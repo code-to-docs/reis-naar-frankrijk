@@ -7,11 +7,19 @@
   import { db } from '$lib/firebase.js';
   import { gebruiker } from '$lib/stores.js';
 
-  let { titel = '', emoji = '', collectie = '', afvinkbaar = false, placeholder = 'Nieuw item...' } = $props();
+  let {
+    titel = '',
+    emoji = '',
+    collectie = '',
+    afvinkbaar = false,
+    metLink = false,
+    placeholder = 'Nieuw item...'
+  } = $props();
 
   let items = $state([]);
   let nieuwItem = $state('');
   let extraVeld = $state('');
+  let linkVeld = $state('');
   let toonForm = $state(false);
   let unsubscribe;
 
@@ -35,9 +43,11 @@
     };
     if (afvinkbaar) data.gedaan = false;
     if (extraVeld.trim()) data.notities = extraVeld.trim();
+    if (linkVeld.trim()) data.mapsLink = linkVeld.trim();
     await addDoc(collection(db, collectie), data);
     nieuwItem = '';
     extraVeld = '';
+    linkVeld = '';
     toonForm = false;
   }
 
@@ -78,9 +88,18 @@
       <div style="flex:1;">
         <strong>{item.naam}</strong>
         {#if item.notities}
-          <p style="color:#666;font-size:14px;">{item.notities}</p>
+          <p style="color:#666;font-size:14px;margin:2px 0;">{item.notities}</p>
         {/if}
-        <small style="color:#999;">({item.door})</small>
+        {#if item.mapsLink}
+          <a href={item.mapsLink} target="_blank" rel="noopener noreferrer"
+            style="display:inline-flex;align-items:center;gap:4px;
+              color:#1a73e8;font-size:13px;text-decoration:none;
+              background:#e8f0fe;padding:4px 10px;border-radius:12px;
+              margin-top:4px;">
+            🗺️ Open in Maps
+          </a>
+        {/if}
+        <small style="color:#999;display:block;margin-top:2px;">({item.door})</small>
       </div>
       <button style="background:none;font-size:16px;padding:4px;"
         onclick={() => verwijder(item.id)}>🗑️</button>
@@ -97,6 +116,10 @@
     <div class="card">
       <form onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
         <input bind:value={nieuwItem} placeholder={placeholder} />
+        {#if metLink}
+          <input bind:value={linkVeld} type="url"
+            placeholder="Google Maps link (optioneel)" />
+        {/if}
         <textarea bind:value={extraVeld}
           placeholder="Notities (optioneel)" rows="2"></textarea>
         <div style="display:flex;gap:8px;">

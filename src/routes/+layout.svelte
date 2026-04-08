@@ -2,6 +2,7 @@
   import '../app.css';
   import Navigation from '$lib/components/Navigation.svelte';
   import { gebruiker } from '$lib/stores.js';
+  import Snackbar from '$lib/components/Snackbar.svelte';
 
   let { children } = $props();
   let naam = $state('');
@@ -32,7 +33,8 @@
   </div>
 {:else}
   {@render children()}
-  <Navigation />
+  <Snackbar />
+<Navigation />
 {/if}
 
 <style>
