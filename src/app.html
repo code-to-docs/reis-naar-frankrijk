@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#002654" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icon-192.png" />
+    <title>Reis naar Frankrijk 🇫🇷</title>
+    %sveltekit.head%
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
+    </script>
+  </head>
+  <body data-sveltekit-prerender="true">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

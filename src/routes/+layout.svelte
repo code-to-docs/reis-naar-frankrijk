@@ -1,0 +1,43 @@
+<script>
+  import '../app.css';
+  import Navigation from '$lib/components/Navigation.svelte';
+  import { gebruiker } from '$lib/stores.js';
+
+  let { children } = $props();
+  let naam = $state('');
+
+  if (typeof localStorage !== 'undefined') {
+    naam = localStorage.getItem('naam') || '';
+    if (naam) gebruiker.set(naam);
+  }
+
+  function kiesNaam(n) {
+    naam = n;
+    localStorage.setItem('naam', n);
+    gebruiker.set(n);
+  }
+</script>
+
+{#if !naam}
+  <div class="kies-scherm">
+    <h1 style="font-size:80px;">🇫🇷</h1>
+    <h2>Reis naar Frankrijk</h2>
+    <p>Wie ben je?</p>
+    <div style="display:flex;gap:16px;margin-top:20px;">
+      <button class="btn-primary" style="font-size:20px;padding:16px 32px;"
+        onclick={() => kiesNaam('Franzi')}>🙋‍♀️ Franzi</button>
+      <button class="btn-primary" style="font-size:20px;padding:16px 32px;"
+        onclick={() => kiesNaam('Dennis')}>🙋‍♂️ Dennis</button>
+    </div>
+  </div>
+{:else}
+  {@render children()}
+  <Navigation />
+{/if}
+
+<style>
+  .kies-scherm {
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; height:100vh; gap:16px;
+  }
+</style>
