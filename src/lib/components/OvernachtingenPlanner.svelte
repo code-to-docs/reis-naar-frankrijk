@@ -1593,21 +1593,30 @@
   .ov-open-btn {
     width: auto;
     min-height: var(--ui-touch-compact);
-    padding: 0 10px;
-    border-radius: 999px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
-    font-size: var(--font-size-xs);
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
   }
   .ov-delete {
     width: auto;
-    padding: 2px 6px;
-    font-size: 1rem;
-    background: transparent;
-    border: none;
-    opacity: 0.7;
+    min-height: var(--ui-touch-compact);
+    min-width: var(--ui-touch-compact);
+    padding: 0 10px;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--input-border);
+    background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
+    color: color-mix(in srgb, var(--tekst) 70%, #475569);
+    opacity: 1;
+  }
+  .ov-delete:hover {
+    border-color: color-mix(in srgb, var(--rood) 30%, var(--input-border));
+    color: var(--rood);
+    background: color-mix(in srgb, var(--card-bg) 78%, #fee2e2);
   }
   .ov-meta {
     display: flex;
@@ -1799,6 +1808,16 @@
     background: #1e3a8a;
     color: #dbeafe;
     border-color: #2563eb;
+  }
+  :global(html.dark) .ov-delete {
+    background: #0f172a;
+    border-color: #334155;
+    color: #cbd5e1;
+  }
+  :global(html.dark) .ov-delete:hover {
+    border-color: #dc2626;
+    color: #fecaca;
+    background: rgba(127, 29, 29, 0.35);
   }
   :global(html.dark) .ov-view-switch {
     background: #0f172a;
