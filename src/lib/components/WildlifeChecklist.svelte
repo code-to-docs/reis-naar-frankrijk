@@ -1,715 +1,429 @@
 <script>
-  import { onMount } from 'svelte';
-  import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
-  import { db } from '$lib/firebase.js';
-  import { gebruiker } from '$lib/stores.js';
-  import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
+  import { onMount } from "svelte";
+  import { collection, onSnapshot, doc, setDoc, deleteDoc } from "firebase/firestore";
+  import { db } from "$lib/firebase.js";
+  import { gebruiker, toonSnackbar } from "$lib/stores.js";
+  import { haptic } from "$lib/utils/haptic.js";
+  import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from "$lib/wildlifeData.js";
 
-  let currentUser = $state('');
+  let currentUser = $state("");
   let spottings = $state({});
   let fotos = $state({});
-  let zoek = $state('');
-  let filterStatus = $state('alle');
-  let filterRegio = $state('alle');
-  let filterCategorie = $state('alle');
+  let zoek = $state("");
+  let filterStatus = $state("alle");
+  let filterRegio = $state("alle");
+  let filterCategorie = $state("alle");
   let expandedDier = $state(null);
-  let spotNotitie = $state('');
-  let spotLocatie = $state('');
+  let spotNotitie = $state("");
+  let spotLocatie = $state("");
+  let toonFilters = $state(false);
 
-  // Abonneer op gebruiker store
+  const E_ZOEK = "\u{1F50D}";
+  const E_CHECK = "\u2705";
+  const E_KRUIS = "\u274C";
+  const E_PIN = "\u{1F4CD}";
+  const E_NOTITIE = "\u{1F4DD}";
+  const E_KALENDER = "\u{1F4C5}";
+  const E_TIP = "\u{1F4A1}";
+  const E_WIKI = "\u{1F4D6}";
+  const E_GELUID = "\u{1F50A}";
+  const E_UNDO = "\u21A9\uFE0F";
+  const E_FILTER = "\u{1F3AF}";
+  const E_POOT = "\u{1F43E}";
+
   let unsubUser;
   onMount(() => {
     unsubUser = gebruiker.subscribe(v => currentUser = v);
     return () => unsubUser?.();
   });
 
-  // Firestore realtime sync voor spottings
   let unsubFirestore;
   onMount(() => {
-    const ref = collection(db, 'wildlife');
+    const ref = collection(db, "wildlife");
     unsubFirestore = onSnapshot(ref, (snapshot) => {
       const data = {};
-      snapshot.forEach((d) => {
-        data[d.id] = d.data();
-      });
+      snapshot.forEach((d) => { data[d.id] = d.data(); });
       spottings = data;
     });
     return () => unsubFirestore?.();
   });
 
-  // Wikipedia foto's laden
   onMount(() => {
-    wildlifeData.forEach(async (dier) => {
-      try {
-        const res = await fetch(`https://nl.wikipedia.org/api/rest_v1/page/summary/${dier.wiki}`);
-        if (!res.ok) {
-          const resEN = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${dier.wiki}`);
-          if (resEN.ok) {
-            const data = await resEN.json();
-            if (data.thumbnail?.source) {
-              fotos[dier.id] = data.thumbnail.source;
+    const CACHE_KEY = "wildlife_fotos_v2";
+    const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.timestamp && (Date.now() - parsed.timestamp) < CACHE_MAX_AGE) {
+          fotos = parsed.data || {};
+          const missing = wildlifeData.filter(d => !fotos[d.id]);
+          if (missing.length === 0) return;
+          laadFotos(missing);
+          return;
+        }
+      }
+    } catch (e) {}
+    laadFotos(wildlifeData);
+  });
+
+  function laadFotos(dieren) {
+    const CACHE_KEY = "wildlife_fotos_v2";
+    let index = 0;
+    const batchSize = 5;
+    function laadBatch() {
+      const batch = dieren.slice(index, index + batchSize);
+      if (batch.length === 0) {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: fotos })); } catch (e) {}
+        return;
+      }
+      Promise.all(batch.map(async (dier) => {
+        try {
+          const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dier.wiki));
+          if (res.ok) {
+            const data = await res.json();
+            if (data.thumbnail && data.thumbnail.source) {
+              const src = data.thumbnail.source;
+              const sized = src.replace(/\/\d+px-/, "/300px-");
+              fotos[dier.id] = sized;
               fotos = { ...fotos };
             }
           }
-          return;
-        }
-        const data = await res.json();
-        if (data.thumbnail?.source) {
-          fotos[dier.id] = data.thumbnail.source;
-          fotos = { ...fotos };
-        }
-      } catch (e) {
-        console.warn('Foto laden mislukt voor', dier.naam);
-      }
-    });
-  });
-
-  // Spotting toevoegen/verwijderen
-  async function toggleSpotting(dierId) {
-    const spotting = spottings[dierId];
-    if (spotting) {
-      await deleteDoc(doc(db, 'wildlife', dierId));
-    } else {
-      await setDoc(doc(db, 'wildlife', dierId), {
-        gespot: true,
-        door: currentUser,
-        datum: new Date().toISOString(),
-        notitie: spotNotitie || '',
-        locatie: spotLocatie || '',
+        } catch (e) {}
+      })).then(() => {
+        index += batchSize;
+        setTimeout(laadBatch, 200);
       });
-      spotNotitie = '';
-      spotLocatie = '';
     }
+    laadBatch();
   }
 
-  // Spotting met details opslaan
   async function saveSpottingDetails(dierId) {
-    await setDoc(doc(db, 'wildlife', dierId), {
+    const dier = wildlifeData.find(d => d.id === dierId);
+    await setDoc(doc(db, "wildlife", dierId), {
       gespot: true,
       door: currentUser,
       datum: new Date().toISOString(),
       notitie: spotNotitie,
       locatie: spotLocatie,
     });
-    spotNotitie = '';
-    spotLocatie = '';
+    haptic("success");
+    const emoji = dier ? (categorieLabels[dier.categorie]?.emoji || E_POOT) : E_POOT;
+    toonSnackbar(dier ? dier.naam + " gespot!" : "Gespot!", "success", emoji);
+    spotNotitie = "";
+    spotLocatie = "";
     expandedDier = null;
   }
 
-  // Gefilterde lijst
+  async function verwijderSpotting(dierId) {
+    await deleteDoc(doc(db, "wildlife", dierId));
+    haptic("light");
+    toonSnackbar("Spotting ongedaan gemaakt", "warning", E_UNDO);
+  }
+
   let gefilterd = $derived.by(() => {
     return wildlifeData.filter((dier) => {
-      const zoekMatch = zoek === '' ||
+      const zoekMatch = zoek === "" ||
         dier.naam.toLowerCase().includes(zoek.toLowerCase()) ||
         dier.frans.toLowerCase().includes(zoek.toLowerCase()) ||
         dier.info.toLowerCase().includes(zoek.toLowerCase());
-
-      const statusMatch = filterStatus === 'alle' ||
-        (filterStatus === 'gespot' && spottings[dier.id]) ||
-        (filterStatus === 'niet' && !spottings[dier.id]);
-
-      const regioMatch = filterRegio === 'alle' ||
-        dier.regios.includes(filterRegio);
-
-      const catMatch = filterCategorie === 'alle' ||
-        dier.categorie === filterCategorie;
-
+      const statusMatch = filterStatus === "alle" ||
+        (filterStatus === "gespot" && spottings[dier.id]) ||
+        (filterStatus === "niet" && !spottings[dier.id]);
+      const regioMatch = filterRegio === "alle" || dier.regios.includes(filterRegio);
+      const catMatch = filterCategorie === "alle" || dier.categorie === filterCategorie;
       return zoekMatch && statusMatch && regioMatch && catMatch;
     });
   });
 
-  // Statistieken
-  let aantalGespot = $derived(
-    wildlifeData.filter(d => spottings[d.id]).length
-  );
+  let aantalGespot = $derived(wildlifeData.filter(d => spottings[d.id]).length);
   let totaal = $derived(wildlifeData.length);
+  let gespotPerc = $derived(totaal > 0 ? Math.round((aantalGespot / totaal) * 100) : 0);
 
-  // Achievements
-  let achievements = $derived.by(() => {
-    const list = [];
-    const gespotIds = wildlifeData.filter(d => spottings[d.id]).map(d => d.id);
+  let isGefilterd = $derived(filterStatus !== "alle" || filterRegio !== "alle" || filterCategorie !== "alle" || zoek !== "");
+  let aantalActieveFilters = $derived(
+    (filterStatus !== "alle" ? 1 : 0) + (filterRegio !== "alle" ? 1 : 0) + (filterCategorie !== "alle" ? 1 : 0)
+  );
 
-    // Alle gieren
-    const gieren = ['vale-gier', 'lammergier', 'monniksgier', 'aasgier'];
-    if (gieren.every(id => gespotIds.includes(id))) {
-      list.push({ emoji: '🏆', tekst: 'Gierenmeester — Alle 4 giersoorten gespot!' });
-    }
-
-    // Eerste 3-ster
-    const drieSterspotted = wildlifeData.filter(d => d.zeldzaamheid === 3 && spottings[d.id]);
-    if (drieSterspotted.length > 0) {
-      list.push({ emoji: '💎', tekst: `Zeldzame vondst — ${drieSterspotted.length}x ⭐⭐⭐ gespot!` });
-    }
-
-    // 10+ gespot
-    if (gespotIds.length >= 10) {
-      list.push({ emoji: '🔭', tekst: 'Natuurkenner — 10+ soorten gespot!' });
-    }
-
-    // 20+ gespot
-    if (gespotIds.length >= 20) {
-      list.push({ emoji: '🏅', tekst: 'Wildlife expert — 20+ soorten gespot!' });
-    }
-
-    // Alle categorieën
-    const gespotCats = new Set(wildlifeData.filter(d => spottings[d.id]).map(d => d.categorie));
-    if (gespotCats.size === Object.keys(categorieLabels).length) {
-      list.push({ emoji: '🌈', tekst: 'Alleskunner — Elke categorie minstens 1x gespot!' });
-    }
-
-    // Alle regio's
-    const gespotRegios = new Set();
-    wildlifeData.filter(d => spottings[d.id]).forEach(d => d.regios.forEach(r => gespotRegios.add(r)));
-    if (gespotRegios.size === Object.keys(regioLabels).length) {
-      list.push({ emoji: '🗺️', tekst: 'Ontdekker — Wildlife gespot in alle 3 regio\'s!' });
-    }
-
-    return list;
-  });
+  function resetFilters() {
+    zoek = "";
+    filterStatus = "alle";
+    filterRegio = "alle";
+    filterCategorie = "alle";
+  }
 </script>
 
-
-<!-- ACHIEVEMENTS -->
-{#if achievements.length > 0}
-<div class="achievements">
-  <h3>🏆 Achievements</h3>
-  {#each achievements as ach}
-    <div class="achievement">
-      <span class="ach-emoji">{ach.emoji}</span>
-      <span class="ach-tekst">{ach.tekst}</span>
+<div class="wl-stats-card">
+  <div class="wl-stats-top">
+    <div class="wl-stats-nummer">
+      <span class="wl-stats-groot">{aantalGespot}</span>
+      <span class="wl-stats-van">/ {totaal}</span>
     </div>
-  {/each}
+    <div class="wl-stats-rechts">
+      <div class="wl-stats-perc">{gespotPerc}%</div>
+      <div class="wl-stats-label">gespot</div>
+    </div>
+  </div>
+  <div class="wl-stats-bar">
+    <div class="wl-stats-fill" style="width:{gespotPerc}%"></div>
+  </div>
 </div>
+
+<div class="wl-zoek-rij">
+  <input type="text" class="wl-zoek" placeholder="{E_ZOEK} Zoek op naam, Frans, info..." bind:value={zoek} />
+  <button class="wl-filter-toggle" class:actief={toonFilters || aantalActieveFilters > 0} onclick={() => toonFilters = !toonFilters}>
+    {E_FILTER}
+    {#if aantalActieveFilters > 0}
+      <span class="wl-filter-badge">{aantalActieveFilters}</span>
+    {/if}
+  </button>
+</div>
+
+{#if toonFilters}
+  <div class="wl-filters-card">
+    <div class="wl-filter-rij">
+      <div class="wl-pills">
+        <button class="wl-pill" class:active={filterStatus === "alle"} onclick={() => filterStatus = "alle"}>Alle</button>
+        <button class="wl-pill" class:active={filterStatus === "gespot"} onclick={() => filterStatus = "gespot"}>{E_CHECK} Gespot</button>
+        <button class="wl-pill" class:active={filterStatus === "niet"} onclick={() => filterStatus = "niet"}>{E_KRUIS} Niet gespot</button>
+      </div>
+    </div>
+    <div class="wl-filter-rij">
+      <div class="wl-pills">
+        <button class="wl-pill" class:active={filterRegio === "alle"} onclick={() => filterRegio = "alle"}>Alle</button>
+        {#each Object.entries(regioLabels) as [key, val]}
+          <button class="wl-pill" class:active={filterRegio === key} onclick={() => filterRegio = key}>{val.emoji} {val.label}</button>
+        {/each}
+      </div>
+    </div>
+    <div class="wl-filter-rij">
+      <div class="wl-pills">
+        <button class="wl-pill" class:active={filterCategorie === "alle"} onclick={() => filterCategorie = "alle"}>Alle</button>
+        {#each Object.entries(categorieLabels) as [key, val]}
+          <button class="wl-pill" class:active={filterCategorie === key} onclick={() => filterCategorie = key}>{val.emoji} {val.label}</button>
+        {/each}
+      </div>
+    </div>
+    {#if isGefilterd}
+      <button class="wl-reset" onclick={resetFilters}>Filters resetten</button>
+    {/if}
+  </div>
 {/if}
 
-<!-- STATISTIEKEN -->
-<div class="wildlife-header">
-  <h2>🦅 Wildlife Checklist</h2>
-  <div class="stats-bar">
-    <div class="stats-tekst">{aantalGespot} / {totaal} gespot</div>
-    <div class="stats-track">
-      <div class="stats-fill" style="width: {totaal > 0 ? (aantalGespot / totaal) * 100 : 0}%"></div>
-    </div>
-  </div>
-</div>
+{#if isGefilterd}
+  <div class="wl-resultaten">{gefilterd.length} {gefilterd.length === 1 ? "soort" : "soorten"} gevonden</div>
+{/if}
 
-<!-- ZOEKBALK -->
-<div class="zoek-container">
-  <input
-    type="text"
-    class="zoek-input"
-    placeholder="🔍 Zoek op naam, Frans, of info..."
-    bind:value={zoek}
-  />
-</div>
-
-<!-- FILTERS -->
-<div class="filters-section">
-
-  <!-- Status filter -->
-  <div class="filter-rij">
-    <span class="filter-label">Status:</span>
-    <div class="filter-knoppen">
-      <button class="filter-knop" class:actief={filterStatus === 'alle'} onclick={() => filterStatus = 'alle'}>Alle</button>
-      <button class="filter-knop" class:actief={filterStatus === 'gespot'} onclick={() => filterStatus = 'gespot'}>✅ Gespot</button>
-      <button class="filter-knop" class:actief={filterStatus === 'niet'} onclick={() => filterStatus = 'niet'}>❌ Niet gespot</button>
-    </div>
-  </div>
-
-  <!-- Regio filter -->
-  <div class="filter-rij">
-    <span class="filter-label">Regio:</span>
-    <div class="filter-knoppen">
-      <button class="filter-knop" class:actief={filterRegio === 'alle'} onclick={() => filterRegio = 'alle'}>Alle</button>
-      {#each Object.entries(regioLabels) as [key, val]}
-        <button class="filter-knop" class:actief={filterRegio === key} onclick={() => filterRegio = key}>{val.emoji} {val.label}</button>
-      {/each}
-    </div>
-  </div>
-
-  <!-- Categorie filter -->
-  <div class="filter-rij">
-    <span class="filter-label">Soort:</span>
-    <div class="filter-knoppen">
-      <button class="filter-knop" class:actief={filterCategorie === 'alle'} onclick={() => filterCategorie = 'alle'}>Alle</button>
-      {#each Object.entries(categorieLabels) as [key, val]}
-        <button class="filter-knop" class:actief={filterCategorie === key} onclick={() => filterCategorie = key}>{val.emoji} {val.label}</button>
-      {/each}
-    </div>
-  </div>
-
-</div>
-
-<!-- RESULTATEN TELLER -->
-<div class="resultaten-teller">
-  {gefilterd.length} {gefilterd.length === 1 ? 'soort' : 'soorten'} gevonden
-</div>
-
-<!-- DIERENLIJST -->
-<div class="dieren-lijst">
+<div class="wl-lijst">
   {#each gefilterd as dier (dier.id)}
-    <div class="dier-card" class:gespot={spottings[dier.id]}>
-
-      <!-- HOOFDRIJ -->
-      <div class="dier-hoofd" onclick={() => expandedDier = expandedDier === dier.id ? null : dier.id}>
-        <div class="dier-foto-container">
+    <div class="wl-card" class:gespot={spottings[dier.id]}>
+      <button type="button" class="wl-hoofd" onclick={() => expandedDier = expandedDier === dier.id ? null : dier.id}>
+        <div class="wl-foto-wrap">
           {#if fotos[dier.id]}
-            <img src={fotos[dier.id]} alt={dier.naam} class="dier-foto" />
+            <img src={fotos[dier.id]} alt={dier.naam} class="wl-foto" loading="lazy" decoding="async" />
           {:else}
-            <div class="dier-foto-placeholder">{categorieLabels[dier.categorie]?.emoji || '🐾'}</div>
+            <div class="wl-foto-ph">{categorieLabels[dier.categorie]?.emoji || E_POOT}</div>
           {/if}
           {#if spottings[dier.id]}
-            <div class="gespot-badge">✅</div>
+            <div class="wl-gespot-dot"></div>
           {/if}
         </div>
-
-        <div class="dier-info">
-          <div class="dier-naam-rij">
-            <strong class="dier-naam">{dier.naam}</strong>
-            <span class="zeldzaamheid" style="color: {zeldzaamheidLabels[dier.zeldzaamheid].kleur}">
-              {zeldzaamheidLabels[dier.zeldzaamheid].emoji}
-            </span>
+        <div class="wl-info">
+          <div class="wl-naam-rij">
+            <strong class="wl-naam">{dier.naam}</strong>
+            <span class="wl-ster" style="color:{zeldzaamheidLabels[dier.zeldzaamheid].kleur}">{zeldzaamheidLabels[dier.zeldzaamheid].emoji}</span>
           </div>
-          <div class="dier-frans">{dier.frans}</div>
-          <div class="dier-regios">
+          <div class="wl-frans">{dier.frans}</div>
+          <div class="wl-tags">
             {#each dier.regios as regio}
-              <span class="regio-tag">{regioLabels[regio]?.emoji} {regioLabels[regio]?.label}</span>
+              <span class="wl-tag">{regioLabels[regio]?.emoji} {regioLabels[regio]?.label}</span>
             {/each}
           </div>
         </div>
+        <svg class="wl-chevron" class:open={expandedDier === dier.id} width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M6 8L10 12L14 8" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
 
-        <div class="expand-icon">{expandedDier === dier.id ? '▲' : '▼'}</div>
-      </div>
-
-      <!-- UITGEKLAPT DETAIL -->
       {#if expandedDier === dier.id}
-        <div class="dier-detail">
-
-          <p class="dier-beschrijving">{dier.info}</p>
-
-          <!-- Tip -->
+        <div class="wl-detail">
+          <p class="wl-beschrijving">{dier.info}</p>
           {#if dier.tip}
-            <div class="detail-blok">
-              <span class="detail-icon">💡</span>
-              <span class="detail-tekst">{dier.tip}</span>
+            <div class="wl-tip">
+              <span class="wl-tip-icon">{E_TIP}</span>
+              <span class="wl-tip-tekst">{dier.tip}</span>
             </div>
           {/if}
-
-          <!-- Spotting info als gespot -->
           {#if spottings[dier.id]}
-            <div class="spotting-info">
-              <div class="spotting-header">✅ Gespot door {spottings[dier.id].door}</div>
+            <div class="wl-spotting">
+              <div class="wl-spotting-head">{E_CHECK} Gespot door {spottings[dier.id].door}</div>
               {#if spottings[dier.id].datum}
-                <div class="spotting-detail">📅 {new Date(spottings[dier.id].datum).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                <div class="wl-spotting-row">{E_KALENDER} {new Date(spottings[dier.id].datum).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" })}</div>
               {/if}
               {#if spottings[dier.id].locatie}
-                <div class="spotting-detail">📍 {spottings[dier.id].locatie}</div>
+                <div class="wl-spotting-row">{E_PIN} {spottings[dier.id].locatie}</div>
               {/if}
               {#if spottings[dier.id].notitie}
-                <div class="spotting-detail">📝 {spottings[dier.id].notitie}</div>
+                <div class="wl-spotting-row">{E_NOTITIE} {spottings[dier.id].notitie}</div>
               {/if}
             </div>
           {/if}
-
-          <!-- Spot formulier als NIET gespot -->
           {#if !spottings[dier.id]}
-            <div class="spot-formulier">
-              <input type="text" class="spot-input" placeholder="📍 Locatie (optioneel)" bind:value={spotLocatie} />
-              <input type="text" class="spot-input" placeholder="📝 Notitie (optioneel)" bind:value={spotNotitie} />
-              <button class="spot-knop" onclick={() => saveSpottingDetails(dier.id)}>
-                ✅ {dier.naam} gespot!
+            <div class="wl-spot-form">
+              <input type="text" class="wl-spot-input" placeholder="{E_PIN} Locatie (optioneel)" bind:value={spotLocatie} />
+              <input type="text" class="wl-spot-input" placeholder="{E_NOTITIE} Notitie (optioneel)" bind:value={spotNotitie} />
+              <button class="wl-spot-btn" onclick={() => saveSpottingDetails(dier.id)}>
+                {E_CHECK} {dier.naam} gespot!
               </button>
             </div>
           {:else}
-            <button class="unspot-knop" onclick={() => toggleSpotting(dier.id)}>
-              ↩️ Spotting ongedaan maken
+            <button class="wl-unspot" onclick={() => verwijderSpotting(dier.id)}>
+              {E_UNDO} Spotting ongedaan maken
             </button>
           {/if}
-
-          <!-- Links -->
-          <div class="dier-links">
-            <a href="https://en.wikipedia.org/wiki/{dier.wiki}" target="_blank" rel="noopener" class="wiki-link">
-              📖 Wikipedia
-            </a>
+          <div class="wl-links">
+            <a href={"https://en.wikipedia.org/wiki/" + dier.wiki} target="_blank" rel="noopener" class="wl-link wiki">{E_WIKI} Wikipedia</a>
             {#if dier.geluid}
-              <a href={dier.geluid} target="_blank" rel="noopener" class="geluid-link">
-                🔊 Geluid beluisteren
-              </a>
+              <a href={dier.geluid} target="_blank" rel="noopener" class="wl-link geluid">{E_GELUID} Geluid</a>
             {/if}
           </div>
-
         </div>
       {/if}
-
     </div>
   {/each}
 </div>
 
 {#if gefilterd.length === 0}
-  <div class="geen-resultaat">
-    <p>😕 Geen dieren gevonden met deze filters.</p>
-    <button class="reset-knop" onclick={() => { zoek = ''; filterStatus = 'alle'; filterRegio = 'alle'; filterCategorie = 'alle'; }}>
-      Filters resetten
-    </button>
+  <div class="wl-leeg">
+    <p>Geen dieren gevonden</p>
+    <button class="wl-reset" onclick={resetFilters}>Filters resetten</button>
   </div>
 {/if}
 
 <style>
-  /* ACHIEVEMENTS */
-  .achievements {
-    background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 16px;
+  .wl-stats-card {
+    background: white; border-radius: 16px; padding: 16px;
+    margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   }
-  .achievements h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.05rem;
-  }
-  .achievement {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-  }
-  .achievement:last-child { border-bottom: none; }
-  .ach-emoji { font-size: 1.4rem; }
-  .ach-tekst { font-size: 0.9rem; font-weight: 500; }
+  .wl-stats-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+  .wl-stats-nummer { display: flex; align-items: baseline; gap: 4px; }
+  .wl-stats-groot { font-size: 2rem; font-weight: 800; color: #1a5276; line-height: 1; }
+  .wl-stats-van { font-size: 1rem; color: #94a3b8; font-weight: 500; }
+  .wl-stats-rechts { text-align: right; }
+  .wl-stats-perc { font-size: 1.1rem; font-weight: 700; color: #10b981; }
+  .wl-stats-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .wl-stats-bar { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+  .wl-stats-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 4px; transition: width 0.4s ease; }
 
-  /* HEADER + STATS */
-  .wildlife-header {
-    margin-bottom: 16px;
+  .wl-zoek-rij { display: flex; gap: 8px; margin-bottom: 12px; }
+  .wl-zoek {
+    flex: 1; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 12px;
+    font-size: 0.9rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;
   }
-  .wildlife-header h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.4rem;
+  .wl-zoek:focus { border-color: #1a5276; }
+  .wl-filter-toggle {
+    width: 44px; height: 44px; border-radius: 12px; border: 2px solid #e2e8f0;
+    background: white; font-size: 1.1rem; cursor: pointer; position: relative;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s ease;
   }
-  .stats-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .stats-tekst {
-    font-size: 0.9rem;
-    font-weight: 600;
-    white-space: nowrap;
-    min-width: 80px;
-  }
-  .stats-track {
-    flex: 1;
-    height: 10px;
-    background: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  .stats-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #8BC34A);
-    border-radius: 5px;
-    transition: width 0.4s ease;
+  .wl-filter-toggle.actief { background: #1a5276; border-color: #1a5276; }
+  .wl-filter-badge {
+    position: absolute; top: -5px; right: -5px; width: 18px; height: 18px;
+    background: #ef4444; color: white; border-radius: 50%; font-size: 0.65rem;
+    font-weight: 700; display: flex; align-items: center; justify-content: center;
   }
 
-  /* ZOEKBALK */
-  .zoek-container {
-    margin-bottom: 12px;
+  .wl-filters-card {
+    background: white; border-radius: 14px; padding: 14px;
+    margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    animation: wlSlideUp 0.2s ease-out;
   }
-  .zoek-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
-    box-sizing: border-box;
+  @keyframes wlSlideUp {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
-  .zoek-input:focus {
-    border-color: #1a5276;
+  .wl-filter-rij { margin-bottom: 8px; }
+  .wl-filter-rij:last-of-type { margin-bottom: 0; }
+  .wl-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .wl-pill {
+    padding: 5px 12px; border-radius: 20px; border: 1.5px solid #e2e8f0;
+    background: white; color: #64748b; font-size: 0.78rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
   }
+  .wl-pill:active { transform: scale(0.96); }
+  .wl-pill.active { background: #1a5276; color: white; border-color: #1a5276; }
+  .wl-reset {
+    width: 100%; padding: 8px; margin-top: 8px; background: none;
+    border: 1.5px solid #e2e8f0; border-radius: 10px; color: #94a3b8;
+    font-size: 0.8rem; cursor: pointer;
+  }
+  .wl-reset:active { background: #f1f5f9; }
+  .wl-resultaten { font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px; font-style: italic; }
 
-  /* FILTERS */
-  .filters-section {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .filter-rij {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .filter-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .filter-knoppen {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .filter-knop {
-    padding: 6px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 20px;
-    background: white;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .filter-knop:hover {
-    border-color: #1a5276;
-  }
-  .filter-knop.actief {
-    background: #1a5276;
-    color: white;
-    border-color: #1a5276;
-  }
-
-  /* RESULTATEN TELLER */
-  .resultaten-teller {
-    font-size: 0.85rem;
-    color: #777;
-    margin-bottom: 12px;
-    font-style: italic;
-  }
-
-  /* DIER CARDS */
-  .dieren-lijst {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .dier-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 2px solid transparent;
+  .wl-lijst { display: flex; flex-direction: column; gap: 8px; }
+  .wl-card {
+    background: white; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 2px solid transparent;
     transition: border-color 0.2s;
   }
-  .dier-card.gespot {
-    border-color: #4CAF50;
-    background: #F9FFF9;
+  .wl-card.gespot { border-color: #10b981; background: #f0fdf4; }
+  .wl-hoofd { display: flex; width: 100%; background: none; border: none; text-align: left; align-items: center; gap: 12px; padding: 12px; cursor: pointer; }
+  .wl-foto-wrap { position: relative; flex-shrink: 0; }
+  .wl-foto { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; }
+  .wl-foto-ph {
+    width: 56px; height: 56px; border-radius: 12px; background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
   }
+  .wl-gespot-dot {
+    position: absolute; top: -3px; right: -3px; width: 14px; height: 14px;
+    background: #10b981; border: 2px solid white; border-radius: 50%;
+  }
+  .wl-info { flex: 1; min-width: 0; }
+  .wl-naam-rij { display: flex; align-items: center; gap: 6px; }
+  .wl-naam { font-size: 0.95rem; color: #1e293b; }
+  .wl-ster { font-size: 0.7rem; letter-spacing: -1px; }
+  .wl-frans { font-size: 0.78rem; color: #94a3b8; font-style: italic; }
+  .wl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+  .wl-tag { font-size: 0.68rem; background: #f1f5f9; padding: 2px 7px; border-radius: 8px; color: #64748b; }
+  .wl-chevron { flex-shrink: 0; transition: transform 0.2s ease; }
+  .wl-chevron.open { transform: rotate(180deg); }
 
-  /* HOOFDRIJ */
-  .dier-hoofd {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    cursor: pointer;
+  .wl-detail { padding: 0 14px 14px 14px; border-top: 1px solid #f1f5f9; }
+  .wl-beschrijving { font-size: 0.85rem; line-height: 1.5; color: #475569; margin: 12px 0; }
+  .wl-tip {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: #EBF5FB; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px;
   }
-  .dier-foto-container {
-    position: relative;
-    flex-shrink: 0;
+  .wl-tip-icon { font-size: 1rem; flex-shrink: 0; }
+  .wl-tip-tekst { font-size: 0.82rem; line-height: 1.4; color: #1a5276; }
+  .wl-spotting { background: #f0fdf4; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  .wl-spotting-head { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #166534; }
+  .wl-spotting-row { font-size: 0.82rem; color: #475569; padding: 2px 0; }
+  .wl-spot-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .wl-spot-input {
+    padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 10px;
+    font-size: 0.85rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;
   }
-  .dier-foto {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
+  .wl-spot-input:focus { border-color: #10b981; }
+  .wl-spot-btn {
+    padding: 12px; background: #10b981; color: white; border: none;
+    border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
   }
-  .dier-foto-placeholder {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    background: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
+  .wl-spot-btn:active { background: #059669; }
+  .wl-unspot {
+    padding: 8px 16px; background: none; border: 1.5px solid #e2e8f0;
+    border-radius: 10px; font-size: 0.8rem; color: #94a3b8; cursor: pointer; margin-bottom: 12px;
   }
-  .gespot-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    font-size: 1rem;
-    background: white;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  .wl-unspot:active { border-color: #ef4444; color: #ef4444; }
+  .wl-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .wl-link {
+    padding: 7px 14px; border-radius: 20px; font-size: 0.78rem;
+    text-decoration: none; font-weight: 500;
   }
-
-  .dier-info {
-    flex: 1;
-    min-width: 0;
-  }
-  .dier-naam-rij {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .dier-naam {
-    font-size: 1rem;
-  }
-  .zeldzaamheid {
-    font-size: 0.7rem;
-    letter-spacing: -1px;
-  }
-  .dier-frans {
-    font-size: 0.8rem;
-    color: #888;
-    font-style: italic;
-  }
-  .dier-regios {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 4px;
-  }
-  .regio-tag {
-    font-size: 0.7rem;
-    background: #f0f4f8;
-    padding: 2px 8px;
-    border-radius: 10px;
-    color: #555;
-  }
-
-  .expand-icon {
-    font-size: 0.8rem;
-    color: #aaa;
-    flex-shrink: 0;
-  }
-
-  /* DETAIL SECTIE */
-  .dier-detail {
-    padding: 0 16px 16px 16px;
-    border-top: 1px solid #f0f0f0;
-  }
-  .dier-beschrijving {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #444;
-    margin: 12px 0;
-  }
-  .detail-blok {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    background: #FFF8E1;
-    padding: 10px 12px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-  .detail-icon { font-size: 1.1rem; flex-shrink: 0; }
-  .detail-tekst { font-size: 0.85rem; line-height: 1.4; }
-
-  /* SPOTTING INFO */
-  .spotting-info {
-    background: #E8F5E9;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-  .spotting-header {
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-  }
-  .spotting-detail {
-    font-size: 0.85rem;
-    color: #555;
-    padding: 2px 0;
-  }
-
-  /* SPOT FORMULIER */
-  .spot-formulier {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .spot-input {
-    padding: 10px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .spot-input:focus {
-    border-color: #4CAF50;
-  }
-  .spot-knop {
-    padding: 12px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .spot-knop:hover { background: #388E3C; }
-
-  .unspot-knop {
-    padding: 8px 16px;
-    background: none;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    color: #888;
-    cursor: pointer;
-    margin-bottom: 12px;
-    transition: all 0.2s;
-  }
-  .unspot-knop:hover {
-    border-color: #F44336;
-    color: #F44336;
-  }
-
-  /* LINKS */
-  .dier-links {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .wiki-link, .geluid-link {
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
-  }
-  .wiki-link {
-    background: #E3F2FD;
-    color: #1565C0;
-  }
-  .geluid-link {
-    background: #FFF3E0;
-    color: #E65100;
-  }
-  .wiki-link:hover, .geluid-link:hover { opacity: 0.8; }
-
-  /* GEEN RESULTAAT */
-  .geen-resultaat {
-    text-align: center;
-    padding: 30px;
-    color: #888;
-  }
-  .reset-knop {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background: #1a5276;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  .reset-knop:hover { opacity: 0.9; }
+  .wl-link.wiki { background: #EBF5FB; color: #1565C0; }
+  .wl-link.geluid { background: #FFF7ED; color: #c2410c; }
+  .wl-link:active { opacity: 0.7; }
+  .wl-leeg { text-align: center; padding: 32px 16px; color: #94a3b8; }
+  .wl-leeg p { font-size: 0.95rem; margin-bottom: 12px; }
 </style>

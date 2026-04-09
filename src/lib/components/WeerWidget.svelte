@@ -1,96 +1,91 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount } from "svelte";
 
-  let datum = $state('');
-  let dagNaam = $state('');
+  let datum = $state("");
+  let dagNaam = $state("");
   let weer = $state(null);
   let laden = $state(true);
-  let fout = $state('');
-  let locatieNaam = $state('');
+  let fout = $state("");
+  let locatieNaam = $state("");
 
   const FALLBACK_LAT = 44.5;
   const FALLBACK_LON = 3.5;
-  const FALLBACK_NAAM = 'Lozère';
+  const FALLBACK_NAAM = "Loz\u00E8re";
+
+  // Emoji variabelen (workaround voor Svelte template unicode issue)
+  const EMOJI_WEER = "\u{1F324}\uFE0F";
+  const EMOJI_PIN = "\u{1F4CD}";
+  const EMOJI_DROP = "\u{1F4A7}";
+  const EMOJI_WIND = "\u{1F4A8}";
+  const GRADEN = "\u00B0";
 
   const weerCodes = {
-    0: { emoji: '☀️', tekst: 'Zonnig' },
-    1: { emoji: '🌤️', tekst: 'Overwegend zonnig' },
-    2: { emoji: '⛅', tekst: 'Half bewolkt' },
-    3: { emoji: '☁️', tekst: 'Bewolkt' },
-    45: { emoji: '🌫️', tekst: 'Mist' },
-    48: { emoji: '🌫️', tekst: 'Rijpmist' },
-    51: { emoji: '🌦️', tekst: 'Lichte motregen' },
-    53: { emoji: '🌦️', tekst: 'Motregen' },
-    55: { emoji: '🌧️', tekst: 'Zware motregen' },
-    56: { emoji: '🌧️', tekst: 'Aanvriezende motregen' },
-    57: { emoji: '🌧️', tekst: 'Zware aanvriezende motregen' },
-    61: { emoji: '🌦️', tekst: 'Lichte regen' },
-    63: { emoji: '🌧️', tekst: 'Regen' },
-    65: { emoji: '🌧️', tekst: 'Zware regen' },
-    66: { emoji: '🧊', tekst: 'Aanvriezende regen' },
-    67: { emoji: '🧊', tekst: 'Zware aanvriezende regen' },
-    71: { emoji: '🌨️', tekst: 'Lichte sneeuw' },
-    73: { emoji: '🌨️', tekst: 'Sneeuw' },
-    75: { emoji: '❄️', tekst: 'Zware sneeuw' },
-    77: { emoji: '❄️', tekst: 'Sneeuwkorrels' },
-    80: { emoji: '🌦️', tekst: 'Lichte buien' },
-    81: { emoji: '🌧️', tekst: 'Buien' },
-    82: { emoji: '⛈️', tekst: 'Zware buien' },
-    85: { emoji: '🌨️', tekst: 'Lichte sneeuwbuien' },
-    86: { emoji: '❄️', tekst: 'Zware sneeuwbuien' },
-    95: { emoji: '⛈️', tekst: 'Onweer' },
-    96: { emoji: '⛈️', tekst: 'Onweer met hagel' },
-    99: { emoji: '⛈️', tekst: 'Zwaar onweer met hagel' },
+    0: { emoji: "\u2600\uFE0F", tekst: "Zonnig" },
+    1: { emoji: "\u{1F324}\uFE0F", tekst: "Overwegend zonnig" },
+    2: { emoji: "\u26C5", tekst: "Half bewolkt" },
+    3: { emoji: "\u2601\uFE0F", tekst: "Bewolkt" },
+    45: { emoji: "\u{1F32B}\uFE0F", tekst: "Mist" },
+    48: { emoji: "\u{1F32B}\uFE0F", tekst: "Rijpmist" },
+    51: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte motregen" },
+    53: { emoji: "\u{1F326}\uFE0F", tekst: "Motregen" },
+    55: { emoji: "\u{1F327}\uFE0F", tekst: "Zware motregen" },
+    61: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte regen" },
+    63: { emoji: "\u{1F327}\uFE0F", tekst: "Regen" },
+    65: { emoji: "\u{1F327}\uFE0F", tekst: "Zware regen" },
+    71: { emoji: "\u{1F328}\uFE0F", tekst: "Lichte sneeuw" },
+    73: { emoji: "\u{1F328}\uFE0F", tekst: "Sneeuw" },
+    75: { emoji: "\u2744\uFE0F", tekst: "Zware sneeuw" },
+    80: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte buien" },
+    81: { emoji: "\u{1F327}\uFE0F", tekst: "Buien" },
+    82: { emoji: "\u26C8\uFE0F", tekst: "Zware buien" },
+    95: { emoji: "\u26C8\uFE0F", tekst: "Onweer" },
+    96: { emoji: "\u26C8\uFE0F", tekst: "Onweer met hagel" },
+    99: { emoji: "\u26C8\uFE0F", tekst: "Zwaar onweer met hagel" },
   };
 
   function getWeerInfo(code) {
-    return weerCodes[code] || { emoji: '🌡️', tekst: 'Onbekend' };
+    return weerCodes[code] || { emoji: "\u{1F321}\uFE0F", tekst: "Onbekend" };
   }
 
-  const dagNamen = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
-  const maandNamen = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+  const dagNamen = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+  const maandNamen = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 
-  function formatDatum(dateStr) {
-    const d = new Date(dateStr + 'T12:00:00');
+  function formatDag(dateStr) {
+    const d = new Date(dateStr + "T12:00:00");
     return dagNamen[d.getDay()];
   }
 
   function formatDatumKort(dateStr) {
-    const d = new Date(dateStr + 'T12:00:00');
-    return d.getDate() + ' ' + maandNamen[d.getMonth()].slice(0, 3);
+    const d = new Date(dateStr + "T12:00:00");
+    return d.getDate() + " " + maandNamen[d.getMonth()].slice(0, 3);
   }
 
   async function laadWeer(lat, lon) {
     try {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3';
-
+      const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3";
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Weer ophalen mislukt');
-
+      if (!res.ok) throw new Error("fail");
       const data = await res.json();
-
       weer = data.daily.time.map((dag, i) => ({
         datum: dag,
-        dagNaam: formatDatum(dag),
+        dagNaam: formatDag(dag),
         datumKort: formatDatumKort(dag),
-        weercode: data.daily.weathercode[i],
         weerInfo: getWeerInfo(data.daily.weathercode[i]),
         maxTemp: Math.round(data.daily.temperature_2m_max[i]),
         minTemp: Math.round(data.daily.temperature_2m_min[i]),
         neerslagKans: data.daily.precipitation_probability_max[i],
         windMax: Math.round(data.daily.windspeed_10m_max[i]),
       }));
-
       laden = false;
     } catch (e) {
-      fout = 'Weer laden mislukt';
+      fout = "Weer laden mislukt";
       laden = false;
     }
   }
 
   async function getLocatieNaam(lat, lon) {
     try {
-      const res = await fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&format=json&zoom=10&accept-language=nl');
+      const res = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json&zoom=10&accept-language=nl");
       if (res.ok) {
         const data = await res.json();
         const parts = [];
@@ -100,22 +95,18 @@
         if (data.address?.county || data.address?.state) {
           parts.push(data.address.county || data.address.state);
         }
-        locatieNaam = parts.join(', ') || 'Frankrijk';
+        locatieNaam = parts.join(", ") || "Frankrijk";
       }
-    } catch (e) {
-      locatieNaam = '';
-    }
+    } catch (e) {}
   }
 
   onMount(() => {
     const nu = new Date();
     dagNaam = dagNamen[nu.getDay()].charAt(0).toUpperCase() + dagNamen[nu.getDay()].slice(1);
-    datum = nu.getDate() + ' ' + maandNamen[nu.getMonth()] + ' ' + nu.getFullYear();
+    datum = nu.getDate() + " " + maandNamen[nu.getMonth()] + " " + nu.getFullYear();
 
-    // Probeer GPS met korte timeout, val snel terug op fallback
     let gpsDone = false;
-
-    if ('geolocation' in navigator) {
+    if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           if (gpsDone) return;
@@ -131,8 +122,6 @@
         },
         { timeout: 5000, maximumAge: 600000 }
       );
-
-      // Extra fallback: als GPS na 3 sec nog niet reageert, laad alvast
       setTimeout(() => {
         if (!gpsDone) {
           gpsDone = true;
@@ -152,11 +141,11 @@
   <div class="datum-volledig">{datum}</div>
 </div>
 
-<div class="weer-widget">
+<div class="weer-card">
   <div class="weer-titel-rij">
-    <span class="weer-titel">🌤️ Weer</span>
+    <span class="weer-titel">{EMOJI_WEER} Weer</span>
     {#if locatieNaam}
-      <span class="weer-locatie">📍 {locatieNaam}</span>
+      <span class="weer-locatie">{EMOJI_PIN} {locatieNaam}</span>
     {/if}
   </div>
 
@@ -171,19 +160,19 @@
     <div class="weer-dagen">
       {#each weer as dag, i}
         <div class="weer-dag" class:vandaag={i === 0}>
-          <div class="weer-dag-naam">{i === 0 ? 'Vandaag' : dag.dagNaam.charAt(0).toUpperCase() + dag.dagNaam.slice(1)}</div>
+          <div class="weer-dag-naam">{i === 0 ? "Vandaag" : dag.dagNaam.charAt(0).toUpperCase() + dag.dagNaam.slice(1)}</div>
           <div class="weer-dag-datum">{dag.datumKort}</div>
           <div class="weer-emoji">{dag.weerInfo.emoji}</div>
           <div class="weer-beschrijving">{dag.weerInfo.tekst}</div>
           <div class="weer-temps">
-            <span class="temp-max">{dag.maxTemp}°</span>
-            <span class="temp-min">{dag.minTemp}°</span>
+            <span class="temp-max">{dag.maxTemp}{GRADEN}</span>
+            <span class="temp-min">{dag.minTemp}{GRADEN}</span>
           </div>
-          <div class="weer-details">
+          <div class="weer-extra">
             {#if dag.neerslagKans > 0}
-              <span class="weer-detail">💧 {dag.neerslagKans}%</span>
+              <span>{EMOJI_DROP} {dag.neerslagKans}%</span>
             {/if}
-            <span class="weer-detail">💨 {dag.windMax} km/u</span>
+            <span>{EMOJI_WIND} {dag.windMax} km/u</span>
           </div>
         </div>
       {/each}
@@ -194,27 +183,26 @@
 <style>
   .datum-header {
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    padding-top: 4px;
   }
   .datum-dag {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
+    color: #1a5276;
   }
   .datum-volledig {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    color: #666;
     margin-top: 2px;
   }
 
-  .weer-widget {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  .weer-card {
+    background: white;
     border-radius: 16px;
     padding: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   }
   .weer-titel-rij {
     display: flex;
@@ -226,14 +214,14 @@
   }
   .weer-titel {
     font-weight: 700;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    color: #1a5276;
   }
   .weer-locatie {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.15);
-    padding: 3px 10px;
+    color: #1976D2;
+    background: #E3F2FD;
+    padding: 4px 10px;
     border-radius: 12px;
   }
 
@@ -243,24 +231,22 @@
     gap: 10px;
     justify-content: center;
     padding: 20px;
-    color: rgba(255, 255, 255, 0.8);
+    color: #1565C0;
     font-size: 0.9rem;
   }
   .weer-spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    border-top-color: rgba(255, 255, 255, 0.9);
+    border: 3px solid #E3F2FD;
+    border-top-color: #1565C0;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .weer-fout {
     text-align: center;
-    color: #FF8A80;
+    color: #C62828;
     font-size: 0.85rem;
     padding: 16px;
   }
@@ -271,25 +257,26 @@
     gap: 10px;
   }
   .weer-dag {
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8f9fa;
     border-radius: 14px;
     padding: 12px 8px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
   }
   .weer-dag.vandaag {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: #EBF5FB;
+    border-color: #1a5276;
   }
   .weer-dag-naam {
     font-weight: 700;
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.95);
+    color: #1a5276;
     margin-bottom: 2px;
   }
   .weer-dag-datum {
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: #999;
     margin-bottom: 8px;
   }
   .weer-emoji {
@@ -299,7 +286,7 @@
   }
   .weer-beschrijving {
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: #555;
     margin-bottom: 8px;
     min-height: 28px;
     display: flex;
@@ -309,26 +296,25 @@
   .weer-temps {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 6px;
   }
   .temp-max {
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #FFD54F;
+    font-size: 1.15rem;
+    color: #D84315;
   }
   .temp-min {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: #90A4AE;
+    align-self: flex-end;
   }
-  .weer-details {
+  .weer-extra {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-  }
-  .weer-detail {
     font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: #777;
   }
 </style>

@@ -1,3 +1,8 @@
+
+/* Mobile viewport fix */
+html, body {
+  min-height: 100dvh;
+}
 :root {
   --blauw: #002654;
   --wit: #ffffff;
@@ -155,3 +160,156 @@ img {
 }
 
 /* ========== EINDE UX-UPGRADES ========== */
+
+/* ========== DARK MODE ========== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --blauw: #1a5276;
+    --wit: #0f172a;
+    --grijs-licht: #0f172a;
+    --grijs: #334155;
+    --tekst: #e2e8f0;
+    --groen: #10b981;
+    --oranje: #f59e0b;
+    --rood: #ef4444;
+  }
+
+  body {
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+
+  h1, h2, h3 { color: #f1f5f9; }
+
+  .card {
+    background: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  input, select, textarea {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #3b82f6;
+  }
+  input::placeholder { color: #64748b; }
+
+  .checklist-item {
+    border-bottom-color: #334155;
+  }
+
+  .progress-bar { background: #334155; }
+
+  .nav-bar {
+    background: #1e293b;
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.3);
+  }
+
+  .header {
+    background: #0c2d48;
+  }
+
+  /* Budget dark overrides */
+  .hero-card,
+  .budget-chart-wrapper,
+  .budget-edit-card { background: #1e293b !important; }
+  .hero-label { color: #94a3b8 !important; }
+  .hero-sub { color: #64748b !important; }
+  .hero-uitgegeven { color: #64748b !important; }
+  .hero-bar { background: #334155 !important; }
+  .entry-item { background: #1e293b !important; }
+  .entry-info strong { color: #e2e8f0 !important; }
+  .entry-bedrag { color: #e2e8f0 !important; }
+  .dag-header { border-bottom-color: #334155 !important; }
+  .dag-totaal { background: #334155 !important; color: #e2e8f0 !important; }
+  .verrekening-card { border-top-color: #334155 !important; }
+  .verrekening-lijn { border-top-color: #334155 !important; }
+
+  .pill, .wl-pill, .cat-pill {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+  }
+  .pill.active, .wl-pill.active {
+    background: #1a5276 !important;
+    color: white !important;
+    border-color: #1a5276 !important;
+  }
+  .filter-info { background: #1e3a5f !important; }
+
+  /* Wildlife dark overrides */
+  .wl-stats-card { background: #1e293b !important; }
+  .wl-stats-groot { color: #f1f5f9 !important; }
+  .wl-zoek {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+  }
+  .wl-filter-toggle {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+  .wl-filters-card { background: #1e293b !important; }
+  .wl-card { background: #1e293b !important; }
+  .wl-card.gespot { background: #0f2d1c !important; border-color: #10b981 !important; }
+  .wl-naam { color: #e2e8f0 !important; }
+  .wl-foto-ph { background: #334155 !important; }
+  .wl-detail { border-top-color: #334155 !important; }
+  .wl-beschrijving { color: #94a3b8 !important; }
+  .wl-tip { background: #1e3a5f !important; }
+  .wl-tip-tekst { color: #93c5fd !important; }
+  .wl-spotting { background: #0f2d1c !important; }
+  .wl-spotting-head { color: #34d399 !important; }
+  .wl-spot-input {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+  }
+  .wl-tag { background: #334155 !important; color: #94a3b8 !important; }
+  .wl-link.wiki { background: #1e3a5f !important; color: #93c5fd !important; }
+  .wl-link.geluid { background: #3b2006 !important; color: #fdba74 !important; }
+
+  /* Weer dark overrides */
+  .weer-card { background: #1e293b !important; }
+  .weer-dag { background: #0f172a !important; }
+  .weer-dag.vandaag { background: #1e3a5f !important; border-color: #3b82f6 !important; }
+  .weer-dag-naam { color: #f1f5f9 !important; }
+  .weer-beschrijving { color: #94a3b8 !important; }
+  .weer-locatie { background: #1e3a5f !important; color: #93c5fd !important; }
+  .datum-dag { color: #f1f5f9 !important; }
+  .datum-volledig { color: #94a3b8 !important; }
+
+  /* Spot van de dag dark */
+  .spot-card { background: linear-gradient(135deg, #0f2d1c, #1a3a2a) !important; }
+  .spot-label { color: #34d399 !important; }
+  .spot-naam { color: #ecfdf5 !important; }
+  .spot-frans { color: #6ee7b7 !important; }
+  .spot-meta { color: #a7f3d0 !important; }
+  .spot-regio-tag { background: rgba(255,255,255,0.1) !important; color: #e2e8f0 !important; }
+
+  /* Meer menu dark */
+  .meer-groep-items { background: #1e293b !important; }
+  .meer-item { border-bottom-color: #334155 !important; }
+  .meer-item:active { background: #334155 !important; }
+  .meer-label { color: #e2e8f0 !important; }
+  .meer-uitloggen { border-color: #7f1d1d !important; }
+
+  /* FAB dark */
+  .fab { background: #3b82f6 !important; box-shadow: 0 4px 14px rgba(59,130,246,0.4) !important; }
+  .fab-form { background: #1e293b !important; box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important; }
+
+  /* Undo bar */
+  .undo-bar { background: #334155 !important; }
+
+  /* Offline bar */
+  .offline-bar { background: #450a0a !important; color: #fca5a5 !important; }
+
+  /* Scrollbar dark */
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15) !important; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25) !important; }
+}
+
+/* ========== EINDE DARK MODE ========== */
