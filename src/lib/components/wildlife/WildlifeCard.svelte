@@ -32,12 +32,21 @@
   let imgError = $state(false);
   let gettingLocation = $state(false);
   let locationAttempted = $state(false);
+  let toonFullscreenFoto = $state(false);
 
   let groteFotoSrc = $derived(groteFoto || (foto ? foto.replace(/\/\d+px-/, "/1600px-") : null));
 
   // Reset error state when foto prop changes
   $effect(() => {
     if (foto) imgError = false;
+  });
+
+  $effect(() => {
+    if (typeof document === "undefined") return;
+    document.body.style.overflow = toonFullscreenFoto ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
   });
 
   async function autoLocatie() {
@@ -147,21 +156,24 @@
   {#if isExpanded}
     <div class="wl-detail">
       {#if groteFotoSrc && !imgError}
-        <figure class="wl-grote-beeld">
-          <img 
-            src={groteFotoSrc} 
-            alt={dier.naam} 
-            class="wl-foto-groot" 
-            loading="lazy" 
-            decoding="async" 
-            onerror={e => {
-              const target = e.currentTarget;
-              if (target instanceof HTMLImageElement) {
-                target.src = foto;
-              }
-            }} 
-          />
-        </figure>
+        <button type="button" class="wl-grote-beeld-btn" onclick={() => toonFullscreenFoto = true} aria-label={`Open foto van ${dier.naam} op volledig scherm`}>
+          <figure class="wl-grote-beeld">
+            <img 
+              src={groteFotoSrc} 
+              alt={dier.naam} 
+              class="wl-foto-groot" 
+              loading="lazy" 
+              decoding="async" 
+              onerror={e => {
+                const target = e.currentTarget;
+                if (target instanceof HTMLImageElement) {
+                  target.src = foto;
+                }
+              }} 
+            />
+            <figcaption class="wl-foto-hint">Tik voor fullscreen</figcaption>
+          </figure>
+        </button>
       {/if}
 
       <div class="wl-names">
@@ -226,6 +238,13 @@
   {/if}
 </div>
 
+{#if toonFullscreenFoto && groteFotoSrc}
+  <div class="wl-fs-overlay" role="dialog" aria-modal="true" aria-label={`Foto van ${dier.naam}`}>
+    <button type="button" class="wl-fs-back" onclick={() => toonFullscreenFoto = false}>{E.PIJL} Terug</button>
+    <img src={groteFotoSrc} alt={dier.naam} class="wl-fs-img" />
+  </div>
+{/if}
+
 <style>
   .wl-card {
     background: white; border-radius: 14px; overflow: hidden;
@@ -254,6 +273,13 @@
   .wl-chevron.open { transform: rotate(180deg); }
 
   .wl-detail { padding: 0 14px 14px 14px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 16px; margin-top: 10px; }
+  .wl-grote-beeld-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    cursor: zoom-in;
+  }
   .wl-grote-beeld {
     width: 100%;
     margin: 0;
@@ -267,6 +293,17 @@
     align-items: center;
     justify-content: center;
   }
+  .wl-foto-hint {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    margin: 0;
+    font-size: 0.75rem;
+    color: white;
+    background: rgba(15, 23, 42, 0.7);
+    padding: 4px 8px;
+    border-radius: 999px;
+  }
   .wl-foto-groot {
     width: 100%;
     height: 100%;
@@ -275,6 +312,36 @@
     display: block;
     background: transparent;
   }
+  .wl-fs-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(2, 6, 23, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 12px 16px 12px;
+  }
+  .wl-fs-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+  .wl-fs-back {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .wl-fs-back:active { opacity: 0.75; }
   .wl-names { display: flex; flex-direction: column; gap: 4px; background: #f8fafc; padding: 12px; border-radius: 10px; }
   .wl-name-row { font-size: 0.85rem; color: #475569; display: flex; }
   .wl-name-row strong { width: 40px; color: #1e293b; }
