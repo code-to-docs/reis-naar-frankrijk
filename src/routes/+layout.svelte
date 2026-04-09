@@ -50,15 +50,38 @@
     </div>
   </div>
 {:else}
-  <Header />
-  {@render children()}
-  <Snackbar />
-  <Navigation />
+  <div class="app-shell">
+    <Navigation />
+    <div class="app-main">
+      <Header />
+      {@render children()}
+      <Snackbar />
+    </div>
+  </div>
 {/if}
 
 <style>
   .kies-scherm {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; height: 100dvh; gap: 16px;
+  }
+
+  .app-shell {
+    width: min(100%, var(--app-max-width));
+    margin: 0 auto;
+  }
+
+  .app-main {
+    min-width: 0;
+  }
+
+  @media (min-width: 1100px) {
+    .app-shell {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      align-items: start;
+      gap: 16px;
+      padding: 14px 14px 0;
+    }
   }
 </style>

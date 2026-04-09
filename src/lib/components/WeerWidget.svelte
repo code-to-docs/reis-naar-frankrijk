@@ -8,6 +8,8 @@
   let laden = $state(true);
   let fout = $state("");
   let locatieNaam = $state("");
+  let isDesktop = $state(false);
+  let zichtbareDagen = $state(3);
 
   const FALLBACK_LAT = 44.5;
   const FALLBACK_LON = 3.5;
@@ -46,8 +48,10 @@
   const dagNamen = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
   const maandNamen = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 
+  let weergegevenDagen = $derived.by(() => weer.slice(0, zichtbareDagen));
+
   function weatherCacheKey(lat: number, lon: number) {
-    return "weer_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
+    return "weer_v2_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
   }
 
   function formatDag(dateStr: string) {
@@ -60,11 +64,23 @@
     return d.getDate() + " " + maandNamen[d.getMonth()].slice(0, 3);
   }
 
+  function formatTijdKort(isoDate: string | undefined) {
+    if (!isoDate) return "";
+    const d = new Date(isoDate);
+    return d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function updateViewportSettings() {
+    const w = window.innerWidth;
+    isDesktop = w >= 1024;
+    zichtbareDagen = w >= 1024 ? 6 : w >= 680 ? 4 : 3;
+  }
+
   async function laadWeer(lat: number, lon: number) {
     const cacheKey = weatherCacheKey(lat, lon);
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     try {
-      const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3";
+      const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,windspeed_10m_max,sunrise,sunset&timezone=Europe/Paris&forecast_days=7";
 
       const controller = new AbortController();
       timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -81,8 +97,12 @@
         weerInfo: getWeerInfo(data.daily.weathercode[i]),
         maxTemp: Math.round(data.daily.temperature_2m_max[i]),
         minTemp: Math.round(data.daily.temperature_2m_min[i]),
+        gevoelMax: Math.round(data.daily.apparent_temperature_max[i]),
+        gevoelMin: Math.round(data.daily.apparent_temperature_min[i]),
         neerslagKans: data.daily.precipitation_probability_max[i],
         windMax: Math.round(data.daily.windspeed_10m_max[i]),
+        zonsopkomst: formatTijdKort(data.daily.sunrise?.[i]),
+        zonsondergang: formatTijdKort(data.daily.sunset?.[i]),
       }));
       laden = false;
       try {
@@ -140,6 +160,10 @@
   }
 
   onMount(() => {
+    updateViewportSettings();
+    const onResize = () => updateViewportSettings();
+    window.addEventListener("resize", onResize, { passive: true });
+
     const nu = new Date();
     dagNaam = dagNamen[nu.getDay()].charAt(0).toUpperCase() + dagNamen[nu.getDay()].slice(1);
     datum = nu.getDate() + " " + maandNamen[nu.getMonth()] + " " + nu.getFullYear();
@@ -172,20 +196,26 @@
       locatieNaam = FALLBACK_NAAM;
       laadWeer(FALLBACK_LAT, FALLBACK_LON);
     }
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
   });
 </script>
 
 <div class="datum-header">
-  <div class="datum-dag">{dagNaam}</div>
-  <div class="datum-volledig">{datum}</div>
+  <div class="datum-dag">{dagNaam} {datum}</div>
 </div>
 
-<div class="weer-card">
+<div class="weer-card" class:desktop={isDesktop}>
   <div class="weer-titel-rij">
     <span class="weer-titel">{E.WEER} Weer</span>
-    {#if locatieNaam}
-      <span class="weer-locatie">{E.PIN} {locatieNaam}</span>
-    {/if}
+    <div class="weer-meta-rij">
+      <span class="weer-periode">{zichtbareDagen}-daagse verwachting</span>
+      {#if locatieNaam}
+        <span class="weer-locatie">{E.PIN} {locatieNaam}</span>
+      {/if}
+    </div>
   </div>
 
   {#if laden}
@@ -197,7 +227,7 @@
     <div class="weer-fout">{fout}</div>
   {:else if weer.length > 0}
     <div class="weer-dagen">
-      {#each weer as dag, i}
+      {#each weergegevenDagen as dag, i}
         <div class="weer-dag" class:vandaag={i === 0}>
           <div class="weer-dag-naam">{i === 0 ? "Vandaag" : dag.dagNaam.charAt(0).toUpperCase() + dag.dagNaam.slice(1)}</div>
           <div class="weer-dag-datum">{dag.datumKort}</div>
@@ -213,6 +243,14 @@
             {/if}
             <span>{E.WIND} {dag.windMax} km/u</span>
           </div>
+          {#if isDesktop}
+            <div class="weer-desktop-meta">
+              <span>Voelt als {dag.gevoelMax}{E.GRADEN}/{dag.gevoelMin}{E.GRADEN}</span>
+              {#if dag.zonsopkomst && dag.zonsondergang}
+                <span>☀️ {dag.zonsopkomst} · 🌙 {dag.zonsondergang}</span>
+              {/if}
+            </div>
+          {/if}
         </div>
       {/each}
     </div>
@@ -221,47 +259,61 @@
 
 <style>
   .datum-header {
-    text-align: center;
-    margin-bottom: 12px;
-    padding-top: 4px;
+    margin-bottom: 10px;
+    padding: 2px 2px 0;
   }
   .datum-dag {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: clamp(1.85rem, 5.4vw, 2.2rem);
+    font-weight: 800;
     color: #1a5276;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
-  .datum-volledig {
-    font-size: 0.95rem;
-    color: #666;
-    margin-top: 2px;
-  }
-
   .weer-card {
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px 14px 14px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--border-subtle);
   }
   .weer-titel-rij {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
   }
   .weer-titel {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #1a5276;
+    font-weight: 800;
+    font-size: 1.55rem;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .weer-meta-rij {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .weer-periode {
+    font-size: 0.76rem;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-weight: 600;
   }
   .weer-locatie {
-    font-size: 0.75rem;
-    color: #1976D2;
-    background: #E3F2FD;
-    padding: 4px 10px;
-    border-radius: 12px;
+    font-size: 0.78rem;
+    color: #0f4d84;
+    background: #e7f0fb;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-weight: 600;
   }
 
   .weer-laden {
@@ -271,7 +323,7 @@
     justify-content: center;
     padding: 20px;
     color: #1565C0;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
   .weer-spinner {
     width: 20px;
@@ -287,7 +339,7 @@
     text-align: center;
     color: #C62828;
     font-size: 0.85rem;
-    padding: 16px;
+    padding: 14px;
   }
 
   .weer-dagen {
@@ -296,64 +348,147 @@
     gap: 10px;
   }
   .weer-dag {
-    background: #f8f9fa;
-    border-radius: 14px;
-    padding: 12px 8px;
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 12px 10px 10px;
     text-align: center;
-    border: 2px solid transparent;
-    transition: border-color 0.2s;
+    border: 1.5px solid #e2e8f0;
+    transition: border-color 0.2s, background-color 0.2s;
   }
   .weer-dag.vandaag {
-    background: #EBF5FB;
-    border-color: #1a5276;
+    background: #ecf4ff;
+    border-color: #2b79c2;
+    box-shadow: 0 2px 8px rgba(43, 121, 194, 0.16);
   }
   .weer-dag-naam {
     font-weight: 700;
-    font-size: 0.8rem;
-    color: #1a5276;
-    margin-bottom: 2px;
+    font-size: 0.82rem;
+    color: #0f172a;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .weer-dag-datum {
-    font-size: 0.7rem;
-    color: #999;
-    margin-bottom: 8px;
+    font-size: 0.78rem;
+    color: #475569;
+    margin-bottom: 7px;
+    font-weight: 500;
   }
   .weer-emoji {
-    font-size: 2rem;
+    font-size: 2.2rem;
     line-height: 1;
     margin-bottom: 6px;
   }
   .weer-beschrijving {
-    font-size: 0.7rem;
-    color: #555;
+    font-size: 0.88rem;
+    color: #1f2937;
     margin-bottom: 8px;
-    min-height: 28px;
+    min-height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
+    line-height: 1.25;
   }
   .weer-temps {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    align-items: baseline;
+    gap: 8px;
     margin-bottom: 6px;
   }
   .temp-max {
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: #D84315;
+    font-weight: 800;
+    font-size: 2.05rem;
+    color: #dd6b20;
+    line-height: 1;
   }
   .temp-min {
-    font-size: 0.9rem;
-    color: #90A4AE;
+    font-size: 1.22rem;
+    color: #6b7280;
+    font-weight: 700;
     align-self: flex-end;
+    line-height: 1;
+    margin-bottom: 1px;
   }
   .weer-extra {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    font-size: 0.7rem;
-    color: #777;
+    gap: 3px;
+    font-size: 0.9rem;
+    color: #111827;
+    font-weight: 500;
+  }
+  .weer-desktop-meta {
+    display: none;
+  }
+
+  .weer-card.desktop .weer-desktop-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: #475569;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 1024px) {
+    .datum-dag { font-size: 2.5rem; }
+    .weer-card {
+      border-radius: 20px;
+      padding: 18px 16px 16px;
+    }
+    .weer-titel {
+      font-size: 2rem;
+    }
+    .weer-periode {
+      font-size: 0.82rem;
+      padding: 6px 10px;
+    }
+    .weer-dagen {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .weer-dag {
+      padding: 14px 10px 12px;
+    }
+    .weer-beschrijving {
+      min-height: 42px;
+      font-size: 0.9rem;
+    }
+    .temp-max {
+      font-size: 2.2rem;
+    }
+    .temp-min {
+      font-size: 1.28rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .weer-titel { font-size: 1.45rem; }
+    .weer-meta-rij { justify-content: flex-start; }
+    .weer-periode {
+      order: 2;
+    }
+    .weer-dagen {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      padding-bottom: 2px;
+      scroll-snap-type: x proximity;
+    }
+    .weer-dag {
+      min-width: 150px;
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+  }
+
+  :global(html.dark) .weer-card {
+    border-color: #334155;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
   }
 </style>
