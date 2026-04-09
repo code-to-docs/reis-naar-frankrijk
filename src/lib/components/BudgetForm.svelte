@@ -50,7 +50,10 @@
     </form>
   </div>
 {:else}
-  <button class="fab" onclick={() => toonForm = true}>+</button>
+  <button class="fab" onclick={() => toonForm = true}>
+    <span class="fab-icon">+</span>
+    <span class="fab-label">Nieuwe uitgave</span>
+  </button>
 {/if}
 
 <style>
@@ -75,6 +78,15 @@
     transition: transform 0.15s ease;
   }
   .fab:active { transform: scale(0.92); }
+  .fab-icon {
+    line-height: 1;
+  }
+  .fab-label {
+    display: none;
+    line-height: 1;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
 
   .fab-overlay {
     position: fixed;
@@ -100,14 +112,25 @@
 
   @media (min-width: 1100px) {
     .fab {
-      bottom: 20px;
-      right: 24px;
+      bottom: 24px;
+      right: max(24px, calc((100vw - var(--app-max-width)) / 2 + 24px));
+      width: auto;
+      min-width: 176px;
+      height: 54px;
+      border-radius: 14px;
+      padding: 0 16px;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .fab-label {
+      display: inline;
     }
     .fab-form {
-      bottom: 16px;
+      bottom: 18px;
       max-width: 520px;
       left: auto;
-      right: 24px;
+      right: max(24px, calc((100vw - var(--app-max-width)) / 2 + 24px));
       max-height: min(82dvh, 620px);
     }
   }
