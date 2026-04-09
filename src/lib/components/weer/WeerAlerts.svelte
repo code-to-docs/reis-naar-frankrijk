@@ -17,6 +17,13 @@
     return fallback;
   }
 
+  function alertChipClass(level: number | undefined) {
+    const tone = alertTone(level);
+    if (tone === "red") return "ui-chip--danger";
+    if (tone === "orange" || tone === "yellow") return "ui-chip--warning";
+    return "ui-chip--success";
+  }
+
   function actieveOfficieleAlerts(): Alert[] {
     return (alerts?.officialAlerts ?? []).filter((alert) => alert.active);
   }
@@ -57,7 +64,7 @@
           <a class="alert-card tone-{alertTone(alert.level)}" href={alert.url} target="_blank" rel="noreferrer">
             <div class="alert-card-top">
               <span class="alert-source">{alert.sourceLabel}</span>
-              <span class="alert-badge">{alert.levelLabel}</span>
+              <span class={`alert-badge ui-chip ${alertChipClass(alert.level)}`}>{alert.levelLabel}</span>
             </div>
             <div class="alert-region">{alert.regionName}</div>
             <div class="alert-summary">{formatPhenomena(alert)}</div>
@@ -70,7 +77,7 @@
         <a class="alert-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
           <div class="alert-card-top">
             <span class="alert-source">M&#233;t&#233;o-France Vigilance</span>
-            <span class="alert-badge">Groen</span>
+            <span class="alert-badge ui-chip ui-chip--success">Groen</span>
           </div>
           <div class="alert-region">Geen weeralarm van kracht</div>
           <div class="alert-summary">Loz&#232;re, Cantal en Ari&#232;ge staan nu op groen.</div>
@@ -123,13 +130,7 @@
     font-weight: 700;
   }
   .alert-badge {
-    font-size: 0.75rem;
-    font-weight: 800;
-    border-radius: 999px;
-    padding: 4px 9px;
-    background: rgba(15, 77, 132, 0.08);
-    color: #0f4d84;
-    white-space: nowrap;
+    min-height: 28px;
   }
   .alert-region {
     font-size: 1.02rem;
@@ -154,33 +155,17 @@
     background: linear-gradient(135deg, #eff9f3 0%, #f7fcf8 100%);
     border-color: #cfe9d9;
   }
-  .tone-calm .alert-badge {
-    background: rgba(31, 169, 104, 0.12);
-    color: #1a7f4f;
-  }
   .tone-yellow {
     background: linear-gradient(135deg, #fff8dd 0%, #fffdf1 100%);
     border-color: #f1de92;
-  }
-  .tone-yellow .alert-badge {
-    background: rgba(212, 172, 13, 0.16);
-    color: #8b6a00;
   }
   .tone-orange {
     background: linear-gradient(135deg, #fff0e2 0%, #fff7f1 100%);
     border-color: #f3c59a;
   }
-  .tone-orange .alert-badge {
-    background: rgba(225, 120, 31, 0.16);
-    color: #a55311;
-  }
   .tone-red {
     background: linear-gradient(135deg, #ffe6e5 0%, #fff3f2 100%);
     border-color: #f0b0ab;
-  }
-  .tone-red .alert-badge {
-    background: rgba(221, 75, 57, 0.15);
-    color: #9f2f22;
   }
   .alerts-footnote {
     margin-top: 8px;

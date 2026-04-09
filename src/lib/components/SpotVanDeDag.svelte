@@ -114,7 +114,7 @@
       {/if}
       <div class="spot-regios">
         {#each dierInfo.regios as regio}
-          <span class="spot-regio-tag">{getRegioMeta(regio).emoji} {getRegioMeta(regio).label}</span>
+          <span class="spot-regio-tag ui-chip ui-chip--muted">{getRegioMeta(regio).label}</span>
         {/each}
       </div>
     </div>
@@ -189,12 +189,7 @@
   .spot-detail { font-size: 0.84rem; color: #334155; margin-bottom: 2px; }
   .spot-regios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
   .spot-regio-tag {
-    font-size: 0.9rem;
-    background: rgba(255,255,255,0.68);
-    padding: 6px 10px;
-    border-radius: 11px;
-    color: #1f2937;
-    font-weight: 600;
+    min-height: 28px;
   }
 
   @media (max-width: 560px) {
@@ -230,8 +225,7 @@
       font-size: 0.95rem;
     }
     .spot-regio-tag {
-      font-size: 0.92rem;
-      padding: 6px 11px;
+      min-height: 28px;
     }
   }
 </style>

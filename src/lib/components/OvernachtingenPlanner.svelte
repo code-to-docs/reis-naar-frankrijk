@@ -800,7 +800,7 @@
     </div>
   </div>
 
-  <div class="card ov-view-switch">
+  <div class="ov-view-switch">
     <button
       type="button"
       class="ov-view-btn"
@@ -1232,32 +1232,26 @@
   }
   .ov-view-switch {
     margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px;
-    width: fit-content;
-    max-width: 100%;
-    border: 1px solid var(--border-subtle);
-    background: color-mix(in srgb, var(--card-bg) 90%, #e8f2fc);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
   }
   .ov-view-btn {
     width: auto;
-    display: inline-flex;
-    align-items: center;
     min-height: var(--ui-touch-compact);
-    border-radius: 999px;
-    padding: 0 14px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--nav-text);
-    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
     font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-medium);
+    transition: all 0.15s ease;
   }
   .ov-view-btn.active {
-    background: color-mix(in srgb, var(--card-bg) 72%, #dbeafe);
-    color: var(--heading);
-    border-color: color-mix(in srgb, var(--blauw) 35%, #bfdbfe);
+    background: #1a5276;
+    color: #ffffff;
+    border-color: #1a5276;
   }
   .ov-stat {
     margin: 0;
@@ -1314,6 +1308,14 @@
     margin: 0;
     font-size: var(--font-size-md);
     font-family: inherit;
+  }
+  .ov-form input,
+  .ov-form select {
+    min-height: var(--ui-touch-min);
+    height: var(--ui-touch-min);
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: var(--ui-line-compact);
   }
   .ov-notes {
     grid-column: 1 / -1;
@@ -1708,11 +1710,10 @@
     }
     .ov-view-switch {
       width: 100%;
-      justify-content: stretch;
+      justify-content: flex-start;
     }
     .ov-view-btn {
-      flex: 1;
-      justify-content: center;
+      flex: 0 0 auto;
     }
     .ov-calendar-teaser {
       display: grid;
@@ -1809,6 +1810,16 @@
     color: #dbeafe;
     border-color: #2563eb;
   }
+  :global(html.dark) .ov-view-btn {
+    background: #111827;
+    border-color: #334155;
+    color: #94a3b8;
+  }
+  :global(html.dark) .ov-view-btn.active {
+    background: #1a5276;
+    border-color: #1a5276;
+    color: #ffffff;
+  }
   :global(html.dark) .ov-delete {
     background: #0f172a;
     border-color: #334155;
@@ -1818,10 +1829,6 @@
     border-color: #dc2626;
     color: #fecaca;
     background: rgba(127, 29, 29, 0.35);
-  }
-  :global(html.dark) .ov-view-switch {
-    background: #0f172a;
-    border-color: #334155;
   }
   :global(html.dark) .ov-shortlist-item {
     background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, #111827 72%);

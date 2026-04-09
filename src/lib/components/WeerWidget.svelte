@@ -107,9 +107,9 @@
   <div class="weer-titel-rij">
     <span class="weer-titel">{E.WEER} Weer</span>
     <div class="weer-meta-rij">
-      <span class="weer-periode">{zichtbareDagen}-daagse verwachting</span>
+      <span class="ui-chip ui-chip--muted weer-chip">{zichtbareDagen}-daagse verwachting</span>
       {#if locatieNaam}
-        <span class="weer-locatie">{E.PIN} {locatieNaam}</span>
+        <span class="ui-chip ui-chip--info weer-chip">{locatieNaam}</span>
       {/if}
     </div>
   </div>
@@ -161,20 +161,7 @@
     flex-wrap: wrap;
     justify-content: flex-end;
   }
-  .weer-periode {
-    font-size: 0.76rem;
-    color: #64748b;
-    background: #f1f5f9;
-    border-radius: 999px;
-    padding: 5px 10px;
-    font-weight: 600;
-  }
-  .weer-locatie {
-    font-size: 0.78rem;
-    color: #0f4d84;
-    background: #e7f0fb;
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-weight: 600;
+  .weer-chip {
+    min-height: 28px;
   }
 </style>

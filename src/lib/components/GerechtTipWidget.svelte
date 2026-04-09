@@ -79,9 +79,9 @@
     <div class="food-tip-sub">{dagTip.frans}</div>
     <p class="food-tip-desc">{dagTip.omschrijving}</p>
     <div class="food-tip-chips">
-      <span class="food-chip">{getStreekLabel(getHoofdStreek(dagTip))}</span>
-      <span class="food-chip">{getSoortLabel(dagTip.soort)}</span>
-      <span class="food-chip">{dagTip.vegetarisch ? "Vegetarisch" : dagTip.vis ? "Vis" : "Non-veg"}</span>
+      <span class="food-chip ui-chip ui-chip--muted">{getStreekLabel(getHoofdStreek(dagTip))}</span>
+      <span class="food-chip ui-chip ui-chip--muted">{getSoortLabel(dagTip.soort)}</span>
+      <span class="food-chip ui-chip ui-chip--muted">{dagTip.vegetarisch ? "Vegetarisch" : dagTip.vis ? "Vis" : "Non-veg"}</span>
     </div>
   {/if}
 </article>
@@ -152,13 +152,7 @@
     gap: 8px;
   }
   .food-chip {
-    border-radius: 999px;
-    border: 1px solid var(--input-border);
-    background: var(--hover-bg);
-    color: var(--heading);
-    font-size: var(--font-size-xs);
-    font-weight: var(--ui-weight-semibold);
-    padding: 4px 10px;
+    min-height: 28px;
   }
 
   @media (max-width: 760px) {
@@ -184,17 +178,12 @@
     color: #dbeafe;
   }
   :global(html.dark) .food-tip-label,
-  :global(html.dark) .food-tip-name,
-  :global(html.dark) .food-chip {
+  :global(html.dark) .food-tip-name {
     color: #e2e8f0;
   }
   :global(html.dark) .food-tip-help,
   :global(html.dark) .food-tip-sub,
   :global(html.dark) .food-tip-desc {
     color: #cbd5e1;
-  }
-  :global(html.dark) .food-chip {
-    background: #0f172a;
-    border-color: #334155;
   }
 </style>
