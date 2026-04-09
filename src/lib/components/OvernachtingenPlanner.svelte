@@ -81,6 +81,7 @@
   let notitiesInput = $state("");
   let websiteUrlInput = $state("");
   let bookingUrlInput = $state("");
+  let adresInput = $state("");
 
   const huidigeMaandKey = maandKeyVanDatum(new Date());
   let geselecteerdeMaand = $state(huidigeMaandKey);
@@ -156,12 +157,17 @@
     return `https://www.google.com/maps?q=${encodeURIComponent(q)}`;
   }
 
+  function getGoogleMapsAddressUrl(adres: string) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adres)}`;
+  }
+
   function getOpenStreetMapUrl(lat: number, lon: number) {
     return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}`;
   }
 
   function normalizeOvernachting(id: string, raw: Overnachting): OvernachtingView {
     const naam = typeof raw.naam === "string" && raw.naam.trim() ? raw.naam.trim() : "Onbekende overnachting";
+    const adres = typeof raw.adres === "string" && raw.adres.trim() ? raw.adres.trim() : "";
     const startDateObj = parseInputDatum(raw.startDatum || "");
     const nachtenSafe = Math.max(1, Math.min(60, Number(raw.nachten) || 1));
     const lastNightObj = startDateObj ? plusDagen(startDateObj, nachtenSafe - 1) : null;
@@ -171,9 +177,15 @@
 
     const locatieKey = latSafe !== null && lonSafe !== null
       ? `${latSafe.toFixed(3)},${lonSafe.toFixed(3)}`
-      : naam.toLowerCase();
+      : (adres || naam).toLowerCase();
 
-    const googleMapsUrl = raw.mapsLink || (latSafe !== null && lonSafe !== null ? getGoogleMapsUrl(latSafe, lonSafe) : null);
+    const googleMapsUrl =
+      raw.mapsLink ||
+      (latSafe !== null && lonSafe !== null
+        ? getGoogleMapsUrl(latSafe, lonSafe)
+        : adres
+          ? getGoogleMapsAddressUrl(adres)
+          : null);
     const openStreetMapLink =
       raw.openStreetMapUrl || (latSafe !== null && lonSafe !== null ? getOpenStreetMapUrl(latSafe, lonSafe) : null);
 
@@ -431,6 +443,7 @@
   function resetForm() {
     naamInput = "";
     typeInput = "camping";
+    adresInput = "";
     startDatumInput = "";
     nachtenInput = "1";
     latitudeInput = "";
@@ -477,8 +490,18 @@
   }
 
   async function voegShortlistToe() {
-    if (!naamInput.trim()) {
+    const naam = naamInput.trim();
+    const adres = adresInput.trim();
+    if (!naam) {
       toonSnackbar("Vul een naam in", "warning", E.WARN);
+      return;
+    }
+    if (!typeInput || !TYPE_OPTIES.some((optie) => optie.id === typeInput)) {
+      toonSnackbar("Kies een geldig type", "warning", E.WARN);
+      return;
+    }
+    if (!adres) {
+      toonSnackbar("Adres is verplicht voor shortlistlocatie", "warning", E.WARN);
       return;
     }
     const coord = haalCoordinatenUitForm();
@@ -488,12 +511,13 @@
     const bookingUrl = normalizeUrl(bookingUrlInput);
     try {
       await addDoc(collection(db, "campings"), {
-        naam: naamInput.trim(),
+        naam,
         shortlist: true,
         type: typeInput,
+        adres,
         latitude: coord.latNum,
         longitude: coord.lonNum,
-        mapsLink: coord.mapsLink,
+        mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres),
         openStreetMapUrl: coord.osmLink,
         websiteUrl: websiteUrl || "",
         bookingUrl: bookingUrl || "",
@@ -537,8 +561,14 @@
   }
 
   async function voegOvernachtingToe() {
-    if (!naamInput.trim()) {
+    const naam = naamInput.trim();
+    const adres = adresInput.trim();
+    if (!naam) {
       toonSnackbar("Vul een naam in", "warning", E.WARN);
+      return;
+    }
+    if (!typeInput || !TYPE_OPTIES.some((optie) => optie.id === typeInput)) {
+      toonSnackbar("Kies een geldig type", "warning", E.WARN);
       return;
     }
     const start = parseInputDatum(startDatumInput);
@@ -560,14 +590,15 @@
 
     try {
       await addDoc(collection(db, "campings"), {
-        naam: naamInput.trim(),
+        naam,
         shortlist: false,
         type: typeInput,
+        adres: adres || "",
         startDatum: startDatumInput,
         nachten,
         latitude: coord.latNum,
         longitude: coord.lonNum,
-        mapsLink: coord.mapsLink,
+        mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : null),
         openStreetMapUrl: coord.osmLink,
         websiteUrl: websiteUrl || "",
         bookingUrl: bookingUrl || "",
@@ -594,6 +625,7 @@
     typeInput = item.typeSafe;
     latitudeInput = item.latSafe !== null ? item.latSafe.toFixed(5) : "";
     longitudeInput = item.lonSafe !== null ? item.lonSafe.toFixed(5) : "";
+    adresInput = item.adres || "";
     websiteUrlInput = item.websiteUrl || "";
     bookingUrlInput = item.bookingUrl || "";
     notitiesInput = item.notities || "";
@@ -716,12 +748,12 @@
       <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegOvernachtingToe(); }}>
         <label>
           <span>Naam</span>
-          <input bind:value={naamInput} placeholder="Bijv. Camping Le Lac" />
+          <input bind:value={naamInput} required placeholder="Bijv. Camping Le Lac" />
         </label>
 
         <label>
           <span>Type</span>
-          <select bind:value={typeInput}>
+          <select bind:value={typeInput} required>
             {#each TYPE_OPTIES as optie}
               <option value={optie.id}>{optie.label}</option>
             {/each}
@@ -730,12 +762,12 @@
 
         <label>
           <span>Aankomst datum</span>
-          <input type="date" bind:value={startDatumInput} />
+          <input type="date" bind:value={startDatumInput} required />
         </label>
 
         <label>
           <span>Aantal nachten</span>
-          <input type="number" min="1" max="60" bind:value={nachtenInput} />
+          <input type="number" min="1" max="60" step="1" bind:value={nachtenInput} required />
         </label>
 
         <label>
@@ -746,6 +778,11 @@
         <label>
           <span>Longitude</span>
           <input bind:value={longitudeInput} placeholder="3.12345" inputmode="decimal" />
+        </label>
+
+        <label>
+          <span>Adres (optioneel)</span>
+          <input bind:value={adresInput} placeholder="Bijv. Route de Florac 12, Meyrueis" />
         </label>
 
         <label>
@@ -786,16 +823,21 @@
       <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegShortlistToe(); }}>
         <label>
           <span>Naam</span>
-          <input bind:value={naamInput} placeholder="Bijv. Eco BNB vallée du Tarn" />
+          <input bind:value={naamInput} required placeholder="Bijv. Eco BNB vallée du Tarn" />
         </label>
 
         <label>
           <span>Type</span>
-          <select bind:value={typeInput}>
+          <select bind:value={typeInput} required>
             {#each TYPE_OPTIES as optie}
               <option value={optie.id}>{optie.label}</option>
             {/each}
           </select>
+        </label>
+
+        <label class="ov-notes">
+          <span>Adres</span>
+          <input bind:value={adresInput} required placeholder="Straat + plaats (bijv. Avenue Jean Jaurès 8, Mende)" />
         </label>
 
         <label>
@@ -927,6 +969,9 @@
                 GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
               </div>
             {/if}
+            {#if o.adres}
+              <div class="ov-address">Adres: {o.adres}</div>
+            {/if}
 
             <div class="ov-links">
               {#if o.googleMapsUrl}
@@ -982,6 +1027,9 @@
               <div class="ov-coords">
                 GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
               </div>
+            {/if}
+            {#if o.adres}
+              <div class="ov-address">Adres: {o.adres}</div>
             {/if}
 
             <div class="ov-links">
@@ -1357,6 +1405,12 @@
     color: var(--blauw);
     font-weight: 600;
   }
+  .ov-address {
+    margin-top: 4px;
+    font-size: var(--font-size-sm);
+    color: var(--tekst);
+    font-weight: 500;
+  }
   .ov-links {
     margin-top: 6px;
     display: flex;
@@ -1473,6 +1527,7 @@
   :global(html.dark) .ov-stat span,
   :global(html.dark) .ov-meta span,
   :global(html.dark) .ov-note,
+  :global(html.dark) .ov-address,
   :global(html.dark) .ov-legend-item {
     color: #cbd5e1;
   }

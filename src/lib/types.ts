@@ -42,6 +42,7 @@ export interface Overnachting {
     datum?: Timestamp;
     shortlist?: boolean;
     type?: OvernachtingType;
+    adres?: string;
     startDatum?: string;
     nachten?: number;
     latitude?: number | null;
