@@ -51,6 +51,7 @@
   let toonShortlistForm = $state(false);
   let bewerkItemId = $state<string | null>(null);
   let gpsBezig = $state(false);
+  let actieveWeergave = $state<"overzicht" | "kalender">("overzicht");
   let selectieActief = $state(false);
   let selectieStartKey = $state<string | null>(null);
   let selectieEindKey = $state<string | null>(null);
@@ -216,7 +217,6 @@
   let overnachtingenZonderDatum = $derived.by(() => ingeplandeOvernachtingen.filter((o) => !o.startDateObj));
 
   let totaalNachten = $derived.by(() => overnachtingenMetDatum.reduce((sum, o) => sum + o.nachtenSafe, 0));
-  let uniekeLocaties = $derived.by(() => new Set(overnachtingenMetDatum.map((o) => o.locatieKey)).size);
 
   let maandSleutels = $derived.by(() => {
     if (overnachtingenMetDatum.length === 0) return [huidigeMaandKey];
@@ -795,13 +795,34 @@
       <strong>{totaalNachten}</strong>
     </div>
     <div class="ov-stat card">
-      <span>Unieke locaties</span>
-      <strong>{uniekeLocaties}</strong>
-    </div>
-    <div class="ov-stat card">
       <span>Shortlist locaties</span>
       <strong>{shortlistOvernachtingen.length}</strong>
     </div>
+  </div>
+
+  <div class="card ov-view-switch">
+    <button
+      type="button"
+      class="ov-view-btn"
+      class:active={actieveWeergave === "overzicht"}
+      onclick={() => {
+        actieveWeergave = "overzicht";
+        resetSelectie();
+      }}
+    >
+      Overzicht
+    </button>
+    <button
+      type="button"
+      class="ov-view-btn"
+      class:active={actieveWeergave === "kalender"}
+      onclick={() => {
+        actieveWeergave = "kalender";
+        resetSelectie();
+      }}
+    >
+      Kalender
+    </button>
   </div>
 
   {#if toonForm}
@@ -948,81 +969,91 @@
     </div>
   {/if}
 
-  <div class="card ov-calendar-card">
-    <div class="ov-calendar-head">
-      <button class="ov-month-btn" onclick={() => stapMaand(-1)} disabled={!kanVorigeMaand}>Vorige</button>
-      <strong>{maandLabel(geselecteerdeMaand)}</strong>
-      <button class="ov-month-btn" onclick={() => stapMaand(1)} disabled={!kanVolgendeMaand}>Volgende</button>
-    </div>
-    <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
+  {#if actieveWeergave === "kalender"}
+    <div class="card ov-calendar-card">
+      <div class="ov-calendar-head">
+        <button class="ov-month-btn" onclick={() => stapMaand(-1)} disabled={!kanVorigeMaand}>Vorige</button>
+        <strong>{maandLabel(geselecteerdeMaand)}</strong>
+        <button class="ov-month-btn" onclick={() => stapMaand(1)} disabled={!kanVolgendeMaand}>Volgende</button>
+      </div>
+      <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
 
-    <div class="ov-weekdays">
-      {#each WEEKDAGEN as wd}
-        <div>{wd}</div>
-      {/each}
-    </div>
+      <div class="ov-weekdays">
+        {#each WEEKDAGEN as wd}
+          <div>{wd}</div>
+        {/each}
+      </div>
 
-    <div class="ov-grid" class:selecting={selectieActief}>
-      {#each kalenderCels as cel (cel.key)}
-        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-        <div
-          class="ov-day"
-          class:leeg={cel.isLeeg}
-          class:vandaag={cel.isVandaag}
-          class:geselecteerd={dagInSelectie(cel.key, cel.isLeeg)}
-          class:selectiestart={dagIsSelectieStart(cel.key, cel.isLeeg)}
-          class:selectieeinde={dagIsSelectieEinde(cel.key, cel.isLeeg)}
-          data-daykey={cel.isLeeg ? undefined : cel.key}
-          role={cel.isLeeg ? undefined : "button"}
-          tabindex={cel.isLeeg ? undefined : 0}
-          aria-label={cel.isLeeg ? undefined : `Kies datum ${cel.key}`}
-          onmousedown={(event) => handleDayMouseDown(event, cel.key, cel.isLeeg)}
-          onmouseenter={() => handleDayMouseEnter(cel.key, cel.isLeeg)}
-          onclick={() => handleDayClick(cel.key, cel.isLeeg, cel.entries)}
-          ontouchstart={(event) => handleDayTouchStart(event, cel.key, cel.isLeeg)}
-          onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg, cel.entries)}
-        >
-          {#if cel.dagNummer !== null}
-            <div class="ov-day-number">{cel.dagNummer}</div>
-            {#if cel.entries.length > 0}
-              <div class="ov-day-events">
-                {#each cel.entries.slice(0, 2) as ent}
-                  <button
-                    type="button"
-                    class="ov-chip ov-chip-btn"
-                    style={`--loc-kleur:${ent.kleur}`}
-                    title={`${ent.naam} (${ent.nachtenSafe} nacht${ent.nachtenSafe > 1 ? "en" : ""})`}
-                    onmousedown={(event) => event.stopPropagation()}
-                    ontouchstart={(event) => event.stopPropagation()}
-                    onclick={(event) => {
-                      event.stopPropagation();
-                      void openItemEditor(ent);
-                    }}
-                  >
-                    <span>{ent.naam}</span>
-                  </button>
-                {/each}
-                {#if cel.entries.length > 2}
-                  <div class="ov-more">+{cel.entries.length - 2}</div>
-                {/if}
-              </div>
+      <div class="ov-grid" class:selecting={selectieActief}>
+        {#each kalenderCels as cel (cel.key)}
+          <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+          <div
+            class="ov-day"
+            class:leeg={cel.isLeeg}
+            class:vandaag={cel.isVandaag}
+            class:geselecteerd={dagInSelectie(cel.key, cel.isLeeg)}
+            class:selectiestart={dagIsSelectieStart(cel.key, cel.isLeeg)}
+            class:selectieeinde={dagIsSelectieEinde(cel.key, cel.isLeeg)}
+            data-daykey={cel.isLeeg ? undefined : cel.key}
+            role={cel.isLeeg ? undefined : "button"}
+            tabindex={cel.isLeeg ? undefined : 0}
+            aria-label={cel.isLeeg ? undefined : `Kies datum ${cel.key}`}
+            onmousedown={(event) => handleDayMouseDown(event, cel.key, cel.isLeeg)}
+            onmouseenter={() => handleDayMouseEnter(cel.key, cel.isLeeg)}
+            onclick={() => handleDayClick(cel.key, cel.isLeeg, cel.entries)}
+            ontouchstart={(event) => handleDayTouchStart(event, cel.key, cel.isLeeg)}
+            onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg, cel.entries)}
+          >
+            {#if cel.dagNummer !== null}
+              <div class="ov-day-number">{cel.dagNummer}</div>
+              {#if cel.entries.length > 0}
+                <div class="ov-day-events">
+                  {#each cel.entries.slice(0, 2) as ent}
+                    <button
+                      type="button"
+                      class="ov-chip ov-chip-btn"
+                      style={`--loc-kleur:${ent.kleur}`}
+                      title={`${ent.naam} (${ent.nachtenSafe} nacht${ent.nachtenSafe > 1 ? "en" : ""})`}
+                      onmousedown={(event) => event.stopPropagation()}
+                      ontouchstart={(event) => event.stopPropagation()}
+                      onclick={(event) => {
+                        event.stopPropagation();
+                        void openItemEditor(ent);
+                      }}
+                    >
+                      <span>{ent.naam}</span>
+                    </button>
+                  {/each}
+                  {#if cel.entries.length > 2}
+                    <div class="ov-more">+{cel.entries.length - 2}</div>
+                  {/if}
+                </div>
+              {/if}
             {/if}
-          {/if}
-        </div>
-      {/each}
-    </div>
-
-    {#if locatieLegenda.length > 0}
-      <div class="ov-legend">
-        {#each locatieLegenda as l}
-          <div class="ov-legend-item">
-            <span class="ov-legend-dot" style={`background:${l.kleur}`}></span>
-            <span>{l.naam}</span>
           </div>
         {/each}
       </div>
-    {/if}
-  </div>
+
+      {#if locatieLegenda.length > 0}
+        <div class="ov-legend">
+          {#each locatieLegenda as l}
+            <div class="ov-legend-item">
+              <span class="ov-legend-dot" style={`background:${l.kleur}`}></span>
+              <span>{l.naam}</span>
+            </div>
+          {/each}
+        </div>
+      {/if}
+    </div>
+  {:else}
+    <div class="card ov-calendar-teaser">
+      <div>
+        <h3>{E.KALENDER} Kalenderplanning</h3>
+        <p>Gebruik de kalender wanneer je data wilt plannen of aanpassen. In overzicht zie je direct je verblijven en shortlist.</p>
+      </div>
+      <button class="ov-secondary-btn" onclick={() => (actieveWeergave = "kalender")}>Open kalender</button>
+    </div>
+  {/if}
 
   <div class="card ov-list-card">
     <h3>Shortlist geschikte locaties</h3>
@@ -1032,10 +1063,13 @@
       <div class="ov-list">
         {#each shortlistOvernachtingen as o (o.id)}
           <article class="ov-item ov-shortlist-item" style={`--loc-kleur:${o.kleur}`}>
-            <div class="ov-item-head">
-              <strong>{o.naam}</strong>
+            <div class="ov-item-top">
+              <div class="ov-item-head">
+                <strong>{o.naam}</strong>
+                <p class="ov-item-subline">Nog niet ingepland</p>
+              </div>
               <div class="ov-item-head-actions">
-                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Open</button>
+                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Bewerk</button>
                 <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
               </div>
             </div>
@@ -1053,7 +1087,7 @@
               </div>
             {/if}
             {#if o.adres}
-              <div class="ov-address">Adres: {o.adres}</div>
+              <div class="ov-address">{o.adres}</div>
             {/if}
 
             <div class="ov-links">
@@ -1090,49 +1124,46 @@
       <div class="ov-list">
         {#each ingeplandeOvernachtingen as o (o.id)}
           <article class="ov-item" style={`--loc-kleur:${o.kleur}`}>
-            <div class="ov-item-head">
-              <strong>{o.naam}</strong>
+            <div class="ov-item-top">
+              <div class="ov-item-head">
+                <strong>{o.naam}</strong>
+                {#if o.startDateObj}
+                  <p class="ov-item-subline">
+                    {o.startDateObj.toLocaleDateString("nl-NL")} t/m {(o.lastNightObj as Date).toLocaleDateString("nl-NL")} - {o.nachtenSafe} nacht{o.nachtenSafe > 1 ? "en" : ""}
+                  </p>
+                {:else}
+                  <p class="ov-item-subline">Nog geen aankomstdatum gekozen</p>
+                {/if}
+              </div>
               <div class="ov-item-head-actions">
-                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Open</button>
+                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Bewerk</button>
                 <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
               </div>
             </div>
-            <div class="ov-meta">
-              <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
-              {#if o.startDateObj}
-                <span>Aankomst: {o.startDateObj.toLocaleDateString("nl-NL")}</span>
-                <span>Nachten: {o.nachtenSafe}</span>
-                <span>Laatste nacht: {(o.lastNightObj as Date).toLocaleDateString("nl-NL")}</span>
-              {:else}
-                <span>Datum nog niet ingevuld</span>
-              {/if}
-              <span>Door: {o.door || "-"}</span>
-            </div>
-
-            {#if o.latSafe !== null && o.lonSafe !== null}
-              <div class="ov-coords">
-                GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
+            <div class="ov-item-body">
+              <div class="ov-meta">
+                <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
+                <span>Door: {o.door || "-"}</span>
               </div>
-            {/if}
-            {#if o.adres}
-              <div class="ov-address">Adres: {o.adres}</div>
-            {/if}
-
-            <div class="ov-links">
-              {#if o.googleMapsUrl}
-                <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
+              {#if o.adres}
+                <div class="ov-address">{o.adres}</div>
               {/if}
-              {#if o.openStreetMapLink}
-                <a href={o.openStreetMapLink} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+              {#if o.latSafe !== null && o.lonSafe !== null}
+                <div class="ov-coords">
+                  GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
+                </div>
               {/if}
-            </div>
-
-            {#if o.notities}
-              <p class="ov-note">{o.notities}</p>
-            {/if}
-
-            <div class="ov-inline-actions">
-              <button class="ov-secondary-btn" onclick={() => void openItemEditor(o)}>Open details en bewerk</button>
+              <div class="ov-links">
+                {#if o.googleMapsUrl}
+                  <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
+                {/if}
+                {#if o.openStreetMapLink}
+                  <a href={o.openStreetMapLink} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+                {/if}
+              </div>
+              {#if o.notities}
+                <p class="ov-note">{o.notities}</p>
+              {/if}
             </div>
           </article>
         {/each}
@@ -1196,8 +1227,37 @@
 
   .ov-stats {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
+  }
+  .ov-view-switch {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    width: fit-content;
+    max-width: 100%;
+    border: 1px solid var(--border-subtle);
+    background: color-mix(in srgb, var(--card-bg) 90%, #e8f2fc);
+  }
+  .ov-view-btn {
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--ui-touch-compact);
+    border-radius: 999px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--nav-text);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+  }
+  .ov-view-btn.active {
+    background: color-mix(in srgb, var(--card-bg) 72%, #dbeafe);
+    color: var(--heading);
+    border-color: color-mix(in srgb, var(--blauw) 35%, #bfdbfe);
   }
   .ov-stat {
     margin: 0;
@@ -1295,6 +1355,24 @@
     margin: 0;
     padding: 14px;
   }
+  .ov-calendar-teaser {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid var(--border-subtle);
+  }
+  .ov-calendar-teaser h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+  }
+  .ov-calendar-teaser p {
+    margin: 4px 0 0;
+    color: var(--nav-text);
+    font-size: var(--font-size-sm);
+    max-width: 66ch;
+  }
   .ov-calendar-head {
     display: flex;
     align-items: center;
@@ -1373,12 +1451,20 @@
     touch-action: auto;
   }
   .ov-day.vandaag {
-    border-color: var(--blauw);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blauw) 30%, transparent);
+    background: color-mix(in srgb, var(--card-bg) 84%, #fff5dd);
+    border-color: color-mix(in srgb, #f59e0b 44%, #fcd34d);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #f59e0b 38%, transparent);
   }
   .ov-day.geselecteerd {
     background: color-mix(in srgb, var(--card-bg) 80%, #dbeafe);
     border-color: color-mix(in srgb, var(--blauw) 40%, #cbd5e1);
+  }
+  .ov-day.vandaag.geselecteerd {
+    background: color-mix(in srgb, var(--card-bg) 72%, #dbeafe);
+    border-color: var(--blauw);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--blauw) 32%, transparent),
+      inset 0 0 0 3px color-mix(in srgb, #f59e0b 30%, transparent);
   }
   .ov-day.selectiestart,
   .ov-day.selectieeinde {
@@ -1465,18 +1551,24 @@
     border: 1px solid var(--border-subtle);
     border-left: 6px solid var(--loc-kleur);
     border-radius: 12px;
-    padding: 10px 10px 10px 12px;
+    padding: 11px 12px;
     background: var(--card-bg);
+    display: grid;
+    gap: 8px;
   }
   .ov-shortlist-item {
     border-left-color: color-mix(in srgb, var(--loc-kleur) 70%, #10b981);
     background: linear-gradient(180deg, rgba(239, 246, 255, 0.52) 0%, #fff 72%);
   }
-  .ov-item-head {
+  .ov-item-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 8px;
+  }
+  .ov-item-head {
+    display: grid;
+    gap: 2px;
   }
   .ov-item-head-actions {
     display: inline-flex;
@@ -1486,6 +1578,17 @@
   .ov-item-head strong {
     font-size: var(--font-size-lg);
     color: var(--heading);
+    line-height: 1.2;
+  }
+  .ov-item-subline {
+    margin: 0;
+    color: var(--nav-text);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+  .ov-item-body {
+    display: grid;
+    gap: 6px;
   }
   .ov-open-btn {
     width: auto;
@@ -1510,7 +1613,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px 10px;
-    margin-top: 5px;
   }
   .ov-meta span {
     font-size: var(--font-size-sm);
@@ -1521,19 +1623,16 @@
     padding: 3px 8px;
   }
   .ov-coords {
-    margin-top: 7px;
     font-size: var(--font-size-sm);
     color: var(--blauw);
     font-weight: 600;
   }
   .ov-address {
-    margin-top: 4px;
     font-size: var(--font-size-sm);
     color: var(--tekst);
     font-weight: 500;
   }
   .ov-links {
-    margin-top: 6px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -1545,7 +1644,7 @@
     font-weight: 700;
   }
   .ov-note {
-    margin-top: 7px;
+    margin: 0;
     font-size: var(--font-size-sm);
     color: var(--tekst);
   }
@@ -1554,15 +1653,6 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-  }
-  .ov-inline-actions {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .ov-inline-actions .ov-secondary-btn {
-    min-height: var(--ui-touch-min);
   }
   .ov-shortlist-actions .btn-primary {
     width: auto;
@@ -1590,7 +1680,7 @@
 
   @media (max-width: 760px) {
     .ov-stats {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
     }
     .ov-top {
       flex-direction: column;
@@ -1606,6 +1696,28 @@
     .ov-secondary-btn {
       width: 100%;
       text-align: center;
+    }
+    .ov-view-switch {
+      width: 100%;
+      justify-content: stretch;
+    }
+    .ov-view-btn {
+      flex: 1;
+      justify-content: center;
+    }
+    .ov-calendar-teaser {
+      display: grid;
+      gap: 10px;
+    }
+    .ov-calendar-teaser .ov-secondary-btn {
+      width: 100%;
+    }
+    .ov-item-top {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .ov-item-head-actions {
+      justify-content: space-between;
     }
     .ov-day {
       min-height: 76px;
@@ -1648,6 +1760,18 @@
     background: #10233f;
     border-color: #3b82f6;
   }
+  :global(html.dark) .ov-day.vandaag {
+    background: #3b2f13;
+    border-color: #f59e0b;
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
+  }
+  :global(html.dark) .ov-day.vandaag.geselecteerd {
+    background: #1a2e4b;
+    border-color: #60a5fa;
+    box-shadow:
+      inset 0 0 0 1px rgba(96, 165, 250, 0.45),
+      inset 0 0 0 3px rgba(245, 158, 11, 0.28);
+  }
   :global(html.dark) .ov-day-number,
   :global(html.dark) .ov-calendar-head strong,
   :global(html.dark) .ov-item-head strong,
@@ -1670,10 +1794,15 @@
     border-color: #2563eb;
   }
   :global(html.dark) .ov-open-btn,
-  :global(html.dark) .ov-secondary-btn {
+  :global(html.dark) .ov-secondary-btn,
+  :global(html.dark) .ov-view-btn.active {
     background: #1e3a8a;
     color: #dbeafe;
     border-color: #2563eb;
+  }
+  :global(html.dark) .ov-view-switch {
+    background: #0f172a;
+    border-color: #334155;
   }
   :global(html.dark) .ov-shortlist-item {
     background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, #111827 72%);
