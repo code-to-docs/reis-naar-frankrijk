@@ -14,9 +14,6 @@
   if (typeof localStorage !== "undefined") {
     const opgeslagen = localStorage.getItem("naam") || "";
     naam = opgeslagen;
-    if (opgeslagen) {
-      appState.init(opgeslagen);
-    }
   }
 
   /** @param {string} n */
@@ -31,6 +28,8 @@
     else appState.applyDarkMode();
   });
 
+  // Reading isDarkMode creates a reactive dependency so applyDarkMode()
+  // runs whenever the toggle changes.
   $effect(() => {
     const _dark = appState.isDarkMode;
     appState.applyDarkMode();

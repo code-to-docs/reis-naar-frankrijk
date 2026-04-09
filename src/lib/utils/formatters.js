@@ -80,8 +80,7 @@ export function getFriendlyDayLabel(dateValue) {
   if (target.getTime() === yesterday.getTime()) return "Gisteren";
 
   const dayName = dayNameFormatter.format(date);
-  const formattedDate = fullDateFormatter.format(date).replace(/ \d{4}$/, ''); // Strip year if it's this year?
-  
+
   return dayName.charAt(0).toUpperCase() + dayName.slice(1) + " " + date.getDate() + " " + new Intl.DateTimeFormat('nl-NL', { month: 'long' }).format(date);
 }
 

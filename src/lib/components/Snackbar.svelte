@@ -4,11 +4,12 @@
 
   let zichtbaar = $state(false);
   let verdwijnt = $state(false);
-  let timer: any;
+  let timer: ReturnType<typeof setTimeout>;
+
+  let snack = $derived(appState.snackbar);
 
   $effect(() => {
-    const val = (appState as any).snackbar;
-    if (val) {
+    if (snack) {
       verdwijnt = false;
       zichtbaar = true;
       haptic('light');
@@ -22,18 +23,18 @@
     setTimeout(() => {
       zichtbaar = false;
       verdwijnt = false;
-      (appState as any).snackbar = null;
+      appState.snackbar = null;
     }, 300);
   }
 </script>
 
-{#if zichtbaar && (appState as any).snackbar}
+{#if zichtbaar && snack}
   <button class="snackbar-overlay" onclick={dismiss}>
-    <div class="snackbar snackbar-{(appState as any).snackbar.type || 'success'}" class:verdwijnt>
-      {#if (appState as any).snackbar.emoji}
-        <span class="snackbar-emoji">{(appState as any).snackbar.emoji}</span>
+    <div class="snackbar snackbar-{snack.type || 'success'}" class:verdwijnt>
+      {#if snack.emoji}
+        <span class="snackbar-emoji">{snack.emoji}</span>
       {/if}
-      <span class="snackbar-tekst">{(appState as any).snackbar.tekst}</span>
+      <span class="snackbar-tekst">{snack.tekst}</span>
     </div>
   </button>
 {/if}

@@ -167,7 +167,8 @@
   });
 
   $effect(() => {
-    const _count = uitgaven.length;
+    // Serialize key fields to detect edits, not just additions/removals
+    const _digest = JSON.stringify(uitgaven.map((u: UitgaveLike) => [u.categorie, u.bedrag]));
     const _budget = budget;
     if (chartInstance) updateChart();
     else if (canvasEl) buildChart();

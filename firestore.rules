@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Shared trip collections: allow read/write for any client (no auth implemented yet)
+    match /uitgaven/{document=**} {
+      allow read, write: if true;
+    }
+    match /instellingen/{document=**} {
+      allow read, write: if true;
+    }
+    match /wildlife/{document=**} {
+      allow read, write: if true;
+    }
+    match /gerechten_checks/{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Generic list collections
+    match /campings/{document=**} {
+      allow read, write: if true;
+    }
+    match /pois/{document=**} {
+      allow read, write: if true;
+    }
+    match /activiteiten/{document=**} {
+      allow read, write: if true;
+    }
+    match /paklijst_dennis/{document=**} {
+      allow read, write: if true;
+    }
+    match /paklijst_franzi/{document=**} {
+      allow read, write: if true;
+    }
+    match /boodschappen/{document=**} {
+      allow read, write: if true;
+    }
+    match /zwemplekken/{document=**} {
+      allow read, write: if true;
+    }
+    match /dagboek/{document=**} {
+      allow read, write: if true;
+    }
+
+    // Default: deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

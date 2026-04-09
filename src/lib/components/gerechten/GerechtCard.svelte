@@ -3,6 +3,7 @@
   import { db } from "$lib/firebase.js";
   import { toonSnackbar } from "$lib/stores.svelte.js";
   import { formatFullDate, formatTime } from "$lib/utils/formatters.js";
+  import { E } from "$lib/emojis.js";
 
   let {
     gerecht,
@@ -50,7 +51,7 @@
     try {
       if (mijnCheck) {
         await deleteDoc(ref);
-        toonSnackbar(`${gerecht.naam} verwijderd uit jouw lijst`, "warning", "↩️");
+        toonSnackbar(`${gerecht.naam} verwijderd uit jouw lijst`, "warning", E.UNDO);
       } else {
         await setDoc(ref, {
           gerechtId: gerecht.id,
@@ -59,11 +60,11 @@
           datum: serverTimestamp(),
           rating: 0
         });
-        toonSnackbar(`${gerecht.naam} geproefd!`, "success", "✅");
+        toonSnackbar(`${gerecht.naam} geproefd!`, "success", E.CHECK);
       }
     } catch (e) {
       console.error(e);
-      toonSnackbar("Opslaan mislukt", "error", "❌");
+      toonSnackbar("Opslaan mislukt", "error", E.KRUIS);
     }
   }
 
@@ -72,10 +73,10 @@
     if (!naam || !mijnCheck) return;
     try {
       await updateDoc(doc(db, "gerechten_checks", `${gerecht.id}_${naam.toLowerCase()}`), { rating: value });
-      toonSnackbar(`Rating opgeslagen: ${value}★`, "success", "⭐");
+      toonSnackbar(`Rating opgeslagen: ${value}★`, "success", E.TARGET);
     } catch (e) {
       console.error(e);
-      toonSnackbar("Rating opslaan mislukt", "error", "❌");
+      toonSnackbar("Rating opslaan mislukt", "error", E.KRUIS);
     }
   }
 </script>
