@@ -1,0 +1,78 @@
+UI NORMPROFIEL - Reis naar Frankrijk
+Versie: 2026-04-09
+
+Doel
+- Een consistente, rustige en goed leesbare UI op mobiel en desktop.
+- Dashboard-stijl als visuele basis voor alle pagina's.
+- Lage cognitieve belasting: minder visuele ruis, duidelijke hierarchie, voorspelbare interactie.
+
+Bronnen (grote lijn)
+- NL Design System: ontwerp met design tokens, toegankelijkheid als baseline, support voor gebruikersvoorkeuren.
+- Apple HIG / UI Design Dos and Don'ts: heldere layout, minimale touch-targets, voldoende contrast, goede spacing en uitlijning.
+- UX best-practices: eenvoud, focus op kerntaken, voorkom overvolle schermen en overmatige keuzes.
+- WCAG 2.2 AA als ondergrens voor contrast, focus, target size en leesbaarheid.
+
+Niet-onderhandelbare basisregels
+1. Toegankelijkheid
+- Text contrast: minimaal 4.5:1 (normale tekst), 3:1 (grote tekst).
+- Non-text contrast: minimaal 3:1 voor interactieve randen/states.
+- Target size: minimaal 24x24 (AA), streven 44x44 (mobiel).
+- Focus zichtbaar en niet verborgen.
+- Reflow: geen 2D-scroll voor normale content op mobiel.
+
+2. Typografie
+- Max 1 primaire UI-fontfamilie in de app.
+- Gewichten beperken tot: 400, 500, 600, 700, 800.
+- Italic alleen functioneel (bijv. wetenschappelijke namen), niet voor lange teksten.
+- UPPERCASE alleen voor korte labels/chips.
+- Gebruik uitsluitend tokens voor font-size in nieuwe code.
+
+3. Rust en hierarchie
+- Actieknoppen in duidelijke "action rows" met vaste tussenruimte.
+- Formulieren met vaste label/input-rhythm (zelfde spacing, hoogte, radius).
+- Maximaliseer consistentie in card-opbouw: titel, meta, content, acties.
+- Vermijd dubbele of concurrerende CTA's in dezelfde viewport-zone.
+
+4. Kleur en theming
+- Semantische kleuren via tokens, geen losse hex in nieuwe componenten.
+- Donkere modus via tokens, niet component-specifiek hardcoded waar mogelijk.
+
+Implementatie in code
+- Centraal tokenbestand: src/lib/styles/ui-norm-profile.css
+- Globale mapping en basiscomponenten: src/app.css
+- Eerste harmonisatie toegepast op:
+  - src/lib/components/Budget.svelte
+  - src/lib/components/BudgetForm.svelte
+  - src/lib/components/OvernachtingenPlanner.svelte
+  - src/lib/components/Navigation.svelte
+  - src/routes/meer/+page.svelte
+
+Actieve tokens (wijzig hier voor globale impact)
+- Typography:
+  --ui-text-2xs, --ui-text-xs, --ui-text-sm, --ui-text-md, --ui-text-lg, --ui-text-xl, --ui-text-2xl
+- Weights:
+  --ui-weight-regular, --ui-weight-medium, --ui-weight-semibold, --ui-weight-bold, --ui-weight-heavy
+- Rhythm:
+  --ui-line-tight, --ui-line-heading, --ui-line-compact, --ui-line-body
+- Interaction:
+  --ui-touch-min, --ui-touch-compact, --ui-form-gap, --ui-actions-gap
+- Readability:
+  --ui-measure-reading
+
+Review-checklist voor iedere nieuwe UI-wijziging
+1. Is elke tekststijl een bestaand token?
+2. Zijn CTA's visueel en inhoudelijk geprioriteerd (1 primair, rest secundair)?
+3. Is elke klikbare control op mobiel minimaal 40px hoog (liefst 44px)?
+4. Is er voldoende contrast in light en dark mode?
+5. Is de spacing gelijkmatig (geen "drukkende" clusters)?
+6. Blijft de lay-out leesbaar op 360px breedte en op desktop?
+7. Is forced-colors en reduced-motion gedrag niet gebroken?
+
+Volgende verbeterstap (aanbevolen)
+- Hardcoded kleuren reduceren naar tokens in:
+  - GerechtenChecklist
+  - GerechtCard
+  - WildlifeCard
+  - WeerAlerts / WeerDagen
+- Font-size normalisatie naar tokens in alle componenten met 0.68-0.79rem waarden.
+- !important-overrides terugdringen door component-API en duidelijke stijlgrenzen.

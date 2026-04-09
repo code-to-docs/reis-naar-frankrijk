@@ -120,7 +120,7 @@
     font-size: 0.88rem;
     color: #1f2937;
     margin-bottom: 8px;
-    min-height: 38px;
+    min-height: var(--ui-touch-compact);
     display: flex;
     align-items: center;
     justify-content: center;

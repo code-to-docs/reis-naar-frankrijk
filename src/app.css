@@ -1,3 +1,5 @@
+@import "./lib/styles/ui-norm-profile.css";
+
 /* Mobile viewport fix */
 html, body {
   min-height: 100dvh;
@@ -13,21 +15,21 @@ html, body {
   --grijs-licht: #f3f7fc;
   --grijs: #d6e1ee;
   --tekst: #10233a;
-  --groen: #1fa968;
-  --oranje: #e1781f;
-  --rood: #dd4b39;
+  --groen: #17814f;
+  --oranje: #a8570f;
+  --rood: #c93727;
   --card-bg: #ffffff;
   --card-shadow: rgba(15, 35, 58, 0.10);
   --input-bg: #ffffff;
   --input-border: #cddaea;
   --input-focus: #0f4d84;
-  --input-placeholder: #7b8ca3;
+  --input-placeholder: #667990;
   --heading: #0a3764;
   --border-subtle: #dde7f2;
   --hover-bg: #edf3fa;
   --nav-bg: #ffffff;
   --nav-shadow: rgba(15, 35, 58, 0.12);
-  --nav-text: #6a7f98;
+  --nav-text: #5b738f;
   --nav-active: #0f4d84;
   --header-bg: #0a3764;
   --scrollbar-thumb: rgba(10, 55, 100, 0.25);
@@ -36,13 +38,13 @@ html, body {
   --radius-md: 14px;
   --radius-lg: 18px;
   --radius-xl: 22px;
-  --font-family-base: "Segoe UI", "Inter", "SF Pro Text", "Avenir Next", system-ui, -apple-system, sans-serif;
-  --font-size-xs: 0.78rem;
-  --font-size-sm: 0.9rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.12rem;
-  --font-size-xl: 1.42rem;
-  --font-size-2xl: clamp(1.7rem, 4.4vw, 2.35rem);
+  --font-family-base: var(--ui-font-family);
+  --font-size-xs: var(--ui-text-xs);
+  --font-size-sm: var(--ui-text-sm);
+  --font-size-md: var(--ui-text-md);
+  --font-size-lg: var(--ui-text-lg);
+  --font-size-xl: var(--ui-text-xl);
+  --font-size-2xl: var(--ui-text-2xl);
 }
 
 /* ========== DARK MODE VARIABLES ========== */
@@ -54,7 +56,7 @@ html.dark {
   --tekst: #dce7f3;
   --groen: #10b981;
   --oranje: #f59e0b;
-  --rood: #ef4444;
+  --rood: #dc2626;
   --card-bg: #0d1828;
   --card-shadow: rgba(1, 5, 10, 0.42);
   --input-bg: #0b1524;
@@ -76,6 +78,8 @@ html.dark {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: var(--font-family-base);
+  font-size: var(--font-size-md);
+  line-height: var(--ui-line-body);
   background:
     radial-gradient(circle at 6% -8%, rgba(15, 77, 132, 0.11), transparent 32%),
     radial-gradient(circle at 95% 0%, rgba(67, 132, 181, 0.12), transparent 28%),
@@ -91,7 +95,7 @@ h1, h2, h3 {
   color: var(--heading);
   font-family: var(--font-family-base);
   letter-spacing: -0.02em;
-  line-height: 1.12;
+  line-height: var(--ui-line-heading);
 }
 h1 { font-size: var(--font-size-2xl); }
 h2 { font-size: var(--font-size-xl); }
@@ -112,10 +116,10 @@ button {
   padding: 10px 16px;
   font-size: var(--font-size-md);
   cursor: pointer;
-  font-weight: 700;
+  font-weight: var(--ui-weight-bold);
   letter-spacing: -0.01em;
   font-family: inherit;
-  line-height: 1.2;
+  line-height: var(--ui-line-compact);
 }
 button:active { transform: scale(0.95); }
 .btn-primary {
@@ -124,20 +128,25 @@ button:active { transform: scale(0.95); }
 }
 .btn-danger { background: var(--rood); color: white; }
 .btn-success {
-  background: linear-gradient(135deg, #1c9d60, #1fa968);
+  background: linear-gradient(135deg, #146a43, #17814f);
   color: white;
 }
 .btn-save {
-  background: linear-gradient(135deg, #1c9d60, #1fa968);
+  background: linear-gradient(135deg, #146a43, #17814f);
   color: #ffffff;
-  min-height: 44px;
+  min-height: var(--ui-touch-min);
   border-radius: 12px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-weight: var(--ui-weight-heavy);
+  letter-spacing: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 16px;
+}
+.btn-primary,
+.btn-success,
+.btn-danger {
+  min-height: var(--ui-touch-min);
 }
 .btn-save:disabled {
   opacity: 0.6;
@@ -145,7 +154,9 @@ button:active { transform: scale(0.95); }
   filter: saturate(0.8);
 }
 
-input, select, textarea {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+select,
+textarea {
   width: 100%; padding: 12px;
   border: 1.5px solid var(--input-border);
   border-radius: var(--radius-sm);
@@ -154,7 +165,14 @@ input, select, textarea {
   background: var(--input-bg);
   color: var(--tekst);
   font-family: inherit;
-  line-height: 1.3;
+  line-height: var(--ui-line-compact);
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+select {
+  min-height: var(--ui-touch-min);
+}
+textarea {
+  min-height: calc(var(--ui-touch-min) * 1.6);
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--input-focus); outline: none;

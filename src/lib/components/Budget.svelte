@@ -153,7 +153,7 @@
       <BudgetChart {uitgaven} {budget} />
       <div class="hero-info">
         <div class="hero-label">Resterend</div>
-        <div class="hero-bedrag" style="color:{resterend >= 0 ? '#10b981' : '#ef4444'}">
+        <div class="hero-bedrag" style="color:{resterend >= 0 ? 'var(--groen)' : 'var(--rood)'}">
           {resterend < 0 ? '-' : ''}{formatEuroGroot(Math.abs(resterend))}
         </div>
         <div class="hero-sub">
@@ -163,7 +163,7 @@
         <div class="hero-bar">
           <div class="hero-bar-fill" style="
             width:{Math.min(percentage,100)}%;
-            background:{percentage <= 70 ? '#10b981' : percentage <= 90 ? '#f59e0b' : '#ef4444'}">
+            background:{percentage <= 70 ? 'var(--groen)' : percentage <= 90 ? 'var(--oranje)' : 'var(--rood)'}">
           </div>
         </div>
         <div class="hero-uitgegeven">{formatEuroGroot(totaal)} uitgegeven</div>
@@ -308,21 +308,21 @@
   }
   .hero-info { flex: 1; }
   .hero-label {
-    font-size: 0.8rem;
-    color: #94a3b8;
+    font-size: var(--font-size-xs);
+    color: var(--nav-text);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
+    letter-spacing: 0.03em;
+    font-weight: var(--ui-weight-semibold);
   }
   .hero-bedrag {
     font-size: 2rem;
-    font-weight: 800;
-    line-height: 1.1;
+    font-weight: var(--ui-weight-heavy);
+    line-height: var(--ui-line-tight);
     margin: 2px 0 4px 0;
   }
   .hero-sub {
-    font-size: 0.8rem;
-    color: #94a3b8;
+    font-size: var(--font-size-sm);
+    color: var(--nav-text);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -330,8 +330,10 @@
   .edit-budget-btn {
     background: none;
     border: none;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     cursor: pointer;
+    min-height: var(--ui-touch-compact);
+    min-width: var(--ui-touch-compact);
     padding: 2px 4px;
     opacity: 0.6;
   }
@@ -349,8 +351,8 @@
     transition: width 0.4s ease;
   }
   .hero-uitgegeven {
-    font-size: 0.75rem;
-    color: #94a3b8;
+    font-size: var(--font-size-xs);
+    color: var(--nav-text);
   }
 
   .budget-edit-card {
@@ -359,9 +361,9 @@
   }
   .budget-edit-titel {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     margin-bottom: 8px;
-    color: #1e293b;
+    color: var(--heading);
   }
   .budget-edit-row {
     display: flex;
@@ -414,9 +416,10 @@
     border-radius: 20px;
     border: 1.5px solid #e2e8f0;
     background: white;
-    color: #64748b;
-    font-size: 0.82rem;
-    font-weight: 500;
+    color: #475569;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-medium);
+    min-height: var(--ui-touch-compact);
     cursor: pointer;
     transition: all 0.15s ease;
   }
@@ -427,18 +430,27 @@
   .filter-info {
     display: flex; justify-content: space-between; align-items: center;
     background: #EBF5FB; padding: 8px 12px; border-radius: 10px;
-    margin-bottom: 10px; font-size: 0.82rem; color: #1a5276;
+    margin-bottom: 10px; font-size: var(--font-size-sm); color: #1a5276;
   }
-  .filter-reset { background: none; border: none; color: #e74c3c; font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 2px 8px; }
+  .filter-reset {
+    background: none;
+    border: none;
+    color: var(--rood);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    min-height: var(--ui-touch-compact);
+    padding: 2px 8px;
+  }
 
   .dag-groep { margin-bottom: 16px; }
   .dag-header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 8px 4px 6px 4px; border-bottom: 2px solid #e2e8f0; margin-bottom: 6px;
   }
-  .dag-label { font-weight: 700; font-size: 0.85rem; color: #1a5276; }
+  .dag-label { font-weight: 700; font-size: var(--font-size-sm); color: #1a5276; }
   .dag-totaal {
-    font-weight: 600; font-size: 0.85rem; color: #475569;
+    font-weight: 600; font-size: var(--font-size-sm); color: #475569;
     background: #f1f5f9; padding: 3px 10px; border-radius: 8px;
   }
 
@@ -451,15 +463,25 @@
   }
   .entry-emoji { font-size: 1.4rem; flex-shrink: 0; }
   .entry-info { flex: 1; min-width: 0; }
-  .entry-info strong { display: block; font-size: 0.9rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .entry-info small { color: #94a3b8; font-size: 0.75rem; }
-  .entry-bedrag { font-size: 0.95rem; color: #1e293b; white-space: nowrap; flex-shrink: 0; }
-  .entry-delete { background: none; border: none; font-size: 0.9rem; padding: 4px; cursor: pointer; opacity: 0.5; flex-shrink: 0; }
+  .entry-info strong { display: block; font-size: var(--font-size-sm); color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-info small { color: #64748b; font-size: var(--font-size-xs); }
+  .entry-bedrag { font-size: var(--font-size-md); color: #1e293b; white-space: nowrap; flex-shrink: 0; }
+  .entry-delete {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    min-height: var(--ui-touch-compact);
+    min-width: var(--ui-touch-compact);
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
   .entry-delete:active { opacity: 1; }
 
   .empty-state { text-align: center; padding: 32px 16px; color: #94a3b8; }
   .empty-icon { font-size: 2.5rem; }
-  .empty-state p { margin-top: 8px; font-size: 0.95rem; }
+  .empty-state p { margin-top: 8px; font-size: var(--font-size-sm); }
 
   .budget-rij { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
   .verrekening-card { margin-top: 20px; border-top: 3px solid #e2e8f0; }

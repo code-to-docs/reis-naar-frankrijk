@@ -1,0 +1,81 @@
+/*
+  UI Normprofiel
+  Dit bestand bevat de kernregels voor een harmonische, consistente UI.
+  Pas vooral de variabelen hieronder aan om de hele app mee te schalen.
+*/
+
+:root {
+  /* Typography */
+  --ui-font-family: "Segoe UI", "Inter", "SF Pro Text", "Avenir Next", system-ui, -apple-system, sans-serif;
+  --ui-weight-regular: 400;
+  --ui-weight-medium: 500;
+  --ui-weight-semibold: 600;
+  --ui-weight-bold: 700;
+  --ui-weight-heavy: 800;
+
+  --ui-text-2xs: 0.75rem;
+  --ui-text-xs: 0.82rem;
+  --ui-text-sm: 0.92rem;
+  --ui-text-md: 1rem;
+  --ui-text-lg: 1.12rem;
+  --ui-text-xl: 1.42rem;
+  --ui-text-2xl: clamp(1.75rem, 4.4vw, 2.35rem);
+
+  --ui-line-tight: 1.1;
+  --ui-line-heading: 1.14;
+  --ui-line-compact: 1.3;
+  --ui-line-body: 1.45;
+
+  /* Spacing rhythm */
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 20px;
+  --ui-space-6: 24px;
+
+  /* Interaction */
+  --ui-touch-min: 44px;
+  --ui-touch-compact: 40px;
+  --ui-form-gap: 10px;
+  --ui-actions-gap: 10px;
+
+  /* Readability */
+  --ui-measure-reading: 68ch;
+}
+
+/* User preference support (NL Design System baseline) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  button,
+  input,
+  select,
+  textarea,
+  a {
+    forced-color-adjust: auto;
+    border: 1px solid ButtonText;
+  }
+}
+
+/* Optional helper classes */
+.ui-body-copy {
+  max-width: var(--ui-measure-reading);
+  line-height: var(--ui-line-body);
+}
+
+.ui-label {
+  font-size: var(--ui-text-xs);
+  font-weight: var(--ui-weight-bold);
+  line-height: var(--ui-line-tight);
+  letter-spacing: 0.03em;
+}

@@ -77,8 +77,8 @@
   .meer-menu { padding-top: 12px; }
   .meer-groep { margin-bottom: 16px; }
   .meer-groep-label {
-    font-size: 0.72rem; font-weight: 600; color: var(--nav-text);
-    text-transform: uppercase; letter-spacing: 0.5px; padding: 0 4px 6px 4px;
+    font-size: var(--font-size-xs); font-weight: 600; color: var(--nav-text);
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 0 4px 6px 4px;
   }
   .meer-groep-items {
     background: var(--card-bg); border-radius: 14px; overflow: hidden;
@@ -94,7 +94,7 @@
   .meer-item:last-child { border-bottom: none; }
   .meer-item:active { background: var(--hover-bg); }
   .meer-emoji { font-size: 1.4rem; flex-shrink: 0; }
-  .meer-label { flex: 1; font-size: 0.95rem; font-weight: 500; color: var(--tekst); }
+  .meer-label { flex: 1; font-size: var(--font-size-sm); font-weight: 500; color: var(--tekst); }
   .meer-arrow { flex-shrink: 0; }
   
   .dark-toggle-item {
@@ -103,7 +103,7 @@
     text-align: left;
   }
   .dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
-  .dark-toggle-label { flex: 1; font-size: 0.95rem; font-weight: 500; color: var(--tekst); }
+  .dark-toggle-label { flex: 1; font-size: var(--font-size-sm); font-weight: 500; color: var(--tekst); }
   .toggle-track { width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; position: relative; transition: background 0.2s; }
   .toggle-track.active { background: #3b82f6; }
   .toggle-thumb { position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
@@ -111,8 +111,8 @@
   
   .meer-uitloggen {
     width: 100%; padding: 14px; background: none;
-    border: 1.5px solid #fecaca; border-radius: 14px;
-    color: #ef4444; font-size: 0.95rem; font-weight: 500;
+    border: 1.5px solid #f5b3ac; border-radius: 14px;
+    color: var(--rood); font-size: var(--font-size-sm); font-weight: 500;
     cursor: pointer; margin-top: 8px;
   }
   .meer-uitloggen:active { background: var(--hover-bg); }

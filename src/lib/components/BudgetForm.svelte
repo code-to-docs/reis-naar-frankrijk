@@ -121,8 +121,8 @@
     border-radius: 16px;
     background: linear-gradient(135deg, #0a3764, #0f4d84);
     color: white;
-    font-size: 28px;
-    font-weight: 300;
+    font-size: 1.4rem;
+    font-weight: 700;
     border: none;
     box-shadow: 0 8px 24px var(--card-shadow);
     cursor: pointer;
@@ -140,7 +140,7 @@
   .fab-label {
     display: none;
     line-height: 1;
-    font-size: 0.95rem;
+    font-size: var(--font-size-sm);
     font-weight: 700;
   }
 
@@ -179,7 +179,7 @@
   }
   .budget-add-form {
     display: grid;
-    gap: 12px;
+    gap: var(--ui-form-gap);
   }
   .form-header {
     display: grid;
@@ -194,7 +194,7 @@
     margin: 0;
   }
   .form-header p {
-    font-size: 0.84rem;
+    font-size: var(--font-size-sm);
     color: var(--nav-text);
     font-weight: 500;
     margin: 0;
@@ -204,9 +204,9 @@
     gap: 6px;
   }
   .field-label {
-    font-size: 0.72rem;
+    font-size: var(--font-size-xs);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     font-weight: 700;
     color: var(--nav-text);
   }
@@ -217,9 +217,9 @@
     border: 1.5px solid var(--input-border);
     min-height: 46px;
     padding: 10px 12px;
-    font-size: 1rem;
-    line-height: 1.2;
-    font-weight: 600;
+    font-size: var(--font-size-md);
+    line-height: var(--ui-line-compact);
+    font-weight: 500;
     color: var(--tekst);
     background: var(--input-bg);
     width: 100%;
@@ -229,11 +229,11 @@
     font-weight: 500;
   }
   .field-select {
-    font-weight: 600;
+    font-weight: 500;
   }
   .form-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--ui-actions-gap);
     margin-top: 2px;
   }
   .action-save {
@@ -284,15 +284,15 @@
       font-size: 1.25rem;
     }
     .form-header p {
-      font-size: 0.86rem;
+      font-size: var(--font-size-sm);
     }
     .field-label {
-      font-size: 0.73rem;
+      font-size: var(--font-size-xs);
     }
     .field-input,
     .field-select {
       min-height: 48px;
-      font-size: 1.02rem;
+      font-size: var(--font-size-md);
     }
   }
 

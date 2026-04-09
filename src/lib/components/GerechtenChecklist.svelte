@@ -536,7 +536,7 @@
   }
 
   .gr-tip-label {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     color: #1e3a8a;
     font-weight: 700;
     text-transform: uppercase;
@@ -545,12 +545,12 @@
 
   .gr-tip-refresh {
     width: auto;
-    min-height: 32px;
+    min-height: var(--ui-touch-compact);
     border-radius: 999px;
     border: 1px solid #93c5fd;
     background: rgba(255, 255, 255, 0.7);
     color: #1d4ed8;
-    font-size: 0.76rem;
+    font-size: var(--font-size-xs);
     font-weight: 700;
     padding: 0 10px;
   }

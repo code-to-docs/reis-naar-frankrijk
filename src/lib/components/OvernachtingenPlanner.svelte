@@ -1173,7 +1173,7 @@
     font-weight: 500;
   }
   .ov-add {
-    min-height: 42px;
+    min-height: var(--ui-touch-min);
     white-space: nowrap;
     font-weight: 700;
   }
@@ -1185,7 +1185,7 @@
   }
   .ov-secondary-btn {
     width: auto;
-    min-height: 40px;
+    min-height: var(--ui-touch-min);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
@@ -1235,17 +1235,17 @@
   }
   .ov-form {
     display: grid;
-    gap: 10px;
+    gap: var(--ui-form-gap);
   }
   .ov-form label {
     display: grid;
     gap: 5px;
   }
   .ov-form label span {
-    font-size: 0.74rem;
+    font-size: var(--font-size-xs);
     text-transform: uppercase;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     color: var(--nav-text);
   }
   .ov-form input,
@@ -1270,7 +1270,7 @@
   }
   .ov-gps-btn {
     width: auto;
-    min-height: 36px;
+    min-height: var(--ui-touch-min);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
@@ -1279,7 +1279,7 @@
   }
   .ov-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--ui-actions-gap);
   }
   .ov-actions .btn-save {
     flex: 1;
@@ -1314,7 +1314,7 @@
   }
   .ov-month-btn {
     width: auto;
-    min-height: 34px;
+    min-height: var(--ui-touch-compact);
     padding: 0 10px;
     font-size: var(--font-size-sm);
     font-weight: 700;
@@ -1489,7 +1489,7 @@
   }
   .ov-open-btn {
     width: auto;
-    min-height: 32px;
+    min-height: var(--ui-touch-compact);
     padding: 0 10px;
     border-radius: 999px;
     border: 1px solid var(--input-border);
@@ -1562,11 +1562,11 @@
     gap: 8px;
   }
   .ov-inline-actions .ov-secondary-btn {
-    min-height: 38px;
+    min-height: var(--ui-touch-min);
   }
   .ov-shortlist-actions .btn-primary {
     width: auto;
-    min-height: 38px;
+    min-height: var(--ui-touch-min);
     padding: 0 12px;
   }
   .ov-empty {
@@ -1601,10 +1601,10 @@
       justify-content: flex-start;
     }
     .ov-add {
-      width: calc(50% - 4px);
+      width: 100%;
     }
     .ov-secondary-btn {
-      width: calc(50% - 4px);
+      width: 100%;
       text-align: center;
     }
     .ov-day {

@@ -84,7 +84,7 @@
     justify-content: center;
     gap: 8px;
     padding: 7px 16px;
-    font-size: 0.78rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
     z-index: 99;
     max-width: var(--app-max-width);
@@ -147,11 +147,11 @@
   .nav-item.active .nav-emoji { transform: scale(1.08); }
 
   .nav-label {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     color: var(--nav-text);
     transition: color 0.2s ease;
-    line-height: 1;
+    line-height: 1.15;
   }
   .nav-item.active .nav-label {
     color: var(--nav-active);
@@ -239,7 +239,7 @@
     }
 
     .profile-meta span {
-      font-size: 0.74rem;
+      font-size: var(--font-size-xs);
       color: var(--nav-text);
       font-weight: 500;
     }
@@ -273,7 +273,7 @@
     }
 
     .nav-label {
-      font-size: 0.98rem;
+      font-size: var(--font-size-md);
       line-height: 1.1;
     }
 
