@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
   import { onMount } from "svelte";
   import { E } from "$lib/emojis.js";
 
@@ -83,7 +83,7 @@
   }
 
   function alertsCacheKey() {
-    return "weer_alerts_v1";
+    return "weer_alerts_v2";
   }
 
   function formatDag(dateStr: string) {
@@ -118,10 +118,6 @@
     if (level === 3) return "orange";
     if (level === 2) return "yellow";
     return fallback;
-  }
-
-  function specialistTone(severity: string | undefined) {
-    return severity === "watch" ? "specialist-watch" : "specialist";
   }
 
   function actieveOfficieleAlerts() {
@@ -385,8 +381,8 @@
   {:else if alerts}
     <div class="alerts-panel">
       <div class="alerts-header">
-        <span>{E.WARN} Alerts onderweg</span>
-        <small>Officieel + Pyrenee\u00EBn-specialist</small>
+        <span>{E.WARN} Offici&#235;le alerts</span>
+        <small>M&#233;t&#233;o-France voor je route</small>
       </div>
 
       <div class="alerts-grid">
@@ -423,46 +419,23 @@
             rel="noreferrer"
           >
             <div class="alert-card-top">
-              <span class="alert-source">Meteo-France Vigilance</span>
+              <span class="alert-source">M&#233;t&#233;o-France Vigilance</span>
               <span class="alert-badge">Groen</span>
             </div>
             <div class="alert-region">Route rustig</div>
             <div class="alert-summary">
-              Loz\u00E8re, Cantal en Ari\u00E8ge staan nu op groen.
+              Loz&#232;re, Cantal en Ari&#232;ge staan nu op groen.
             </div>
             {#if alerts.officialAlerts?.[0]?.updatedAt}
               <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
             {/if}
           </a>
         {/if}
-
-        {#if alerts.specialistAlert}
-          <a
-            class="alert-card tone-{specialistTone(alerts.specialistAlert.severity)}"
-            href={alerts.specialistAlert.url}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div class="alert-card-top">
-              <span class="alert-source">{alerts.specialistAlert.sourceLabel}</span>
-              <span class="alert-badge">Pyrenee\u00EBn</span>
-            </div>
-            <div class="alert-region">{alerts.specialistAlert.regionLabel}</div>
-            <div class="alert-summary">{alerts.specialistAlert.title}</div>
-            <div class="alert-meta">
-              {formatAlertMoment(alerts.specialistAlert.publishedAt)}
-              {#if alerts.specialistAlert.excerpt}
-                <span class="alert-divider">•</span>
-                {alerts.specialistAlert.excerpt}
-              {/if}
-            </div>
-          </a>
-        {/if}
       </div>
 
       {#if actieveOfficieleAlerts().length > 0 && rustigeRegios().length > 0}
         <div class="alerts-footnote">
-          Rustig volgens M\u00E9t\u00E9o-France: {rustigeRegios().join(", ")}.
+          Rustig volgens M&#233;t&#233;o-France: {rustigeRegios().join(", ")}.
         </div>
       {/if}
     </div>
@@ -647,9 +620,6 @@
     color: #5f738c;
     line-height: 1.35;
   }
-  .alert-divider {
-    margin: 0 5px;
-  }
   .tone-calm {
     background: linear-gradient(135deg, #eff9f3 0%, #f7fcf8 100%);
     border-color: #cfe9d9;
@@ -681,20 +651,6 @@
   .tone-red .alert-badge {
     background: rgba(221, 75, 57, 0.15);
     color: #9f2f22;
-  }
-  .tone-specialist,
-  .tone-specialist-watch {
-    background: linear-gradient(135deg, #edf4ff 0%, #f7faff 100%);
-    border-color: #cfe0f7;
-  }
-  .tone-specialist .alert-badge,
-  .tone-specialist-watch .alert-badge {
-    background: rgba(43, 121, 194, 0.12);
-    color: #1d5e9a;
-  }
-  .tone-specialist-watch {
-    background: linear-gradient(135deg, #eef6ff 0%, #edf7fb 100%);
-    border-color: #bfd7f1;
   }
   .alerts-footnote {
     margin-top: 8px;
@@ -905,3 +861,4 @@
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
   }
 </style>
+
