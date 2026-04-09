@@ -12,6 +12,7 @@
     dier, 
     spotting, 
     foto, 
+    groteFoto, 
     isExpanded, 
     currentUser, 
     onToggle 
@@ -19,6 +20,7 @@
     dier: any; 
     spotting: Spotting | null | undefined; 
     foto: string; 
+    groteFoto?: string; 
     isExpanded: boolean; 
     currentUser: string; 
     onToggle: () => void; 
@@ -31,7 +33,7 @@
   let gettingLocation = $state(false);
   let locationAttempted = $state(false);
 
-  let groteFoto = $derived(foto ? foto.replace(/\/\d+px-/, '/800px-') : null);
+  let groteFotoSrc = $derived(groteFoto || (foto ? foto.replace(/\/\d+px-/, "/1600px-") : null));
 
   // Reset error state when foto prop changes
   $effect(() => {
@@ -144,10 +146,10 @@
 
   {#if isExpanded}
     <div class="wl-detail">
-      {#if groteFoto && !imgError}
+      {#if groteFotoSrc && !imgError}
         <figure class="wl-grote-beeld">
           <img 
-            src={groteFoto} 
+            src={groteFotoSrc} 
             alt={dier.naam} 
             class="wl-foto-groot" 
             loading="lazy" 
@@ -252,8 +254,27 @@
   .wl-chevron.open { transform: rotate(180deg); }
 
   .wl-detail { padding: 0 14px 14px 14px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 16px; margin-top: 10px; }
-  .wl-grote-beeld { width: 100%; margin: 0; position: relative; height: 260px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px -6px rgba(0,0,0,0.2); }
-  .wl-foto-groot { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .wl-grote-beeld {
+    width: 100%;
+    margin: 0;
+    position: relative;
+    height: 260px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px -6px rgba(0,0,0,0.2);
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wl-foto-groot {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    display: block;
+    background: transparent;
+  }
   .wl-names { display: flex; flex-direction: column; gap: 4px; background: #f8fafc; padding: 12px; border-radius: 10px; }
   .wl-name-row { font-size: 0.85rem; color: #475569; display: flex; }
   .wl-name-row strong { width: 40px; color: #1e293b; }
@@ -302,6 +323,7 @@
   :global(html.dark) .wl-naam { color: #e2e8f0; }
   :global(html.dark) .wl-foto-ph { background: #334155; }
   :global(html.dark) .wl-detail { border-top-color: #334155; }
+  :global(html.dark) .wl-grote-beeld { background: #0f172a; }
   :global(html.dark) .wl-names { background: #1e293b; }
   :global(html.dark) .wl-name-row strong { color: #cbd5e1; }
   :global(html.dark) .wl-name-row { color: #94a3b8; }

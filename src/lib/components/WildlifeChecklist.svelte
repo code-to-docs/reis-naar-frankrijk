@@ -9,7 +9,8 @@
   import WildlifeCard from "./wildlife/WildlifeCard.svelte";
 
   let spottings: Record<string, any> = $state({}); // Firestore data lookup
-  let fotos: Record<string, string> = $state({});    // Wiki photo lookup
+  let fotos: Record<string, string> = $state({}); // Wiki thumbnail lookup
+  let fotosGroot: Record<string, string> = $state({}); // Wiki high-res lookup
   let zoek = $state("");
   let filterStatus = $state("alle");
   let filterRegio = $state("alle");
@@ -28,15 +29,18 @@
   });
 
   onMount(() => {
-    const CACHE_KEY = "wildlife_fotos_v2";
+    const CACHE_KEY = "wildlife_fotos_v3";
     const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 uur
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
         if (parsed.timestamp && (Date.now() - parsed.timestamp) < CACHE_MAX_AGE) {
-          fotos = parsed.data || {};
-          const missing = wildlifeData.filter(d => !fotos[d.id]);
+          const parsedThumbs = parsed.data?.thumb || parsed.data || {};
+          const parsedFull = parsed.data?.full || {};
+          fotos = parsedThumbs;
+          fotosGroot = parsedFull;
+          const missing = wildlifeData.filter(d => !fotos[d.id] || !fotosGroot[d.id]);
           if (missing.length === 0) return;
           laadFotos(missing);
           return;
@@ -47,10 +51,15 @@
   });
 
   function laadFotos(dieren: any[]) {
-    const CACHE_KEY = "wildlife_fotos_v2";
+    const CACHE_KEY = "wildlife_fotos_v3";
     let index = 0;
     const batchSize = 3;
     let retries = 0;
+
+    function maakGrotereThumbUrl(url: string) {
+      if (!url) return url;
+      return url.replace(/\/\d+px-/, "/1600px-");
+    }
 
     async function laadEnkel(dier: any) {
       try {
@@ -61,7 +70,11 @@
         if (res.ok) {
           const data = await res.json();
           if (data.thumbnail && data.thumbnail.source) {
-            return { id: dier.id, src: data.thumbnail.source };
+            return {
+              id: dier.id,
+              thumb: data.thumbnail.source,
+              full: data.originalimage?.source || maakGrotereThumbUrl(data.thumbnail.source)
+            };
           }
         }
       } catch (e) {}
@@ -71,7 +84,12 @@
     function laadBatch() {
       const batch = dieren.slice(index, index + batchSize);
       if (batch.length === 0) {
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: fotos })); } catch (e) {}
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({
+            timestamp: Date.now(),
+            data: { thumb: fotos, full: fotosGroot }
+          }));
+        } catch (e) {}
         return;
       }
       Promise.all(batch.map(laadEnkel)).then((results) => {
@@ -80,16 +98,23 @@
         results.forEach(res => {
           if (res && res.retry) {
             gotRateLimited = true;
-          } else if (res && res.src) {
-            fotos[res.id] = res.src;
+          } else if (res && res.thumb) {
+            fotos[res.id] = res.thumb;
+            if (res.full) fotosGroot[res.id] = res.full;
             changed = true;
           }
         });
         
         if (changed) {
           fotos = { ...fotos };
+          fotosGroot = { ...fotosGroot };
           // Save incrementally so progress isn't lost if user navigates away
-          try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: fotos })); } catch (e) {}
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+              timestamp: Date.now(),
+              data: { thumb: fotos, full: fotosGroot }
+            }));
+          } catch (e) {}
         }
 
         if (gotRateLimited && retries < 5) {
@@ -193,6 +218,7 @@
       {dier} 
       spotting={spottings[dier.id]} 
       foto={fotos[dier.id]} 
+      groteFoto={fotosGroot[dier.id]} 
       isExpanded={expandedDier === dier.id} 
       currentUser={appState.gebruiker} 
       onToggle={() => expandedDier = expandedDier === dier.id ? null : dier.id} 
