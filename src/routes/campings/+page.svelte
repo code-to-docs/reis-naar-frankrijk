@@ -4,7 +4,8 @@
 </script>
 
 <div class="page-transition page-shell">
-  <GedeeldeLijst titel="Campings" emoji={E.CAMPING}
+  <GedeeldeLijst titel="Overnachtingen" emoji={E.CAMPING}
     collectie="campings" metLink={true}
-    placeholder="Naam camping..." />
+    placeholder="Naam camping, Airbnb of hotel..."
+    toonDesktopTitel={false} />
 </div>

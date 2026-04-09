@@ -14,7 +14,8 @@
     collectie = '',
     afvinkbaar = false,
     metLink = false,
-    placeholder = 'Nieuw item...'
+    placeholder = 'Nieuw item...',
+    toonDesktopTitel = true
   } = $props();
 
   let items: any[] = $state([]);
@@ -99,7 +100,7 @@
 </script>
 
 <div class="gl-container">
-  <h2>{emoji} {titel}</h2>
+  <h2 class="gl-title" class:desktop-hidden={!toonDesktopTitel}>{emoji} {titel}</h2>
 
   {#if afvinkbaar}
     <p class="gl-voortgang">{aantalGedaan}/{items.length} gedaan</p>
@@ -163,6 +164,13 @@
 
 <style>
   .gl-container { padding: 0; }
+  .gl-title {
+    margin: 0 0 12px;
+    color: var(--heading);
+    font-size: clamp(1.55rem, 4.2vw, 2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
   .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: 0.9rem; }
   .progress-fill { background: var(--groen); }
   .gl-item-content { flex: 1; min-width: 0; }
@@ -182,4 +190,10 @@
   .gl-submit { flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
   .gl-add-btn { width: 100%; margin-top: 12px; padding: 14px; font-size: 18px; font-weight: 600; }
+
+  @media (min-width: 1100px) {
+    .gl-title.desktop-hidden {
+      display: none;
+    }
+  }
 </style>

@@ -87,7 +87,7 @@
         </a>
         <a href="/campings" class="quick-btn">
           <div class="quick-content">
-            <span>Bekijk campings</span>
+            <span>Bekijk overnachtingen</span>
             <small>Snel naar je verblijfopties</small>
           </div>
           <div class="icon">{E.CAMPING}</div>

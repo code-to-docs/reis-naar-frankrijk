@@ -6,5 +6,6 @@
 <div class="page-transition page-shell">
   <GedeeldeLijst titel="Bezienswaardigheden" emoji={E.PIN}
     collectie="pois" metLink={true}
-    placeholder="Naam plek..." />
+    placeholder="Naam plek..."
+    toonDesktopTitel={false} />
 </div>

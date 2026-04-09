@@ -7,7 +7,7 @@
     switch ($page.url.pathname) {
       case "/": return `FR Frankrijk`;
       case "/budget": return `${E.GELD} Vakantiebudget`;
-      case "/campings": return `${E.CAMPING} Campings`;
+      case "/campings": return `${E.CAMPING} Overnachtingen`;
       case "/poi": return `${E.PIN} Bezienswaardigheden`;
       case "/meer": return "Menu & Instellingen";
       default:

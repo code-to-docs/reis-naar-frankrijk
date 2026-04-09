@@ -8,7 +8,7 @@
 
   const paginas = [
     { id: "/", emoji: "\u{1F3E0}", label: "Home" },
-    { id: "/campings", emoji: E.CAMPING, label: "Campings" },
+    { id: "/campings", emoji: E.CAMPING, label: "Overnachtingen" },
     { id: "/poi", emoji: E.PIN, label: "POIs" },
     { id: "/budget", emoji: E.GELD, label: "Budget" },
     { id: "/meer", emoji: "\u2630", label: "Meer" }
