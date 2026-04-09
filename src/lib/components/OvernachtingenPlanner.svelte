@@ -63,6 +63,11 @@
 
   let toonForm = $state(false);
   let gpsBezig = $state(false);
+  let selectieActief = $state(false);
+  let selectieStartKey = $state<string | null>(null);
+  let selectieEindKey = $state<string | null>(null);
+  let activeTouchId = $state<number | null>(null);
+  let onderdrukKlikTot = 0;
 
   let naamInput = $state("");
   let typeInput = $state<OvernachtingType>("camping");
@@ -93,6 +98,10 @@
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const dd = String(d.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function parseDagKey(dayKey: string) {
+    return parseInputDatum(dayKey);
   }
 
   function maandKeyVanDatum(d: Date) {
@@ -293,6 +302,120 @@
     geselecteerdeMaand = maandSleutels[target];
   }
 
+  function zetSelectie(startKey: string, eindKey: string) {
+    const start = parseDagKey(startKey);
+    const end = parseDagKey(eindKey);
+    if (!start || !end) return;
+    if (start.getTime() <= end.getTime()) {
+      selectieStartKey = startKey;
+      selectieEindKey = eindKey;
+      return;
+    }
+    selectieStartKey = eindKey;
+    selectieEindKey = startKey;
+  }
+
+  function commitSelectie() {
+    if (!selectieStartKey || !selectieEindKey) return;
+    const start = parseDagKey(selectieStartKey);
+    const end = parseDagKey(selectieEindKey);
+    if (!start || !end) return;
+    const dagen = Math.max(1, Math.floor((end.getTime() - start.getTime()) / 86400000) + 1);
+    startDatumInput = selectieStartKey;
+    nachtenInput = String(dagen);
+    toonForm = true;
+  }
+
+  function selectieBereik() {
+    if (!selectieStartKey || !selectieEindKey) return null;
+    const start = parseDagKey(selectieStartKey);
+    const end = parseDagKey(selectieEindKey);
+    if (!start || !end) return null;
+    return { start: start.getTime(), end: end.getTime() };
+  }
+
+  function dagInSelectie(dayKey: string, isLeeg: boolean) {
+    if (isLeeg) return false;
+    const bounds = selectieBereik();
+    const day = parseDagKey(dayKey);
+    if (!bounds || !day) return false;
+    const t = day.getTime();
+    return t >= bounds.start && t <= bounds.end;
+  }
+
+  function dagIsSelectieStart(dayKey: string, isLeeg: boolean) {
+    return !isLeeg && dayKey === selectieStartKey;
+  }
+
+  function dagIsSelectieEinde(dayKey: string, isLeeg: boolean) {
+    return !isLeeg && dayKey === selectieEindKey;
+  }
+
+  function handleDayClick(dayKey: string, isLeeg: boolean) {
+    if (isLeeg) return;
+    if (Date.now() < onderdrukKlikTot) return;
+    zetSelectie(dayKey, dayKey);
+    commitSelectie();
+  }
+
+  function handleDayMouseDown(event: MouseEvent, dayKey: string, isLeeg: boolean) {
+    if (isLeeg || event.button !== 0) return;
+    event.preventDefault();
+    selectieActief = true;
+    zetSelectie(dayKey, dayKey);
+  }
+
+  function handleDayMouseEnter(dayKey: string, isLeeg: boolean) {
+    if (!selectieActief || !selectieStartKey || isLeeg) return;
+    zetSelectie(selectieStartKey, dayKey);
+  }
+
+  function handleGlobalMouseUp() {
+    if (!selectieActief) return;
+    selectieActief = false;
+    commitSelectie();
+    onderdrukKlikTot = Date.now() + 260;
+  }
+
+  function handleDayTouchStart(event: TouchEvent, dayKey: string, isLeeg: boolean) {
+    if (isLeeg) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    activeTouchId = touch.identifier;
+    selectieActief = true;
+    zetSelectie(dayKey, dayKey);
+  }
+
+  function handleGlobalTouchMove(event: TouchEvent) {
+    if (!selectieActief || activeTouchId === null || !selectieStartKey) return;
+    const activeTouch = Array.from(event.touches).find((t) => t.identifier === activeTouchId);
+    if (!activeTouch) return;
+    const element = document.elementFromPoint(activeTouch.clientX, activeTouch.clientY) as HTMLElement | null;
+    const dayEl = element?.closest<HTMLElement>("[data-daykey]");
+    const dayKey = dayEl?.dataset.daykey;
+    if (!dayKey) return;
+    event.preventDefault();
+    zetSelectie(selectieStartKey, dayKey);
+  }
+
+  function finishTouchSelection(event: TouchEvent) {
+    if (activeTouchId === null) return;
+    const changed = Array.from(event.changedTouches).some((t) => t.identifier === activeTouchId);
+    if (!changed) return;
+    activeTouchId = null;
+    if (!selectieActief) return;
+    selectieActief = false;
+    commitSelectie();
+    onderdrukKlikTot = Date.now() + 360;
+  }
+
+  function handleDayKeydown(event: KeyboardEvent, dayKey: string, isLeeg: boolean) {
+    if (isLeeg) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    handleDayClick(dayKey, false);
+  }
+
   function resetForm() {
     naamInput = "";
     typeInput = "camping";
@@ -406,6 +529,11 @@
   }
 
   onMount(() => {
+    window.addEventListener("mouseup", handleGlobalMouseUp);
+    window.addEventListener("touchmove", handleGlobalTouchMove, { passive: false });
+    window.addEventListener("touchend", finishTouchSelection);
+    window.addEventListener("touchcancel", finishTouchSelection);
+
     const ref = collection(db, "campings");
     const sorted = query(ref, orderBy("startDatum", "asc"));
 
@@ -424,7 +552,13 @@
       }
     );
 
-    return () => unsubscribe?.();
+    return () => {
+      window.removeEventListener("mouseup", handleGlobalMouseUp);
+      window.removeEventListener("touchmove", handleGlobalTouchMove);
+      window.removeEventListener("touchend", finishTouchSelection);
+      window.removeEventListener("touchcancel", finishTouchSelection);
+      unsubscribe?.();
+    };
   });
 </script>
 
@@ -520,6 +654,7 @@
       <strong>{maandLabel(geselecteerdeMaand)}</strong>
       <button class="ov-month-btn" onclick={() => stapMaand(1)} disabled={!kanVolgendeMaand}>Volgende</button>
     </div>
+    <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
 
     <div class="ov-weekdays">
       {#each WEEKDAGEN as wd}
@@ -527,9 +662,25 @@
       {/each}
     </div>
 
-    <div class="ov-grid">
+    <div class="ov-grid" class:selecting={selectieActief}>
       {#each kalenderCels as cel (cel.key)}
-        <div class="ov-day" class:leeg={cel.isLeeg} class:vandaag={cel.isVandaag}>
+        <button
+          type="button"
+          class="ov-day"
+          class:leeg={cel.isLeeg}
+          class:vandaag={cel.isVandaag}
+          class:geselecteerd={dagInSelectie(cel.key, cel.isLeeg)}
+          class:selectiestart={dagIsSelectieStart(cel.key, cel.isLeeg)}
+          class:selectieeinde={dagIsSelectieEinde(cel.key, cel.isLeeg)}
+          data-daykey={cel.isLeeg ? undefined : cel.key}
+          disabled={cel.isLeeg}
+          aria-label={cel.isLeeg ? undefined : `Kies datum ${cel.key}`}
+          onmousedown={(event) => handleDayMouseDown(event, cel.key, cel.isLeeg)}
+          onmouseenter={() => handleDayMouseEnter(cel.key, cel.isLeeg)}
+          onclick={() => handleDayClick(cel.key, cel.isLeeg)}
+          ontouchstart={(event) => handleDayTouchStart(event, cel.key, cel.isLeeg)}
+          onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg)}
+        >
           {#if cel.dagNummer !== null}
             <div class="ov-day-number">{cel.dagNummer}</div>
             {#if cel.entries.length > 0}
@@ -545,7 +696,7 @@
               </div>
             {/if}
           {/if}
-        </div>
+        </button>
       {/each}
     </div>
 
@@ -745,6 +896,12 @@
     text-transform: capitalize;
     color: #0f172a;
   }
+  .ov-calendar-hint {
+    margin: -2px 0 10px;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+  }
   .ov-month-btn {
     width: auto;
     min-height: 34px;
@@ -778,7 +935,12 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 6px;
   }
+  .ov-grid.selecting {
+    user-select: none;
+  }
   .ov-day {
+    appearance: none;
+    width: 100%;
     min-height: 88px;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
@@ -787,15 +949,34 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+    touch-action: none;
+    text-align: left;
+    font: inherit;
   }
   .ov-day.leeg {
     background: #f8fafc;
     border-style: dashed;
     opacity: 0.55;
+    cursor: default;
+    touch-action: auto;
+  }
+  .ov-day:disabled {
+    pointer-events: none;
   }
   .ov-day.vandaag {
     border-color: #2563eb;
     box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+  }
+  .ov-day.geselecteerd {
+    background: #eef5ff;
+    border-color: #60a5fa;
+  }
+  .ov-day.selectiestart,
+  .ov-day.selectieeinde {
+    border-color: #2563eb;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
   }
   .ov-day-number {
     font-size: 0.78rem;
@@ -980,7 +1161,8 @@
   :global(html.dark) .ov-top p,
   :global(html.dark) .ov-weekdays div,
   :global(html.dark) .ov-more,
-  :global(html.dark) .ov-empty {
+  :global(html.dark) .ov-empty,
+  :global(html.dark) .ov-calendar-hint {
     color: #94a3b8;
   }
   :global(html.dark) .ov-stat,
@@ -993,6 +1175,10 @@
   }
   :global(html.dark) .ov-day.leeg {
     background: #0f172a;
+  }
+  :global(html.dark) .ov-day.geselecteerd {
+    background: #10233f;
+    border-color: #3b82f6;
   }
   :global(html.dark) .ov-day-number,
   :global(html.dark) .ov-calendar-head strong,
