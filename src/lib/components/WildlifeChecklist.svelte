@@ -1,34 +1,26 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import { collection, onSnapshot, doc, setDoc, deleteDoc } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
-  import { gebruiker } from "$lib/stores.js";
+  import { appState } from "$lib/stores.svelte.js";
   import { wildlifeData, categorieLabels, regioLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
   import WildlifeStats from "./wildlife/WildlifeStats.svelte";
   import WildlifeCard from "./wildlife/WildlifeCard.svelte";
 
-  let currentUser = $state("");
-  let spottings = $state({});
-  let fotos = $state({});
+  let spottings: Record<string, any> = $state({}); // Firestore data lookup
+  let fotos: Record<string, string> = $state({});    // Wiki photo lookup
   let zoek = $state("");
   let filterStatus = $state("alle");
   let filterRegio = $state("alle");
   let filterCategorie = $state("alle");
-  let expandedDier = $state(null);
+  let expandedDier: string | null = $state(null);
 
-
-  let unsubUser;
-  onMount(() => {
-    unsubUser = gebruiker.subscribe(v => currentUser = v);
-    return () => unsubUser?.();
-  });
-
-  let unsubFirestore;
+  let unsubFirestore: (() => void) | undefined;
   onMount(() => {
     const ref = collection(db, "wildlife");
     unsubFirestore = onSnapshot(ref, (snapshot) => {
-      const data = {};
+      const data: Record<string, any> = {};
       snapshot.forEach((d) => { data[d.id] = d.data(); });
       spottings = data;
     });
@@ -37,7 +29,7 @@
 
   onMount(() => {
     const CACHE_KEY = "wildlife_fotos_v2";
-    const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+    const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 uur
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
@@ -54,40 +46,60 @@
     laadFotos(wildlifeData);
   });
 
-  function laadFotos(dieren) {
+  function laadFotos(dieren: any[]) {
     const CACHE_KEY = "wildlife_fotos_v2";
     let index = 0;
-    const batchSize = 5;
+    const batchSize = 3;
+    let retries = 0;
+
+    async function laadEnkel(dier: any) {
+      try {
+        const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dier.wiki), {
+          headers: { "Api-User-Agent": "ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)" }
+        });
+        if (res.status === 429) return { id: dier.id, retry: true };
+        if (res.ok) {
+          const data = await res.json();
+          if (data.thumbnail && data.thumbnail.source) {
+            return { id: dier.id, src: data.thumbnail.source };
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
     function laadBatch() {
       const batch = dieren.slice(index, index + batchSize);
       if (batch.length === 0) {
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: fotos })); } catch (e) {}
         return;
       }
-      Promise.all(batch.map(async (dier) => {
-        try {
-          const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dier.wiki));
-          if (res.ok) {
-            const data = await res.json();
-            if (data.thumbnail && data.thumbnail.source) {
-              const src = data.thumbnail.source;
-              const sized = src.replace(/\/\d+px-/, "/300px-");
-              return { id: dier.id, src: sized };
-            }
-          }
-        } catch (e) {}
-        return null;
-      })).then((results) => {
+      Promise.all(batch.map(laadEnkel)).then((results) => {
         let changed = false;
+        let gotRateLimited = false;
         results.forEach(res => {
-          if (res) {
+          if (res && res.retry) {
+            gotRateLimited = true;
+          } else if (res && res.src) {
             fotos[res.id] = res.src;
             changed = true;
           }
         });
-        if (changed) fotos = { ...fotos };
-        index += batchSize;
-        setTimeout(laadBatch, 200);
+        
+        if (changed) {
+          fotos = { ...fotos };
+          // Save incrementally so progress isn't lost if user navigates away
+          try { localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: fotos })); } catch (e) {}
+        }
+
+        if (gotRateLimited && retries < 5) {
+          retries++;
+          setTimeout(laadBatch, 2500 * retries);
+        } else {
+          retries = 0;
+          index += batchSize;
+          setTimeout(laadBatch, 800);
+        }
       });
     }
     laadBatch();
@@ -98,8 +110,10 @@
     return wildlifeData.filter((dier) => {
       const zoekMatch = zoek === "" ||
         dier.naam.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.frans.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.info.toLowerCase().includes(zoek.toLowerCase());
+        dier.duits.toLowerCase().includes(zoek.toLowerCase()) ||
+        dier.latijn.toLowerCase().includes(zoek.toLowerCase()) ||
+        dier.kenmerken.toLowerCase().includes(zoek.toLowerCase()) ||
+        dier.waar_wanneer.toLowerCase().includes(zoek.toLowerCase());
       const statusMatch = filterStatus === "alle" ||
         (filterStatus === "gespot" && spottings[dier.id]) ||
         (filterStatus === "niet" && !spottings[dier.id]);
@@ -180,7 +194,7 @@
       spotting={spottings[dier.id]} 
       foto={fotos[dier.id]} 
       isExpanded={expandedDier === dier.id} 
-      {currentUser} 
+      currentUser={appState.gebruiker} 
       onToggle={() => expandedDier = expandedDier === dier.id ? null : dier.id} 
     />
   {/each}

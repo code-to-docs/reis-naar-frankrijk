@@ -1,8 +1,9 @@
 <script>
   import "../app.css";
   import Navigation from "$lib/components/Navigation.svelte";
-  import { gebruiker, initDarkMode } from "$lib/stores.js";
+  import { appState } from "$lib/stores.svelte.js";
   import Snackbar from "$lib/components/Snackbar.svelte";
+  import Header from "$lib/components/Header.svelte";
 
   let { children } = $props();
   let naam = $state("");
@@ -13,16 +14,14 @@
     const opgeslagen = localStorage.getItem("naam") || "";
     naam = opgeslagen;
     if (opgeslagen) {
-      gebruiker.set(opgeslagen);
-      initDarkMode(opgeslagen);
+      appState.init(opgeslagen);
     }
   }
 
   function kiesNaam(n) {
     naam = n;
     localStorage.setItem("naam", n);
-    gebruiker.set(n);
-    initDarkMode(n);
+    appState.init(n);
   }
 </script>
 
@@ -39,6 +38,7 @@
     </div>
   </div>
 {:else}
+  <Header />
   {@render children()}
   <Snackbar />
   <Navigation />

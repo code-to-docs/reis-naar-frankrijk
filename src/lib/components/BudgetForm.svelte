@@ -1,7 +1,7 @@
 <script>
   import { addDoc, collection, serverTimestamp } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
-  import { gebruiker, toonSnackbar } from "$lib/stores.js";
+  import { appState, toonSnackbar } from "$lib/stores.svelte.js";
   import { E } from "$lib/emojis.js";
 
   let { cats } = $props();
@@ -18,7 +18,7 @@
         bedrag: parseFloat(bedrag),
         categorie,
         omschrijving: omschrijving.trim(),
-        door: $gebruiker,
+        door: appState.gebruiker,
         datum: serverTimestamp()
       });
       bedrag = "";

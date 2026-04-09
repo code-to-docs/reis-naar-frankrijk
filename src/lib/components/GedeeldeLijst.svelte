@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import {
     collection, onSnapshot, addDoc, updateDoc,
     deleteDoc, doc, serverTimestamp
   } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
-  import { gebruiker, toonSnackbar } from '$lib/stores.js';
+  import { appState, toonSnackbar } from '$lib/stores.svelte.js';
   import { E } from '$lib/emojis.js';
 
   let {
@@ -17,19 +17,19 @@
     placeholder = 'Nieuw item...'
   } = $props();
 
-  let items = $state([]);
+  let items: any[] = $state([]);
   let nieuwItem = $state('');
   let extraVeld = $state('');
   let linkVeld = $state('');
   let toonForm = $state(false);
-  let unsubscribe;
+  let unsubscribe: (() => void) | undefined;
 
   let aantalGedaan = $derived(items.filter(i => i.gedaan).length);
 
   onMount(() => {
     unsubscribe = onSnapshot(collection(db, collectie), (snapshot) => {
       items = snapshot.docs
-        .map(d => ({ id: d.id, ...d.data() }))
+        .map(d => ({ id: d.id, ...d.data() } as any))
         .sort((a, b) => (a.datum?.seconds || 0) - (b.datum?.seconds || 0));
     });
     return () => unsubscribe?.();
@@ -37,9 +37,9 @@
 
   async function voegToe() {
     if (!nieuwItem.trim()) return;
-    const data = {
+    const data: any = {
       naam: nieuwItem.trim(),
-      door: $gebruiker,
+      door: appState.gebruiker,
       datum: serverTimestamp()
     };
     if (afvinkbaar) data.gedaan = false;
@@ -57,11 +57,11 @@
     }
   }
 
-  async function toggle(item) {
+  async function toggle(item: any) {
     try {
       await updateDoc(doc(db, collectie, item.id), {
         gedaan: !item.gedaan,
-        afgevinktDoor: $gebruiker
+        afgevinktDoor: appState.gebruiker
       });
     } catch (e) {
       console.error(e);

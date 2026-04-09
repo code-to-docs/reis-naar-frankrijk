@@ -1,28 +1,20 @@
-<script>
-  import { onMount } from 'svelte';
-  import { snackbar } from '$lib/stores.js';
+<script lang="ts">
+  import { appState } from '$lib/stores.svelte.js';
   import { haptic } from '$lib/utils/haptic.js';
 
-  let bericht = $state(null);
   let zichtbaar = $state(false);
   let verdwijnt = $state(false);
-  let timer;
+  let timer: any;
 
-  onMount(() => {
-    const unsub = snackbar.subscribe(val => {
-      if (val) {
-        bericht = val;
-        verdwijnt = false;
-        zichtbaar = true;
-        haptic('light');
-        clearTimeout(timer);
-        timer = setTimeout(() => dismiss(), 2500);
-      }
-    });
-    return () => {
-      unsub?.();
+  $effect(() => {
+    const val = (appState as any).snackbar;
+    if (val) {
+      verdwijnt = false;
+      zichtbaar = true;
+      haptic('light');
       clearTimeout(timer);
-    };
+      timer = setTimeout(() => dismiss(), 2500);
+    }
   });
 
   function dismiss() {
@@ -30,18 +22,18 @@
     setTimeout(() => {
       zichtbaar = false;
       verdwijnt = false;
-      snackbar.set(null);
+      (appState as any).snackbar = null;
     }, 300);
   }
 </script>
 
-{#if zichtbaar && bericht}
+{#if zichtbaar && (appState as any).snackbar}
   <button class="snackbar-overlay" onclick={dismiss}>
-    <div class="snackbar snackbar-{bericht.type || 'success'}" class:verdwijnt>
-      {#if bericht.emoji}
-        <span class="snackbar-emoji">{bericht.emoji}</span>
+    <div class="snackbar snackbar-{(appState as any).snackbar.type || 'success'}" class:verdwijnt>
+      {#if (appState as any).snackbar.emoji}
+        <span class="snackbar-emoji">{(appState as any).snackbar.emoji}</span>
       {/if}
-      <span class="snackbar-tekst">{bericht.tekst}</span>
+      <span class="snackbar-tekst">{(appState as any).snackbar.tekst}</span>
     </div>
   </button>
 {/if}

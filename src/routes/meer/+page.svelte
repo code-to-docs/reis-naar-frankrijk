@@ -1,6 +1,8 @@
 <script>
-  import { darkMode, toggleDarkMode, gebruiker } from "$lib/stores.js";
+  import { appState } from "$lib/stores.svelte.js";
   import { E } from "$lib/emojis.js";
+
+
 
   const meerGroepen = [
     {
@@ -29,7 +31,7 @@
   ];
 
   function handleToggleDark() {
-    toggleDarkMode($gebruiker);
+    appState.toggleDarkMode();
   }
 </script>
 
@@ -55,11 +57,11 @@
     <div class="meer-groep-label">Instellingen</div>
     <div class="meer-groep-items">
       <button class="dark-toggle-item" onclick={handleToggleDark}>
-        <span class="dark-toggle-emoji">{$darkMode ? "\u2600\uFE0F" : "\u{1F319}"}</span>
-        <span class="dark-toggle-label">{$darkMode ? "Light mode" : "Dark mode"}</span>
-        <div class="toggle-track" class:active={$darkMode}>
+        <span class="dark-toggle-emoji">{appState.isDarkMode ? "\u2600\uFE0F" : "\u{1F319}"}</span>
+        <span class="dark-toggle-label">{appState.isDarkMode ? "Light mode" : "Dark mode"}</span>
+        <div class="toggle-track" class:active={appState.isDarkMode}>
           <div class="toggle-thumb">
-            {$darkMode ? "\u{1F319}" : "\u2600\uFE0F"}
+            {appState.isDarkMode ? "\u{1F319}" : "\u2600\uFE0F"}
           </div>
         </div>
       </button>

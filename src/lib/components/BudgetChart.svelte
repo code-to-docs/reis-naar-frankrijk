@@ -54,7 +54,8 @@
       ctx.textBaseline = "middle";
 
       ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
-      ctx.fillStyle = "#1e293b";
+      const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains("dark");
+      ctx.fillStyle = isDark ? "#e2e8f0" : "#1e293b";
       ctx.fillText(pct + "%", centerX, centerY);
 
       ctx.restore();
@@ -197,6 +198,9 @@
     border-radius: 2px;
     flex-shrink: 0;
   }
-  .legenda-label { color: #64748b; }
-  .legenda-bedrag { color: #1e293b; font-weight: 600; }
+  .legenda-label { color: #64748b; transition: color 0.2s; }
+  .legenda-bedrag { color: #1e293b; font-weight: 600; transition: color 0.2s; }
+
+  :global(html.dark) .legenda-label { color: #94a3b8; }
+  :global(html.dark) .legenda-bedrag { color: #e2e8f0; }
 </style>

@@ -1,6 +1,6 @@
 <script>
   import { page } from '$app/stores';
-  import { gebruiker } from '$lib/stores.js';
+  import { appState } from '$lib/stores.svelte.js';
   import { E } from '$lib/emojis.js';
   import GedeeldeLijst from '$lib/components/GedeeldeLijst.svelte';
   import Noodinfo from '$lib/components/Noodinfo.svelte';
@@ -28,9 +28,13 @@
       collectie="gerechten" afvinkbaar={true}
       placeholder="Nieuw gerecht..." />
   {:else if id === "paklijst"}
-    <GedeeldeLijst titel={"Paklijst (" + $gebruiker + ")"} emoji={E.LIJST}
-      collectie={"paklijst_" + $gebruiker.toLowerCase()} afvinkbaar={true}
-      placeholder="Wat moet je inpakken..." />
+    <GedeeldeLijst 
+      titel={"Paklijst (" + appState.gebruiker + ")"} 
+      emoji={E.LIJST}
+      collectie={"paklijst_" + appState.gebruiker.toLowerCase()} 
+      afvinkbaar={true}
+      placeholder="Wat moet je inpakken..." 
+    />
   {:else if id === "boodschappen"}
     <GedeeldeLijst titel="Boodschappen" emoji={E.WINKEL}
       collectie="boodschappen" afvinkbaar={true}

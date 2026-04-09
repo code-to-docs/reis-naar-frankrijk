@@ -1,18 +1,21 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
   import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
-  let laatsteSpotting = $state(null);
-  let dierInfo = $state(null);
+  import { formatFullDate } from '$lib/utils/formatters.js';
+
+  let laatsteSpotting: any = $state(null);
+  let dierInfo: any = $state(null);
   let foto = $state('');
+  let imgError = $state(false);
 
   onMount(() => {
     const ref = collection(db, 'wildlife');
     const q = query(ref, orderBy("datum", "desc"), limit(1));
     const unsub = onSnapshot(q, (snapshot) => {
-      let nieuwste = null;
+      let nieuwste: any = null;
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
         nieuwste = { id: d.id, ...d.data() };
@@ -31,7 +34,10 @@
               }
             }
           } catch (e) {}
-          fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(dierInfo.wiki))
+          
+          fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(dierInfo.wiki), {
+            headers: { 'Api-User-Agent': 'ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)' }
+          })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
               if (data && data.thumbnail && data.thumbnail.source) foto = data.thumbnail.source;
@@ -42,7 +48,6 @@
     });
     return () => unsub();
   });
-  function formatDate(d) { return new Date(d).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' }); }
 </script>
 
 {#if laatsteSpotting && dierInfo}
@@ -51,21 +56,21 @@
     <span class="spot-label">{E.VOGEL} Laatste spotting</span>
   </div>
   <div class="spot-content">
-    {#if foto}
-      <img src={foto} alt={dierInfo.naam} class="spot-foto" />
+    {#if foto && !imgError}
+      <img src={foto} alt={dierInfo.naam} class="spot-foto" loading="lazy" onerror={() => imgError = true} />
     {:else}
-      <div class="spot-foto-placeholder">{categorieLabels[dierInfo.categorie]?.emoji || E.POOT}</div>
+      <div class="spot-foto-placeholder">{(categorieLabels as any)[dierInfo.categorie]?.emoji || E.POOT}</div>
     {/if}
     <div class="spot-info">
       <div class="spot-naam">
         {dierInfo.naam}
-        <span class="spot-zeldzaamheid" style="color: {zeldzaamheidLabels[dierInfo.zeldzaamheid].kleur}">
-          {zeldzaamheidLabels[dierInfo.zeldzaamheid].emoji}
+        <span class="spot-zeldzaamheid" style="color: {(zeldzaamheidLabels as any)[dierInfo.zeldzaamheid].kleur}">
+          {(zeldzaamheidLabels as any)[dierInfo.zeldzaamheid].emoji}
         </span>
       </div>
       <div class="spot-frans">{dierInfo.frans}</div>
       <div class="spot-meta">
-        <span>{E.KALENDER} {formatDate(laatsteSpotting.datum)}</span>
+        <span>{E.KALENDER} {formatFullDate(laatsteSpotting.datum).replace(/ \d{4}$/, '')}</span>
         <span>{E.PERSOON} {laatsteSpotting.door}</span>
       </div>
       {#if laatsteSpotting.locatie}
@@ -76,7 +81,7 @@
       {/if}
       <div class="spot-regios">
         {#each dierInfo.regios as regio}
-          <span class="spot-regio-tag">{regioLabels[regio]?.emoji} {regioLabels[regio]?.label}</span>
+          <span class="spot-regio-tag">{(regioLabels as any)[regio]?.emoji} {(regioLabels as any)[regio]?.label}</span>
         {/each}
       </div>
     </div>

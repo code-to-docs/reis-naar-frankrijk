@@ -5,10 +5,15 @@
     doc as firestoreDoc, serverTimestamp, setDoc
   } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
-  import { gebruiker, toonSnackbar } from "$lib/stores.js";
+  import { appState, toonSnackbar } from "$lib/stores.svelte.js";
   import BudgetChart from "./BudgetChart.svelte";
   import BudgetForm from "./BudgetForm.svelte";
   import { budgetCategorieen as cats, budgetCatMap } from "$lib/budgetCategories.js";
+  import { E } from "$lib/emojis.js";
+  import { 
+    formatEuro, formatEuroGroot, formatTime, 
+    getFriendlyDayLabel, getDayKey 
+  } from "$lib/utils/formatters.js";
 
   let uitgaven = $state([]);
   let budget = $state(2500);
@@ -40,37 +45,14 @@
   let gefilterdTotaal = $derived.by(() => gefilterdeUitgaven.reduce((sum, u) => sum + u.bedrag, 0));
   let isGefilterd = $derived(filterPersoon !== "alle" || filterCat !== "alle");
 
-  const dagNamenVol = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
-  const maandNamenVol = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
-
-  function getDagKey(timestamp) {
-    if (!timestamp?.seconds) return "onbekend";
-    const d = new Date(timestamp.seconds * 1000);
-    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  }
-
-  function getDagLabel(dagKey) {
-    if (dagKey === "onbekend") return "Onbekende datum";
-    const nu = new Date();
-    const vandaag = nu.getFullYear() + "-" + String(nu.getMonth()+1).padStart(2,"0") + "-" + String(nu.getDate()).padStart(2,"0");
-    const gisteren = new Date(nu.getTime() - 86400000);
-    const gisterenKey = gisteren.getFullYear() + "-" + String(gisteren.getMonth()+1).padStart(2,"0") + "-" + String(gisteren.getDate()).padStart(2,"0");
-    if (dagKey === vandaag) return "Vandaag";
-    if (dagKey === gisterenKey) return "Gisteren";
-    const parts = dagKey.split("-");
-    const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]), 12, 0, 0);
-    const naam = dagNamenVol[d.getDay()];
-    return naam.charAt(0).toUpperCase() + naam.slice(1) + " " + d.getDate() + " " + maandNamenVol[d.getMonth()];
-  }
-
   let gegroepeerdeUitgaven = $derived.by(() => {
     const items = gefilterdeUitgaven;
     const groepen = [];
     const groepMap = {};
     for (const u of items) {
-      const key = getDagKey(u.datum);
+      const key = getDayKey(u.datum);
       if (!groepMap[key]) {
-        groepMap[key] = { key, label: getDagLabel(key), items: [], totaal: 0 };
+        groepMap[key] = { key, label: getFriendlyDayLabel(u.datum), items: [], totaal: 0 };
         groepen.push(groepMap[key]);
       }
       groepMap[key].items.push(u);
@@ -79,22 +61,15 @@
     return groepen;
   });
 
-  function formatTijd(timestamp) {
-    if (!timestamp?.seconds) return "";
-    const d = new Date(timestamp.seconds * 1000);
-    return d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0");
-  }
-
-  function formatBedragGroot(n) {
-    if (n >= 1000) {
-      const str = Math.round(n).toString();
-      return str.slice(0, -3) + "." + str.slice(-3);
+  let { franziBetaald, dennisBetaald } = $derived.by(() => {
+    let f = 0, d = 0;
+    for (const u of uitgaven) {
+      if (u.door === "Franzi") f += u.bedrag;
+      else if (u.door === "Dennis") d += u.bedrag;
     }
-    return Math.round(n).toString();
-  }
+    return { franziBetaald: f, dennisBetaald: d };
+  });
 
-  let franziBetaald = $derived(uitgaven.filter(u => u.door === "Franzi").reduce((s,u) => s + u.bedrag, 0));
-  let dennisBetaald = $derived(uitgaven.filter(u => u.door === "Dennis").reduce((s,u) => s + u.bedrag, 0));
   let verschil = $derived(Math.abs(franziBetaald - dennisBetaald) / 2);
 
   function resetFilters() { filterPersoon = "alle"; filterCat = "alle"; }
@@ -170,10 +145,10 @@
       <div class="hero-info">
         <div class="hero-label">Resterend</div>
         <div class="hero-bedrag" style="color:{resterend >= 0 ? '#10b981' : '#ef4444'}">
-          {E.EURO}{formatBedragGroot(Math.abs(resterend))}
+          {formatEuroGroot(Math.abs(resterend))}
         </div>
         <div class="hero-sub">
-          <span>van {E.EURO}{formatBedragGroot(budget)}</span>
+          <span>van {formatEuroGroot(budget)}</span>
           <button class="edit-budget-btn" onclick={() => { toonBudgetEdit = !toonBudgetEdit; nieuwBudget = String(budget); }}>{E.PEN}</button>
         </div>
         <div class="hero-bar">
@@ -182,7 +157,7 @@
             background:{percentage <= 70 ? '#10b981' : percentage <= 90 ? '#f59e0b' : '#ef4444'}">
           </div>
         </div>
-        <div class="hero-uitgegeven">{E.EURO}{formatBedragGroot(totaal)} uitgegeven</div>
+        <div class="hero-uitgegeven">{formatEuroGroot(totaal)} uitgegeven</div>
       </div>
     </div>
   </div>
@@ -230,7 +205,7 @@
 
     {#if isGefilterd}
       <div class="filter-info">
-        <span>{E.ZOEK} {gefilterdeUitgaven.length} resultaten — {E.EURO}{gefilterdTotaal.toFixed(2)}</span>
+        <span>{E.ZOEK} {gefilterdeUitgaven.length} resultaten — {formatEuro(gefilterdTotaal)}</span>
         <button class="filter-reset" onclick={resetFilters}>{E.KRUIS} Reset</button>
       </div>
     {/if}
@@ -239,16 +214,16 @@
       <div class="dag-groep">
         <div class="dag-header">
           <span class="dag-label">{E.KALENDER} {groep.label}</span>
-          <span class="dag-totaal">{E.EURO}{groep.totaal.toFixed(2)}</span>
+          <span class="dag-totaal">{formatEuro(groep.totaal)}</span>
         </div>
         {#each groep.items as u (u.id)}
           <div class="entry-item">
             <span class="entry-emoji">{cats.find(c => c.id === u.categorie)?.emoji || E.LEEG}</span>
             <div class="entry-info">
               <strong>{u.omschrijving}</strong>
-              <small>{u.door} {formatTijd(u.datum)}</small>
+              <small>{u.door} {formatTime(u.datum)}</small>
             </div>
-            <strong class="entry-bedrag">{E.EURO}{u.bedrag.toFixed(2)}</strong>
+            <strong class="entry-bedrag">{formatEuro(u.bedrag)}</strong>
             <button class="entry-delete" onclick={() => verwijder(u.id)}>{E.PRULLENBAK}</button>
           </div>
         {/each}
@@ -266,22 +241,22 @@
       <h3>{E.HANDDRUK} Verrekening</h3>
       <div class="budget-rij">
         <span>Franzi betaald</span>
-        <strong>{E.EURO}{franziBetaald.toFixed(2)}</strong>
+        <strong>{formatEuro(franziBetaald)}</strong>
       </div>
       <div class="budget-rij">
         <span>Dennis betaald</span>
-        <strong>{E.EURO}{dennisBetaald.toFixed(2)}</strong>
+        <strong>{formatEuro(dennisBetaald)}</strong>
       </div>
       <hr class="verrekening-lijn" />
       {#if franziBetaald > dennisBetaald}
         <div class="verrekening-resultaat">
           <span>Dennis {E.PIJL} Franzi</span>
-          <strong>{E.EURO}{verschil.toFixed(2)}</strong>
+          <strong>{formatEuro(verschil)}</strong>
         </div>
       {:else if dennisBetaald > franziBetaald}
         <div class="verrekening-resultaat">
           <span>Franzi {E.PIJL} Dennis</span>
-          <strong>{E.EURO}{verschil.toFixed(2)}</strong>
+          <strong>{formatEuro(verschil)}</strong>
         </div>
       {:else}
         <div class="verrekening-resultaat quitte">

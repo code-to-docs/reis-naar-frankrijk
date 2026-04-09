@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import { E } from "$lib/emojis.js";
 
@@ -39,36 +39,35 @@
     99: { emoji: "\u26C8\uFE0F", tekst: "Zwaar onweer met hagel" },
   };
 
-  function getWeerInfo(code) {
-    return weerCodes[code] || { emoji: "\u{1F321}\uFE0F", tekst: "Onbekend" };
+  function getWeerInfo(code: number) {
+    return (weerCodes as any)[code] || { emoji: "\u{1F321}\uFE0F", tekst: "Onbekend" };
   }
 
   const dagNamen = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
   const maandNamen = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 
-  function formatDag(dateStr) {
+  function formatDag(dateStr: string) {
     const d = new Date(dateStr + "T12:00:00");
     return dagNamen[d.getDay()];
   }
 
-  function formatDatumKort(dateStr) {
+  function formatDatumKort(dateStr: string) {
     const d = new Date(dateStr + "T12:00:00");
     return d.getDate() + " " + maandNamen[d.getMonth()].slice(0, 3);
   }
 
-  async function laadWeer(lat, lon) {
+  async function laadWeer(lat: number, lon: number) {
     try {
       const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3";
-      };
       
       const res = await Promise.race([
         fetch(url).catch(e => { throw e; }),
         new Promise((_, r) => setTimeout(() => r(new Error("Timeout")), 5000))
-      ]);
+      ]) as Response;
       
       if (!res.ok) throw new Error("fail");
       const data = await res.json();
-      weer = data.daily.time.map((dag, i) => ({
+      weer = data.daily.time.map((dag: string, i: number) => ({
         datum: dag,
         dagNaam: formatDag(dag),
         datumKort: formatDatumKort(dag),
@@ -98,7 +97,7 @@
     }
   }
 
-  async function getLocatieNaam(lat, lon) {
+  async function getLocatieNaam(lat: number, lon: number) {
     const latRnd = Math.round(lat * 100) / 100;
     const lonRnd = Math.round(lon * 100) / 100;
     const cacheKey = "loc_" + latRnd + "_" + lonRnd;

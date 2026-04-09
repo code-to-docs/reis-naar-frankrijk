@@ -1,7 +1,8 @@
 <script>
-  import { gebruiker } from "$lib/stores.js";
+  import { appState } from "$lib/stores.svelte.js";
   import WeerWidget from "$lib/components/WeerWidget.svelte";
   import SpotVanDeDag from "$lib/components/SpotVanDeDag.svelte";
+  import { page } from '$app/stores';
   import { E } from "$lib/emojis.js";
 
   const vertrekDatum = new Date("2025-07-14");
@@ -19,37 +20,83 @@
   }
 </script>
 
-<div class="header">
-  <h1>{E.VLAG} Frankrijk</h1>
-  <p>Hoi {$gebruiker}!</p>
-</div>
+
 
 <div class="page-transition">
   <WeerWidget />
   <SpotVanDeDag />
 
-  <div class="card aftelling-card">
+  <div class="card countdown-card">
+    <div class="countdown-progress">
+      <div class="countdown-fill" style="width: {Math.max(0, 100 - (dagen * 2))}%;"></div>
+    </div>
     <div class="aftelling-tekst">{getAftelTekst()}</div>
     <div class="aftelling-route">{routeTekst}</div>
+  </div>
+
+  <div class="quick-actions">
+    <a href="/budget" class="quick-btn">
+      <div class="icon">{E.GELD}</div>
+      <span>Nieuwe uitgave</span>
+    </a>
+    <a href="/meer/wildlife" class="quick-btn">
+      <div class="icon">🐾</div>
+      <span>Wildlife zoeken</span>
+    </a>
+    <a href="/campings" class="quick-btn">
+      <div class="icon">{E.CAMPING}</div>
+      <span>Bekijk campings</span>
+    </a>
+    <a href="/poi" class="quick-btn">
+      <div class="icon">{E.PIN}</div>
+      <span>Onze POIs</span>
+    </a>
   </div>
 </div>
 
 <style>
   /* Aftelling kaart */
-  .aftelling-card {
+  /* Aftelling kaart */
+  .countdown-card {
     text-align: center;
-    padding: 20px 16px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    padding: 24px 16px;
   }
-  .aftelling-tekst {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--heading);
+  .countdown-progress {
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: rgba(255,255,255,0.2);
   }
-  .aftelling-route {
-    margin-top: 6px;
-    font-size: 0.85rem;
-    font-weight: 400;
-    color: var(--nav-text);
-    letter-spacing: 0.3px;
+  .countdown-fill {
+    height: 100%; background: #ff4757; transition: width 1s ease-in-out;
   }
+  .aftelling-tekst { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: white; }
+  .aftelling-route { font-size: 14px; opacity: 0.9; color: white; }
+
+  /* Quick actions */
+  .quick-actions {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    padding: 0 16px 24px 16px;
+  }
+  .quick-btn {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--tekst);
+    box-shadow: 0 2px 8px var(--card-shadow);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--border-subtle);
+  }
+  .quick-btn:active { transform: scale(0.96); }
+  .quick-btn .icon {
+    font-size: 28px; background: var(--hover-bg); width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; margin-bottom: 4px;
+  }
+  .quick-btn span { font-size: 13px; font-weight: 600; color: var(--nav-text); }
 </style>

@@ -13,6 +13,8 @@
     { id: "/meer",     emoji: "\u2630", label: "Meer" },
   ];
 
+  const isActive = (path) => $page.url.pathname === path || ($page.url.pathname.startsWith('/meer') && path === '/meer');
+
   onMount(() => {
     online = navigator.onLine;
     const goOnline = () => online = true;
@@ -35,10 +37,11 @@
 
 <nav class="nav-bar">
   {#each paginas as p}
-    <a href={p.id} class="nav-item" class:active={$page.url.pathname === p.id || ($page.url.pathname.startsWith('/meer') && p.id === '/meer')}>
+    {@const active = isActive(p.id)}
+    <a href={p.id} class="nav-item" class:active>
       <span class="nav-emoji">{p.emoji}</span>
       <span class="nav-label">{p.label}</span>
-      {#if $page.url.pathname === p.id || ($page.url.pathname.startsWith('/meer') && p.id === '/meer')}
+      {#if active}
         <div class="nav-indicator"></div>
       {/if}
     </a>
