@@ -10,17 +10,22 @@
   let locatieNaam = $state("");
   let isDesktop = $state(false);
   let zichtbareDagen = $state(3);
+  let alerts = $state<any | null>(null);
+  let alertsLaden = $state(true);
+  let alertsFout = $state("");
 
   const FALLBACK_LAT = 44.5;
   const FALLBACK_LON = 3.5;
   const FALLBACK_NAAM = "Loz\u00E8re";
   const WEATHER_CACHE_MAX_AGE = 4 * 3600 * 1000;
+  const ALERTS_CACHE_MAX_AGE = 30 * 60 * 1000;
 
   let isAlive = false;
   let gpsFallbackTimer: ReturnType<typeof setTimeout> | null = null;
   let weerRequestCounter = 0;
   let actiefWeerAbort: AbortController | null = null;
   let actiefLocatieAbort: AbortController | null = null;
+  let actiefAlertsAbort: AbortController | null = null;
 
   // Emoji variabelen (komen nu the E object)
 
@@ -77,6 +82,10 @@
     return "weer_v2_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
   }
 
+  function alertsCacheKey() {
+    return "weer_alerts_v1";
+  }
+
   function formatDag(dateStr: string) {
     const d = new Date(dateStr + "T12:00:00");
     return dagNamen[d.getDay()];
@@ -91,6 +100,92 @@
     if (!isoDate) return "";
     const d = new Date(isoDate);
     return d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function formatAlertMoment(isoDate: string | undefined) {
+    if (!isoDate) return "";
+    const d = new Date(isoDate);
+    return d.toLocaleString("nl-NL", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  function alertTone(level: number | undefined, fallback = "green") {
+    if (level === 4) return "red";
+    if (level === 3) return "orange";
+    if (level === 2) return "yellow";
+    return fallback;
+  }
+
+  function specialistTone(severity: string | undefined) {
+    return severity === "watch" ? "specialist-watch" : "specialist";
+  }
+
+  function actieveOfficieleAlerts() {
+    return (alerts?.officialAlerts ?? []).filter((alert: any) => alert.active);
+  }
+
+  function rustigeRegios() {
+    return (alerts?.officialAlerts ?? [])
+      .filter((alert: any) => !alert.active)
+      .map((alert: any) => alert.regionName);
+  }
+
+  async function laadAlerts() {
+    const cacheKey = alertsCacheKey();
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    alertsFout = "";
+    alertsLaden = true;
+
+    if (actiefAlertsAbort) actiefAlertsAbort.abort();
+    const controller = new AbortController();
+    actiefAlertsAbort = controller;
+
+    try {
+      timeoutId = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch("/api/weather-alerts", {
+        signal: controller.signal,
+        headers: {
+          "cache-control": "no-cache"
+        }
+      });
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      if (!res.ok) throw new Error("alerts-fail");
+      const data = await res.json();
+      if (!isAlive || actiefAlertsAbort !== controller) return;
+
+      alerts = data;
+      alertsLaden = false;
+      storageSet(cacheKey, JSON.stringify({ t: Date.now(), data }));
+    } catch {
+      if (!isAlive || actiefAlertsAbort !== controller) return;
+
+      const cached = storageGet(cacheKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.t < ALERTS_CACHE_MAX_AGE) {
+            alerts = parsed.data;
+            alertsLaden = false;
+            return;
+          }
+        } catch {
+          // Ignore broken cache entries.
+        }
+      }
+
+      alertsFout = "Alerts tijdelijk niet beschikbaar";
+      alertsLaden = false;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (actiefAlertsAbort === controller) actiefAlertsAbort = null;
+    }
   }
 
   function updateViewportSettings() {
@@ -217,6 +312,7 @@
     const nu = new Date();
     dagNaam = dagNamen[nu.getDay()].charAt(0).toUpperCase() + dagNamen[nu.getDay()].slice(1);
     datum = nu.getDate() + " " + maandNamen[nu.getMonth()] + " " + nu.getFullYear();
+    laadAlerts();
 
     let gpsDone = false;
     if ("geolocation" in navigator) {
@@ -260,6 +356,7 @@
       if (gpsFallbackTimer) clearTimeout(gpsFallbackTimer);
       if (actiefWeerAbort) actiefWeerAbort.abort();
       if (actiefLocatieAbort) actiefLocatieAbort.abort();
+      if (actiefAlertsAbort) actiefAlertsAbort.abort();
       window.removeEventListener("resize", onResize);
     };
   });
@@ -279,6 +376,99 @@
       {/if}
     </div>
   </div>
+
+  {#if alertsLaden}
+    <div class="alerts-loading">
+      <div class="alert-skeleton"></div>
+      <div class="alert-skeleton"></div>
+    </div>
+  {:else if alerts}
+    <div class="alerts-panel">
+      <div class="alerts-header">
+        <span>{E.WARN} Alerts onderweg</span>
+        <small>Officieel + Pyrenee\u00EBn-specialist</small>
+      </div>
+
+      <div class="alerts-grid">
+        {#if actieveOfficieleAlerts().length > 0}
+          {#each actieveOfficieleAlerts() as alert}
+            <a
+              class="alert-card tone-{alertTone(alert.level)}"
+              href={alert.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div class="alert-card-top">
+                <span class="alert-source">{alert.sourceLabel}</span>
+                <span class="alert-badge">{alert.levelLabel}</span>
+              </div>
+              <div class="alert-region">{alert.regionName}</div>
+              <div class="alert-summary">
+                {#if alert.activePhenomena.length > 0}
+                  {alert.activePhenomena.map((item: any) => item.label).join(" • ")}
+                {:else}
+                  Officieel weeralarm actief
+                {/if}
+              </div>
+              {#if alert.validUntil}
+                <div class="alert-meta">Geldig tot {formatAlertMoment(alert.validUntil)}</div>
+              {/if}
+            </a>
+          {/each}
+        {:else}
+          <a
+            class="alert-card tone-calm"
+            href={alerts.sources?.meteoFranceUrl || "https://vigilance.meteofrance.fr/fr"}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div class="alert-card-top">
+              <span class="alert-source">Meteo-France Vigilance</span>
+              <span class="alert-badge">Groen</span>
+            </div>
+            <div class="alert-region">Route rustig</div>
+            <div class="alert-summary">
+              Loz\u00E8re, Cantal en Ari\u00E8ge staan nu op groen.
+            </div>
+            {#if alerts.officialAlerts?.[0]?.updatedAt}
+              <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
+            {/if}
+          </a>
+        {/if}
+
+        {#if alerts.specialistAlert}
+          <a
+            class="alert-card tone-{specialistTone(alerts.specialistAlert.severity)}"
+            href={alerts.specialistAlert.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div class="alert-card-top">
+              <span class="alert-source">{alerts.specialistAlert.sourceLabel}</span>
+              <span class="alert-badge">Pyrenee\u00EBn</span>
+            </div>
+            <div class="alert-region">{alerts.specialistAlert.regionLabel}</div>
+            <div class="alert-summary">{alerts.specialistAlert.title}</div>
+            <div class="alert-meta">
+              {formatAlertMoment(alerts.specialistAlert.publishedAt)}
+              {#if alerts.specialistAlert.excerpt}
+                <span class="alert-divider">•</span>
+                {alerts.specialistAlert.excerpt}
+              {/if}
+            </div>
+          </a>
+        {/if}
+      </div>
+
+      {#if actieveOfficieleAlerts().length > 0 && rustigeRegios().length > 0}
+        <div class="alerts-footnote">
+          Rustig volgens M\u00E9t\u00E9o-France: {rustigeRegios().join(", ")}.
+        </div>
+      {/if}
+    </div>
+  {:else if alertsFout}
+    <div class="alerts-footnote alerts-footnote-error">{alertsFout}</div>
+  {/if}
 
   {#if laden}
     <div class="weer-laden">
@@ -376,6 +566,164 @@
     padding: 5px 10px;
     border-radius: 999px;
     font-weight: 600;
+  }
+
+  .alerts-panel {
+    margin-bottom: 12px;
+  }
+  .alerts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .alerts-header span {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #10233a;
+    letter-spacing: -0.01em;
+  }
+  .alerts-header small {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+  .alerts-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+  .alert-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 16px;
+    padding: 12px 12px 11px;
+    border: 1px solid #dbe7f3;
+    background: linear-gradient(135deg, #f8fbff 0%, #f3f7fd 100%);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  }
+  .alert-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .alert-source {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #5b6f89;
+    font-weight: 700;
+  }
+  .alert-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 999px;
+    padding: 4px 9px;
+    background: rgba(15, 77, 132, 0.08);
+    color: #0f4d84;
+    white-space: nowrap;
+  }
+  .alert-region {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #10233a;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .alert-summary {
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: #21364e;
+    font-weight: 600;
+  }
+  .alert-meta {
+    margin-top: 7px;
+    font-size: 0.77rem;
+    color: #5f738c;
+    line-height: 1.35;
+  }
+  .alert-divider {
+    margin: 0 5px;
+  }
+  .tone-calm {
+    background: linear-gradient(135deg, #eff9f3 0%, #f7fcf8 100%);
+    border-color: #cfe9d9;
+  }
+  .tone-calm .alert-badge {
+    background: rgba(31, 169, 104, 0.12);
+    color: #1a7f4f;
+  }
+  .tone-yellow {
+    background: linear-gradient(135deg, #fff8dd 0%, #fffdf1 100%);
+    border-color: #f1de92;
+  }
+  .tone-yellow .alert-badge {
+    background: rgba(212, 172, 13, 0.16);
+    color: #8b6a00;
+  }
+  .tone-orange {
+    background: linear-gradient(135deg, #fff0e2 0%, #fff7f1 100%);
+    border-color: #f3c59a;
+  }
+  .tone-orange .alert-badge {
+    background: rgba(225, 120, 31, 0.16);
+    color: #a55311;
+  }
+  .tone-red {
+    background: linear-gradient(135deg, #ffe6e5 0%, #fff3f2 100%);
+    border-color: #f0b0ab;
+  }
+  .tone-red .alert-badge {
+    background: rgba(221, 75, 57, 0.15);
+    color: #9f2f22;
+  }
+  .tone-specialist,
+  .tone-specialist-watch {
+    background: linear-gradient(135deg, #edf4ff 0%, #f7faff 100%);
+    border-color: #cfe0f7;
+  }
+  .tone-specialist .alert-badge,
+  .tone-specialist-watch .alert-badge {
+    background: rgba(43, 121, 194, 0.12);
+    color: #1d5e9a;
+  }
+  .tone-specialist-watch {
+    background: linear-gradient(135deg, #eef6ff 0%, #edf7fb 100%);
+    border-color: #bfd7f1;
+  }
+  .alerts-footnote {
+    margin-top: 8px;
+    font-size: 0.79rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+  .alerts-footnote-error {
+    margin-bottom: 12px;
+  }
+  .alerts-loading {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .alert-skeleton {
+    height: 86px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #eff4fa 25%, #f8fbff 50%, #eff4fa 75%);
+    background-size: 200% 100%;
+    animation: alertShimmer 1.3s infinite linear;
+  }
+  @keyframes alertShimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
   }
 
   .weer-laden {
@@ -509,6 +857,9 @@
     .weer-periode {
       font-size: 0.82rem;
       padding: 6px 10px;
+    }
+    .alerts-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .weer-dagen {
       grid-template-columns: repeat(6, minmax(0, 1fr));

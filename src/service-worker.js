@@ -55,6 +55,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Same-origin APIs should stay fresh, with offline fallback from runtime cache.
+  if (url.origin === self.location.origin && url.pathname.startsWith("/api/")) {
+    event.respondWith(networkFirst(event.request, RUNTIME_CACHE, MAX_RUNTIME));
+    return;
+  }
+
   // Same origin (App shell + assets)
   if (url.origin === self.location.origin) {
     if (event.request.mode === "navigate" || event.request.destination === "document") {
