@@ -11,7 +11,7 @@ const firebaseConfig = {
 };
 
 if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.appId) {
-  throw new Error("Firebase env vars ontbreken. Vul PUBLIC_FIREBASE_* in je .env in.");
+  throw new Error("Firebase env vars ontbreken. Zet PUBLIC_FIREBASE_* in je environment.");
 }
 
 const app = initializeApp(firebaseConfig);
