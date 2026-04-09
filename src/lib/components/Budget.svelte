@@ -8,17 +8,7 @@
   import { gebruiker, toonSnackbar } from "$lib/stores.js";
   import BudgetChart from "./BudgetChart.svelte";
   import BudgetForm from "./BudgetForm.svelte";
-  import { E } from "$lib/emojis.js";
-
-  const cats = [
-    { id:"dining",       emoji:"\u{1F37D}\uFE0F", label:"Uit eten",     kleur:"#FF6B6B" },
-    { id:"boodschappen", emoji:"\u{1F6D2}",          label:"Boodschappen", kleur:"#4ECDC4" },
-    { id:"overnachting", emoji:"\u{1F3D5}\uFE0F", label:"Overnachting", kleur:"#45B7D1" },
-    { id:"benzine",      emoji:"\u26FD",           label:"Benzine",      kleur:"#F9CA24" },
-    { id:"tol",          emoji:"\u{1F6E3}\uFE0F", label:"Tol",          kleur:"#A29BFE" },
-    { id:"uitjes",       emoji:"\u{1F3AF}",          label:"Uitjes",       kleur:"#FD79A8" },
-    { id:"overig",       emoji:"\u{1F4E6}",          label:"Overig",       kleur:"#636E72" },
-  ];
+  import { budgetCategorieen as cats, budgetCatMap } from "$lib/budgetCategories.js";
 
   let uitgaven = $state([]);
   let budget = $state(2500);
@@ -40,14 +30,14 @@
     cats.filter(c => uitgaven.some(u => u.categorie === c.id))
   );
 
-  let gefilterdeUitgaven = $derived(() => {
+  let gefilterdeUitgaven = $derived.by(() => {
     let result = uitgaven;
     if (filterPersoon !== "alle") result = result.filter(u => u.door === filterPersoon);
     if (filterCat !== "alle") result = result.filter(u => u.categorie === filterCat);
     return result;
   });
 
-  let gefilterdTotaal = $derived(() => gefilterdeUitgaven().reduce((sum, u) => sum + u.bedrag, 0));
+  let gefilterdTotaal = $derived.by(() => gefilterdeUitgaven.reduce((sum, u) => sum + u.bedrag, 0));
   let isGefilterd = $derived(filterPersoon !== "alle" || filterCat !== "alle");
 
   const dagNamenVol = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
@@ -73,8 +63,8 @@
     return naam.charAt(0).toUpperCase() + naam.slice(1) + " " + d.getDate() + " " + maandNamenVol[d.getMonth()];
   }
 
-  let gegroepeerdeUitgaven = $derived(() => {
-    const items = gefilterdeUitgaven();
+  let gegroepeerdeUitgaven = $derived.by(() => {
+    const items = gefilterdeUitgaven;
     const groepen = [];
     const groepMap = {};
     for (const u of items) {
@@ -112,10 +102,15 @@
   async function slabudgetOp() {
     const val = parseFloat(nieuwBudget);
     if (!val || val <= 0) return;
-    await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: val });
-    toonBudgetEdit = false;
-    nieuwBudget = "";
-    toonSnackbar("Budget aangepast", "success", E.CHECK);
+    try {
+      await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: val });
+      toonBudgetEdit = false;
+      nieuwBudget = "";
+      toonSnackbar("Budget aangepast", "success", E.CHECK);
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Gefaald om budget aan te passen", "error", E.KRUIS);
+    }
   }
 
   onMount(() => {
@@ -143,17 +138,28 @@
     const item = uitgaven.find(u => u.id === id);
     if (!item) return;
     laatsteVerwijderd = { bedrag: item.bedrag, categorie: item.categorie, omschrijving: item.omschrijving, door: item.door, datum: item.datum };
-    await deleteDoc(firestoreDoc(db, "uitgaven", id));
-    if (undoTimer) clearTimeout(undoTimer);
-    undoTimer = setTimeout(() => { laatsteVerwijderd = null; }, 5000);
+    try {
+      await deleteDoc(firestoreDoc(db, "uitgaven", id));
+      if (undoTimer) clearTimeout(undoTimer);
+      undoTimer = setTimeout(() => { laatsteVerwijderd = null; }, 5000);
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Kon niet verwijderen", "error", E.KRUIS);
+      laatsteVerwijderd = null;
+    }
   }
 
   async function ongedaanMaken() {
     if (!laatsteVerwijderd) return;
-    await addDoc(collection(db, "uitgaven"), laatsteVerwijderd);
-    laatsteVerwijderd = null;
-    if (undoTimer) clearTimeout(undoTimer);
-    toonSnackbar("Uitgave hersteld", "success", E.UNDO);
+    try {
+      await addDoc(collection(db, "uitgaven"), laatsteVerwijderd);
+      laatsteVerwijderd = null;
+      if (undoTimer) clearTimeout(undoTimer);
+      toonSnackbar("Uitgave hersteld", "success", E.UNDO);
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Kon niet herstellen", "error", E.KRUIS);
+    }
   }
 </script>
 
@@ -224,12 +230,12 @@
 
     {#if isGefilterd}
       <div class="filter-info">
-        <span>{E.ZOEK} {gefilterdeUitgaven().length} resultaten — {E.EURO}{gefilterdTotaal().toFixed(2)}</span>
+        <span>{E.ZOEK} {gefilterdeUitgaven.length} resultaten — {E.EURO}{gefilterdTotaal.toFixed(2)}</span>
         <button class="filter-reset" onclick={resetFilters}>{E.KRUIS} Reset</button>
       </div>
     {/if}
 
-    {#each gegroepeerdeUitgaven() as groep (groep.key)}
+    {#each gegroepeerdeUitgaven as groep (groep.key)}
       <div class="dag-groep">
         <div class="dag-header">
           <span class="dag-label">{E.KALENDER} {groep.label}</span>
@@ -249,7 +255,7 @@
       </div>
     {/each}
 
-    {#if gefilterdeUitgaven().length === 0 && isGefilterd}
+    {#if gefilterdeUitgaven.length === 0 && isGefilterd}
       <div class="empty-state">
         <span class="empty-icon">{E.ZOEK}</span>
         <p>Geen uitgaven voor dit filter</p>

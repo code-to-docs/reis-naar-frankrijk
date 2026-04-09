@@ -59,7 +59,13 @@
   async function laadWeer(lat, lon) {
     try {
       const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3";
-      const res = await fetch(url);
+      };
+      
+      const res = await Promise.race([
+        fetch(url).catch(e => { throw e; }),
+        new Promise((_, r) => setTimeout(() => r(new Error("Timeout")), 5000))
+      ]);
+      
       if (!res.ok) throw new Error("fail");
       const data = await res.json();
       weer = data.daily.time.map((dag, i) => ({
@@ -73,8 +79,21 @@
         windMax: Math.round(data.daily.windspeed_10m_max[i]),
       }));
       laden = false;
+      const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
+      localStorage.setItem(cacheKey, JSON.stringify({t: Date.now(), weer}));
     } catch (e) {
-      fout = "Weer laden mislukt";
+      // Probeer cache
+      const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Date.now() - parsed.t < 4 * 3600 * 1000) {
+          weer = parsed.weer;
+          laden = false;
+          return;
+        }
+      }
+      fout = "Weer laden mislukt (offline?)";
       laden = false;
     }
   }

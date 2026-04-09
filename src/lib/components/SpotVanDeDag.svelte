@@ -4,7 +4,6 @@
   import { db } from '$lib/firebase.js';
   import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
-  import { activePagina } from '$lib/stores.js';
   let laatsteSpotting = $state(null);
   let dierInfo = $state(null);
   let foto = $state('');

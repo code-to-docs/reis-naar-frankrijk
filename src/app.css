@@ -250,36 +250,6 @@ html.dark .wl-pill.active {
 }
 html.dark .filter-info { background: #1e3a5f !important; }
 
-html.dark .wl-stats-card { background: var(--card-bg) !important; }
-html.dark .wl-stats-groot { color: #f1f5f9 !important; }
-html.dark .wl-zoek {
-  background: var(--card-bg) !important;
-  border-color: #334155 !important;
-  color: #e2e8f0 !important;
-}
-html.dark .wl-filter-toggle {
-  background: var(--card-bg) !important;
-  border-color: #334155 !important;
-}
-html.dark .wl-filters-card { background: var(--card-bg) !important; }
-html.dark .wl-card { background: var(--card-bg) !important; }
-html.dark .wl-card.gespot { background: #071a10 !important; border-color: #10b981 !important; }
-html.dark .wl-naam { color: #e2e8f0 !important; }
-html.dark .wl-foto-ph { background: #334155 !important; }
-html.dark .wl-detail { border-top-color: #334155 !important; }
-html.dark .wl-beschrijving { color: #94a3b8 !important; }
-html.dark .wl-tip { background: #1e3a5f !important; }
-html.dark .wl-tip-tekst { color: #93c5fd !important; }
-html.dark .wl-spotting { background: #0f2d1c !important; }
-html.dark .wl-spotting-head { color: #34d399 !important; }
-html.dark .wl-spot-input {
-  background: #000000 !important;
-  border-color: #334155 !important;
-  color: #e2e8f0 !important;
-}
-html.dark .wl-tag { background: #334155 !important; color: #94a3b8 !important; }
-html.dark .wl-link.wiki { background: #1e3a5f !important; color: #93c5fd !important; }
-html.dark .wl-link.geluid { background: #3b2006 !important; color: #fdba74 !important; }
 
 html.dark .weer-card { background: var(--card-bg) !important; }
 html.dark .weer-dag { background: #000000 !important; }

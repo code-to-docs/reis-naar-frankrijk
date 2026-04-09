@@ -5,7 +5,8 @@
     deleteDoc, doc, serverTimestamp
   } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
-  import { gebruiker } from '$lib/stores.js';
+  import { gebruiker, toonSnackbar } from '$lib/stores.js';
+  import { E } from '$lib/emojis.js';
 
   let {
     titel = '',
@@ -43,37 +44,51 @@
     };
     if (afvinkbaar) data.gedaan = false;
     if (extraVeld.trim()) data.notities = extraVeld.trim();
-    if (linkVeld.trim()) data.mapsLink = linkVeld.trim();
-    await addDoc(collection(db, collectie), data);
-    nieuwItem = '';
-    extraVeld = '';
-    linkVeld = '';
-    toonForm = false;
+    try {
+      await addDoc(collection(db, collectie), data);
+      nieuwItem = '';
+      extraVeld = '';
+      linkVeld = '';
+      toonForm = false;
+      toonSnackbar("Opgeslagen", "success", E.CHECK);
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Fout bij opslaan", "error", E.KRUIS);
+    }
   }
 
   async function toggle(item) {
-    await updateDoc(doc(db, collectie, item.id), {
-      gedaan: !item.gedaan,
-      afgevinktDoor: $gebruiker
-    });
+    try {
+      await updateDoc(doc(db, collectie, item.id), {
+        gedaan: !item.gedaan,
+        afgevinktDoor: $gebruiker
+      });
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Actie mislukt", "error", E.KRUIS);
+    }
   }
 
   async function verwijder(id) {
     if (confirm('Verwijderen?')) {
-      await deleteDoc(doc(db, collectie, id));
+      try {
+        await deleteDoc(doc(db, collectie, id));
+        toonSnackbar("Verwijderd", "success", E.PRULLENBAK);
+      } catch (e) {
+        console.error(e);
+        toonSnackbar("Actie mislukt", "error", E.KRUIS);
+      }
     }
   }
 </script>
 
-<div style="padding:16px;">
+<div class="gl-container">
   <h2>{emoji} {titel}</h2>
 
   {#if afvinkbaar}
-    <p style="color:#666;">{aantalGedaan}/{items.length} gedaan</p>
+    <p class="gl-voortgang">{aantalGedaan}/{items.length} gedaan</p>
     <div class="progress-bar">
-      <div class="progress-fill" style="
-        width:{items.length ? (aantalGedaan/items.length)*100 : 0}%;
-        background:var(--groen);">
+      <div class="progress-fill" style="width:{items.length ? (aantalGedaan/items.length)*100 : 0}%">
         {items.length ? Math.round((aantalGedaan/items.length)*100) : 0}%
       </div>
     </div>
@@ -85,29 +100,24 @@
         <input type="checkbox" checked={item.gedaan}
           onchange={() => toggle(item)} />
       {/if}
-      <div style="flex:1;">
+      <div class="gl-item-content">
         <strong>{item.naam}</strong>
         {#if item.notities}
-          <p style="color:#666;font-size:14px;margin:2px 0;">{item.notities}</p>
+          <p class="gl-notitie">{item.notities}</p>
         {/if}
         {#if item.mapsLink}
-          <a href={item.mapsLink} target="_blank" rel="noopener noreferrer"
-            style="display:inline-flex;align-items:center;gap:4px;
-              color:#1a73e8;font-size:13px;text-decoration:none;
-              background:#e8f0fe;padding:4px 10px;border-radius:12px;
-              margin-top:4px;">
-            🗺️ Open in Maps
+          <a href={item.mapsLink} target="_blank" rel="noopener noreferrer" class="gl-maps-link">
+            {E.PIN} Open in Maps
           </a>
         {/if}
-        <small style="color:#999;display:block;margin-top:2px;">({item.door})</small>
+        <small class="gl-meta">({item.door})</small>
       </div>
-      <button style="background:none;font-size:16px;padding:4px;"
-        onclick={() => verwijder(item.id)}>🗑️</button>
+      <button class="gl-delete" onclick={() => verwijder(item.id)}>{E.PRULLENBAK}</button>
     </div>
   {/each}
 
   {#if items.length === 0}
-    <p style="text-align:center;color:#999;margin:32px 0;">
+    <p class="gl-leeg">
       Nog niets toegevoegd
     </p>
   {/if}
@@ -117,25 +127,43 @@
       <form onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
         <input bind:value={nieuwItem} placeholder={placeholder} />
         {#if metLink}
-          <input bind:value={linkVeld} type="url"
-            placeholder="Google Maps link (optioneel)" />
+          <input bind:value={linkVeld} type="url" placeholder="Google Maps link (optioneel)" />
         {/if}
-        <textarea bind:value={extraVeld}
-          placeholder="Notities (optioneel)" rows="2"></textarea>
-        <div style="display:flex;gap:8px;">
-          <button type="submit" class="btn-success" style="flex:1;">
-            ✅ Opslaan
+        <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
+        <div class="gl-form-actions">
+          <button type="submit" class="btn-success gl-submit">
+            {E.CHECK} Opslaan
           </button>
-          <button type="button" class="btn-danger"
-            onclick={() => toonForm = false}>✕</button>
+          <button type="button" class="btn-danger gl-cancel" onclick={() => toonForm = false}>{E.X}</button>
         </div>
       </form>
     </div>
   {:else}
-    <button class="btn-primary"
-      style="width:calc(100% - 32px);margin:16px;padding:14px;font-size:18px;"
-      onclick={() => toonForm = true}>
+    <button class="btn-primary gl-add-btn" onclick={() => toonForm = true}>
       + Toevoegen
     </button>
   {/if}
 </div>
+
+<style>
+  .gl-container { padding: 16px; }
+  .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: 0.9rem; }
+  .progress-fill { background: var(--groen); }
+  .gl-item-content { flex: 1; min-width: 0; }
+  .gl-notitie { color: var(--nav-text); font-size: 14px; margin: 2px 0; }
+  .gl-maps-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--blauw); font-size: 13px; text-decoration: none;
+    background: var(--hover-bg); padding: 4px 10px; border-radius: 12px;
+    margin-top: 4px; border: 1px solid var(--border-subtle);
+  }
+  .gl-maps-link:active { opacity: 0.8; }
+  .gl-meta { color: var(--nav-text); display: block; margin-top: 2px; }
+  .gl-delete { background: none; font-size: 18px; padding: 6px; cursor: pointer; border: none; opacity: 0.7; }
+  .gl-delete:active { opacity: 1; }
+  .gl-leeg { text-align: center; color: var(--nav-text); margin: 32px 0; }
+  .gl-form-actions { display: flex; gap: 8px; }
+  .gl-submit { flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
+  .gl-add-btn { width: calc(100% - 32px); margin: 16px; padding: 14px; font-size: 18px; font-weight: 600; }
+</style>

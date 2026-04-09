@@ -1,21 +1,16 @@
 <script>
-  import { activePagina } from "$lib/stores.js";
+  import { page } from "$app/stores";
   import { onMount } from "svelte";
 
   let online = $state(true);
-
-  const E_HOME = "\u{1F3E0}";
-  const E_CAMP = "\u{1F3D5}\uFE0F";
-  const E_PIN = "\u{1F4CD}";
-  const E_GELD = "\u{1F4B0}";
-  const E_MEER = "\u2630";
+  import { E } from "$lib/emojis.js";
 
   const paginas = [
-    { id: "home",     emoji: E_HOME, label: "Home" },
-    { id: "campings", emoji: E_CAMP, label: "Campings" },
-    { id: "poi",      emoji: E_PIN,  label: "POIs" },
-    { id: "budget",   emoji: E_GELD, label: "Budget" },
-    { id: "meer",     emoji: E_MEER, label: "Meer" },
+    { id: "/",         emoji: "\u{1F3E0}", label: "Home" },
+    { id: "/campings", emoji: E.CAMPING, label: "Campings" },
+    { id: "/poi",      emoji: E.PIN,  label: "POIs" },
+    { id: "/budget",   emoji: E.GELD, label: "Budget" },
+    { id: "/meer",     emoji: "\u2630", label: "Meer" },
   ];
 
   onMount(() => {
@@ -40,14 +35,13 @@
 
 <nav class="nav-bar">
   {#each paginas as p}
-    <button class="nav-item" class:active={$activePagina === p.id}
-      onclick={() => activePagina.set(p.id)}>
+    <a href={p.id} class="nav-item" class:active={$page.url.pathname === p.id || ($page.url.pathname.startsWith('/meer') && p.id === '/meer')}>
       <span class="nav-emoji">{p.emoji}</span>
       <span class="nav-label">{p.label}</span>
-      {#if $activePagina === p.id}
+      {#if $page.url.pathname === p.id || ($page.url.pathname.startsWith('/meer') && p.id === '/meer')}
         <div class="nav-indicator"></div>
       {/if}
-    </button>
+    </a>
   {/each}
 </nav>
 
@@ -104,6 +98,7 @@
     align-items: center;
     background: none;
     border: none;
+    text-decoration: none;
     padding: 4px 12px;
     cursor: pointer;
     position: relative;

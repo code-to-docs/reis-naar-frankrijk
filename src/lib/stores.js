@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 
 export const gebruiker = writable('');
-export const activePagina = writable('home');
 
 // Dark mode store
 export const darkMode = writable(false);

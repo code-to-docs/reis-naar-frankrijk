@@ -13,17 +13,22 @@
 
   async function voegToe() {
     if (!bedrag || !omschrijving.trim()) return;
-    await addDoc(collection(db, "uitgaven"), {
-      bedrag: parseFloat(bedrag),
-      categorie,
-      omschrijving: omschrijving.trim(),
-      door: $gebruiker,
-      datum: serverTimestamp()
-    });
-    bedrag = "";
-    omschrijving = "";
-    toonForm = false;
-    toonSnackbar("Uitgave toegevoegd", "success", E.CHECK);
+    try {
+      await addDoc(collection(db, "uitgaven"), {
+        bedrag: parseFloat(bedrag),
+        categorie,
+        omschrijving: omschrijving.trim(),
+        door: $gebruiker,
+        datum: serverTimestamp()
+      });
+      bedrag = "";
+      omschrijving = "";
+      toonForm = false;
+      toonSnackbar("Uitgave toegevoegd", "success", E.CHECK);
+    } catch (e) {
+      console.error(e);
+      toonSnackbar("Fout bij opslaan", "error", E.KRUIS);
+    }
   }
 </script>
 

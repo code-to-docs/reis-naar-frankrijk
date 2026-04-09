@@ -3,19 +3,12 @@
   import { Chart, DoughnutController, ArcElement, Tooltip } from "chart.js";
   Chart.register(DoughnutController, ArcElement, Tooltip);
 
+  import { budgetCatMap } from "$lib/budgetCategories.js";
+  import { E } from "$lib/emojis.js";
+
   let { uitgaven = [], budget = 2500 } = $props();
 
-  const EURO = "\u20AC";
-
-  const categorieen = {
-    dining:       { label: "Uit eten",     kleur: "#FF6B6B" },
-    boodschappen: { label: "Boodschappen", kleur: "#4ECDC4" },
-    overnachting: { label: "Overnachting", kleur: "#45B7D1" },
-    benzine:      { label: "Benzine",      kleur: "#F9CA24" },
-    tol:          { label: "Tol",          kleur: "#A29BFE" },
-    uitjes:       { label: "Uitjes",       kleur: "#FD79A8" },
-    overig:       { label: "Overig",       kleur: "#636E72" }
-  };
+  const EURO = E.EURO;
 
   let canvasEl = $state(null);
   let chartInstance = null;
@@ -23,7 +16,7 @@
 
   function getTotaalPerCategorie() {
     const result = {};
-    for (const key of Object.keys(categorieen)) result[key] = 0;
+    for (const key of Object.keys(budgetCatMap)) result[key] = 0;
     for (const u of uitgaven) {
       const cat = u.categorie || "overig";
       if (result[cat] !== undefined) result[cat] += Number(u.bedrag) || 0;
@@ -38,7 +31,7 @@
 
   function updateLegenda() {
     const perCat = getTotaalPerCategorie();
-    legendaItems = Object.entries(categorieen)
+    legendaItems = Object.entries(budgetCatMap)
       .filter(([key]) => perCat[key] > 0)
       .map(([key, cat]) => ({
         label: cat.label,
@@ -83,9 +76,9 @@
       data = [1];
       colors = ["#e2e8f0"];
     } else {
-      labels = actief.map(([k]) => categorieen[k].label);
+      labels = actief.map(([k]) => budgetCatMap[k].label);
       data = actief.map(([_, v]) => v);
-      colors = actief.map(([k]) => categorieen[k].kleur);
+      colors = actief.map(([k]) => budgetCatMap[k].kleur);
     }
 
     chartInstance = new Chart(canvasEl, {
@@ -124,6 +117,34 @@
     updateLegenda();
   }
 
+  function updateChart() {
+    if (!chartInstance) return buildChart();
+    
+    const perCat = getTotaalPerCategorie();
+    const totaal = getTotaal(perCat);
+    const pct = totaal === 0 ? 0 : Math.round((totaal / budget) * 100);
+    const actief = Object.entries(perCat).filter(([_, v]) => v > 0);
+    
+    let labels, data, colors;
+    if (actief.length === 0) {
+      labels = ["Nog niets"];
+      data = [1];
+      colors = ["#e2e8f0"];
+    } else {
+      labels = actief.map(([k]) => budgetCatMap[k].label);
+      data = actief.map(([_, v]) => v);
+      colors = actief.map(([k]) => budgetCatMap[k].kleur);
+    }
+
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets[0].data = data;
+    chartInstance.data.datasets[0].backgroundColor = colors;
+    chartInstance.options.plugins.centerText.percentage = pct;
+    chartInstance.update();
+    
+    updateLegenda();
+  }
+
   onMount(() => {
     buildChart();
     return () => { if (chartInstance) chartInstance.destroy(); };
@@ -132,7 +153,8 @@
   $effect(() => {
     const _t1 = uitgaven.length;
     const _t2 = budget;
-    if (canvasEl) buildChart();
+    if (chartInstance) updateChart();
+    else if (canvasEl) buildChart();
   });
 </script>
 
