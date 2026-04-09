@@ -35,17 +35,43 @@
 {#if toonForm}
   <button type="button" class="fab-overlay" onclick={() => toonForm = false} aria-label="Sluiten"></button>
   <div class="fab-form">
-    <form onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
-      <input type="number" step="0.01" bind:value={bedrag} placeholder="Bedrag" />
-      <select bind:value={categorie}>
-        {#each cats as c}
-          <option value={c.id}>{c.emoji} {c.label}</option>
-        {/each}
-      </select>
-      <input bind:value={omschrijving} placeholder="Omschrijving" />
-      <div style="display:flex;gap:8px;">
-        <button type="submit" class="btn-success" style="flex:1;color:white;font-weight:700;">Opslaan</button>
-        <button type="button" class="btn-danger" onclick={() => toonForm = false}><span style="color:white;font-weight:800;font-size:1.1rem;">{E.X}</span></button>
+    <form class="budget-add-form" onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
+      <div class="form-header">
+        <h3>{E.GELD} Nieuwe uitgave</h3>
+        <p>Snel registreren voor {appState.gebruiker || "deze reis"}</p>
+      </div>
+
+      <label class="field-group">
+        <span class="field-label">Bedrag</span>
+        <input
+          class="field-input"
+          type="number"
+          step="0.01"
+          bind:value={bedrag}
+          placeholder="0,00"
+          inputmode="decimal"
+        />
+      </label>
+
+      <label class="field-group">
+        <span class="field-label">Categorie</span>
+        <select class="field-select" bind:value={categorie}>
+          {#each cats as c}
+            <option value={c.id}>{c.emoji} {c.label}</option>
+          {/each}
+        </select>
+      </label>
+
+      <label class="field-group">
+        <span class="field-label">Omschrijving</span>
+        <input class="field-input" bind:value={omschrijving} placeholder="Bijv. lunch op camping" />
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="action-save">Opslaan</button>
+        <button type="button" class="action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
+          {E.X}
+        </button>
       </div>
     </form>
   </div>
@@ -109,6 +135,88 @@
     z-index: 140;
     animation: slideUp 0.2s ease-out;
   }
+  .budget-add-form {
+    display: grid;
+    gap: 12px;
+  }
+  .form-header {
+    display: grid;
+    gap: 3px;
+  }
+  .form-header h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: #0f172a;
+    margin: 0;
+  }
+  .form-header p {
+    font-size: 0.84rem;
+    color: #64748b;
+    font-weight: 500;
+    margin: 0;
+  }
+  .field-group {
+    display: grid;
+    gap: 6px;
+  }
+  .field-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: #475569;
+  }
+  .field-input,
+  .field-select {
+    margin-bottom: 0;
+    border-radius: 10px;
+    border: 1.5px solid #d5dde7;
+    min-height: 46px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 600;
+    color: #0f172a;
+    background: var(--input-bg);
+    width: 100%;
+  }
+  .field-input::placeholder {
+    color: #94a3b8;
+    font-weight: 500;
+  }
+  .field-select {
+    font-weight: 600;
+  }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .action-save {
+    flex: 1;
+    min-height: 44px;
+    border-radius: 10px;
+    background: #2fb264;
+    color: #fff;
+    font-size: 1.02rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    border: none;
+  }
+  .action-cancel {
+    width: 50px;
+    min-height: 44px;
+    border-radius: 10px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border: none;
+    padding: 0;
+    line-height: 1;
+  }
 
   @media (min-width: 1100px) {
     .fab {
@@ -132,6 +240,37 @@
       left: auto;
       right: max(24px, calc((100vw - var(--app-max-width)) / 2 + 24px));
       max-height: min(82dvh, 620px);
+      padding: 22px;
+    }
+    .budget-add-form {
+      gap: 13px;
+    }
+    .form-header h3 {
+      font-size: 1.25rem;
+    }
+    .form-header p {
+      font-size: 0.86rem;
+    }
+    .field-label {
+      font-size: 0.73rem;
+    }
+    .field-input,
+    .field-select {
+      min-height: 48px;
+      font-size: 1.02rem;
     }
   }
+
+  :global(html.dark) .form-header h3 { color: #f1f5f9; }
+  :global(html.dark) .form-header p { color: #94a3b8; }
+  :global(html.dark) .field-label { color: #cbd5e1; }
+  :global(html.dark) .field-input,
+  :global(html.dark) .field-select {
+    border-color: #334155;
+    color: #e2e8f0;
+    background: #0f172a;
+  }
+  :global(html.dark) .field-input::placeholder { color: #64748b; }
+  :global(html.dark) .action-save { background: #22c55e; }
+  :global(html.dark) .action-cancel { background: #dc2626; }
 </style>
