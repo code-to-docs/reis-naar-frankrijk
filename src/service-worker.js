@@ -7,7 +7,6 @@ const IMAGE_CACHE = `${CACHE_VERSION}-images`;
 
 // Bestanden die altijd gecached worden
 const PRECACHE_URLS = [
-  "/",
   ...build,
   ...files
 ];
@@ -57,7 +56,7 @@ self.addEventListener("fetch", (event) => {
   // Same origin (App shell + assets)
   if (url.origin === self.location.origin) {
     if (event.request.mode === "navigate" || event.request.destination === "document") {
-      event.respondWith(networkFirst(event.request, RUNTIME_CACHE, MAX_RUNTIME));
+      event.respondWith(networkFirst(event.request, RUNTIME_CACHE, 10));
     } else {
       event.respondWith(cacheFirst(event.request, STATIC_CACHE));
     }
