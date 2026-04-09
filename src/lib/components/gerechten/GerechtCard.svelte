@@ -33,6 +33,14 @@
 
   const sterren = [1, 2, 3, 4, 5];
 
+  function korteOmschrijving(tekst: string) {
+    if (!tekst) return "";
+    const clean = tekst.trim();
+    const eersteZin = clean.split(".")[0]?.trim() || clean;
+    if (eersteZin.length <= 72) return eersteZin;
+    return `${eersteZin.slice(0, 69).trim()}...`;
+  }
+
   async function toggleMijnProefStatus() {
     const naam = currentUser?.trim();
     if (!naam) return;
@@ -77,12 +85,12 @@
     <div class="gr-emoji">{gerecht.emoji}</div>
     <div class="gr-main">
       <div class="gr-title-row">
-        <strong class="gr-name">{gerecht.naam}</strong>
+        <strong class="gr-name">{gerecht.frans || gerecht.naam}</strong>
         {#if gemiddeldeRating}
           <span class="gr-rating">⭐ {gemiddeldeRating}</span>
         {/if}
       </div>
-      <div class="gr-french">{gerecht.frans}</div>
+      <div class="gr-kort">{korteOmschrijving(gerecht.omschrijving)}</div>
       <div class="gr-tags">
         <span class="gr-tag">{gerecht.vegetarisch ? "🌱 Vegetarisch" : "🍖 Non-veg"}</span>
         {#if gerecht.vis}
@@ -200,11 +208,12 @@
     font-weight: 700;
     flex-shrink: 0;
   }
-  .gr-french {
+  .gr-kort {
     font-size: 0.8rem;
     color: #64748b;
     margin-top: 2px;
     font-style: italic;
+    line-height: 1.35;
   }
   .gr-tags {
     margin-top: 6px;
@@ -318,7 +327,7 @@
   :global(html.dark) .gr-card.done { background: #071a10; border-color: #10b981; }
   :global(html.dark) .gr-emoji { background: #1e293b; }
   :global(html.dark) .gr-name { color: #e2e8f0; }
-  :global(html.dark) .gr-french { color: #94a3b8; }
+  :global(html.dark) .gr-kort { color: #94a3b8; }
   :global(html.dark) .gr-tag { background: #1e293b; border-color: #334155; color: #cbd5e1; }
   :global(html.dark) .gr-detail { border-top-color: #334155; }
   :global(html.dark) .gr-omschrijving,
