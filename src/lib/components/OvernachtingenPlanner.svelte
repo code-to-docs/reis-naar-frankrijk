@@ -1025,13 +1025,13 @@
   }
   .ov-top h2 {
     margin: 0;
-    font-size: clamp(1.35rem, 4vw, 1.85rem);
+    font-size: var(--font-size-2xl);
     letter-spacing: -0.02em;
   }
   .ov-top p {
     margin: 2px 0 0;
     color: var(--nav-text);
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     font-weight: 500;
   }
   .ov-add {
@@ -1069,10 +1069,10 @@
   .ov-stat span {
     display: block;
     color: var(--nav-text);
-    font-size: 0.78rem;
+    font-size: var(--font-size-xs);
   }
   .ov-stat strong {
-    font-size: 1.45rem;
+    font-size: clamp(1.3rem, 3vw, 1.55rem);
     line-height: 1.05;
     color: var(--heading);
   }
@@ -1082,7 +1082,7 @@
   }
   .ov-form-card h3 {
     margin-bottom: 10px;
-    font-size: 1.1rem;
+    font-size: var(--font-size-xl);
   }
   .ov-form {
     display: grid;
@@ -1093,7 +1093,7 @@
     gap: 5px;
   }
   .ov-form label span {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -1103,6 +1103,8 @@
   .ov-form select,
   .ov-form textarea {
     margin: 0;
+    font-size: var(--font-size-md);
+    font-family: inherit;
   }
   .ov-notes {
     grid-column: 1 / -1;
@@ -1115,7 +1117,7 @@
     flex-wrap: wrap;
     color: var(--blauw);
     font-weight: 600;
-    font-size: 0.86rem;
+    font-size: var(--font-size-sm);
   }
   .ov-gps-btn {
     width: auto;
@@ -1151,21 +1153,21 @@
     margin-bottom: 10px;
   }
   .ov-calendar-head strong {
-    font-size: 1.05rem;
+    font-size: var(--font-size-lg);
     text-transform: capitalize;
     color: var(--heading);
   }
   .ov-calendar-hint {
     margin: -2px 0 10px;
-    font-size: 0.78rem;
+    font-size: var(--font-size-sm);
     color: var(--nav-text);
-    font-weight: 600;
+    font-weight: 500;
   }
   .ov-month-btn {
     width: auto;
     min-height: 34px;
     padding: 0 10px;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
     font-weight: 700;
     border: 1px solid var(--input-border);
     background: var(--hover-bg);
@@ -1184,7 +1186,7 @@
   }
   .ov-weekdays div {
     text-align: center;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     font-weight: 700;
     color: var(--nav-text);
   }
@@ -1238,7 +1240,7 @@
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blauw) 35%, transparent);
   }
   .ov-day-number {
-    font-size: 0.78rem;
+    font-size: var(--font-size-sm);
     font-weight: 800;
     color: var(--heading);
   }
@@ -1249,7 +1251,7 @@
   }
   .ov-chip {
     --loc-kleur: #2563eb;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
     border-radius: 8px;
     padding: 3px 5px;
@@ -1267,7 +1269,7 @@
     white-space: nowrap;
   }
   .ov-more {
-    font-size: 0.66rem;
+    font-size: 0.72rem;
     color: var(--nav-text);
     font-weight: 700;
     padding-left: 2px;
@@ -1283,7 +1285,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.76rem;
+    font-size: var(--font-size-xs);
     color: var(--tekst);
     font-weight: 600;
   }
@@ -1324,7 +1326,7 @@
     gap: 8px;
   }
   .ov-item-head strong {
-    font-size: 1rem;
+    font-size: var(--font-size-lg);
     color: var(--heading);
   }
   .ov-delete {
@@ -1342,7 +1344,7 @@
     margin-top: 5px;
   }
   .ov-meta span {
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: var(--tekst);
     background: var(--hover-bg);
     border: 1px solid var(--border-subtle);
@@ -1351,7 +1353,7 @@
   }
   .ov-coords {
     margin-top: 7px;
-    font-size: 0.78rem;
+    font-size: var(--font-size-sm);
     color: var(--blauw);
     font-weight: 600;
   }
@@ -1362,14 +1364,14 @@
     gap: 8px;
   }
   .ov-links a {
-    font-size: 0.78rem;
+    font-size: var(--font-size-sm);
     color: var(--blauw);
     text-decoration: none;
     font-weight: 700;
   }
   .ov-note {
     margin-top: 7px;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
     color: var(--tekst);
   }
   .ov-shortlist-actions {
