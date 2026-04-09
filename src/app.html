@@ -19,6 +19,79 @@
 
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/favicon.png" />
+    <script>
+      (function () {
+        const recoveryKey = "chunk-recovery-v1";
+
+        function shouldRecover(message, source) {
+          const text = String(message || "");
+          const src = String(source || "");
+          return (
+            /Failed to fetch dynamically imported module/i.test(text) ||
+            /Importing a module script failed/i.test(text) ||
+            /Loading chunk [\w-]+ failed/i.test(text) ||
+            src.includes("/_app/immutable/")
+          );
+        }
+
+        async function recoverFromChunkError() {
+          try {
+            const lastAttempt = Number(sessionStorage.getItem(recoveryKey) || "0");
+            if (Date.now() - lastAttempt < 30000) return;
+            sessionStorage.setItem(recoveryKey, String(Date.now()));
+          } catch {
+            // Ignore sessionStorage issues.
+          }
+
+          try {
+            if ("serviceWorker" in navigator) {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(registrations.map((registration) => registration.unregister()));
+            }
+
+            if ("caches" in window) {
+              const cacheNames = await caches.keys();
+              await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+            }
+          } catch {
+            // Ignore cleanup failures and continue with reload.
+          }
+
+          const url = new URL(window.location.href);
+          url.searchParams.set("reloaded", String(Date.now()));
+          window.location.replace(url.toString());
+        }
+
+        window.addEventListener(
+          "error",
+          (event) => {
+            const target = event.target;
+            const source = target && "src" in target ? target.src : "";
+            if (shouldRecover(event.message, source)) {
+              recoverFromChunkError();
+            }
+          },
+          true
+        );
+
+        window.addEventListener("unhandledrejection", (event) => {
+          const reason = event.reason;
+          const message = reason && typeof reason === "object" ? reason.message : String(reason || "");
+          if (shouldRecover(message, "")) {
+            event.preventDefault();
+            recoverFromChunkError();
+          }
+        });
+
+        window.addEventListener("load", () => {
+          try {
+            sessionStorage.removeItem(recoveryKey);
+          } catch {
+            // Ignore sessionStorage issues.
+          }
+        });
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="tap">
