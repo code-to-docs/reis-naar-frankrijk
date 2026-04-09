@@ -29,11 +29,14 @@
 
           imgError = false;
           try {
-            const cached = localStorage.getItem('wildlife_fotos_v2');
-            if (cached) {
-              const parsed = JSON.parse(cached);
-              if (parsed.data && parsed.data[dierInfo.id]) {
-                foto = parsed.data[dierInfo.id];
+            const cachedV3 = localStorage.getItem('wildlife_fotos_v3');
+            const cachedV2 = localStorage.getItem('wildlife_fotos_v2');
+            const raw = cachedV3 || cachedV2;
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              const thumbs = parsed?.data?.thumb || parsed?.data || {};
+              if (thumbs[dierInfo.id]) {
+                foto = thumbs[dierInfo.id];
                 laatstFotoDierId = dierInfo.id;
                 return;
               }

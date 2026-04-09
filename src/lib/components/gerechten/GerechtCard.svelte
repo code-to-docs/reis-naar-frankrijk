@@ -85,6 +85,9 @@
       <div class="gr-french">{gerecht.frans}</div>
       <div class="gr-tags">
         <span class="gr-tag">{gerecht.vegetarisch ? "🌱 Vegetarisch" : "🍖 Non-veg"}</span>
+        {#if gerecht.vis}
+          <span class="gr-tag">🐟 Vis</span>
+        {/if}
         <span class="gr-tag">{gerecht.smaak === "zoet" ? "🍰 Zoet" : "🧂 Hartig"}</span>
       </div>
     </div>

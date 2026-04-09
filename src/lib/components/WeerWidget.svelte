@@ -46,6 +46,10 @@
   const dagNamen = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
   const maandNamen = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 
+  function weatherCacheKey(lat: number, lon: number) {
+    return "weer_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
+  }
+
   function formatDag(dateStr: string) {
     const d = new Date(dateStr + "T12:00:00");
     return dagNamen[d.getDay()];
@@ -57,13 +61,16 @@
   }
 
   async function laadWeer(lat: number, lon: number) {
+    const cacheKey = weatherCacheKey(lat, lon);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     try {
       const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe/Paris&forecast_days=3";
-      
-      const res = await Promise.race([
-        fetch(url).catch(e => { throw e; }),
-        new Promise((_, r) => setTimeout(() => r(new Error("Timeout")), 5000))
-      ]) as Response;
+
+      const controller = new AbortController();
+      timeoutId = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      timeoutId = null;
       
       if (!res.ok) throw new Error("fail");
       const data = await res.json();
@@ -78,13 +85,11 @@
         windMax: Math.round(data.daily.windspeed_10m_max[i]),
       }));
       laden = false;
-      const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
       try {
         localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), weer }));
       } catch (e) {}
     } catch (e) {
       // Probeer cache
-      const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         try {
@@ -100,6 +105,8 @@
       }
       fout = "Weer laden mislukt (offline?)";
       laden = false;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
   }
 

@@ -16,6 +16,8 @@
   let filterRegio = $state("alle");
   let filterCategorie = $state("alle");
   let expandedDier: string | null = $state(null);
+  let stopFotoLoading = false;
+  let fotoBatchTimer: ReturnType<typeof setTimeout> | null = null;
 
   let unsubFirestore: (() => void) | undefined;
   onMount(() => {
@@ -29,6 +31,7 @@
   });
 
   onMount(() => {
+    stopFotoLoading = false;
     const CACHE_KEY = "wildlife_fotos_v3";
     const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 uur
     try {
@@ -43,11 +46,19 @@
           const missing = wildlifeData.filter(d => !fotos[d.id] || !fotosGroot[d.id]);
           if (missing.length === 0) return;
           laadFotos(missing);
-          return;
+          return () => {
+            stopFotoLoading = true;
+            if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
+          };
         }
       }
     } catch (e) {}
     laadFotos(wildlifeData);
+
+    return () => {
+      stopFotoLoading = true;
+      if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
+    };
   });
 
   function laadFotos(dieren: any[]) {
@@ -82,6 +93,7 @@
     }
 
     function laadBatch() {
+      if (stopFotoLoading) return;
       const batch = dieren.slice(index, index + batchSize);
       if (batch.length === 0) {
         try {
@@ -93,6 +105,7 @@
         return;
       }
       Promise.all(batch.map(laadEnkel)).then((results) => {
+        if (stopFotoLoading) return;
         let changed = false;
         let gotRateLimited = false;
         results.forEach(res => {
@@ -119,11 +132,11 @@
 
         if (gotRateLimited && retries < 5) {
           retries++;
-          setTimeout(laadBatch, 2500 * retries);
+          fotoBatchTimer = setTimeout(laadBatch, 2500 * retries);
         } else {
           retries = 0;
           index += batchSize;
-          setTimeout(laadBatch, 800);
+          fotoBatchTimer = setTimeout(laadBatch, 800);
         }
       });
     }
@@ -132,13 +145,14 @@
   let toonFilters = $state(false);
 
   let gefilterd = $derived.by(() => {
+    const zoekLower = zoek.trim().toLowerCase();
     return wildlifeData.filter((dier) => {
-      const zoekMatch = zoek === "" ||
-        dier.naam.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.duits.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.latijn.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.kenmerken.toLowerCase().includes(zoek.toLowerCase()) ||
-        dier.waar_wanneer.toLowerCase().includes(zoek.toLowerCase());
+      const zoekMatch = zoekLower === "" ||
+        dier.naam.toLowerCase().includes(zoekLower) ||
+        dier.duits.toLowerCase().includes(zoekLower) ||
+        dier.latijn.toLowerCase().includes(zoekLower) ||
+        dier.kenmerken.toLowerCase().includes(zoekLower) ||
+        dier.waar_wanneer.toLowerCase().includes(zoekLower);
       const statusMatch = filterStatus === "alle" ||
         (filterStatus === "gespot" && spottings[dier.id]) ||
         (filterStatus === "niet" && !spottings[dier.id]);

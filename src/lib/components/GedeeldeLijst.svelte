@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import {
     collection, onSnapshot, addDoc, updateDoc,
-    deleteDoc, doc, serverTimestamp
+    deleteDoc, doc, serverTimestamp, query, orderBy
   } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
   import { appState, toonSnackbar } from '$lib/stores.svelte.js';
@@ -26,12 +26,27 @@
 
   let aantalGedaan = $derived(items.filter(i => i.gedaan).length);
 
+  function mapItems(snapshot: any, sorteerClientSide = false) {
+    const mapped = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as any));
+    if (sorteerClientSide) {
+      mapped.sort((a: any, b: any) => (a.datum?.seconds || 0) - (b.datum?.seconds || 0));
+    }
+    items = mapped;
+  }
+
   onMount(() => {
-    unsubscribe = onSnapshot(collection(db, collectie), (snapshot) => {
-      items = snapshot.docs
-        .map(d => ({ id: d.id, ...d.data() } as any))
-        .sort((a, b) => (a.datum?.seconds || 0) - (b.datum?.seconds || 0));
-    });
+    const ref = collection(db, collectie);
+    const sorted = query(ref, orderBy("datum", "asc"));
+
+    unsubscribe = onSnapshot(
+      sorted,
+      (snapshot) => mapItems(snapshot, false),
+      () => {
+        unsubscribe?.();
+        unsubscribe = onSnapshot(ref, (snapshot) => mapItems(snapshot, true));
+      }
+    );
+
     return () => unsubscribe?.();
   });
 

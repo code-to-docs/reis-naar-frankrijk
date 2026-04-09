@@ -9,23 +9,19 @@
 
     <!-- Preconnect: browser maakt alvast verbinding -->
     <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://en.wikipedia.org" crossorigin />
     <link rel="preconnect" href="https://api.open-meteo.com" crossorigin />
     <link rel="preconnect" href="https://nominatim.openstreetmap.org" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- DNS prefetch als fallback voor oudere browsers -->
     <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
-    <link rel="dns-prefetch" href="https://en.wikipedia.org" />
     <link rel="dns-prefetch" href="https://api.open-meteo.com" />
+    <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
 
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/favicon.png" />
     %sveltekit.head%
   </head>
-  <body data-sveltekit-preload-data="hover">
+  <body data-sveltekit-preload-data="tap">
     <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>

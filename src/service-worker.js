@@ -13,6 +13,7 @@ const PRECACHE_URLS = [
 
 const MAX_RUNTIME = 50;
 const MAX_IMAGES = 80;
+const OFFLINE_FALLBACKS = ["/", "/index.html"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -37,6 +38,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
   if (event.request.method !== "GET") return;
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
 
   // Altijd online
   if (url.hostname.includes("googleapis.com") || url.hostname.includes("firebaseio.com")) return;
@@ -56,7 +58,7 @@ self.addEventListener("fetch", (event) => {
   // Same origin (App shell + assets)
   if (url.origin === self.location.origin) {
     if (event.request.mode === "navigate" || event.request.destination === "document") {
-      event.respondWith(networkFirst(event.request, RUNTIME_CACHE, 10));
+      event.respondWith(networkFirst(event.request, RUNTIME_CACHE, 10, true));
     } else {
       event.respondWith(cacheFirst(event.request, STATIC_CACHE));
     }
@@ -76,12 +78,12 @@ async function cacheFirst(request, cacheName, maxItems) {
     }
     return response;
   } catch (e) {
-    if (request.destination === "document") return caches.match("/");
+    if (request.destination === "document") return getOfflineDocument();
     return new Response("Offline", { status: 503 });
   }
 }
 
-async function networkFirst(request, cacheName, maxItems) {
+async function networkFirst(request, cacheName, maxItems, isDocument = false) {
   try {
     const response = await fetch(request);
     if (response.ok) {
@@ -93,8 +95,20 @@ async function networkFirst(request, cacheName, maxItems) {
   } catch (e) {
     const cached = await caches.match(request);
     if (cached) return cached;
+    if (isDocument || request.destination === "document") {
+      const fallbackDoc = await getOfflineDocument();
+      if (fallbackDoc) return fallbackDoc;
+    }
     return new Response("Offline", { status: 503 });
   }
+}
+
+async function getOfflineDocument() {
+  for (const candidate of OFFLINE_FALLBACKS) {
+    const match = await caches.match(candidate);
+    if (match) return match;
+  }
+  return null;
 }
 
 async function trimCache(cacheName, maxItems) {

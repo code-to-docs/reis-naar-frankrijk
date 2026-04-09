@@ -163,6 +163,7 @@ export const gerechtenData = [
     omschrijving: "Gedroogde kabeljauw met aardappel en ei, traditioneel in de bergstreken rond Aubrac.",
     emoji: "\u{1F41F}",
     vegetarisch: false,
+    vis: true,
     smaak: "hartig",
     soort: "hoofdgerecht",
     streken: ["aubrac", "occitanie"]
@@ -344,6 +345,42 @@ export const gerechtenData = [
     streken: ["pyrenees_ariegeoises", "occitanie"]
   }
 ];
+
+export const gerechtenStreekLocaties = {
+  lozere: [
+    { naam: "Mende", lat: 44.518, lon: 3.501 },
+    { naam: "Florac", lat: 44.326, lon: 3.593 },
+    { naam: "Sainte-Enimie", lat: 44.367, lon: 3.411 },
+    { naam: "Marvejols", lat: 44.553, lon: 3.291 }
+  ],
+  cantal: [
+    { naam: "Aurillac", lat: 44.926, lon: 2.441 },
+    { naam: "Saint-Flour", lat: 45.034, lon: 3.093 },
+    { naam: "Salers", lat: 45.137, lon: 2.492 },
+    { naam: "Murat", lat: 45.109, lon: 2.867 }
+  ],
+  pyrenees_ariegeoises: [
+    { naam: "Foix", lat: 42.965, lon: 1.607 },
+    { naam: "Tarascon-sur-Ariege", lat: 42.845, lon: 1.606 },
+    { naam: "Ax-les-Thermes", lat: 42.72, lon: 1.84 },
+    { naam: "Saint-Girons", lat: 42.985, lon: 1.145 }
+  ],
+  aubrac: [
+    { naam: "Laguiole", lat: 44.684, lon: 2.848 },
+    { naam: "Nasbinals", lat: 44.658, lon: 3.034 },
+    { naam: "Aumont-Aubrac", lat: 44.723, lon: 3.284 }
+  ],
+  auvergne: [
+    { naam: "Aurillac", lat: 44.926, lon: 2.441 },
+    { naam: "Saint-Flour", lat: 45.034, lon: 3.093 },
+    { naam: "Clermont-Ferrand", lat: 45.777, lon: 3.087 }
+  ],
+  occitanie: [
+    { naam: "Mende", lat: 44.518, lon: 3.501 },
+    { naam: "Foix", lat: 42.965, lon: 1.607 },
+    { naam: "Rodez", lat: 44.351, lon: 2.576 }
+  ]
+};
 
 export const gerechtenDieetLabels = {
   alle: { label: "Alle", emoji: "\u{1F37D}\uFE0F" },

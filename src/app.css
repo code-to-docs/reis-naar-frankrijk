@@ -64,7 +64,7 @@ html.dark {
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--grijs-licht);
   color: var(--tekst);
   max-width: var(--app-max-width);
