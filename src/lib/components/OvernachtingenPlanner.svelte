@@ -1,21 +1,11 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    onSnapshot,
-    orderBy,
-    query,
-    serverTimestamp,
-    updateDoc
-  } from "firebase/firestore";
-  import { db } from "$lib/firebase.js";
   import { appState, toonSnackbar } from "$lib/stores.svelte.js";
   import { E } from "$lib/emojis.js";
+  import { TYPE_OPTIES } from "$lib/config.js";
+  import { OvernachtingenService } from "$lib/services/overnachtingenService.js";
   import { parseLocalizedNumber } from "$lib/utils/formatters.js";
-  import type { Overnachting, OvernachtingType } from "$lib/types";
+  import type { Overnachting, OvernachtingType } from "$lib/types.js";
 
   type OvernachtingView = Overnachting & {
     id: string;
@@ -39,12 +29,6 @@
     isVandaag: boolean;
     isLeeg: boolean;
   };
-
-  const TYPE_OPTIES: Array<{ id: OvernachtingType; label: string; emoji: string }> = [
-    { id: "hotel", label: "Hotel", emoji: "H" },
-    { id: "bnb", label: "BNB", emoji: "B" },
-    { id: "camping", label: "Camping", emoji: "C" }
-  ];
 
   const WEEKDAGEN = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
   const LOCATIE_KLEUREN = [
@@ -221,8 +205,6 @@
         return a.naam.localeCompare(b.naam, "nl");
       });
   });
-
-  let bewerkItem = $derived.by(() => overnachtingen.find((row) => row.id === bewerkItemId) || null);
 
   let shortlistOvernachtingen = $derived.by(() =>
     overnachtingen
@@ -593,7 +575,7 @@
 
     const websiteUrl = normalizeUrl(websiteUrlInput);
     const bookingUrl = normalizeUrl(bookingUrlInput);
-    const payload = {
+    const payload: Omit<Overnachting, "id" | "datum"> = {
       naam,
       shortlist: true,
       type: typeInput,
@@ -601,18 +583,17 @@
       latitude: coord.latNum,
       longitude: coord.lonNum,
       mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres),
-      openStreetMapUrl: coord.osmLink,
+      openStreetMapUrl: coord.osmLink || undefined,
       websiteUrl: websiteUrl || "",
       bookingUrl: bookingUrl || "",
       notities: notitiesInput.trim() || "",
-      door: appState.gebruiker || "",
-      datum: serverTimestamp()
+      door: appState.gebruiker || ""
     };
     try {
       if (bewerkItemId) {
-        await updateDoc(doc(db, "campings", bewerkItemId), payload);
+        await OvernachtingenService.update(bewerkItemId, payload);
       } else {
-        await addDoc(collection(db, "campings"), payload);
+        await OvernachtingenService.add(payload);
       }
       bewerkItemId = null;
       toonShortlistForm = false;
@@ -678,7 +659,7 @@
     const isUpdate = Boolean(bewerkItemId);
     const websiteUrl = normalizeUrl(websiteUrlInput);
     const bookingUrl = normalizeUrl(bookingUrlInput);
-    const payload = {
+    const payload: Omit<Overnachting, "id" | "datum"> = {
       naam,
       shortlist: false,
       type: typeInput,
@@ -687,20 +668,19 @@
       nachten,
       latitude: coord.latNum,
       longitude: coord.lonNum,
-      mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : null),
-      openStreetMapUrl: coord.osmLink,
+      mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : undefined),
+      openStreetMapUrl: coord.osmLink || undefined,
       websiteUrl: websiteUrl || "",
       bookingUrl: bookingUrl || "",
       notities: notitiesInput.trim() || "",
-      door: appState.gebruiker || "",
-      datum: serverTimestamp()
+      door: appState.gebruiker || ""
     };
 
     try {
       if (bewerkItemId) {
-        await updateDoc(doc(db, "campings", bewerkItemId), payload);
+        await OvernachtingenService.update(bewerkItemId, payload);
       } else {
-        await addDoc(collection(db, "campings"), payload);
+        await OvernachtingenService.add(payload);
       }
       geselecteerdeMaand = maandKeyVanDatum(start);
       bewerkItemId = null;
@@ -740,11 +720,10 @@
       return;
     }
     try {
-      await updateDoc(doc(db, "campings", id), {
+      await OvernachtingenService.update(id, {
         shortlist: false,
         startDatum,
-        nachten: nights,
-        datum: serverTimestamp()
+        nachten: nights
       });
       geselecteerdeMaand = maandKeyVanDatum(parsed);
       toonSnackbar(`"${naam}" ingepland op de kalender`, "success", E.CHECK);
@@ -757,7 +736,7 @@
   async function verwijderOvernachting(id: string, naam: string) {
     if (!confirm(`Verwijder overnachting "${naam}"?`)) return;
     try {
-      await deleteDoc(doc(db, "campings", id));
+      await OvernachtingenService.delete(id);
       toonSnackbar("Overnachting verwijderd", "success", E.PRULLENBAK);
     } catch (e) {
       console.error(e);
@@ -771,21 +750,12 @@
     window.addEventListener("touchend", finishTouchSelection);
     window.addEventListener("touchcancel", finishTouchSelection);
 
-    const ref = collection(db, "campings");
-    const sorted = query(ref, orderBy("startDatum", "asc"));
-
-    unsubscribe = onSnapshot(
-      sorted,
-      (snapshot) => {
-        ruweOvernachtingen = snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Overnachting) }));
+    unsubscribe = OvernachtingenService.subscribe(
+      (items) => {
+        ruweOvernachtingen = items;
       },
       () => {
-        unsubscribe?.();
-        unsubscribe = onSnapshot(ref, (snapshot) => {
-          ruweOvernachtingen = snapshot.docs
-            .map((d) => ({ id: d.id, ...(d.data() as Overnachting) }))
-            .sort((a, b) => String(a.startDatum || "").localeCompare(String(b.startDatum || "")));
-        });
+        toonSnackbar("Overnachtingen konden niet live worden geladen", "error", E.KRUIS);
       }
     );
 
@@ -921,7 +891,7 @@
       <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegShortlistToe(); }}>
         <label>
           <span>Naam</span>
-          <input bind:value={naamInput} required placeholder="Bijv. Eco BNB vallée du Tarn" />
+          <input bind:value={naamInput} required placeholder="Bijv. Eco BNB vallee du Tarn" />
         </label>
 
         <label>
@@ -935,7 +905,7 @@
 
         <label class="ov-notes">
           <span>Adres</span>
-          <input bind:value={adresInput} required placeholder="Straat + plaats (bijv. Avenue Jean Jaurès 8, Mende)" />
+          <input bind:value={adresInput} required placeholder="Straat + plaats (bijv. Avenue Jean Jaures 8, Mende)" />
         </label>
 
         <label>

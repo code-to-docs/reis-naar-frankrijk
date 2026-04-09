@@ -3,28 +3,33 @@
   import { collection, onSnapshot, doc, setDoc, deleteDoc } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState } from "$lib/stores.svelte.js";
+  import type { Spotting, Wildlife, WildlifeCategorie, WildlifeRegio } from "$lib/types.js";
   import { wildlifeData, categorieLabels, regioLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
   import WildlifeStats from "./wildlife/WildlifeStats.svelte";
   import WildlifeCard from "./wildlife/WildlifeCard.svelte";
 
-  let spottings: Record<string, any> = $state({}); // Firestore data lookup
+  type WildlifePhotoResult = { id: string; thumb: string; full: string } | { id: string; retry: true } | null;
+
+  let spottings: Record<string, Spotting> = $state({}); // Firestore data lookup
   let fotos: Record<string, string> = $state({}); // Wiki thumbnail lookup
   let fotosGroot: Record<string, string> = $state({}); // Wiki high-res lookup
   let zoek = $state("");
   let filterStatus = $state("alle");
-  let filterRegio = $state("alle");
-  let filterCategorie = $state("alle");
+  let filterRegio = $state<"alle" | WildlifeRegio>("alle");
+  let filterCategorie = $state<"alle" | WildlifeCategorie>("alle");
   let expandedDier: string | null = $state(null);
   let stopFotoLoading = false;
   let fotoBatchTimer: ReturnType<typeof setTimeout> | null = null;
+  const regioEntries = Object.entries(regioLabels) as Array<[WildlifeRegio, (typeof regioLabels)[WildlifeRegio]]>;
+  const categorieEntries = Object.entries(categorieLabels) as Array<[WildlifeCategorie, (typeof categorieLabels)[WildlifeCategorie]]>;
 
   let unsubFirestore: (() => void) | undefined;
   onMount(() => {
     const ref = collection(db, "wildlife");
     unsubFirestore = onSnapshot(ref, (snapshot) => {
-      const data: Record<string, any> = {};
-      snapshot.forEach((d) => { data[d.id] = d.data(); });
+      const data: Record<string, Spotting> = {};
+      snapshot.forEach((d) => { data[d.id] = d.data() as Spotting; });
       spottings = data;
     });
     return () => unsubFirestore?.();
@@ -61,7 +66,7 @@
     };
   });
 
-  function laadFotos(dieren: any[]) {
+  function laadFotos(dieren: Wildlife[]) {
     const CACHE_KEY = "wildlife_fotos_v3";
     let index = 0;
     const batchSize = 3;
@@ -72,14 +77,17 @@
       return url.replace(/\/\d+px-/, "/1600px-");
     }
 
-    async function laadEnkel(dier: any) {
+    async function laadEnkel(dier: Wildlife): Promise<WildlifePhotoResult> {
       try {
         const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dier.wiki), {
           headers: { "Api-User-Agent": "ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)" }
         });
         if (res.status === 429) return { id: dier.id, retry: true };
         if (res.ok) {
-          const data = await res.json();
+          const data = await res.json() as {
+            thumbnail?: { source?: string };
+            originalimage?: { source?: string };
+          };
           if (data.thumbnail && data.thumbnail.source) {
             return {
               id: dier.id,
@@ -88,7 +96,7 @@
             };
           }
         }
-      } catch (e) {}
+        } catch {}
       return null;
     }
 
@@ -108,10 +116,10 @@
         if (stopFotoLoading) return;
         let changed = false;
         let gotRateLimited = false;
-        results.forEach(res => {
-          if (res && res.retry) {
+        results.forEach((res) => {
+          if (res && "retry" in res) {
             gotRateLimited = true;
-          } else if (res && res.thumb) {
+          } else if (res && "thumb" in res) {
             fotos[res.id] = res.thumb;
             if (res.full) fotosGroot[res.id] = res.full;
             changed = true;
@@ -204,7 +212,7 @@
       <div class="wl-filter-rij">
         <div class="wl-pills">
           <button class="wl-pill" class:active={filterRegio === "alle"} onclick={() => filterRegio = "alle"}>Alle</button>
-          {#each Object.entries(regioLabels) as [key, val]}
+          {#each regioEntries as [key, val]}
             <button class="wl-pill" class:active={filterRegio === key} onclick={() => filterRegio = key}>{val.emoji} {val.label}</button>
           {/each}
         </div>
@@ -212,7 +220,7 @@
       <div class="wl-filter-rij">
         <div class="wl-pills">
           <button class="wl-pill" class:active={filterCategorie === "alle"} onclick={() => filterCategorie = "alle"}>Alle</button>
-          {#each Object.entries(categorieLabels) as [key, val]}
+          {#each categorieEntries as [key, val]}
             <button class="wl-pill" class:active={filterCategorie === key} onclick={() => filterCategorie = key}>{val.emoji} {val.label}</button>
           {/each}
         </div>

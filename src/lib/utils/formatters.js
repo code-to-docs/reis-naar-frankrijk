@@ -49,28 +49,49 @@ const timeFormatter = new Intl.DateTimeFormat('nl-NL', {
 });
 
 /**
- * @param {any} dateValue
+ * @typedef {Date | string | number | { toDate?: () => Date, seconds?: number } | null | undefined} DateValue
+ */
+
+/**
+ * @param {unknown} value
+ * @returns {value is { toDate: () => Date }}
+ */
+function hasToDate(value) {
+  return value !== null && value !== undefined && typeof value === 'object' && 'toDate' in value && typeof value.toDate === 'function';
+}
+
+/**
+ * @param {unknown} value
+ * @returns {value is { seconds: number }}
+ */
+function hasSeconds(value) {
+  return value !== null && value !== undefined && typeof value === 'object' && 'seconds' in value && typeof value.seconds === 'number';
+}
+
+/**
+ * @param {DateValue} dateValue
  * @returns {Date}
  */
 function toDate(dateValue) {
   if (!dateValue) return new Date();
   if (dateValue instanceof Date) return Number.isNaN(dateValue.getTime()) ? new Date() : dateValue;
-  if (dateValue?.toDate && typeof dateValue.toDate === 'function') return dateValue.toDate();
-  if (dateValue?.seconds) return new Date(dateValue.seconds * 1000);
+  if (hasToDate(dateValue)) return dateValue.toDate();
+  if (hasSeconds(dateValue)) return new Date(dateValue.seconds * 1000);
+  if (typeof dateValue !== 'string' && typeof dateValue !== 'number') return new Date();
   const parsed = new Date(dateValue);
   return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
 }
 
-/** @param {any} date */
+/** @param {DateValue} date */
 export const formatFullDate = (date) => fullDateFormatter.format(toDate(date));
-/** @param {any} date */
+/** @param {DateValue} date */
 export const formatShortDate = (date) => shortDateFormatter.format(toDate(date));
-/** @param {any} date */
+/** @param {DateValue} date */
 export const formatTime = (date) => timeFormatter.format(toDate(date));
 
 /**
  * Returns a human-friendly label for a date key (YYYY-MM-DD or Firestore timestamp)
- * @param {any} dateValue
+ * @param {DateValue} dateValue
  */
 export function getFriendlyDayLabel(dateValue) {
   const date = toDate(dateValue);
@@ -91,7 +112,7 @@ export function getFriendlyDayLabel(dateValue) {
 
 /**
  * Returns a sortable day key (YYYY-MM-DD) from a date/timestamp
- * @param {any} dateValue
+ * @param {DateValue} dateValue
  */
 export function getDayKey(dateValue) {
   const d = toDate(dateValue);

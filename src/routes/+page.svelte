@@ -2,10 +2,10 @@
   import WeerWidget from "$lib/components/WeerWidget.svelte";
   import SpotVanDeDag from "$lib/components/SpotVanDeDag.svelte";
   import { E } from "$lib/emojis.js";
+  import { config, getVertrekDatum } from "$lib/config.js";
 
   const vandaag = new Date();
-  const vertrekDatum = new Date(vandaag.getFullYear(), 6, 14);
-  if (vandaag > vertrekDatum) vertrekDatum.setFullYear(vandaag.getFullYear() + 1);
+  const vertrekDatum = getVertrekDatum(vandaag);
   const dagen = Math.ceil((vertrekDatum.getTime() - new Date().getTime()) / 86400000);
   const vertrekTekst = vertrekDatum.toLocaleDateString("nl-NL", {
     weekday: "long",
@@ -14,7 +14,7 @@
     year: "numeric"
   });
 
-  const routeTekst = "Loz\u00E8re \u2192 Cantal \u2192 Pyr\u00E9n\u00E9es Ari\u00E9geoises";
+  const routeTekst = config.routeTekst;
 
   function getReisFase() {
     if (dagen > 75) return "Voorbereiden";

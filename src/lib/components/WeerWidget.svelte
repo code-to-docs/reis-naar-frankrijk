@@ -1,188 +1,29 @@
-﻿<script lang="ts">
+<script lang="ts">
   import { onMount } from "svelte";
   import { E } from "$lib/emojis.js";
+  import type { WeatherAlertsPayload, WeerDag } from "$lib/types.js";
+  import { fetchAlerts, fetchLocatieNaam, fetchWeer } from "$lib/api/weatherApi.js";
+  import WeerAlerts from "./weer/WeerAlerts.svelte";
+  import WeerDagen from "./weer/WeerDagen.svelte";
 
   let datum = $state("");
   let dagNaam = $state("");
-  let weer = $state<any[]>([]);
+  let weer = $state<WeerDag[]>([]);
   let laden = $state(true);
   let fout = $state("");
   let locatieNaam = $state("");
   let isDesktop = $state(false);
   let zichtbareDagen = $state(3);
-  let alerts = $state<any | null>(null);
+  
+  let alerts = $state<WeatherAlertsPayload | null>(null);
   let alertsLaden = $state(true);
   let alertsFout = $state("");
 
   const FALLBACK_LAT = 44.5;
   const FALLBACK_LON = 3.5;
   const FALLBACK_NAAM = "Loz\u00E8re";
-  const WEATHER_CACHE_MAX_AGE = 4 * 3600 * 1000;
-  const ALERTS_CACHE_MAX_AGE = 30 * 60 * 1000;
-
-  let isAlive = false;
-  let gpsFallbackTimer: ReturnType<typeof setTimeout> | null = null;
-  let weerRequestCounter = 0;
-  let actiefWeerAbort: AbortController | null = null;
-  let actiefLocatieAbort: AbortController | null = null;
-  let actiefAlertsAbort: AbortController | null = null;
-
-  // Emoji variabelen (komen nu the E object)
-
-  const weerCodes = {
-    0: { emoji: "\u2600\uFE0F", tekst: "Zonnig" },
-    1: { emoji: "\u{1F324}\uFE0F", tekst: "Overwegend zonnig" },
-    2: { emoji: "\u26C5", tekst: "Half bewolkt" },
-    3: { emoji: "\u2601\uFE0F", tekst: "Bewolkt" },
-    45: { emoji: "\u{1F32B}\uFE0F", tekst: "Mist" },
-    48: { emoji: "\u{1F32B}\uFE0F", tekst: "Rijpmist" },
-    51: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte motregen" },
-    53: { emoji: "\u{1F326}\uFE0F", tekst: "Motregen" },
-    55: { emoji: "\u{1F327}\uFE0F", tekst: "Zware motregen" },
-    61: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte regen" },
-    63: { emoji: "\u{1F327}\uFE0F", tekst: "Regen" },
-    65: { emoji: "\u{1F327}\uFE0F", tekst: "Zware regen" },
-    71: { emoji: "\u{1F328}\uFE0F", tekst: "Lichte sneeuw" },
-    73: { emoji: "\u{1F328}\uFE0F", tekst: "Sneeuw" },
-    75: { emoji: "\u2744\uFE0F", tekst: "Zware sneeuw" },
-    80: { emoji: "\u{1F326}\uFE0F", tekst: "Lichte buien" },
-    81: { emoji: "\u{1F327}\uFE0F", tekst: "Buien" },
-    82: { emoji: "\u26C8\uFE0F", tekst: "Zware buien" },
-    95: { emoji: "\u26C8\uFE0F", tekst: "Onweer" },
-    96: { emoji: "\u26C8\uFE0F", tekst: "Onweer met hagel" },
-    99: { emoji: "\u26C8\uFE0F", tekst: "Zwaar onweer met hagel" },
-  };
-
-  function getWeerInfo(code: number) {
-    return (weerCodes as any)[code] || { emoji: "\u{1F321}\uFE0F", tekst: "Onbekend" };
-  }
-
-  const dagNamen = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
-  const maandNamen = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
-
+  
   let weergegevenDagen = $derived.by(() => weer.slice(0, zichtbareDagen));
-
-  function storageGet(key: string) {
-    try {
-      return localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  }
-
-  function storageSet(key: string, value: string) {
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-      // Ignore storage quota / private mode errors.
-    }
-  }
-
-  function weatherCacheKey(lat: number, lon: number) {
-    return "weer_v2_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
-  }
-
-  function alertsCacheKey() {
-    return "weer_alerts_v2";
-  }
-
-  function formatDag(dateStr: string) {
-    const d = new Date(dateStr + "T12:00:00");
-    return dagNamen[d.getDay()];
-  }
-
-  function formatDatumKort(dateStr: string) {
-    const d = new Date(dateStr + "T12:00:00");
-    return d.getDate() + " " + maandNamen[d.getMonth()].slice(0, 3);
-  }
-
-  function formatTijdKort(isoDate: string | undefined) {
-    if (!isoDate) return "";
-    const d = new Date(isoDate);
-    return d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
-  }
-
-  function formatAlertMoment(isoDate: string | undefined) {
-    if (!isoDate) return "";
-    const d = new Date(isoDate);
-    return d.toLocaleString("nl-NL", {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  }
-
-  function alertTone(level: number | undefined, fallback = "green") {
-    if (level === 4) return "red";
-    if (level === 3) return "orange";
-    if (level === 2) return "yellow";
-    return fallback;
-  }
-
-  function actieveOfficieleAlerts() {
-    return (alerts?.officialAlerts ?? []).filter((alert: any) => alert.active);
-  }
-
-  function rustigeRegios() {
-    return (alerts?.officialAlerts ?? [])
-      .filter((alert: any) => !alert.active)
-      .map((alert: any) => alert.regionName);
-  }
-
-  async function laadAlerts() {
-    const cacheKey = alertsCacheKey();
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    alertsFout = "";
-    alertsLaden = true;
-
-    if (actiefAlertsAbort) actiefAlertsAbort.abort();
-    const controller = new AbortController();
-    actiefAlertsAbort = controller;
-
-    try {
-      timeoutId = setTimeout(() => controller.abort(), 6000);
-      const res = await fetch("/api/weather-alerts", {
-        signal: controller.signal,
-        headers: {
-          "cache-control": "no-cache"
-        }
-      });
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-      if (!res.ok) throw new Error("alerts-fail");
-      const data = await res.json();
-      if (!isAlive || actiefAlertsAbort !== controller) return;
-
-      alerts = data;
-      alertsLaden = false;
-      storageSet(cacheKey, JSON.stringify({ t: Date.now(), data }));
-    } catch {
-      if (!isAlive || actiefAlertsAbort !== controller) return;
-
-      const cached = storageGet(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.t < ALERTS_CACHE_MAX_AGE) {
-            alerts = parsed.data;
-            alertsLaden = false;
-            return;
-          }
-        } catch {
-          // Ignore broken cache entries.
-        }
-      }
-
-      alertsFout = "Alerts tijdelijk niet beschikbaar";
-      alertsLaden = false;
-    } finally {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (actiefAlertsAbort === controller) actiefAlertsAbort = null;
-    }
-  }
 
   function updateViewportSettings() {
     const w = window.innerWidth;
@@ -190,169 +31,69 @@
     zichtbareDagen = w >= 1024 ? 6 : w >= 680 ? 4 : 3;
   }
 
-  async function laadWeer(lat: number, lon: number) {
-    const cacheKey = weatherCacheKey(lat, lon);
-    const requestId = ++weerRequestCounter;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    fout = "";
-    laden = true;
-
-    if (actiefWeerAbort) actiefWeerAbort.abort();
-    const controller = new AbortController();
-    actiefWeerAbort = controller;
-
-    try {
-      const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,windspeed_10m_max,sunrise,sunset&timezone=Europe/Paris&forecast_days=7";
-      timeoutId = setTimeout(() => controller.abort(), 5000);
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      timeoutId = null;
-      
-      if (!res.ok) throw new Error("fail");
-      const data = await res.json();
-      if (!isAlive || requestId !== weerRequestCounter) return;
-
-      weer = data.daily.time.map((dag: string, i: number) => ({
-        datum: dag,
-        dagNaam: formatDag(dag),
-        datumKort: formatDatumKort(dag),
-        weerInfo: getWeerInfo(data.daily.weathercode[i]),
-        maxTemp: Math.round(data.daily.temperature_2m_max[i]),
-        minTemp: Math.round(data.daily.temperature_2m_min[i]),
-        gevoelMax: Math.round(data.daily.apparent_temperature_max[i]),
-        gevoelMin: Math.round(data.daily.apparent_temperature_min[i]),
-        neerslagKans: data.daily.precipitation_probability_max[i],
-        windMax: Math.round(data.daily.windspeed_10m_max[i]),
-        zonsopkomst: formatTijdKort(data.daily.sunrise?.[i]),
-        zonsondergang: formatTijdKort(data.daily.sunset?.[i]),
-      }));
-      laden = false;
-      storageSet(cacheKey, JSON.stringify({ t: Date.now(), weer }));
-    } catch (e) {
-      if (!isAlive || requestId !== weerRequestCounter) return;
-      // Probeer cache
-      const cached = storageGet(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.t < WEATHER_CACHE_MAX_AGE) {
-            weer = parsed.weer;
-            laden = false;
-            return;
-          }
-        } catch (e) {
-          // Corrupted cache, ignore and continue to error state
-        }
-      }
-      fout = "Weer laden mislukt (offline?)";
-      laden = false;
-    } finally {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (actiefWeerAbort === controller) actiefWeerAbort = null;
-    }
-  }
-
-  async function getLocatieNaam(lat: number, lon: number) {
-    const latRnd = Math.round(lat * 100) / 100;
-    const lonRnd = Math.round(lon * 100) / 100;
-    const cacheKey = "loc_" + latRnd + "_" + lonRnd;
-    const cached = storageGet(cacheKey);
-    if (cached) {
-      locatieNaam = cached;
-      return;
-    }
-    
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    if (actiefLocatieAbort) actiefLocatieAbort.abort();
-    const controller = new AbortController();
-    actiefLocatieAbort = controller;
-
-    try {
-      timeoutId = setTimeout(() => controller.abort(), 5000);
-      const res = await fetch(
-        "https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json&zoom=10&accept-language=nl",
-        { signal: controller.signal }
-      );
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-      if (res.ok) {
-        const data = await res.json();
-        if (!isAlive || actiefLocatieAbort !== controller) return;
-
-        const parts = [];
-        if (data.address?.village || data.address?.town || data.address?.city) {
-          parts.push(data.address.village || data.address.town || data.address.city);
-        }
-        if (data.address?.county || data.address?.state) {
-          parts.push(data.address.county || data.address.state);
-        }
-        locatieNaam = parts.join(", ") || "Frankrijk";
-        storageSet(cacheKey, locatieNaam);
-      }
-    } catch {
-      // Ignore geocoder failures; fallback location remains visible.
-    } finally {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (actiefLocatieAbort === controller) actiefLocatieAbort = null;
-    }
-  }
-
   onMount(() => {
-    isAlive = true;
     updateViewportSettings();
     const onResize = () => updateViewportSettings();
     window.addEventListener("resize", onResize, { passive: true });
 
     const nu = new Date();
-    dagNaam = dagNamen[nu.getDay()].charAt(0).toUpperCase() + dagNamen[nu.getDay()].slice(1);
-    datum = nu.getDate() + " " + maandNamen[nu.getMonth()] + " " + nu.getFullYear();
-    laadAlerts();
+    const dagNamenInit = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+    const maandNamenInit = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+    
+    dagNaam = dagNamenInit[nu.getDay()].charAt(0).toUpperCase() + dagNamenInit[nu.getDay()].slice(1);
+    datum = nu.getDate() + " " + maandNamenInit[nu.getMonth()] + " " + nu.getFullYear();
+    
+    const controller = new AbortController();
 
-    let gpsDone = false;
+    async function loadData(lat: number, lon: number, customName?: string) {
+      laden = true;
+      fout = "";
+      locatieNaam = customName || locatieNaam || FALLBACK_NAAM;
+
+      if (!customName) {
+        void fetchLocatieNaam(lat, lon, controller.signal).then((naam) => {
+          if (naam) locatieNaam = naam;
+        });
+      }
+
+      try {
+        const result = await fetchWeer(lat, lon, controller.signal);
+        weer = result;
+      } catch (err) {
+        fout = err instanceof Error ? err.message : "Weer ophalen mislukt";
+      } finally {
+        laden = false;
+      }
+    }
+
+    async function loadAlertsData() {
+      try {
+        const result = await fetchAlerts(controller.signal);
+        if (result) {
+          alerts = result;
+          alertsFout = "";
+        }
+      } catch (err) {
+        alertsFout = err instanceof Error ? err.message : "Alerts onbeschikbaar";
+      } finally {
+        alertsLaden = false;
+      }
+    }
+
+    loadAlertsData();
+
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (gpsDone) return;
-          gpsDone = true;
-          if (gpsFallbackTimer) {
-            clearTimeout(gpsFallbackTimer);
-            gpsFallbackTimer = null;
-          }
-          laadWeer(pos.coords.latitude, pos.coords.longitude);
-          getLocatieNaam(pos.coords.latitude, pos.coords.longitude);
-        },
-        () => {
-          if (gpsDone) return;
-          gpsDone = true;
-          if (gpsFallbackTimer) {
-            clearTimeout(gpsFallbackTimer);
-            gpsFallbackTimer = null;
-          }
-          locatieNaam = FALLBACK_NAAM;
-          laadWeer(FALLBACK_LAT, FALLBACK_LON);
-        },
+        (pos) => loadData(pos.coords.latitude, pos.coords.longitude),
+        () => loadData(FALLBACK_LAT, FALLBACK_LON, FALLBACK_NAAM),
         { timeout: 5000, maximumAge: 600000 }
       );
-      gpsFallbackTimer = setTimeout(() => {
-        if (!gpsDone) {
-          gpsDone = true;
-          locatieNaam = FALLBACK_NAAM;
-          laadWeer(FALLBACK_LAT, FALLBACK_LON);
-        }
-      }, 3000);
     } else {
-      locatieNaam = FALLBACK_NAAM;
-      laadWeer(FALLBACK_LAT, FALLBACK_LON);
+      loadData(FALLBACK_LAT, FALLBACK_LON, FALLBACK_NAAM);
     }
 
     return () => {
-      isAlive = false;
-      if (gpsFallbackTimer) clearTimeout(gpsFallbackTimer);
-      if (actiefWeerAbort) actiefWeerAbort.abort();
-      if (actiefLocatieAbort) actiefLocatieAbort.abort();
-      if (actiefAlertsAbort) actiefAlertsAbort.abort();
+      controller.abort();
       window.removeEventListener("resize", onResize);
     };
   });
@@ -373,113 +114,9 @@
     </div>
   </div>
 
-  {#if alertsLaden}
-    <div class="alerts-loading">
-      <div class="alert-skeleton"></div>
-      <div class="alert-skeleton"></div>
-    </div>
-  {:else if alerts}
-    <div class="alerts-panel">
-      <div class="alerts-header">
-        <span>{E.WARN} Offici&#235;le alerts</span>
-        <small>M&#233;t&#233;o-France voor je route</small>
-      </div>
-
-      <div class="alerts-grid">
-        {#if actieveOfficieleAlerts().length > 0}
-          {#each actieveOfficieleAlerts() as alert}
-            <a
-              class="alert-card tone-{alertTone(alert.level)}"
-              href={alert.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div class="alert-card-top">
-                <span class="alert-source">{alert.sourceLabel}</span>
-                <span class="alert-badge">{alert.levelLabel}</span>
-              </div>
-              <div class="alert-region">{alert.regionName}</div>
-              <div class="alert-summary">
-                {#if alert.activePhenomena.length > 0}
-                  {alert.activePhenomena.map((item: any) => item.label).join(" • ")}
-                {:else}
-                  Officieel weeralarm actief
-                {/if}
-              </div>
-              {#if alert.validUntil}
-                <div class="alert-meta">Geldig tot {formatAlertMoment(alert.validUntil)}</div>
-              {/if}
-            </a>
-          {/each}
-        {:else}
-          <a
-            class="alert-card tone-calm"
-            href={alerts.sources?.meteoFranceUrl || "https://vigilance.meteofrance.fr/fr"}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div class="alert-card-top">
-              <span class="alert-source">M&#233;t&#233;o-France Vigilance</span>
-              <span class="alert-badge">Groen</span>
-            </div>
-            <div class="alert-region">Route rustig</div>
-            <div class="alert-summary">
-              Loz&#232;re, Cantal en Ari&#232;ge staan nu op groen.
-            </div>
-            {#if alerts.officialAlerts?.[0]?.updatedAt}
-              <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
-            {/if}
-          </a>
-        {/if}
-      </div>
-
-      {#if actieveOfficieleAlerts().length > 0 && rustigeRegios().length > 0}
-        <div class="alerts-footnote">
-          Rustig volgens M&#233;t&#233;o-France: {rustigeRegios().join(", ")}.
-        </div>
-      {/if}
-    </div>
-  {:else if alertsFout}
-    <div class="alerts-footnote alerts-footnote-error">{alertsFout}</div>
-  {/if}
-
-  {#if laden}
-    <div class="weer-laden">
-      <div class="weer-spinner"></div>
-      <span>Weer ophalen...</span>
-    </div>
-  {:else if fout}
-    <div class="weer-fout">{fout}</div>
-  {:else if weer.length > 0}
-    <div class="weer-dagen">
-      {#each weergegevenDagen as dag, i}
-        <div class="weer-dag" class:vandaag={i === 0}>
-          <div class="weer-dag-naam">{i === 0 ? "Vandaag" : dag.dagNaam.charAt(0).toUpperCase() + dag.dagNaam.slice(1)}</div>
-          <div class="weer-dag-datum">{dag.datumKort}</div>
-          <div class="weer-emoji">{dag.weerInfo.emoji}</div>
-          <div class="weer-beschrijving">{dag.weerInfo.tekst}</div>
-          <div class="weer-temps">
-            <span class="temp-max">{dag.maxTemp}{E.GRADEN}</span>
-            <span class="temp-min">{dag.minTemp}{E.GRADEN}</span>
-          </div>
-          <div class="weer-extra">
-            {#if dag.neerslagKans > 0}
-              <span>{E.DRUPPEL} {dag.neerslagKans}%</span>
-            {/if}
-            <span>{E.WIND} {dag.windMax} km/u</span>
-          </div>
-          {#if isDesktop}
-            <div class="weer-desktop-meta">
-              <span>Voelt als {dag.gevoelMax}{E.GRADEN}/{dag.gevoelMin}{E.GRADEN}</span>
-              {#if dag.zonsopkomst && dag.zonsondergang}
-                <span>Zon {dag.zonsopkomst} - Maan {dag.zonsondergang}</span>
-              {/if}
-            </div>
-          {/if}
-        </div>
-      {/each}
-    </div>
-  {/if}
+  <WeerAlerts {alerts} {alertsLaden} {alertsFout} />
+  
+  <WeerDagen {weer} {laden} {fout} {isDesktop} {weergegevenDagen} />
 </div>
 
 <style>
@@ -540,325 +177,4 @@
     border-radius: 999px;
     font-weight: 600;
   }
-
-  .alerts-panel {
-    margin-bottom: 12px;
-  }
-  .alerts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .alerts-header span {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #10233a;
-    letter-spacing: -0.01em;
-  }
-  .alerts-header small {
-    font-size: 0.78rem;
-    color: #64748b;
-    font-weight: 600;
-  }
-  .alerts-grid {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: 1fr;
-  }
-  .alert-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    border-radius: 16px;
-    padding: 12px 12px 11px;
-    border: 1px solid #dbe7f3;
-    background: linear-gradient(135deg, #f8fbff 0%, #f3f7fd 100%);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-  }
-  .alert-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .alert-source {
-    font-size: 0.74rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #5b6f89;
-    font-weight: 700;
-  }
-  .alert-badge {
-    font-size: 0.75rem;
-    font-weight: 800;
-    border-radius: 999px;
-    padding: 4px 9px;
-    background: rgba(15, 77, 132, 0.08);
-    color: #0f4d84;
-    white-space: nowrap;
-  }
-  .alert-region {
-    font-size: 1.02rem;
-    font-weight: 800;
-    color: #10233a;
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-  }
-  .alert-summary {
-    font-size: 0.9rem;
-    line-height: 1.35;
-    color: #21364e;
-    font-weight: 600;
-  }
-  .alert-meta {
-    margin-top: 7px;
-    font-size: 0.77rem;
-    color: #5f738c;
-    line-height: 1.35;
-  }
-  .tone-calm {
-    background: linear-gradient(135deg, #eff9f3 0%, #f7fcf8 100%);
-    border-color: #cfe9d9;
-  }
-  .tone-calm .alert-badge {
-    background: rgba(31, 169, 104, 0.12);
-    color: #1a7f4f;
-  }
-  .tone-yellow {
-    background: linear-gradient(135deg, #fff8dd 0%, #fffdf1 100%);
-    border-color: #f1de92;
-  }
-  .tone-yellow .alert-badge {
-    background: rgba(212, 172, 13, 0.16);
-    color: #8b6a00;
-  }
-  .tone-orange {
-    background: linear-gradient(135deg, #fff0e2 0%, #fff7f1 100%);
-    border-color: #f3c59a;
-  }
-  .tone-orange .alert-badge {
-    background: rgba(225, 120, 31, 0.16);
-    color: #a55311;
-  }
-  .tone-red {
-    background: linear-gradient(135deg, #ffe6e5 0%, #fff3f2 100%);
-    border-color: #f0b0ab;
-  }
-  .tone-red .alert-badge {
-    background: rgba(221, 75, 57, 0.15);
-    color: #9f2f22;
-  }
-  .alerts-footnote {
-    margin-top: 8px;
-    font-size: 0.79rem;
-    color: #64748b;
-    font-weight: 600;
-  }
-  .alerts-footnote-error {
-    margin-bottom: 12px;
-  }
-  .alerts-loading {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .alert-skeleton {
-    height: 86px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #eff4fa 25%, #f8fbff 50%, #eff4fa 75%);
-    background-size: 200% 100%;
-    animation: alertShimmer 1.3s infinite linear;
-  }
-  @keyframes alertShimmer {
-    from {
-      background-position: 200% 0;
-    }
-    to {
-      background-position: -200% 0;
-    }
-  }
-
-  .weer-laden {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: center;
-    padding: 20px;
-    color: #1565C0;
-    font-size: 0.92rem;
-  }
-  .weer-spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid #E3F2FD;
-    border-top-color: #1565C0;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .weer-fout {
-    text-align: center;
-    color: #C62828;
-    font-size: 0.85rem;
-    padding: 14px;
-  }
-
-  .weer-dagen {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .weer-dag {
-    background: #f8fafc;
-    border-radius: 16px;
-    padding: 12px 10px 10px;
-    text-align: center;
-    border: 1.5px solid #e2e8f0;
-    transition: border-color 0.2s, background-color 0.2s;
-  }
-  .weer-dag.vandaag {
-    background: #ecf4ff;
-    border-color: #2b79c2;
-    box-shadow: 0 2px 8px rgba(43, 121, 194, 0.16);
-  }
-  .weer-dag-naam {
-    font-weight: 700;
-    font-size: 0.82rem;
-    color: #0f172a;
-    margin-bottom: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .weer-dag-datum {
-    font-size: 0.78rem;
-    color: #475569;
-    margin-bottom: 7px;
-    font-weight: 500;
-  }
-  .weer-emoji {
-    font-size: 2.2rem;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-  .weer-beschrijving {
-    font-size: 0.88rem;
-    color: #1f2937;
-    margin-bottom: 8px;
-    min-height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.25;
-  }
-  .weer-temps {
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .temp-max {
-    font-weight: 800;
-    font-size: 2.05rem;
-    color: #dd6b20;
-    line-height: 1;
-  }
-  .temp-min {
-    font-size: 1.22rem;
-    color: #6b7280;
-    font-weight: 700;
-    align-self: flex-end;
-    line-height: 1;
-    margin-bottom: 1px;
-  }
-  .weer-extra {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    font-size: 0.9rem;
-    color: #111827;
-    font-weight: 500;
-  }
-  .weer-desktop-meta {
-    display: none;
-  }
-
-  .weer-card.desktop .weer-desktop-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    margin-top: 8px;
-    font-size: 0.78rem;
-    color: #475569;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-
-  @media (min-width: 1024px) {
-    .datum-dag { font-size: 2.5rem; }
-    .weer-card {
-      border-radius: 20px;
-      padding: 18px 16px 16px;
-    }
-    .weer-titel {
-      font-size: 2rem;
-    }
-    .weer-periode {
-      font-size: 0.82rem;
-      padding: 6px 10px;
-    }
-    .alerts-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .weer-dagen {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .weer-dag {
-      padding: 14px 10px 12px;
-    }
-    .weer-beschrijving {
-      min-height: 42px;
-      font-size: 0.9rem;
-    }
-    .temp-max {
-      font-size: 2.2rem;
-    }
-    .temp-min {
-      font-size: 1.28rem;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .weer-titel { font-size: 1.45rem; }
-    .weer-meta-rij { justify-content: flex-start; }
-    .weer-periode {
-      order: 2;
-    }
-    .weer-dagen {
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      padding-bottom: 2px;
-      scroll-snap-type: x proximity;
-    }
-    .weer-dag {
-      min-width: 150px;
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-    }
-  }
-
-  :global(html.dark) .weer-card {
-    border-color: #334155;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
-  }
 </style>
-

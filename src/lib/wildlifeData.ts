@@ -3,7 +3,9 @@
 // Zeldzaamheid: 1 = veel voorkomend, 2 = ongewoon, 3 = zeldzaam
 // Categorieën: roofvogel, zoogdier, reptiel_amfibie, insect
 
-export const wildlifeData = [
+import type { Wildlife } from "./types.js";
+
+export const wildlifeData: Wildlife[] = [
   // ============================================
   // ROOFVOGELS
   // ============================================
@@ -451,18 +453,18 @@ export const categorieLabels = {
   zoogdier: { label: 'Zoogdieren', emoji: '\u{1F98C}' },
   reptiel_amfibie: { label: 'Reptielen & amfibie\u00EBn', emoji: '\u{1F98E}' },
   insect: { label: 'Insecten & spinnen', emoji: '\u{1F98B}' },
-};
+} as const;
 
 // Regio labels en emoji's
 export const regioLabels = {
   lozere: { label: 'Loz\u00E8re', emoji: '\u{1F3D4}\uFE0F' },
   cantal: { label: 'Cantal', emoji: '\u{1F30B}' },
   pyrenees: { label: 'Pyr\u00E9n\u00E9es', emoji: '\u{1F43B}' },
-};
+} as const;
 
 // Zeldzaamheid labels
 export const zeldzaamheidLabels = {
   1: { label: 'Veel voorkomend', emoji: '\u2B50', kleur: '#4CAF50' },
   2: { label: 'Ongewoon', emoji: '\u2B50\u2B50', kleur: '#FF9800' },
   3: { label: 'Zeldzaam', emoji: '\u2B50\u2B50\u2B50', kleur: '#F44336' },
-};
+} as const;

@@ -6,7 +6,7 @@
   import { categorieLabels, regioLabels, zeldzaamheidLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
   import { formatFullDate, formatTime } from "$lib/utils/formatters.js";
-  import type { Spotting } from "$lib/types";
+  import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from "$lib/types.js";
 
   let { 
     dier, 
@@ -17,7 +17,7 @@
     currentUser, 
     onToggle 
   } = $props<{ 
-    dier: any; 
+    dier: Wildlife;
     spotting: Spotting | null | undefined; 
     foto: string; 
     groteFoto?: string; 
@@ -99,6 +99,19 @@
     };
   }
 
+  function getCategorieEmoji() {
+    const categorie = dier.categorie as keyof typeof categorieLabels;
+    return categorieLabels[categorie]?.emoji || E.POOT;
+  }
+
+  function getZeldzaamheidMeta(level: WildlifeZeldzaamheid) {
+    return zeldzaamheidLabels[level];
+  }
+
+  function getRegioMeta(regio: WildlifeRegio) {
+    return regioLabels[regio];
+  }
+
   async function autoLocatie() {
     if (gettingLocation) return;
     gettingLocation = true;
@@ -156,7 +169,7 @@
         openStreetMapUrl: links?.osm || null
       });
       haptic("success");
-      const emoji = (categorieLabels as any)[dier.categorie]?.emoji || E.POOT;
+      const emoji = getCategorieEmoji();
       toonSnackbar(dier.naam + " gespot!", "success", emoji);
       spotNotitie = "";
       spotLocatie = "";
@@ -187,7 +200,7 @@
       {#if foto && !imgError}
         <img src={foto} alt={dier.naam} class="wl-foto" loading="lazy" decoding="async" onerror={() => imgError = true} />
       {:else}
-        <div class="wl-foto-ph">{(categorieLabels as any)[dier.categorie]?.emoji || E.POOT}</div>
+        <div class="wl-foto-ph">{getCategorieEmoji()}</div>
       {/if}
       {#if spotting}
         <div class="wl-gespot-dot"></div>
@@ -196,11 +209,11 @@
     <div class="wl-info">
       <div class="wl-naam-rij">
         <strong class="wl-naam">{dier.naam}</strong>
-        <span class="wl-ster" style="color:{(zeldzaamheidLabels as any)[dier.zeldzaamheid]?.kleur}">{(zeldzaamheidLabels as any)[dier.zeldzaamheid]?.emoji}</span>
+          <span class="wl-ster" style="color:{getZeldzaamheidMeta(dier.zeldzaamheid).kleur}">{getZeldzaamheidMeta(dier.zeldzaamheid).emoji}</span>
       </div>
       <div class="wl-tags">
         {#each dier.regios as regio}
-          <span class="wl-tag">{(regioLabels as any)[regio]?.emoji} {(regioLabels as any)[regio]?.label}</span>
+          <span class="wl-tag">{getRegioMeta(regio).emoji} {getRegioMeta(regio).label}</span>
         {/each}
       </div>
     </div>
@@ -252,7 +265,7 @@
           <div class="wl-spotting-head">{E.CHECK} Gespot door {spotting.door}</div>
           {#if spotting.datum}
             <div class="wl-spotting-row">{E.KALENDER} {formatFullDate(spotting.datum)}</div>
-            <div class="wl-spotting-row">🕒 {formatTime(spotting.datum)}</div>
+            <div class="wl-spotting-row">Tijd {formatTime(spotting.datum)}</div>
           {/if}
           {#if spotting.locatie}
             <div class="wl-spotting-row">{E.PIN} {spotting.locatie}</div>

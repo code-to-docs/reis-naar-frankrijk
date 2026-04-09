@@ -2,11 +2,16 @@
   import { onMount } from 'svelte';
   import {
     collection, onSnapshot, addDoc, updateDoc,
-    deleteDoc, doc, serverTimestamp, query, orderBy
+    deleteDoc, doc, serverTimestamp, query, orderBy,
+    type DocumentData,
+    type QuerySnapshot
   } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
   import { appState, toonSnackbar } from '$lib/stores.svelte.js';
   import { E } from '$lib/emojis.js';
+  import type { LijstItem } from '$lib/types.js';
+
+  type GedeeldLijstItem = LijstItem & { id: string };
 
   let {
     titel = '',
@@ -16,9 +21,17 @@
     metLink = false,
     placeholder = 'Nieuw item...',
     toonDesktopTitel = true
-  } = $props();
+  } = $props<{
+    titel?: string;
+    emoji?: string;
+    collectie?: string;
+    afvinkbaar?: boolean;
+    metLink?: boolean;
+    placeholder?: string;
+    toonDesktopTitel?: boolean;
+  }>();
 
-  let items: any[] = $state([]);
+  let items = $state<GedeeldLijstItem[]>([]);
   let nieuwItem = $state('');
   let extraVeld = $state('');
   let linkVeld = $state('');
@@ -27,10 +40,13 @@
 
   let aantalGedaan = $derived(items.filter(i => i.gedaan).length);
 
-  function mapItems(snapshot: any, sorteerClientSide = false) {
-    const mapped = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as any));
+  function mapItems(snapshot: QuerySnapshot<DocumentData>, sorteerClientSide = false) {
+    const mapped: GedeeldLijstItem[] = snapshot.docs.map((entry) => ({
+      id: entry.id,
+      ...(entry.data() as Omit<LijstItem, 'id'>)
+    }));
     if (sorteerClientSide) {
-      mapped.sort((a: any, b: any) => (a.datum?.seconds || 0) - (b.datum?.seconds || 0));
+      mapped.sort((a, b) => (a.datum?.seconds || 0) - (b.datum?.seconds || 0));
     }
     items = mapped;
   }
@@ -53,7 +69,7 @@
 
   async function voegToe() {
     if (!nieuwItem.trim()) return;
-    const data: any = {
+    const data: Record<string, unknown> = {
       naam: nieuwItem.trim(),
       door: appState.gebruiker,
       datum: serverTimestamp()
@@ -74,7 +90,7 @@
     }
   }
 
-  async function toggle(item: any) {
+  async function toggle(item: GedeeldLijstItem) {
     try {
       await updateDoc(doc(db, collectie, item.id), {
         gedaan: !item.gedaan,

@@ -3,6 +3,7 @@
   import { collection, onSnapshot } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState } from "$lib/stores.svelte.js";
+  import type { Gerecht, GerechtCheck } from "$lib/types.js";
   import {
     gerechtenData,
     gerechtenDieetLabels,
@@ -13,15 +14,17 @@
   } from "$lib/gerechtenData.js";
   import GerechtenStats from "./gerechten/GerechtenStats.svelte";
   import GerechtCard from "./gerechten/GerechtCard.svelte";
+  import { laadEnkeleFotoVoorGerecht } from "$lib/api/wikiApi.js";
+  import { cacheManager } from "$lib/utils/cacheManager.js";
 
   type Coords = { lat: number; lon: number };
   type StreekLocatie = { naam: string; lat: number; lon: number };
-  type FotoResultaat = { thumb: string; full: string } | { retry: true } | null;
+  type GerechtChecksPerUser = Partial<Record<string, GerechtCheck>>;
 
   const TIP_MAX_AFSTAND_KM = 20;
   const REGIO_DETECTIE_MAX_KM = 70;
 
-  let checksByDish: Record<string, Record<string, any>> = $state({});
+  let checksByDish: Record<string, GerechtChecksPerUser> = $state({});
   let fotos: Record<string, string> = $state({});
   let fotosGroot: Record<string, string> = $state({});
   let expandedGerecht: string | null = $state(null);
@@ -93,12 +96,12 @@
     return bestRegio;
   }
 
-  function gerechtVoorFranziToegestaan(gerecht: any): boolean {
+  function gerechtVoorFranziToegestaan(gerecht: Gerecht): boolean {
     if (!isFranzi) return true;
     return Boolean(gerecht.vegetarisch || gerecht.vis);
   }
 
-  function gerechtBinnen20Km(gerecht: any, coords: Coords, regio: string): boolean {
+  function gerechtBinnen20Km(gerecht: Gerecht, coords: Coords, regio: string): boolean {
     if (!Array.isArray(gerecht.streken) || !gerecht.streken.includes(regio)) return false;
 
     const regioLocaties =
@@ -164,9 +167,9 @@
 
   onMount(() => {
     const unsub = onSnapshot(collection(db, "gerechten_checks"), (snapshot) => {
-      const grouped: Record<string, Record<string, any>> = {};
+      const grouped: Record<string, GerechtChecksPerUser> = {};
       snapshot.forEach((rowDoc) => {
-        const row: any = rowDoc.data();
+        const row = rowDoc.data() as Omit<GerechtCheck, "id">;
         if (!row?.gerechtId || !row?.door) return;
         const dishId = String(row.gerechtId);
         const key = String(row.door).toLowerCase();
@@ -185,184 +188,33 @@
     const CACHE_KEY = "gerechten_fotos_v1";
     const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < CACHE_MAX_AGE) {
-          const parsedThumbs = parsed.data?.thumb || parsed.data || {};
-          const parsedFull = parsed.data?.full || {};
-          fotos = parsedThumbs;
-          fotosGroot = parsedFull;
-
-          const missing = gerechtenData.filter((gerecht) => !fotos[gerecht.id] || !fotosGroot[gerecht.id]);
-          if (missing.length === 0) {
-            return () => {
-              stopFotoLoading = true;
-              if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
-            };
-          }
-
-          laadFotos(missing);
-          return () => {
-            stopFotoLoading = true;
-            if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
-          };
-        }
+    const cached = cacheManager.get<{ thumb: Record<string, string>, full: Record<string, string> }>(CACHE_KEY, CACHE_MAX_AGE);
+    
+    if (cached) {
+      fotos = cached.thumb || {};
+      fotosGroot = cached.full || {};
+      
+      const missing = gerechtenData.filter((gerecht) => !fotos[gerecht.id] || !fotosGroot[gerecht.id]);
+      if (missing.length > 0) laadFotos(missing);
+      else {
+        stopFotoLoading = true;
+        if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
       }
-    } catch (error) {
-      console.warn("Gerechtenfoto-cache kon niet worden gelezen", error);
+    } else {
+      laadFotos(gerechtenData);
     }
 
-    laadFotos(gerechtenData);
     return () => {
       stopFotoLoading = true;
       if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
     };
   });
 
-  function maakFotoZoektermen(gerecht: any): string[] {
-    const termen = [gerecht.frans, gerecht.naam];
-
-    if (gerecht.soort === "kaas") {
-      termen.push(`fromage ${gerecht.naam}`);
-      termen.push(`fromage ${gerecht.frans}`);
-    }
-
-    if (gerecht.soort === "drank") {
-      termen.push(`${gerecht.frans} boisson`);
-      termen.push(`${gerecht.naam} aperitif`);
-    }
-
-    if (gerecht.soort === "dessert" || gerecht.soort === "koek_cake") {
-      termen.push(`${gerecht.frans} dessert`);
-      termen.push(`${gerecht.naam} gateau`);
-    }
-
-    if (gerecht.soort === "hoofdgerecht" || gerecht.soort === "soep_stoof" || gerecht.soort === "streetfood") {
-      termen.push(`${gerecht.frans} cuisine`);
-      termen.push(`${gerecht.naam} recette`);
-    }
-
-    return [...new Set(termen.map((term) => String(term || "").trim()).filter(Boolean))];
-  }
-
-  async function zoekWikipediaFoto(term: string): Promise<FotoResultaat> {
-    try {
-      const params = new URLSearchParams({
-        action: "query",
-        generator: "search",
-        gsrsearch: term,
-        gsrlimit: "1",
-        prop: "pageimages|info",
-        piprop: "thumbnail|original",
-        pithumbsize: "900",
-        inprop: "url",
-        format: "json",
-        origin: "*"
-      });
-
-      const res = await fetch(`https://fr.wikipedia.org/w/api.php?${params.toString()}`, {
-        headers: { Accept: "application/json" }
-      });
-
-      if (res.status === 429) return { retry: true };
-      if (!res.ok) return null;
-
-      const data = await res.json();
-      const pages = Object.values(data?.query?.pages || {}) as Array<any>;
-      const page = pages.find((entry) => entry?.original?.source || entry?.thumbnail?.source);
-      if (!page) return null;
-
-      const thumb = page.thumbnail?.source || page.original?.source || "";
-      const full = page.original?.source || page.thumbnail?.source || "";
-      if (!thumb && !full) return null;
-
-      return {
-        thumb: thumb || full,
-        full: full || thumb
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  async function zoekCommonsFoto(term: string): Promise<FotoResultaat> {
-    try {
-      const params = new URLSearchParams({
-        action: "query",
-        generator: "search",
-        gsrsearch: term,
-        gsrnamespace: "6",
-        gsrlimit: "1",
-        prop: "imageinfo",
-        iiprop: "url",
-        iiurlwidth: "900",
-        format: "json",
-        origin: "*"
-      });
-
-      const res = await fetch(`https://commons.wikimedia.org/w/api.php?${params.toString()}`, {
-        headers: { Accept: "application/json" }
-      });
-
-      if (res.status === 429) return { retry: true };
-      if (!res.ok) return null;
-
-      const data = await res.json();
-      const pages = Object.values(data?.query?.pages || {}) as Array<any>;
-      const page = pages.find((entry) => entry?.imageinfo?.[0]?.thumburl || entry?.imageinfo?.[0]?.url);
-      const imageInfo = page?.imageinfo?.[0];
-      if (!imageInfo) return null;
-
-      const thumb = imageInfo.thumburl || imageInfo.url || "";
-      const full = imageInfo.url || imageInfo.thumburl || "";
-      if (!thumb && !full) return null;
-
-      return {
-        thumb: thumb || full,
-        full: full || thumb
-      };
-    } catch {
-      return null;
-    }
-  }
-
   function bewaarFotoCache() {
-    try {
-      localStorage.setItem(
-        "gerechten_fotos_v1",
-        JSON.stringify({
-          timestamp: Date.now(),
-          data: { thumb: fotos, full: fotosGroot }
-        })
-      );
-    } catch (error) {
-      console.warn("Gerechtenfoto-cache kon niet worden opgeslagen", error);
-    }
+    cacheManager.set("gerechten_fotos_v1", { thumb: fotos, full: fotosGroot });
   }
 
-  async function laadEnkeleFoto(gerecht: any) {
-    const zoektermen = maakFotoZoektermen(gerecht);
-
-    for (const zoekterm of zoektermen) {
-      const wikiFoto = await zoekWikipediaFoto(zoekterm);
-      if (wikiFoto && "retry" in wikiFoto) return { id: gerecht.id, retry: true };
-      if (wikiFoto && "thumb" in wikiFoto) {
-        return { id: gerecht.id, thumb: wikiFoto.thumb, full: wikiFoto.full };
-      }
-
-      const commonsFoto = await zoekCommonsFoto(zoekterm);
-      if (commonsFoto && "retry" in commonsFoto) return { id: gerecht.id, retry: true };
-      if (commonsFoto && "thumb" in commonsFoto) {
-        return { id: gerecht.id, thumb: commonsFoto.thumb, full: commonsFoto.full };
-      }
-    }
-
-    return null;
-  }
-
-  function laadFotos(gerechten: any[]) {
+  function laadFotos(gerechten: Gerecht[]) {
     let index = 0;
     const batchSize = 2;
     let retries = 0;
@@ -376,7 +228,7 @@
         return;
       }
 
-      const results = await Promise.all(batch.map(laadEnkeleFoto));
+      const results = await Promise.all(batch.map(laadEnkeleFotoVoorGerecht));
       if (stopFotoLoading) return;
 
       let changed = false;
@@ -384,27 +236,27 @@
 
       results.forEach((result) => {
         if (result && "retry" in result) {
-          gotRateLimited = true;
-          return;
+            gotRateLimited = true;
+            return;
         }
 
         if (result && "thumb" in result) {
-          fotos[result.id] = result.thumb;
-          fotosGroot[result.id] = result.full;
-          changed = true;
+            fotos[result.id] = result.thumb;
+            fotosGroot[result.id] = result.full;
+            changed = true;
         }
       });
 
       if (changed) {
-        fotos = { ...fotos };
-        fotosGroot = { ...fotosGroot };
-        bewaarFotoCache();
+          fotos = { ...fotos };
+          fotosGroot = { ...fotosGroot };
+          bewaarFotoCache();
       }
 
       if (gotRateLimited && retries < 5) {
-        retries += 1;
-        fotoBatchTimer = setTimeout(laadBatch, 2500 * retries);
-        return;
+          retries += 1;
+          fotoBatchTimer = setTimeout(laadBatch, 2500 * retries);
+          return;
       }
 
       retries = 0;

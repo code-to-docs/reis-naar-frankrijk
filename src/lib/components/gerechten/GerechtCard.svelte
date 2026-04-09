@@ -4,6 +4,7 @@
   import { E } from "$lib/emojis.js";
   import { toonSnackbar } from "$lib/stores.svelte.js";
   import { formatFullDate, formatTime } from "$lib/utils/formatters.js";
+  import type { Gerecht, GerechtCheck } from "$lib/types.js";
 
   let {
     gerecht,
@@ -14,8 +15,8 @@
     isExpanded,
     onToggle
   } = $props<{
-    gerecht: any;
-    checks: Record<string, any> | undefined;
+    gerecht: Gerecht;
+    checks: Partial<Record<string, GerechtCheck>> | undefined;
     currentUser: string;
     foto?: string;
     groteFoto?: string;
@@ -181,7 +182,7 @@
       {#if mijnCheck}
         <div class="gr-mijn-meta">
           {#if mijnCheck.datum}
-            <div>{E.KALENDER} {formatFullDate(mijnCheck.datum)} · {formatTime(mijnCheck.datum)}</div>
+            <div>{E.KALENDER} {formatFullDate(mijnCheck.datum)} - {formatTime(mijnCheck.datum)}</div>
           {/if}
           <div class="gr-stars">
             {#each sterren as s}
@@ -192,7 +193,7 @@
                 onclick={() => saveRating(s)}
                 aria-label={`Geef ${s} sterren`}
               >
-                ★
+                &#9733;
               </button>
             {/each}
           </div>

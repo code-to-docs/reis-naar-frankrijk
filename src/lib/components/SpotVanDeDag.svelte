@@ -5,27 +5,41 @@
   import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
   import { formatFullDate } from '$lib/utils/formatters.js';
+  import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from '$lib/types.js';
 
-  let laatsteSpotting: any = $state(null);
-  let dierInfo: any = $state(null);
+  let laatsteSpotting = $state<Spotting | null>(null);
+  let dierInfo = $state<Wildlife | null>(null);
   let foto = $state('');
   let imgError = $state(false);
   let laatstFotoDierId = "";
+
+  function getCategorieEmoji(dier: Wildlife) {
+    return categorieLabels[dier.categorie]?.emoji || E.POOT;
+  }
+
+  function getZeldzaamheidMeta(level: WildlifeZeldzaamheid) {
+    return zeldzaamheidLabels[level];
+  }
+
+  function getRegioMeta(regio: WildlifeRegio) {
+    return regioLabels[regio];
+  }
 
   onMount(() => {
     const ref = collection(db, 'wildlife');
     const q = query(ref, orderBy("datum", "desc"), limit(1));
     const unsub = onSnapshot(q, (snapshot) => {
-      let nieuwste: any = null;
+      let nieuwste: (Spotting & { id: string }) | null = null;
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
-        nieuwste = { id: d.id, ...d.data() };
+        nieuwste = { id: d.id, ...(d.data() as Spotting) };
       }
       if (nieuwste) {
         laatsteSpotting = nieuwste;
-        dierInfo = wildlifeData.find(d => d.id === nieuwste.id) || null;
-        if (dierInfo) {
-          if (laatstFotoDierId === dierInfo.id && foto) return;
+        const currentDier = wildlifeData.find((d) => d.id === nieuwste.id) || null;
+        dierInfo = currentDier;
+        if (currentDier) {
+          if (laatstFotoDierId === currentDier.id && foto) return;
 
           imgError = false;
           try {
@@ -33,24 +47,32 @@
             const cachedV2 = localStorage.getItem('wildlife_fotos_v2');
             const raw = cachedV3 || cachedV2;
             if (raw) {
-              const parsed = JSON.parse(raw);
-              const thumbs = parsed?.data?.thumb || parsed?.data || {};
-              if (thumbs[dierInfo.id]) {
-                foto = thumbs[dierInfo.id];
-                laatstFotoDierId = dierInfo.id;
+              const parsed = JSON.parse(raw) as { data?: { thumb?: Record<string, string> } | Record<string, string> };
+              const cachedData = parsed.data;
+              let thumbs: Record<string, string> = {};
+              if (cachedData && typeof cachedData === 'object') {
+                if ('thumb' in cachedData && cachedData.thumb && typeof cachedData.thumb === 'object') {
+                  thumbs = cachedData.thumb;
+                } else {
+                  thumbs = cachedData as Record<string, string>;
+                }
+              }
+              if (thumbs[currentDier.id]) {
+                foto = thumbs[currentDier.id];
+                laatstFotoDierId = currentDier.id;
                 return;
               }
             }
-          } catch (e) {}
+          } catch {}
           
-          fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(dierInfo.wiki), {
+          fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(currentDier.wiki), {
             headers: { 'Api-User-Agent': 'ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)' }
           })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
               if (data && data.thumbnail && data.thumbnail.source) {
                 foto = data.thumbnail.source;
-                laatstFotoDierId = dierInfo.id;
+                laatstFotoDierId = currentDier.id;
               }
             })
             .catch(() => {});
@@ -70,16 +92,16 @@
     {#if foto && !imgError}
       <img src={foto} alt={dierInfo.naam} class="spot-foto" loading="lazy" onerror={() => imgError = true} />
     {:else}
-      <div class="spot-foto-placeholder">{(categorieLabels as any)[dierInfo.categorie]?.emoji || E.POOT}</div>
+      <div class="spot-foto-placeholder">{getCategorieEmoji(dierInfo)}</div>
     {/if}
     <div class="spot-info">
       <div class="spot-naam">
         {dierInfo.naam}
-        <span class="spot-zeldzaamheid" style="color: {(zeldzaamheidLabels as any)[dierInfo.zeldzaamheid].kleur}">
-          {(zeldzaamheidLabels as any)[dierInfo.zeldzaamheid].emoji}
+        <span class="spot-zeldzaamheid" style="color: {getZeldzaamheidMeta(dierInfo.zeldzaamheid).kleur}">
+          {getZeldzaamheidMeta(dierInfo.zeldzaamheid).emoji}
         </span>
       </div>
-      <div class="spot-frans">{dierInfo.frans}</div>
+      <div class="spot-frans"><i>{dierInfo.latijn}</i></div>
       <div class="spot-meta">
         <span>{E.KALENDER} {formatFullDate(laatsteSpotting.datum).replace(/ \d{4}$/, '')}</span>
         <span>{E.PERSOON} {laatsteSpotting.door}</span>
@@ -92,7 +114,7 @@
       {/if}
       <div class="spot-regios">
         {#each dierInfo.regios as regio}
-          <span class="spot-regio-tag">{(regioLabels as any)[regio]?.emoji} {(regioLabels as any)[regio]?.label}</span>
+          <span class="spot-regio-tag">{getRegioMeta(regio).emoji} {getRegioMeta(regio).label}</span>
         {/each}
       </div>
     </div>

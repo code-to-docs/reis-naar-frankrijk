@@ -1,7 +1,9 @@
 // Gerechten specifiek voor Lozere, Cantal en de Pyrenees Ariegeoises
 // plus direct gerelateerde streekkeukens (Aubrac, Auvergne, Occitanie).
 
-export const gerechtenData = [
+import type { Gerecht } from "./types.js";
+
+export const gerechtenData: Gerecht[] = [
   {
     id: "aligot-aubrac",
     naam: "Aligot",

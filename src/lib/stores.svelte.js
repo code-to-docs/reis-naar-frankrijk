@@ -83,8 +83,9 @@ export const appState = new AppState();
 const noop = () => {};
 
 /**
- * @param {Set<Function>} set
- * @param {(value: any) => void} fn
+ * @template T
+ * @param {Set<(value: T) => void>} set
+ * @param {(value: T) => void} fn
  */
 function addSub(set, fn) {
   set.add(fn);
