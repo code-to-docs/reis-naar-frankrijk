@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import { addDoc, collection, serverTimestamp } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState, toonSnackbar } from "$lib/stores.svelte.js";
@@ -11,6 +12,7 @@
   let categorie = $state("dining");
   let omschrijving = $state("");
   let toonForm = $state(false);
+  let isMounted = $state(false);
 
   /** @param {string} raw */
   function parseBedrag(raw) {
@@ -49,9 +51,13 @@
       toonSnackbar("Fout bij opslaan", "error", E.KRUIS);
     }
   }
+
+  onMount(() => {
+    isMounted = true;
+  });
 </script>
 
-{#if toonForm}
+{#if isMounted && toonForm}
   <button type="button" class="fab-overlay" onclick={() => toonForm = false} aria-label="Sluiten"></button>
   <div class="fab-form">
     <form class="budget-add-form" onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
@@ -98,7 +104,7 @@
       </div>
     </form>
   </div>
-{:else}
+{:else if isMounted}
   <button class="fab" onclick={() => toonForm = true}>
     <span class="fab-icon">+</span>
     <span class="fab-label">Nieuwe uitgave</span>
@@ -125,6 +131,7 @@
     justify-content: center;
     z-index: 120;
     transition: transform 0.15s ease;
+    animation: fabIn 0.18s ease-out;
   }
   .fab:active { transform: scale(0.92); }
   .fab-icon {
@@ -158,6 +165,17 @@
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 8px));
     z-index: 140;
     animation: slideUp 0.2s ease-out;
+  }
+
+  @keyframes fabIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .budget-add-form {
     display: grid;

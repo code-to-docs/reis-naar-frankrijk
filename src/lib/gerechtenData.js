@@ -47,6 +47,61 @@ export const gerechtenData = [
     streken: ["cantal", "auvergne"]
   },
   {
+    id: "viande-salers-cantal",
+    naam: "Viande de Salers",
+    frans: "Viande de Salers",
+    omschrijving: "Mals en mooi gemarmerd rundvlees van Salers-koeien, vaak als entrecote geserveerd.",
+    emoji: "\u{1F969}",
+    vegetarisch: false,
+    smaak: "hartig",
+    soort: "hoofdgerecht",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "cantal-kaas",
+    naam: "Cantal",
+    frans: "Fromage Cantal",
+    omschrijving: "Halfharde koemelkkaas uit de Auvergne, van jeune tot vieux met steeds meer pit.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "salers-kaas",
+    naam: "Salers",
+    frans: "Fromage Salers",
+    omschrijving: "Rauwmelkse bergkaas met uitgesproken smaak, traditioneel alleen in het weideseizoen gemaakt.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "bleu-auvergne",
+    naam: "Bleu d'Auvergne",
+    frans: "Bleu d'Auvergne",
+    omschrijving: "Romige blauwaderkaas met pittige, ziltige tonen uit het hart van de Auvergne.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "cornet-murat",
+    naam: "Cornet de Murat",
+    frans: "Cornet de Murat",
+    omschrijving: "Opgerold wafelhoorntje uit Murat, traditioneel gevuld met slagroom of banketbakkersroom.",
+    emoji: "\u{1F9C7}",
+    vegetarisch: true,
+    smaak: "zoet",
+    soort: "koek_cake",
+    streken: ["cantal", "auvergne"]
+  },
+  {
     id: "manouls-lozere",
     naam: "Manouls",
     frans: "Manouls lozeriens",
@@ -55,6 +110,39 @@ export const gerechtenData = [
     vegetarisch: false,
     smaak: "hartig",
     soort: "soep_stoof",
+    streken: ["lozere", "occitanie"]
+  },
+  {
+    id: "fricandeau-lozere",
+    naam: "Fricandeau",
+    frans: "Fricandeau des Cevennes",
+    omschrijving: "Stevige bal van varkensgehakt en lever in crepine, koud gegeten als grove pate.",
+    emoji: "\u{1F356}",
+    vegetarisch: false,
+    smaak: "hartig",
+    soort: "hoofdgerecht",
+    streken: ["lozere", "occitanie"]
+  },
+  {
+    id: "pelardon-lozere",
+    naam: "Pelardon",
+    frans: "Pelardon des Cevennes",
+    omschrijving: "Klein rauwmelks geitenkaasje uit de Cevennen met frisse, aardse smaak.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
+    streken: ["lozere", "occitanie"]
+  },
+  {
+    id: "bleu-causses-lozere",
+    naam: "Bleu des Causses",
+    frans: "Bleu des Causses",
+    omschrijving: "Blauwschimmelkaas van koemelk, gerijpt in kalkgrotten met krachtige smaak.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
     streken: ["lozere", "occitanie"]
   },
   {
@@ -124,6 +212,17 @@ export const gerechtenData = [
     streken: ["pyrenees_ariegeoises", "occitanie"]
   },
   {
+    id: "rouzolle-ariegeoise",
+    naam: "Rouzolle",
+    frans: "Rouzolle ariegeoise",
+    omschrijving: "Dikke schijf van varkensgehakt, ham, kruiden en broodkruim die vaak in azinat wordt meegegaard.",
+    emoji: "\u{1F969}",
+    vegetarisch: false,
+    smaak: "hartig",
+    soort: "hoofdgerecht",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
+  },
+  {
     id: "mounjetado-ariegeoise",
     naam: "Mounjetado",
     frans: "Mounjetado ariegeoise",
@@ -132,6 +231,39 @@ export const gerechtenData = [
     vegetarisch: false,
     smaak: "hartig",
     soort: "soep_stoof",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
+  },
+  {
+    id: "porc-noir-bigorre",
+    naam: "Porc Noir de Bigorre",
+    frans: "Charcuterie de Porc Noir de Bigorre",
+    omschrijving: "Donkere, aromatische charcuterie van het zwarte varken dat vaak op menus in de Ariege verschijnt.",
+    emoji: "\u{1F356}",
+    vegetarisch: false,
+    smaak: "hartig",
+    soort: "hoofdgerecht",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
+  },
+  {
+    id: "bethmale-ariege",
+    naam: "Bethmale",
+    frans: "Fromage Bethmale",
+    omschrijving: "Milde, licht nootachtige halfharde koemelkkaas uit de vallei van Bethmale.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
+  },
+  {
+    id: "moulis-ariege",
+    naam: "Moulis",
+    frans: "Fromage de Moulis",
+    omschrijving: "Populaire bergkaas uit de Ariège, verkrijgbaar van koe-, schaap- of geitenmelk.",
+    emoji: "\u{1F9C0}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "kaas",
     streken: ["pyrenees_ariegeoises", "occitanie"]
   },
   {
@@ -200,6 +332,17 @@ export const gerechtenData = [
     smaak: "zoet",
     soort: "dessert",
     streken: ["lozere", "occitanie"]
+  },
+  {
+    id: "flocons-ariege",
+    naam: "Flocons d'Ariege",
+    frans: "Flocons d'Ariege",
+    omschrijving: "Kleine lekkernijen met knapperige meringue en een hart van romige hazelnootpraline.",
+    emoji: "\u{1F36C}",
+    vegetarisch: true,
+    smaak: "zoet",
+    soort: "dessert",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
   },
   {
     id: "flaune-aubrac",
@@ -301,11 +444,77 @@ export const gerechtenData = [
     streken: ["cantal", "auvergne"]
   },
   {
+    id: "salers-aperitif",
+    naam: "Salers",
+    frans: "Aperitif Salers",
+    omschrijving: "Bekende bittere aperitiefdrank op basis van gele gentiaan uit de vulkaanstreken van Cantal.",
+    emoji: "\u{1F379}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "drank",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "aveze-aperitif",
+    naam: "Aveze",
+    frans: "Aperitif Aveze",
+    omschrijving: "Bittere gentiaanlikeur uit de Auvergne, vaak puur of in een mix als aperitief gedronken.",
+    emoji: "\u{1F943}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "drank",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "biere-cantal",
+    naam: "Biere artisanale du Cantal",
+    frans: "Biere artisanale du Cantal",
+    omschrijving: "Lokale bieren uit Cantal, soms gebrouwen met linzen of kastanje voor extra streekkarakter.",
+    emoji: "\u{1F37A}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "drank",
+    streken: ["cantal", "auvergne"]
+  },
+  {
+    id: "castagnou-lozere",
+    naam: "Castagnou",
+    frans: "Castagnou des Cevennes",
+    omschrijving: "Witte wijn met kastanjelikeur uit de Cevennen, lokaal als zachte aperitiefklassieker.",
+    emoji: "\u{1F377}",
+    vegetarisch: true,
+    smaak: "zoet",
+    soort: "drank",
+    streken: ["lozere", "occitanie"]
+  },
+  {
+    id: "biere-chataigne-lozere",
+    naam: "Biere a la chataigne",
+    frans: "Biere a la chataigne des Cevennes",
+    omschrijving: "Ambachtelijk kastanjebier uit de Cevennen, met licht zoete en nootachtige tonen.",
+    emoji: "\u{1F37A}",
+    vegetarisch: true,
+    smaak: "hartig",
+    soort: "drank",
+    streken: ["lozere", "occitanie"]
+  },
+  {
     id: "genepi-pyrenees",
     naam: "Genepi",
     frans: "Genepi des Pyrenees",
     omschrijving: "Kruidige berglikeur op alpenkruiden, traditioneel als digestief.",
     emoji: "\u{1F943}",
+    vegetarisch: true,
+    smaak: "zoet",
+    soort: "drank",
+    streken: ["pyrenees_ariegeoises", "occitanie"]
+  },
+  {
+    id: "hypocras-ariege",
+    naam: "Hypocras",
+    frans: "Hypocras d'Ariege",
+    omschrijving: "Gezoete, kruidige wijn met kaneel, gember en kardemom, nog steeds geliefd rond Tarascon.",
+    emoji: "\u{1F377}",
     vegetarisch: true,
     smaak: "zoet",
     soort: "drank",

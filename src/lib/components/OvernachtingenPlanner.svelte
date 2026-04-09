@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import {
     addDoc,
     collection,
@@ -65,12 +65,16 @@
 
   let toonForm = $state(false);
   let toonShortlistForm = $state(false);
+  let bewerkItemId = $state<string | null>(null);
   let gpsBezig = $state(false);
   let selectieActief = $state(false);
   let selectieStartKey = $state<string | null>(null);
   let selectieEindKey = $state<string | null>(null);
   let activeTouchId = $state<number | null>(null);
   let onderdrukKlikTot = 0;
+
+  let overnachtingFormEl = $state<HTMLDivElement | null>(null);
+  let shortlistFormEl = $state<HTMLDivElement | null>(null);
 
   let naamInput = $state("");
   let typeInput = $state<OvernachtingType>("camping");
@@ -218,6 +222,8 @@
       });
   });
 
+  let bewerkItem = $derived.by(() => overnachtingen.find((row) => row.id === bewerkItemId) || null);
+
   let shortlistOvernachtingen = $derived.by(() =>
     overnachtingen
       .filter((o) => o.shortlistSafe)
@@ -326,6 +332,76 @@
     geselecteerdeMaand = maandSleutels[target];
   }
 
+  function resetSelectie() {
+    selectieActief = false;
+    selectieStartKey = null;
+    selectieEindKey = null;
+    activeTouchId = null;
+  }
+
+  function vulFormMetItem(item: OvernachtingView) {
+    naamInput = item.naam;
+    typeInput = item.typeSafe;
+    startDatumInput = item.startDatum || "";
+    nachtenInput = String(item.nachtenSafe || 1);
+    latitudeInput = item.latSafe !== null ? item.latSafe.toFixed(5) : "";
+    longitudeInput = item.lonSafe !== null ? item.lonSafe.toFixed(5) : "";
+    adresInput = item.adres || "";
+    websiteUrlInput = item.websiteUrl || "";
+    bookingUrlInput = item.bookingUrl || "";
+    notitiesInput = item.notities || "";
+  }
+
+  async function scrollNaarFormulier(type: "overnachting" | "shortlist") {
+    await tick();
+    const target = type === "shortlist" ? shortlistFormEl : overnachtingFormEl;
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function openNieuwOvernachtingForm() {
+    bewerkItemId = null;
+    resetSelectie();
+    resetForm();
+    toonShortlistForm = false;
+    toonForm = true;
+    await scrollNaarFormulier("overnachting");
+  }
+
+  async function openNieuweShortlistForm() {
+    bewerkItemId = null;
+    resetSelectie();
+    resetForm();
+    toonForm = false;
+    toonShortlistForm = true;
+    await scrollNaarFormulier("shortlist");
+  }
+
+  function sluitFormulieren() {
+    toonForm = false;
+    toonShortlistForm = false;
+    bewerkItemId = null;
+    resetSelectie();
+    resetForm();
+  }
+
+  async function openItemEditor(item: OvernachtingView) {
+    bewerkItemId = item.id;
+    resetSelectie();
+    vulFormMetItem(item);
+    if (item.startDateObj) {
+      geselecteerdeMaand = maandKeyVanDatum(item.startDateObj);
+    }
+    if (item.shortlistSafe) {
+      toonForm = false;
+      toonShortlistForm = true;
+      await scrollNaarFormulier("shortlist");
+      return;
+    }
+    toonShortlistForm = false;
+    toonForm = true;
+    await scrollNaarFormulier("overnachting");
+  }
+
   function zetSelectie(startKey: string, eindKey: string) {
     const start = parseDagKey(startKey);
     const end = parseDagKey(eindKey);
@@ -339,15 +415,18 @@
     selectieEindKey = startKey;
   }
 
-  function commitSelectie() {
+  async function commitSelectie() {
     if (!selectieStartKey || !selectieEindKey) return;
     const start = parseDagKey(selectieStartKey);
     const end = parseDagKey(selectieEindKey);
     if (!start || !end) return;
     const dagen = Math.max(1, Math.floor((end.getTime() - start.getTime()) / 86400000) + 1);
+    bewerkItemId = null;
     startDatumInput = selectieStartKey;
     nachtenInput = String(dagen);
+    toonShortlistForm = false;
     toonForm = true;
+    await scrollNaarFormulier("overnachting");
   }
 
   function selectieBereik() {
@@ -375,11 +454,15 @@
     return !isLeeg && dayKey === selectieEindKey;
   }
 
-  function handleDayClick(dayKey: string, isLeeg: boolean) {
+  function handleDayClick(dayKey: string, isLeeg: boolean, entries: OvernachtingView[]) {
     if (isLeeg) return;
     if (Date.now() < onderdrukKlikTot) return;
+    if (entries.length === 1) {
+      void openItemEditor(entries[0]);
+      return;
+    }
     zetSelectie(dayKey, dayKey);
-    commitSelectie();
+    void commitSelectie();
   }
 
   function handleDayMouseDown(event: MouseEvent, dayKey: string, isLeeg: boolean) {
@@ -397,7 +480,7 @@
   function handleGlobalMouseUp() {
     if (!selectieActief) return;
     selectieActief = false;
-    commitSelectie();
+    void commitSelectie();
     onderdrukKlikTot = Date.now() + 260;
   }
 
@@ -429,15 +512,15 @@
     activeTouchId = null;
     if (!selectieActief) return;
     selectieActief = false;
-    commitSelectie();
+    void commitSelectie();
     onderdrukKlikTot = Date.now() + 360;
   }
 
-  function handleDayKeydown(event: KeyboardEvent, dayKey: string, isLeeg: boolean) {
+  function handleDayKeydown(event: KeyboardEvent, dayKey: string, isLeeg: boolean, entries: OvernachtingView[]) {
     if (isLeeg) return;
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    handleDayClick(dayKey, false);
+    handleDayClick(dayKey, false, entries);
   }
 
   function resetForm() {
@@ -506,28 +589,35 @@
     }
     const coord = haalCoordinatenUitForm();
     if (!coord) return;
+    const isUpdate = Boolean(bewerkItemId);
 
     const websiteUrl = normalizeUrl(websiteUrlInput);
     const bookingUrl = normalizeUrl(bookingUrlInput);
+    const payload = {
+      naam,
+      shortlist: true,
+      type: typeInput,
+      adres,
+      latitude: coord.latNum,
+      longitude: coord.lonNum,
+      mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres),
+      openStreetMapUrl: coord.osmLink,
+      websiteUrl: websiteUrl || "",
+      bookingUrl: bookingUrl || "",
+      notities: notitiesInput.trim() || "",
+      door: appState.gebruiker || "",
+      datum: serverTimestamp()
+    };
     try {
-      await addDoc(collection(db, "campings"), {
-        naam,
-        shortlist: true,
-        type: typeInput,
-        adres,
-        latitude: coord.latNum,
-        longitude: coord.lonNum,
-        mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres),
-        openStreetMapUrl: coord.osmLink,
-        websiteUrl: websiteUrl || "",
-        bookingUrl: bookingUrl || "",
-        notities: notitiesInput.trim() || "",
-        door: appState.gebruiker || "",
-        datum: serverTimestamp()
-      });
+      if (bewerkItemId) {
+        await updateDoc(doc(db, "campings", bewerkItemId), payload);
+      } else {
+        await addDoc(collection(db, "campings"), payload);
+      }
+      bewerkItemId = null;
       toonShortlistForm = false;
       resetForm();
-      toonSnackbar("Locatie aan shortlist toegevoegd", "success", E.CHECK);
+      toonSnackbar(isUpdate ? "Shortlist-locatie bijgewerkt" : "Locatie aan shortlist toegevoegd", "success", E.CHECK);
     } catch (e) {
       console.error(e);
       toonSnackbar("Kon shortlist-locatie niet opslaan", "error", E.KRUIS);
@@ -585,31 +675,38 @@
 
     const coord = haalCoordinatenUitForm();
     if (!coord) return;
+    const isUpdate = Boolean(bewerkItemId);
     const websiteUrl = normalizeUrl(websiteUrlInput);
     const bookingUrl = normalizeUrl(bookingUrlInput);
+    const payload = {
+      naam,
+      shortlist: false,
+      type: typeInput,
+      adres: adres || "",
+      startDatum: startDatumInput,
+      nachten,
+      latitude: coord.latNum,
+      longitude: coord.lonNum,
+      mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : null),
+      openStreetMapUrl: coord.osmLink,
+      websiteUrl: websiteUrl || "",
+      bookingUrl: bookingUrl || "",
+      notities: notitiesInput.trim() || "",
+      door: appState.gebruiker || "",
+      datum: serverTimestamp()
+    };
 
     try {
-      await addDoc(collection(db, "campings"), {
-        naam,
-        shortlist: false,
-        type: typeInput,
-        adres: adres || "",
-        startDatum: startDatumInput,
-        nachten,
-        latitude: coord.latNum,
-        longitude: coord.lonNum,
-        mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : null),
-        openStreetMapUrl: coord.osmLink,
-        websiteUrl: websiteUrl || "",
-        bookingUrl: bookingUrl || "",
-        notities: notitiesInput.trim() || "",
-        door: appState.gebruiker || "",
-        datum: serverTimestamp()
-      });
+      if (bewerkItemId) {
+        await updateDoc(doc(db, "campings", bewerkItemId), payload);
+      } else {
+        await addDoc(collection(db, "campings"), payload);
+      }
       geselecteerdeMaand = maandKeyVanDatum(start);
+      bewerkItemId = null;
       toonForm = false;
       resetForm();
-      toonSnackbar("Overnachting toegevoegd", "success", E.CHECK);
+      toonSnackbar(isUpdate ? "Overnachting bijgewerkt" : "Overnachting toegevoegd", "success", E.CHECK);
     } catch (e) {
       console.error(e);
       toonSnackbar("Kon overnachting niet opslaan", "error", E.KRUIS);
@@ -617,21 +714,16 @@
   }
 
   async function planShortlistItem(item: OvernachtingView) {
+    vulFormMetItem(item);
     if (!startDatumInput) {
       const vandaag = dagKeyVanDatum(naarLokaleDag(new Date()));
       startDatumInput = vandaag;
     }
-    naamInput = item.naam;
-    typeInput = item.typeSafe;
-    latitudeInput = item.latSafe !== null ? item.latSafe.toFixed(5) : "";
-    longitudeInput = item.lonSafe !== null ? item.lonSafe.toFixed(5) : "";
-    adresInput = item.adres || "";
-    websiteUrlInput = item.websiteUrl || "";
-    bookingUrlInput = item.bookingUrl || "";
-    notitiesInput = item.notities || "";
     nachtenInput = "1";
-    toonForm = true;
+    bewerkItemId = item.id;
     toonShortlistForm = false;
+    toonForm = true;
+    await scrollNaarFormulier("overnachting");
     toonSnackbar("Shortlist item geladen. Kies datum en aantal nachten.", "success", E.KALENDER);
   }
 
@@ -714,10 +806,10 @@
       <p>Plan verblijven op de kalender en bewaar kansrijke plekken in je shortlist.</p>
     </div>
     <div class="ov-top-actions">
-      <button class="btn-primary ov-add" onclick={() => { toonForm = !toonForm; if (toonForm) toonShortlistForm = false; }}>
+      <button class="btn-primary ov-add" onclick={() => { if (toonForm) { sluitFormulieren(); } else { void openNieuwOvernachtingForm(); } }}>
         {toonForm ? "Sluit planning" : "+ Plan overnachting"}
       </button>
-      <button class="ov-secondary-btn" onclick={() => { toonShortlistForm = !toonShortlistForm; if (toonShortlistForm) toonForm = false; }}>
+      <button class="ov-secondary-btn" onclick={() => { if (toonShortlistForm) { sluitFormulieren(); } else { void openNieuweShortlistForm(); } }}>
         {toonShortlistForm ? "Sluit shortlist" : "+ Shortlist locatie"}
       </button>
     </div>
@@ -743,8 +835,11 @@
   </div>
 
   {#if toonForm}
-    <div class="card ov-form-card">
-      <h3>Nieuwe overnachting</h3>
+    <div class="card ov-form-card" bind:this={overnachtingFormEl}>
+      <div class="ov-form-head">
+        <h3>{bewerkItemId ? "Overnachting bewerken" : "Nieuwe overnachting"}</h3>
+        <p>{bewerkItemId ? "Pas de details aan en sla opnieuw op." : "Plan een verblijf direct op de kalender."}</p>
+      </div>
       <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegOvernachtingToe(); }}>
         <label>
           <span>Naam</span>
@@ -810,16 +905,19 @@
         </div>
 
         <div class="ov-actions">
-          <button class="btn-save" type="submit">Opslaan</button>
-          <button class="btn-danger" type="button" onclick={() => { toonForm = false; resetForm(); }}>{E.X}</button>
+          <button class="btn-save" type="submit">{bewerkItemId ? "Wijzigingen opslaan" : "Opslaan"}</button>
+          <button class="btn-danger" type="button" onclick={sluitFormulieren}>{E.X}</button>
         </div>
       </form>
     </div>
   {/if}
 
   {#if toonShortlistForm}
-    <div class="card ov-form-card">
-      <h3>Nieuwe shortlist-locatie</h3>
+    <div class="card ov-form-card" bind:this={shortlistFormEl}>
+      <div class="ov-form-head">
+        <h3>{bewerkItemId ? "Shortlist-locatie bewerken" : "Nieuwe shortlist-locatie"}</h3>
+        <p>{bewerkItemId ? "Werk de shortlist bij zonder de plek al in te plannen." : "Bewaar kansrijke locaties om later makkelijk te boeken."}</p>
+      </div>
       <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegShortlistToe(); }}>
         <label>
           <span>Naam</span>
@@ -873,8 +971,8 @@
         </div>
 
         <div class="ov-actions">
-          <button class="btn-save" type="submit">Naar shortlist</button>
-          <button class="btn-danger" type="button" onclick={() => { toonShortlistForm = false; resetForm(); }}>{E.X}</button>
+          <button class="btn-save" type="submit">{bewerkItemId ? "Wijzigingen opslaan" : "Naar shortlist"}</button>
+          <button class="btn-danger" type="button" onclick={sluitFormulieren}>{E.X}</button>
         </div>
       </form>
     </div>
@@ -896,8 +994,8 @@
 
     <div class="ov-grid" class:selecting={selectieActief}>
       {#each kalenderCels as cel (cel.key)}
-        <button
-          type="button"
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <div
           class="ov-day"
           class:leeg={cel.isLeeg}
           class:vandaag={cel.isVandaag}
@@ -905,22 +1003,34 @@
           class:selectiestart={dagIsSelectieStart(cel.key, cel.isLeeg)}
           class:selectieeinde={dagIsSelectieEinde(cel.key, cel.isLeeg)}
           data-daykey={cel.isLeeg ? undefined : cel.key}
-          disabled={cel.isLeeg}
+          role={cel.isLeeg ? undefined : "button"}
+          tabindex={cel.isLeeg ? undefined : 0}
           aria-label={cel.isLeeg ? undefined : `Kies datum ${cel.key}`}
           onmousedown={(event) => handleDayMouseDown(event, cel.key, cel.isLeeg)}
           onmouseenter={() => handleDayMouseEnter(cel.key, cel.isLeeg)}
-          onclick={() => handleDayClick(cel.key, cel.isLeeg)}
+          onclick={() => handleDayClick(cel.key, cel.isLeeg, cel.entries)}
           ontouchstart={(event) => handleDayTouchStart(event, cel.key, cel.isLeeg)}
-          onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg)}
+          onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg, cel.entries)}
         >
           {#if cel.dagNummer !== null}
             <div class="ov-day-number">{cel.dagNummer}</div>
             {#if cel.entries.length > 0}
               <div class="ov-day-events">
                 {#each cel.entries.slice(0, 2) as ent}
-                  <div class="ov-chip" style={`--loc-kleur:${ent.kleur}`} title={`${ent.naam} (${ent.nachtenSafe} nacht${ent.nachtenSafe > 1 ? "en" : ""})`}>
+                  <button
+                    type="button"
+                    class="ov-chip ov-chip-btn"
+                    style={`--loc-kleur:${ent.kleur}`}
+                    title={`${ent.naam} (${ent.nachtenSafe} nacht${ent.nachtenSafe > 1 ? "en" : ""})`}
+                    onmousedown={(event) => event.stopPropagation()}
+                    ontouchstart={(event) => event.stopPropagation()}
+                    onclick={(event) => {
+                      event.stopPropagation();
+                      void openItemEditor(ent);
+                    }}
+                  >
                     <span>{ent.naam}</span>
-                  </div>
+                  </button>
                 {/each}
                 {#if cel.entries.length > 2}
                   <div class="ov-more">+{cel.entries.length - 2}</div>
@@ -928,7 +1038,7 @@
               </div>
             {/if}
           {/if}
-        </button>
+        </div>
       {/each}
     </div>
 
@@ -954,7 +1064,10 @@
           <article class="ov-item ov-shortlist-item" style={`--loc-kleur:${o.kleur}`}>
             <div class="ov-item-head">
               <strong>{o.naam}</strong>
-              <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              <div class="ov-item-head-actions">
+                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Open</button>
+                <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              </div>
             </div>
             <div class="ov-meta">
               <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
@@ -1009,7 +1122,10 @@
           <article class="ov-item" style={`--loc-kleur:${o.kleur}`}>
             <div class="ov-item-head">
               <strong>{o.naam}</strong>
-              <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              <div class="ov-item-head-actions">
+                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Open</button>
+                <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              </div>
             </div>
             <div class="ov-meta">
               <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
@@ -1044,6 +1160,10 @@
             {#if o.notities}
               <p class="ov-note">{o.notities}</p>
             {/if}
+
+            <div class="ov-inline-actions">
+              <button class="ov-secondary-btn" onclick={() => void openItemEditor(o)}>Open details en bewerk</button>
+            </div>
           </article>
         {/each}
       </div>
@@ -1128,9 +1248,20 @@
   .ov-form-card {
     margin: 0;
   }
-  .ov-form-card h3 {
+  .ov-form-head {
+    display: grid;
+    gap: 4px;
     margin-bottom: 10px;
+  }
+  .ov-form-card h3 {
+    margin: 0;
     font-size: var(--font-size-xl);
+  }
+  .ov-form-head p {
+    margin: 0;
+    color: var(--nav-text);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
   }
   .ov-form {
     display: grid;
@@ -1271,9 +1402,6 @@
     cursor: default;
     touch-action: auto;
   }
-  .ov-day:disabled {
-    pointer-events: none;
-  }
   .ov-day.vandaag {
     border-color: var(--blauw);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blauw) 30%, transparent);
@@ -1315,6 +1443,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .ov-chip-btn {
+    appearance: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
   }
   .ov-more {
     font-size: 0.72rem;
@@ -1373,9 +1508,25 @@
     justify-content: space-between;
     gap: 8px;
   }
+  .ov-item-head-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
   .ov-item-head strong {
     font-size: var(--font-size-lg);
     color: var(--heading);
+  }
+  .ov-open-btn {
+    width: auto;
+    min-height: 32px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid var(--input-border);
+    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    color: var(--blauw);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
   }
   .ov-delete {
     width: auto;
@@ -1433,6 +1584,15 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+  }
+  .ov-inline-actions {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ov-inline-actions .ov-secondary-btn {
+    min-height: 38px;
   }
   .ov-shortlist-actions .btn-primary {
     width: auto;
@@ -1539,6 +1699,7 @@
     color: #dbeafe;
     border-color: #2563eb;
   }
+  :global(html.dark) .ov-open-btn,
   :global(html.dark) .ov-secondary-btn {
     background: #1e3a8a;
     color: #dbeafe;

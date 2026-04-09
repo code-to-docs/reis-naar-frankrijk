@@ -16,12 +16,17 @@
 
   type Coords = { lat: number; lon: number };
   type StreekLocatie = { naam: string; lat: number; lon: number };
+  type FotoResultaat = { thumb: string; full: string } | { retry: true } | null;
 
   const TIP_MAX_AFSTAND_KM = 20;
   const REGIO_DETECTIE_MAX_KM = 70;
 
   let checksByDish: Record<string, Record<string, any>> = $state({});
+  let fotos: Record<string, string> = $state({});
+  let fotosGroot: Record<string, string> = $state({});
   let expandedGerecht: string | null = $state(null);
+  let stopFotoLoading = false;
+  let fotoBatchTimer: ReturnType<typeof setTimeout> | null = null;
 
   let zoek = $state("");
   let toonFilters = $state(false);
@@ -160,13 +165,13 @@
   onMount(() => {
     const unsub = onSnapshot(collection(db, "gerechten_checks"), (snapshot) => {
       const grouped: Record<string, Record<string, any>> = {};
-      snapshot.forEach((d) => {
-        const row: any = d.data();
+      snapshot.forEach((rowDoc) => {
+        const row: any = rowDoc.data();
         if (!row?.gerechtId || !row?.door) return;
         const dishId = String(row.gerechtId);
         const key = String(row.door).toLowerCase();
         if (!grouped[dishId]) grouped[dishId] = {};
-        grouped[dishId][key] = { id: d.id, ...row };
+        grouped[dishId][key] = { id: rowDoc.id, ...row };
       });
       checksByDish = grouped;
     });
@@ -174,6 +179,241 @@
     void refreshGpsTip();
     return () => unsub();
   });
+
+  onMount(() => {
+    stopFotoLoading = false;
+    const CACHE_KEY = "gerechten_fotos_v1";
+    const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.timestamp && Date.now() - parsed.timestamp < CACHE_MAX_AGE) {
+          const parsedThumbs = parsed.data?.thumb || parsed.data || {};
+          const parsedFull = parsed.data?.full || {};
+          fotos = parsedThumbs;
+          fotosGroot = parsedFull;
+
+          const missing = gerechtenData.filter((gerecht) => !fotos[gerecht.id] || !fotosGroot[gerecht.id]);
+          if (missing.length === 0) {
+            return () => {
+              stopFotoLoading = true;
+              if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
+            };
+          }
+
+          laadFotos(missing);
+          return () => {
+            stopFotoLoading = true;
+            if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
+          };
+        }
+      }
+    } catch (error) {
+      console.warn("Gerechtenfoto-cache kon niet worden gelezen", error);
+    }
+
+    laadFotos(gerechtenData);
+    return () => {
+      stopFotoLoading = true;
+      if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
+    };
+  });
+
+  function maakFotoZoektermen(gerecht: any): string[] {
+    const termen = [gerecht.frans, gerecht.naam];
+
+    if (gerecht.soort === "kaas") {
+      termen.push(`fromage ${gerecht.naam}`);
+      termen.push(`fromage ${gerecht.frans}`);
+    }
+
+    if (gerecht.soort === "drank") {
+      termen.push(`${gerecht.frans} boisson`);
+      termen.push(`${gerecht.naam} aperitif`);
+    }
+
+    if (gerecht.soort === "dessert" || gerecht.soort === "koek_cake") {
+      termen.push(`${gerecht.frans} dessert`);
+      termen.push(`${gerecht.naam} gateau`);
+    }
+
+    if (gerecht.soort === "hoofdgerecht" || gerecht.soort === "soep_stoof" || gerecht.soort === "streetfood") {
+      termen.push(`${gerecht.frans} cuisine`);
+      termen.push(`${gerecht.naam} recette`);
+    }
+
+    return [...new Set(termen.map((term) => String(term || "").trim()).filter(Boolean))];
+  }
+
+  async function zoekWikipediaFoto(term: string): Promise<FotoResultaat> {
+    try {
+      const params = new URLSearchParams({
+        action: "query",
+        generator: "search",
+        gsrsearch: term,
+        gsrlimit: "1",
+        prop: "pageimages|info",
+        piprop: "thumbnail|original",
+        pithumbsize: "900",
+        inprop: "url",
+        format: "json",
+        origin: "*"
+      });
+
+      const res = await fetch(`https://fr.wikipedia.org/w/api.php?${params.toString()}`, {
+        headers: { Accept: "application/json" }
+      });
+
+      if (res.status === 429) return { retry: true };
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      const pages = Object.values(data?.query?.pages || {}) as Array<any>;
+      const page = pages.find((entry) => entry?.original?.source || entry?.thumbnail?.source);
+      if (!page) return null;
+
+      const thumb = page.thumbnail?.source || page.original?.source || "";
+      const full = page.original?.source || page.thumbnail?.source || "";
+      if (!thumb && !full) return null;
+
+      return {
+        thumb: thumb || full,
+        full: full || thumb
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async function zoekCommonsFoto(term: string): Promise<FotoResultaat> {
+    try {
+      const params = new URLSearchParams({
+        action: "query",
+        generator: "search",
+        gsrsearch: term,
+        gsrnamespace: "6",
+        gsrlimit: "1",
+        prop: "imageinfo",
+        iiprop: "url",
+        iiurlwidth: "900",
+        format: "json",
+        origin: "*"
+      });
+
+      const res = await fetch(`https://commons.wikimedia.org/w/api.php?${params.toString()}`, {
+        headers: { Accept: "application/json" }
+      });
+
+      if (res.status === 429) return { retry: true };
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      const pages = Object.values(data?.query?.pages || {}) as Array<any>;
+      const page = pages.find((entry) => entry?.imageinfo?.[0]?.thumburl || entry?.imageinfo?.[0]?.url);
+      const imageInfo = page?.imageinfo?.[0];
+      if (!imageInfo) return null;
+
+      const thumb = imageInfo.thumburl || imageInfo.url || "";
+      const full = imageInfo.url || imageInfo.thumburl || "";
+      if (!thumb && !full) return null;
+
+      return {
+        thumb: thumb || full,
+        full: full || thumb
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function bewaarFotoCache() {
+    try {
+      localStorage.setItem(
+        "gerechten_fotos_v1",
+        JSON.stringify({
+          timestamp: Date.now(),
+          data: { thumb: fotos, full: fotosGroot }
+        })
+      );
+    } catch (error) {
+      console.warn("Gerechtenfoto-cache kon niet worden opgeslagen", error);
+    }
+  }
+
+  async function laadEnkeleFoto(gerecht: any) {
+    const zoektermen = maakFotoZoektermen(gerecht);
+
+    for (const zoekterm of zoektermen) {
+      const wikiFoto = await zoekWikipediaFoto(zoekterm);
+      if (wikiFoto && "retry" in wikiFoto) return { id: gerecht.id, retry: true };
+      if (wikiFoto && "thumb" in wikiFoto) {
+        return { id: gerecht.id, thumb: wikiFoto.thumb, full: wikiFoto.full };
+      }
+
+      const commonsFoto = await zoekCommonsFoto(zoekterm);
+      if (commonsFoto && "retry" in commonsFoto) return { id: gerecht.id, retry: true };
+      if (commonsFoto && "thumb" in commonsFoto) {
+        return { id: gerecht.id, thumb: commonsFoto.thumb, full: commonsFoto.full };
+      }
+    }
+
+    return null;
+  }
+
+  function laadFotos(gerechten: any[]) {
+    let index = 0;
+    const batchSize = 2;
+    let retries = 0;
+
+    async function laadBatch() {
+      if (stopFotoLoading) return;
+
+      const batch = gerechten.slice(index, index + batchSize);
+      if (batch.length === 0) {
+        bewaarFotoCache();
+        return;
+      }
+
+      const results = await Promise.all(batch.map(laadEnkeleFoto));
+      if (stopFotoLoading) return;
+
+      let changed = false;
+      let gotRateLimited = false;
+
+      results.forEach((result) => {
+        if (result && "retry" in result) {
+          gotRateLimited = true;
+          return;
+        }
+
+        if (result && "thumb" in result) {
+          fotos[result.id] = result.thumb;
+          fotosGroot[result.id] = result.full;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        fotos = { ...fotos };
+        fotosGroot = { ...fotosGroot };
+        bewaarFotoCache();
+      }
+
+      if (gotRateLimited && retries < 5) {
+        retries += 1;
+        fotoBatchTimer = setTimeout(laadBatch, 2500 * retries);
+        return;
+      }
+
+      retries = 0;
+      index += batchSize;
+      fotoBatchTimer = setTimeout(laadBatch, 700);
+    }
+
+    void laadBatch();
+  }
 
   let gefilterd = $derived.by(() => {
     const zoekLower = zoek.trim().toLowerCase();
@@ -204,9 +444,9 @@
   });
 
   let totaal = $derived(gerechtenData.length);
-  let dennisCount = $derived(gerechtenData.filter((g) => !!checksByDish[g.id]?.dennis).length);
-  let franziCount = $derived(gerechtenData.filter((g) => !!checksByDish[g.id]?.franzi).length);
-  let mijnCount = $derived(gerechtenData.filter((g) => !!checksByDish[g.id]?.[userKey]).length);
+  let dennisCount = $derived(gerechtenData.filter((gerecht) => !!checksByDish[gerecht.id]?.dennis).length);
+  let franziCount = $derived(gerechtenData.filter((gerecht) => !!checksByDish[gerecht.id]?.franzi).length);
+  let mijnCount = $derived(gerechtenData.filter((gerecht) => !!checksByDish[gerecht.id]?.[userKey]).length);
 
   let actieveFilters = $derived(
     (filterDieet !== "alle" ? 1 : 0) +
@@ -244,8 +484,10 @@
 
   let dagTip = $derived.by(() => {
     if (!dagTipKandidaten.length) return null;
-    const nu = new Date();
-    const daySeed = Number(`${nu.getFullYear()}${String(nu.getMonth() + 1).padStart(2, "0")}${String(nu.getDate()).padStart(2, "0")}`);
+    const now = new Date();
+    const daySeed = Number(
+      `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`
+    );
     return dagTipKandidaten[daySeed % dagTipKandidaten.length];
   });
 
@@ -404,6 +646,8 @@
         {gerecht}
         checks={checksByDish[gerecht.id]}
         currentUser={appState.gebruiker}
+        foto={fotos[gerecht.id]}
+        groteFoto={fotosGroot[gerecht.id]}
         isExpanded={expandedGerecht === gerecht.id}
         onToggle={() => (expandedGerecht = expandedGerecht === gerecht.id ? null : gerecht.id)}
       />
@@ -424,18 +668,21 @@
     flex-direction: column;
     gap: 12px;
   }
+
   .gr-tip-card {
     background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border: 1px solid #bfdbfe;
     border-radius: 14px;
     padding: 12px;
   }
+
   .gr-tip-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
   }
+
   .gr-tip-label {
     font-size: 0.75rem;
     color: #1e3a8a;
@@ -443,67 +690,77 @@
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
+
   .gr-tip-refresh {
     width: auto;
     min-height: 32px;
     border-radius: 999px;
     border: 1px solid #93c5fd;
-    background: #ffffffb3;
+    background: rgba(255, 255, 255, 0.7);
     color: #1d4ed8;
     font-size: 0.76rem;
     font-weight: 700;
     padding: 0 10px;
   }
+
   .gr-tip-refresh:disabled {
     opacity: 0.7;
   }
+
   .gr-tip-name {
     margin-top: 6px;
     font-size: 1rem;
     font-weight: 800;
     color: #0f172a;
   }
+
   .gr-tip-sub {
     margin-top: 2px;
     font-size: 0.8rem;
     color: #334155;
   }
+
   .gr-tip-meta {
     margin-top: 8px;
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
   }
+
   .gr-tip-meta span {
     font-size: 0.72rem;
     padding: 4px 8px;
     border-radius: 999px;
-    background: #ffffffa8;
+    background: rgba(255, 255, 255, 0.66);
     color: #1e3a8a;
     border: 1px solid #bfdbfe;
     font-weight: 700;
   }
+
   .gr-tip-empty {
     margin-top: 8px;
     padding: 10px;
     border-radius: 10px;
-    background: #ffffffa8;
+    background: rgba(255, 255, 255, 0.66);
     color: #1e3a8a;
     border: 1px dashed #93c5fd;
     font-size: 0.82rem;
     line-height: 1.35;
   }
+
   .gr-zoek-rij {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
   }
+
   .gr-zoek {
     margin: 0;
     min-height: 44px;
     border-radius: 12px;
     border: 1.5px solid var(--input-border);
   }
+
   .gr-filter-toggle {
     min-width: 92px;
     min-height: 44px;
@@ -516,11 +773,13 @@
     font-size: 0.8rem;
     font-weight: 700;
   }
+
   .gr-filter-toggle.actief {
     background: #1a5276;
     border-color: #1a5276;
     color: white;
   }
+
   .gr-filter-badge {
     position: absolute;
     top: -6px;
@@ -536,6 +795,7 @@
     justify-content: center;
     padding: 0 5px;
   }
+
   .gr-filters-card {
     background: var(--card-bg);
     border-radius: 14px;
@@ -546,6 +806,7 @@
     flex-direction: column;
     gap: 10px;
   }
+
   .gr-filter-title {
     font-size: 0.74rem;
     color: #64748b;
@@ -553,11 +814,13 @@
     text-transform: uppercase;
     margin-bottom: 6px;
   }
+
   .gr-pills {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
+
   .gr-pill {
     border: 1.5px solid #e2e8f0;
     background: #fff;
@@ -568,11 +831,13 @@
     line-height: 1;
     font-weight: 600;
   }
+
   .gr-pill.active {
     background: #1a5276;
     border-color: #1a5276;
     color: #fff;
   }
+
   .gr-reset {
     margin-top: 2px;
     width: 100%;
@@ -581,16 +846,19 @@
     color: #991b1b;
     font-weight: 700;
   }
+
   .gr-resultaten {
     font-size: 0.84rem;
     color: #64748b;
     padding: 0 2px;
   }
+
   .gr-lijst {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
+
   .gr-leeg {
     border-radius: 14px;
     padding: 16px;
@@ -604,53 +872,65 @@
     background: linear-gradient(135deg, #12243f, #1e3a5f);
     border-color: #334155;
   }
+
   :global(html.dark) .gr-tip-label {
     color: #93c5fd;
   }
+
   :global(html.dark) .gr-tip-name {
     color: #e2e8f0;
   }
+
   :global(html.dark) .gr-tip-sub {
     color: #cbd5e1;
   }
+
   :global(html.dark) .gr-tip-refresh {
-    background: #0f172a80;
+    background: rgba(15, 23, 42, 0.5);
     border-color: #334155;
     color: #bfdbfe;
   }
+
   :global(html.dark) .gr-tip-meta span {
-    background: #0f172a80;
+    background: rgba(15, 23, 42, 0.5);
     border-color: #334155;
     color: #bfdbfe;
   }
+
   :global(html.dark) .gr-tip-empty {
-    background: #0f172a80;
+    background: rgba(15, 23, 42, 0.5);
     border-color: #334155;
     color: #bfdbfe;
   }
+
   :global(html.dark) .gr-zoek,
   :global(html.dark) .gr-filter-toggle,
   :global(html.dark) .gr-filters-card {
     border-color: #334155;
   }
+
   :global(html.dark) .gr-filter-toggle {
     background: var(--card-bg);
     color: #e2e8f0;
   }
+
   :global(html.dark) .gr-filter-toggle.actief {
     background: #1a5276;
     border-color: #1a5276;
   }
+
   :global(html.dark) .gr-filter-title,
   :global(html.dark) .gr-resultaten,
   :global(html.dark) .gr-leeg {
     color: #94a3b8;
   }
+
   :global(html.dark) .gr-pill {
     background: var(--card-bg);
     border-color: #334155;
     color: #94a3b8;
   }
+
   :global(html.dark) .gr-pill.active {
     background: #1a5276;
     border-color: #1a5276;
