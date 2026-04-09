@@ -32,3 +32,20 @@ export interface LijstItem {
     mapsLink?: string;
     afgevinktDoor?: string;
 }
+
+export type OvernachtingType = "hotel" | "bnb" | "camping";
+
+export interface Overnachting {
+    id?: string;
+    naam: string;
+    door: string;
+    datum?: Timestamp;
+    type?: OvernachtingType;
+    startDatum?: string;
+    nachten?: number;
+    latitude?: number | null;
+    longitude?: number | null;
+    notities?: string;
+    mapsLink?: string;
+    openStreetMapUrl?: string;
+}
