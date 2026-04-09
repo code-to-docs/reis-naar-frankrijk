@@ -5,7 +5,7 @@
   import { haptic } from "$lib/utils/haptic.js";
   import { categorieLabels, regioLabels, zeldzaamheidLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
-  import { formatFullDate } from "$lib/utils/formatters.js";
+  import { formatFullDate, formatTime } from "$lib/utils/formatters.js";
   import type { Spotting } from "$lib/types";
 
   let { 
@@ -252,6 +252,7 @@
           <div class="wl-spotting-head">{E.CHECK} Gespot door {spotting.door}</div>
           {#if spotting.datum}
             <div class="wl-spotting-row">{E.KALENDER} {formatFullDate(spotting.datum)}</div>
+            <div class="wl-spotting-row">🕒 {formatTime(spotting.datum)}</div>
           {/if}
           {#if spotting.locatie}
             <div class="wl-spotting-row">{E.PIN} {spotting.locatie}</div>
