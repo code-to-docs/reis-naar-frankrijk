@@ -24,6 +24,7 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
+		"@vercel/speed-insights": "^2.0.0",
 		"firebase": "^12.11.0"
 	}
 }
