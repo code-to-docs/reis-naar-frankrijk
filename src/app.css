@@ -8,55 +8,59 @@ html, body {
   --content-max-width: 760px;
   --page-gutter: 12px;
   --nav-height: 80px;
-  --blauw: #002654;
+  --blauw: #0f4d84;
   --wit: #ffffff;
-  --grijs-licht: #f8f6f4;
-  --grijs: #e0e0e0;
-  --tekst: #333;
-  --groen: #27ae60;
-  --oranje: #f39c12;
-  --rood: #e74c3c;
+  --grijs-licht: #f3f7fc;
+  --grijs: #d6e1ee;
+  --tekst: #10233a;
+  --groen: #1fa968;
+  --oranje: #e1781f;
+  --rood: #dd4b39;
   --card-bg: #ffffff;
-  --card-shadow: rgba(0,0,0,0.08);
+  --card-shadow: rgba(15, 35, 58, 0.10);
   --input-bg: #ffffff;
-  --input-border: #e0e0e0;
-  --input-focus: #002654;
-  --input-placeholder: #999;
-  --heading: #002654;
-  --border-subtle: #f1f5f9;
-  --hover-bg: #f8fafc;
+  --input-border: #cddaea;
+  --input-focus: #0f4d84;
+  --input-placeholder: #7b8ca3;
+  --heading: #0a3764;
+  --border-subtle: #dde7f2;
+  --hover-bg: #edf3fa;
   --nav-bg: #ffffff;
-  --nav-shadow: rgba(0,0,0,0.08);
-  --nav-text: #94a3b8;
-  --nav-active: #1a5276;
-  --header-bg: #002654;
-  --scrollbar-thumb: rgba(0,0,0,0.15);
-  --scrollbar-hover: rgba(0,0,0,0.25);
+  --nav-shadow: rgba(15, 35, 58, 0.12);
+  --nav-text: #6a7f98;
+  --nav-active: #0f4d84;
+  --header-bg: #0a3764;
+  --scrollbar-thumb: rgba(10, 55, 100, 0.25);
+  --scrollbar-hover: rgba(10, 55, 100, 0.4);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
 }
 
 /* ========== DARK MODE VARIABLES ========== */
 html.dark {
-  --blauw: #1a5276;
+  --blauw: #2f82c7;
   --wit: #000000;
-  --grijs-licht: #000000;
+  --grijs-licht: #06101d;
   --grijs: #334155;
-  --tekst: #e2e8f0;
+  --tekst: #dce7f3;
   --groen: #10b981;
   --oranje: #f59e0b;
   --rood: #ef4444;
-  --card-bg: #111111;
-  --card-shadow: rgba(0,0,0,0.3);
-  --input-bg: #111111;
-  --input-border: #334155;
+  --card-bg: #0d1828;
+  --card-shadow: rgba(1, 5, 10, 0.42);
+  --input-bg: #0b1524;
+  --input-border: #304257;
   --input-focus: #3b82f6;
   --input-placeholder: #64748b;
-  --heading: #f1f5f9;
-  --border-subtle: #334155;
-  --hover-bg: #334155;
-  --nav-bg: #111111;
-  --nav-shadow: rgba(0,0,0,0.3);
+  --heading: #ecf4ff;
+  --border-subtle: #304257;
+  --hover-bg: #182538;
+  --nav-bg: #0b1524;
+  --nav-shadow: rgba(1, 5, 10, 0.5);
   --nav-text: #94a3b8;
-  --nav-active: #3b82f6;
+  --nav-active: #79b9f6;
   --header-bg: #0c2d48;
   --scrollbar-thumb: rgba(255,255,255,0.15);
   --scrollbar-hover: rgba(255,255,255,0.25);
@@ -64,8 +68,11 @@ html.dark {
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--grijs-licht);
+  font-family: "Segoe UI", "Inter", "SF Pro Text", "Avenir Next", system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(circle at 6% -8%, rgba(15, 77, 132, 0.11), transparent 32%),
+    radial-gradient(circle at 95% 0%, rgba(67, 132, 181, 0.12), transparent 28%),
+    var(--grijs-licht);
   color: var(--tekst);
   max-width: var(--app-max-width);
   margin: 0 auto;
@@ -77,25 +84,39 @@ h1, h2, h3 { color: var(--heading); }
 
 .card {
   background: var(--card-bg);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 16px;
   margin: 12px 0;
-  box-shadow: 0 4px 14px var(--card-shadow);
+  box-shadow: 0 8px 24px var(--card-shadow);
+  border: 1px solid var(--border-subtle);
 }
 
 button {
-  border: none; border-radius: 8px;
-  padding: 10px 16px; font-size: 16px; cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 button:active { transform: scale(0.95); }
-.btn-primary { background: var(--blauw); color: white; }
+.btn-primary {
+  background: linear-gradient(135deg, #0a3764, #0f4d84);
+  color: white;
+}
 .btn-danger { background: var(--rood); color: white; }
-.btn-success { background: var(--groen); color: white; }
+.btn-success {
+  background: linear-gradient(135deg, #1c9d60, #1fa968);
+  color: white;
+}
 
 input, select, textarea {
   width: 100%; padding: 12px;
-  border: 2px solid var(--input-border);
-  border-radius: 8px; font-size: 16px; margin-bottom: 8px;
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  margin-bottom: 8px;
   background: var(--input-bg);
   color: var(--tekst);
 }
@@ -163,7 +184,7 @@ button,
 }
 
 :focus-visible {
-  outline: 2px solid #1a5276;
+  outline: 2px solid var(--input-focus);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -187,6 +208,71 @@ button,
   width: min(100%, var(--content-max-width));
   margin: 0 auto;
   padding: 10px var(--page-gutter) calc(var(--nav-height) + 18px + env(safe-area-inset-bottom, 8px));
+}
+
+/* ========== DASHBOARD-LED UI HARMONIZATION ========== */
+.hero-card,
+.overzicht-card,
+.ov-form-card,
+.ov-calendar-card,
+.ov-list-card,
+.wl-stats-card,
+.wl-filters-card,
+.gr-stats-card,
+.gr-filters-card,
+.gr-tip-card,
+.noodinfo-card,
+.meer-groep-items {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 8px 24px var(--card-shadow) !important;
+  background: var(--card-bg) !important;
+}
+
+.pill,
+.wl-pill,
+.gr-pill,
+.cat-pill {
+  border-radius: 999px !important;
+  border: 1px solid var(--input-border) !important;
+  background: color-mix(in srgb, var(--card-bg) 88%, #eef4fb) !important;
+  color: #475d76 !important;
+  font-weight: 700 !important;
+}
+
+.pill.active,
+.wl-pill.active,
+.gr-pill.active {
+  background: linear-gradient(135deg, #0a3764, #0f4d84) !important;
+  border-color: #0f4d84 !important;
+  color: #fff !important;
+}
+
+.entry-item,
+.wl-card,
+.gr-card,
+.ov-item,
+.quick-btn {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 4px 14px var(--card-shadow) !important;
+}
+
+html.dark .hero-card,
+html.dark .overzicht-card,
+html.dark .ov-form-card,
+html.dark .ov-calendar-card,
+html.dark .ov-list-card,
+html.dark .wl-stats-card,
+html.dark .wl-filters-card,
+html.dark .gr-stats-card,
+html.dark .gr-filters-card,
+html.dark .gr-tip-card,
+html.dark .noodinfo-card,
+html.dark .meer-groep-items {
+  background: var(--card-bg) !important;
+  border-color: var(--border-subtle) !important;
+  box-shadow: 0 12px 30px var(--card-shadow) !important;
 }
 
 @media (min-width: 900px) and (max-width: 1099px) {

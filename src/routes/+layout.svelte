@@ -38,14 +38,12 @@
 
 {#if !naam}
   <div class="kies-scherm">
-    <h1 style="font-size:80px;">{E_VLAG}</h1>
+    <h1 class="kies-vlag">{E_VLAG}</h1>
     <h2>Reis naar Frankrijk</h2>
     <p>Wie ben je?</p>
-    <div style="display:flex;gap:16px;margin-top:20px;">
-      <button class="btn-primary" style="font-size:20px;padding:16px 32px;"
-        onclick={() => kiesNaam("Franzi")}>Franzi</button>
-      <button class="btn-primary" style="font-size:20px;padding:16px 32px;"
-        onclick={() => kiesNaam("Dennis")}>Dennis</button>
+    <div class="kies-acties">
+      <button class="btn-primary kies-knop" onclick={() => kiesNaam("Franzi")}>Franzi</button>
+      <button class="btn-primary kies-knop" onclick={() => kiesNaam("Dennis")}>Dennis</button>
     </div>
   </div>
 {:else}
@@ -61,8 +59,43 @@
 
 <style>
   .kies-scherm {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; height: 100dvh; gap: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+    gap: 14px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .kies-vlag {
+    font-size: clamp(3.2rem, 11vw, 5.2rem);
+    line-height: 1;
+  }
+
+  .kies-scherm h2 {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    letter-spacing: -0.03em;
+  }
+
+  .kies-scherm p {
+    color: var(--nav-text);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .kies-acties {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .kies-knop {
+    font-size: 1.1rem;
+    padding: 13px 24px;
+    min-width: 136px;
+    border-radius: 12px;
   }
 
   .app-shell {

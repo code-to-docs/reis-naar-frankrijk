@@ -40,12 +40,15 @@ export interface Overnachting {
     naam: string;
     door: string;
     datum?: Timestamp;
+    shortlist?: boolean;
     type?: OvernachtingType;
     startDatum?: string;
     nachten?: number;
     latitude?: number | null;
     longitude?: number | null;
     notities?: string;
+    websiteUrl?: string;
+    bookingUrl?: string;
     mapsLink?: string;
     openStreetMapUrl?: string;
 }

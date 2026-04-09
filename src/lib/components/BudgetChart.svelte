@@ -130,8 +130,7 @@
     justify-content: center;
     font-size: 22px;
     font-weight: 800;
-    font-family: system-ui, -apple-system, sans-serif;
-    color: #1e293b;
+    color: var(--heading);
     pointer-events: none;
   }
   .chart-legenda {
@@ -152,8 +151,8 @@
     border-radius: 2px;
     flex-shrink: 0;
   }
-  .legenda-label { color: #64748b; transition: color 0.2s; }
-  .legenda-bedrag { color: #1e293b; font-weight: 600; transition: color 0.2s; }
+  .legenda-label { color: var(--nav-text); transition: color 0.2s; }
+  .legenda-bedrag { color: var(--heading); font-weight: 600; transition: color 0.2s; }
 
   :global(html.dark) .donut-center { color: #e2e8f0; }
   :global(html.dark) .legenda-label { color: #94a3b8; }

@@ -113,12 +113,12 @@
     width: 56px;
     height: 56px;
     border-radius: 16px;
-    background: #1a5276;
+    background: linear-gradient(135deg, #0a3764, #0f4d84);
     color: white;
     font-size: 28px;
     font-weight: 300;
     border: none;
-    box-shadow: 0 4px 14px rgba(26,82,118,0.4);
+    box-shadow: 0 8px 24px var(--card-shadow);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -148,10 +148,11 @@
     bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 10px);
     left: 16px;
     right: 16px;
-    background: white;
-    border-radius: 16px;
+    background: var(--card-bg);
+    border-radius: 18px;
     padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 32px var(--card-shadow);
+    border: 1px solid var(--border-subtle);
     max-height: min(76dvh, 540px);
     overflow: auto;
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 8px));
@@ -171,12 +172,12 @@
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.01em;
-    color: #0f172a;
+    color: var(--heading);
     margin: 0;
   }
   .form-header p {
     font-size: 0.84rem;
-    color: #64748b;
+    color: var(--nav-text);
     font-weight: 500;
     margin: 0;
   }
@@ -189,24 +190,24 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 700;
-    color: #475569;
+    color: var(--nav-text);
   }
   .field-input,
   .field-select {
     margin-bottom: 0;
     border-radius: 10px;
-    border: 1.5px solid #d5dde7;
+    border: 1.5px solid var(--input-border);
     min-height: 46px;
     padding: 10px 12px;
     font-size: 1rem;
     line-height: 1.2;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--tekst);
     background: var(--input-bg);
     width: 100%;
   }
   .field-input::placeholder {
-    color: #94a3b8;
+    color: var(--input-placeholder);
     font-weight: 500;
   }
   .field-select {
@@ -221,7 +222,7 @@
     flex: 1;
     min-height: 44px;
     border-radius: 10px;
-    background: #2fb264;
+    background: linear-gradient(135deg, #1c9d60, #1fa968);
     color: #fff;
     font-size: 1.02rem;
     font-weight: 800;
@@ -237,7 +238,7 @@
     width: 50px;
     min-height: 44px;
     border-radius: 10px;
-    background: #ef4444;
+    background: var(--rood);
     color: #fff;
     font-size: 1.25rem;
     font-weight: 700;
