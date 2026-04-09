@@ -32,6 +32,37 @@
 </script>
 
 <div class="page-transition page-shell home-page">
+  <div class="quick-actions quick-actions-top">
+    <a href="/budget" class="quick-btn">
+      <div class="quick-content">
+        <span>Nieuwe uitgave</span>
+        <small>Kosten direct noteren</small>
+      </div>
+      <div class="icon">{E.GELD}</div>
+    </a>
+    <a href="/meer/wildlife" class="quick-btn">
+      <div class="quick-content">
+        <span>Wildlife zoeken</span>
+        <small>Dieren in de regio</small>
+      </div>
+      <div class="icon">{E.POOT}</div>
+    </a>
+    <a href="/campings" class="quick-btn">
+      <div class="quick-content">
+        <span>Overnachtingen</span>
+        <small>Planning en shortlist</small>
+      </div>
+      <div class="icon">{E.CAMPING}</div>
+    </a>
+    <a href="/poi" class="quick-btn">
+      <div class="quick-content">
+        <span>Onze POIs</span>
+        <small>Routes en highlights</small>
+      </div>
+      <div class="icon">{E.PIN}</div>
+    </a>
+  </div>
+
   <WeerWidget />
 
   <div class="home-dashboard">
@@ -69,51 +100,30 @@
           <strong>{routeTekst}</strong>
         </div>
       </div>
-
-      <div class="quick-actions">
-        <a href="/budget" class="quick-btn">
-          <div class="quick-content">
-            <span>Nieuwe uitgave</span>
-            <small>Kosten meteen registreren</small>
-          </div>
-          <div class="icon">{E.GELD}</div>
-        </a>
-        <a href="/meer/wildlife" class="quick-btn">
-          <div class="quick-content">
-            <span>Wildlife zoeken</span>
-            <small>Check dieren in de regio</small>
-          </div>
-          <div class="icon">{E.POOT}</div>
-        </a>
-        <a href="/campings" class="quick-btn">
-          <div class="quick-content">
-            <span>Bekijk overnachtingen</span>
-            <small>Snel naar je verblijfopties</small>
-          </div>
-          <div class="icon">{E.CAMPING}</div>
-        </a>
-        <a href="/poi" class="quick-btn">
-          <div class="quick-content">
-            <span>Onze POIs</span>
-            <small>Routes en highlights bekijken</small>
-          </div>
-          <div class="icon">{E.PIN}</div>
-        </a>
-      </div>
     </aside>
   </div>
 </div>
 
 <style>
+  .home-page {
+    display: grid;
+    gap: var(--ui-space-3);
+  }
+
+  .quick-actions-top {
+    margin: 0;
+    padding: 0;
+  }
+
   .home-dashboard {
     display: grid;
-    gap: 12px;
+    gap: var(--ui-space-3);
   }
 
   .dashboard-main,
   .dashboard-side {
     display: grid;
-    gap: 12px;
+    gap: var(--ui-space-3);
     align-content: start;
   }
 
@@ -122,41 +132,43 @@
     color: white;
     position: relative;
     overflow: hidden;
-    padding: 18px 16px;
-    border-radius: 18px;
+    padding: var(--ui-space-4);
+    border-radius: var(--radius-lg);
   }
   .countdown-progress {
     position: absolute; top: 0; left: 0; right: 0; height: 4px;
     background: rgba(255,255,255,0.2);
   }
   .countdown-fill {
-    height: 100%; background: #ff4757; transition: width 1s ease-in-out;
+    height: 100%;
+    background: var(--rood);
+    transition: width 1s ease-in-out;
   }
   .countdown-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--ui-space-3);
   }
   .aftelling-tekst {
     font-size: clamp(2rem, 7vw, 3rem);
-    font-weight: 800;
+    font-weight: var(--ui-weight-heavy);
     margin-bottom: 2px;
     color: white;
-    line-height: 1.05;
+    line-height: var(--ui-line-tight);
     letter-spacing: -0.03em;
   }
   .aftelling-route {
-    font-size: 1.01rem;
+    font-size: var(--font-size-md);
     opacity: 0.92;
     color: white;
-    font-weight: 500;
+    font-weight: var(--ui-weight-medium);
   }
   .aftelling-meta {
-    margin-top: 8px;
-    font-size: 0.86rem;
+    margin-top: var(--ui-space-2);
+    font-size: var(--font-size-sm);
     color: rgba(255, 255, 255, 0.92);
-    font-weight: 600;
+    font-weight: var(--ui-weight-semibold);
   }
   .aftelling-icon {
     width: 52px;
@@ -172,89 +184,115 @@
 
   .overzicht-card {
     border: 1px solid var(--border-subtle);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     margin: 0;
   }
   .overzicht-kop {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 10px;
+    font-size: var(--font-size-xl);
+    font-weight: var(--ui-weight-heavy);
+    color: var(--heading);
+    margin-bottom: var(--ui-space-2);
     letter-spacing: -0.01em;
+    line-height: var(--ui-line-tight);
   }
   .overzicht-rij {
     display: flex;
     justify-content: space-between;
     gap: 10px;
     align-items: baseline;
-    border-bottom: 1px dashed #e2e8f0;
-    padding: 7px 0;
+    border-bottom: 1px dashed var(--border-subtle);
+    padding: 8px 0;
   }
   .overzicht-rij:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
   .overzicht-rij span {
-    font-size: 0.88rem;
-    color: #64748b;
+    font-size: var(--font-size-sm);
+    color: var(--nav-text);
     flex-shrink: 0;
   }
   .overzicht-rij strong {
-    font-size: 0.92rem;
-    color: #0f172a;
+    font-size: var(--font-size-md);
+    color: var(--tekst);
     text-align: right;
+    line-height: var(--ui-line-compact);
   }
 
   .quick-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 0 0 4px 0;
+    gap: var(--ui-space-3);
+    padding: 0;
   }
   .quick-btn {
     background: var(--card-bg);
-    border-radius: 16px;
-    padding: 16px 14px;
+    border-radius: var(--radius-md);
+    padding: 14px;
     text-decoration: none;
     color: var(--tekst);
     box-shadow: 0 2px 8px var(--card-shadow);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 8px;
+    gap: var(--ui-space-2);
     border: 1px solid var(--border-subtle);
-    min-height: 98px;
+    min-height: 106px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .quick-btn:active { transform: scale(0.96); }
+  .quick-btn:active { transform: scale(0.98); }
+  .quick-btn:hover {
+    box-shadow: 0 6px 18px var(--card-shadow);
+    border-color: color-mix(in srgb, var(--blauw) 35%, var(--border-subtle));
+  }
   .quick-content {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--ui-space-1);
     min-width: 0;
   }
   .quick-btn .icon {
-    font-size: 2.15rem;
+    font-size: 1.95rem;
     line-height: 1;
     flex-shrink: 0;
     filter: saturate(1.04);
   }
   .quick-btn span {
-    font-size: clamp(1.05rem, 3.8vw, 1.35rem);
-    font-weight: 800;
-    color: #111827;
+    font-size: clamp(1rem, 2.8vw, 1.25rem);
+    font-weight: var(--ui-weight-heavy);
+    color: var(--heading);
     letter-spacing: -0.01em;
-    line-height: 1.05;
+    line-height: var(--ui-line-tight);
     text-align: left;
-    max-width: 120px;
+    max-width: 100%;
   }
   .quick-btn small {
-    font-size: 0.8rem;
-    color: #64748b;
-    line-height: 1.2;
-    font-weight: 500;
+    font-size: var(--font-size-sm);
+    color: var(--nav-text);
+    line-height: var(--ui-line-compact);
+    font-weight: var(--ui-weight-medium);
+  }
+
+  @media (max-width: 760px) {
+    .quick-btn {
+      min-height: 96px;
+      padding: 12px;
+    }
+    .quick-btn span {
+      font-size: 1rem;
+    }
+    .quick-btn small {
+      font-size: var(--font-size-xs);
+    }
+    .countdown-card {
+      padding: 14px;
+    }
   }
 
   @media (min-width: 1100px) {
+    .quick-actions-top {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
     .home-dashboard {
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
       gap: 14px;
@@ -268,20 +306,18 @@
     .aftelling-route {
       font-size: 1.06rem;
     }
-    .quick-actions { grid-template-columns: 1fr 1fr; }
     .quick-btn {
-      min-height: 114px;
-      padding: 18px 16px;
+      min-height: 108px;
+      padding: 14px;
     }
     .quick-btn span {
-      max-width: none;
-      font-size: 1.35rem;
+      font-size: 1.15rem;
     }
     .quick-btn small {
-      font-size: 0.86rem;
+      font-size: var(--font-size-sm);
     }
     .overzicht-kop {
-      font-size: 1.32rem;
+      font-size: 1.24rem;
     }
   }
 
