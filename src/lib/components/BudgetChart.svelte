@@ -71,6 +71,10 @@
   const centerTextPlugin: Plugin<"doughnut"> = {
     id: "centerText",
     afterDraw(chart) {
+      // Verberg het midden-percentage terwijl tooltip/details zichtbaar zijn,
+      // anders overlappen tekstlagen op mobiel.
+      if (chart.tooltip && chart.tooltip.opacity > 0) return;
+
       const { ctx, chartArea } = chart;
       if (!chartArea) return;
 

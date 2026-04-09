@@ -277,7 +277,7 @@
     </div>
   {/if}
 
-  <div style="height:90px;"></div>
+  <div class="budget-bottom-spacer"></div>
 </div>
 
 <BudgetForm {cats} />
@@ -457,6 +457,9 @@
   .verrekening-lijn { border: none; border-top: 1px solid #e2e8f0; margin: 8px 0; }
   .verrekening-resultaat { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 1rem; }
   .verrekening-resultaat.quitte { justify-content: center; color: var(--groen); }
+  .budget-bottom-spacer {
+    height: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 24px);
+  }
 
 
 </style>

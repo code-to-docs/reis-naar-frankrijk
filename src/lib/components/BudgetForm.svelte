@@ -56,7 +56,7 @@
 <style>
   .fab {
     position: fixed;
-    bottom: 80px;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 12px);
     right: 20px;
     width: 56px;
     height: 56px;
@@ -71,7 +71,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 50;
+    z-index: 120;
     transition: transform 0.15s ease;
   }
   .fab:active { transform: scale(0.92); }
@@ -80,18 +80,35 @@
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.3);
-    z-index: 60;
+    z-index: 130;
   }
   .fab-form {
     position: fixed;
-    bottom: 70px;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 10px);
     left: 16px;
     right: 16px;
     background: white;
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    z-index: 70;
+    max-height: min(76dvh, 540px);
+    overflow: auto;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 8px));
+    z-index: 140;
     animation: slideUp 0.2s ease-out;
+  }
+
+  @media (min-width: 1100px) {
+    .fab {
+      bottom: 20px;
+      right: 24px;
+    }
+    .fab-form {
+      bottom: 16px;
+      max-width: 520px;
+      left: auto;
+      right: 24px;
+      max-height: min(82dvh, 620px);
+    }
   }
 </style>
