@@ -264,7 +264,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--ui-space-3);
     overflow-x: clip;
   }
   .wl-zoek-rij {
@@ -281,7 +281,7 @@
     background: var(--input-bg);
   }
   .wl-filter-toggle {
-    min-height: 44px;
+    min-height: var(--ui-touch-min);
     padding: 10px 12px;
     border-radius: 12px;
     border: 1.5px solid var(--input-border);
@@ -290,7 +290,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
   }
   .wl-filter-toggle.actief {
     background: #1a5276;
@@ -305,7 +306,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     padding: 0 6px;
   }
   .wl-filters-card {
@@ -326,9 +327,12 @@
     background: #fff;
     color: #475569;
     border-radius: 999px;
-    padding: 7px 12px;
-    font-size: 0.82rem;
-    font-weight: 600;
+    min-height: var(--ui-touch-compact);
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
     line-height: 1;
   }
   .wl-pill.active {
@@ -339,13 +343,15 @@
   .wl-reset {
     margin-top: 12px;
     width: 100%;
+    min-height: var(--ui-touch-min);
     border-radius: 10px;
     background: #fee2e2;
     color: #991b1b;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
   }
   .wl-resultaten {
-    font-size: 0.88rem;
+    font-size: var(--font-size-sm);
     color: #64748b;
     padding: 0 2px;
   }
@@ -366,9 +372,45 @@
 
   @media (min-width: 768px) {
     .wl-page {
-      gap: 14px;
+      gap: var(--ui-space-4);
     }
     .wl-filter-toggle { padding-inline: 14px; }
+  }
+
+  @media (min-width: 1100px) {
+    .wl-page {
+      gap: var(--ui-space-5);
+    }
+    .wl-zoek-rij {
+      gap: var(--ui-space-3);
+    }
+    .wl-zoek {
+      min-height: 48px;
+      font-size: var(--font-size-md);
+      padding-inline: 14px;
+    }
+    .wl-filter-toggle {
+      min-height: 48px;
+      padding-inline: 16px;
+      font-size: var(--font-size-md);
+    }
+    .wl-filters-card {
+      padding: var(--ui-space-4);
+    }
+    .wl-filter-rij + .wl-filter-rij {
+      margin-top: 12px;
+    }
+    .wl-pill {
+      min-height: 42px;
+      padding-inline: 14px;
+      font-size: var(--font-size-md);
+    }
+    .wl-resultaten {
+      font-size: var(--font-size-md);
+    }
+    .wl-lijst {
+      gap: 12px;
+    }
   }
 
   :global(html.dark) .wl-filters-card { background: var(--card-bg); border-color: #334155; }

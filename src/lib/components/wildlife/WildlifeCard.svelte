@@ -213,7 +213,10 @@
       </div>
       <div class="wl-tags">
         {#each dier.regios as regio}
-          <span class="wl-tag">{getRegioMeta(regio).emoji} {getRegioMeta(regio).label}</span>
+          <span class="wl-tag ui-chip ui-chip--muted">
+            <span aria-hidden="true">{getRegioMeta(regio).emoji}</span>
+            <span>{getRegioMeta(regio).label}</span>
+          </span>
         {/each}
       </div>
     </div>
@@ -240,7 +243,7 @@
                 }
               }} 
             />
-            <figcaption class="wl-foto-hint">Tik voor fullscreen</figcaption>
+            <figcaption class="wl-foto-hint">Open fullscreen</figcaption>
           </figure>
         </button>
       {/if}
@@ -295,7 +298,7 @@
             </button>
           </div>
           <input type="text" class="wl-spot-input" placeholder="{E.NOTITIE} Notitie (optioneel)" bind:value={spotNotitie} />
-          <button class="wl-spot-btn" onclick={saveSpottingDetails}>
+          <button class="wl-spot-btn btn-save" onclick={saveSpottingDetails}>
             {E.CHECK} {dier.naam} gespot!
           </button>
         </div>
@@ -323,17 +326,41 @@
 
 <style>
   .wl-card {
-    background: white; border-radius: 14px; overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 2px solid transparent;
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
     transition: border-color 0.2s;
   }
   .wl-card.gespot { border-color: #10b981; background: #f0fdf4; }
-  .wl-hoofd { display: flex; width: 100%; background: none; border: none; text-align: left; align-items: center; gap: 12px; padding: 12px; cursor: pointer; }
+  .wl-hoofd {
+    display: flex;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    cursor: pointer;
+  }
   .wl-foto-wrap { position: relative; flex-shrink: 0; }
-  .wl-foto { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; }
+  .wl-foto {
+    width: 62px;
+    height: 62px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
   .wl-foto-ph {
-    width: 56px; height: 56px; border-radius: 12px; background: #f1f5f9;
-    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+    width: 62px;
+    height: 62px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
   }
   .wl-gespot-dot {
     position: absolute; top: -3px; right: -3px; width: 14px; height: 14px;
@@ -341,14 +368,25 @@
   }
   .wl-info { flex: 1; min-width: 0; }
   .wl-naam-rij { display: flex; align-items: center; gap: 6px; }
-  .wl-naam { font-size: 0.95rem; color: #1e293b; }
-  .wl-ster { font-size: 0.7rem; letter-spacing: -1px; }
-  .wl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
-  .wl-tag { font-size: 0.68rem; background: #f1f5f9; padding: 2px 7px; border-radius: 8px; color: #64748b; }
+  .wl-naam {
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-bold);
+    color: #1e293b;
+  }
+  .wl-ster { font-size: var(--font-size-xs); letter-spacing: -1px; }
+  .wl-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .wl-tag { min-height: 26px; }
   .wl-chevron { flex-shrink: 0; transition: transform 0.2s ease; }
   .wl-chevron.open { transform: rotate(180deg); }
 
-  .wl-detail { padding: 0 14px 14px 14px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 16px; margin-top: 10px; }
+  .wl-detail {
+    padding: 0 14px 14px 14px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 10px;
+  }
   .wl-grote-beeld-btn {
     background: none;
     border: none;
@@ -374,7 +412,7 @@
     right: 10px;
     bottom: 10px;
     margin: 0;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     color: white;
     background: rgba(15, 23, 42, 0.7);
     padding: 4px 8px;
@@ -413,49 +451,117 @@
     padding: 8px 12px;
     background: rgba(255, 255, 255, 0.14);
     color: white;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
     cursor: pointer;
   }
   .wl-fs-back:active { opacity: 0.75; }
-  .wl-names { display: flex; flex-direction: column; gap: 4px; background: #f8fafc; padding: 12px; border-radius: 10px; }
-  .wl-name-row { font-size: 0.85rem; color: #475569; display: flex; }
+  .wl-names {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  .wl-name-row {
+    font-size: var(--font-size-sm);
+    color: #475569;
+    display: flex;
+    line-height: var(--ui-line-compact);
+  }
   .wl-name-row strong { width: 40px; color: #1e293b; }
   .wl-section { display: flex; flex-direction: column; gap: 6px; }
-  .wl-section strong { font-size: 0.9rem; color: #1e293b; }
-  .wl-beschrijving { font-size: 0.85rem; line-height: 1.5; color: #475569; margin: 0; }
+  .wl-section strong {
+    font-size: var(--font-size-md);
+    color: #1e293b;
+  }
+  .wl-beschrijving {
+    font-size: var(--font-size-sm);
+    line-height: var(--ui-line-body);
+    color: #475569;
+    margin: 0;
+  }
   .wl-spotting { background: #f0fdf4; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
-  .wl-spotting-head { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #166534; }
-  .wl-spotting-row { font-size: 0.82rem; color: #475569; padding: 2px 0; }
+  .wl-spotting-head {
+    font-weight: var(--ui-weight-semibold);
+    font-size: var(--font-size-sm);
+    margin-bottom: 4px;
+    color: #166534;
+  }
+  .wl-spotting-row {
+    font-size: var(--font-size-sm);
+    color: #475569;
+    padding: 2px 0;
+    line-height: var(--ui-line-compact);
+  }
   .wl-spot-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
   .wl-spot-input {
-    padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 10px;
-    font-size: 0.85rem; outline: none; transition: border-color 0.2s; box-sizing: border-box; width: 100%;
+    min-height: var(--ui-touch-min);
+    padding: 10px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: var(--font-size-sm);
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    width: 100%;
   }
   .wl-spot-input:focus { border-color: #10b981; }
   .wl-locatie-wrap { display: flex; gap: 8px; align-items: center; }
   .wl-loc-input { flex: 1; }
   .wl-loc-btn {
-    width: 40px; height: 40px; flex-shrink: 0; background: #EBF5FB; border: none; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; color: #1565C0;
+    width: var(--ui-touch-compact);
+    height: var(--ui-touch-compact);
+    flex-shrink: 0;
+    background: #EBF5FB;
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1565C0;
   }
   .wl-loc-btn:disabled { opacity: 0.5; cursor: wait; }
   .spin-icon { width: 16px; height: 16px; animation: spin 1s linear infinite; }
   @keyframes spin { 100% { transform: rotate(360deg); } }
   .wl-spot-btn {
-    padding: 12px; background: #10b981; color: white; border: none;
-    border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    min-height: var(--ui-touch-min);
+    width: 100%;
+    gap: 8px;
+    border: none;
+    border-radius: 12px;
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-bold);
+    cursor: pointer;
   }
-  .wl-spot-btn:active { background: #059669; }
   .wl-unspot {
-    padding: 8px 16px; background: none; border: 1.5px solid #e2e8f0;
-    border-radius: 10px; font-size: 0.8rem; color: #94a3b8; cursor: pointer; margin-bottom: 12px;
+    min-height: var(--ui-touch-compact);
+    width: fit-content;
+    padding: 8px 16px;
+    background: none;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: var(--font-size-sm);
+    color: #64748b;
+    cursor: pointer;
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
   }
   .wl-unspot:active { border-color: #ef4444; color: #ef4444; }
   .wl-links { display: flex; gap: 8px; flex-wrap: wrap; }
   .wl-link {
-    padding: 7px 14px; border-radius: 20px; font-size: 0.78rem;
-    text-decoration: none; font-weight: 500;
+    min-height: 32px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--input-border);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    font-weight: var(--ui-weight-semibold);
+    display: inline-flex;
+    align-items: center;
   }
   .wl-link.wiki { background: #EBF5FB; color: #1565C0; }
   .wl-link.geluid { background: #FFF7ED; color: #c2410c; }
@@ -463,6 +569,60 @@
   .wl-link.maps-google { background: #dcfce7; color: #166534; }
   .wl-link.maps-osm { background: #f1f5f9; color: #334155; }
   .wl-link:active { opacity: 0.7; }
+
+  @media (min-width: 900px) {
+    .wl-hoofd {
+      gap: 14px;
+      padding: 14px 16px;
+    }
+    .wl-foto,
+    .wl-foto-ph {
+      width: 70px;
+      height: 70px;
+      border-radius: 14px;
+    }
+    .wl-naam {
+      font-size: var(--font-size-lg);
+    }
+    .wl-ster {
+      font-size: var(--font-size-sm);
+    }
+    .wl-detail {
+      padding: 0 16px 16px 16px;
+      gap: 18px;
+    }
+    .wl-grote-beeld {
+      height: 320px;
+    }
+    .wl-name-row strong {
+      width: 48px;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .wl-hoofd {
+      gap: 16px;
+      padding: 16px 18px;
+    }
+    .wl-foto,
+    .wl-foto-ph {
+      width: 76px;
+      height: 76px;
+    }
+    .wl-detail {
+      padding: 0 18px 18px 18px;
+      gap: 20px;
+    }
+    .wl-grote-beeld {
+      height: 360px;
+    }
+    .wl-beschrijving {
+      font-size: var(--font-size-md);
+    }
+    .wl-spotting-row {
+      font-size: var(--font-size-md);
+    }
+  }
   
   :global(html.dark) .wl-card { background: var(--card-bg); }
   :global(html.dark) .wl-card.gespot { background: #071a10; border-color: #10b981; }
@@ -478,8 +638,7 @@
   :global(html.dark) .wl-spotting { background: #0f2d1c; }
   :global(html.dark) .wl-spotting-head { color: #34d399; }
   :global(html.dark) .wl-spot-input { background: #000000; border-color: #334155; color: #e2e8f0; }
-  :global(html.dark) .wl-loc-btn { background: #1e3a5f; color: #93c5fd; }
-  :global(html.dark) .wl-tag { background: #334155; color: #94a3b8; }
+  :global(html.dark) .wl-loc-btn { background: #1e3a5f; border-color: #334155; color: #93c5fd; }
   :global(html.dark) .wl-link.wiki { background: #1e3a5f; color: #93c5fd; }
   :global(html.dark) .wl-link.geluid { background: #3b2006; color: #fdba74; }
   :global(html.dark) .wl-link.maps-google { background: #0f2d1c; color: #86efac; }

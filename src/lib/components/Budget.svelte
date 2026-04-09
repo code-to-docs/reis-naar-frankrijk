@@ -225,59 +225,70 @@
       </div>
     {/if}
 
-    {#each gegroepeerdeUitgaven as groep (groep.key)}
-      <div class="dag-groep">
-        <div class="dag-header">
-          <span class="dag-label">{E.KALENDER} {groep.label}</span>
-          <span class="dag-totaal">{formatEuro(groep.totaal)}</span>
-        </div>
-        {#each groep.items as u (u.id)}
-          <div class="entry-item">
-            <span class="entry-emoji">{budgetCatMap[u.categorie]?.emoji || E.LEEG}</span>
-            <div class="entry-info">
-              <strong>{u.omschrijving}</strong>
-              <small>{u.door} {formatTime(u.datum)}</small>
+    <div class="budget-content-grid">
+      <div class="budget-main-col">
+        {#each gegroepeerdeUitgaven as groep (groep.key)}
+          <div class="dag-groep">
+            <div class="dag-header">
+              <span class="dag-label">{E.KALENDER} {groep.label}</span>
             </div>
-            <strong class="entry-bedrag">{formatEuro(u.bedrag)}</strong>
-            <button class="entry-delete" onclick={() => verwijder(u.id)}>{E.PRULLENBAK}</button>
+            {#each groep.items as u (u.id)}
+              <div class="entry-item">
+                <span class="entry-emoji">{budgetCatMap[u.categorie]?.emoji || E.LEEG}</span>
+                <div class="entry-info">
+                  <strong>{u.omschrijving}</strong>
+                  <small>{u.door} {formatTime(u.datum)}</small>
+                </div>
+                <div class="entry-right">
+                  <strong class="entry-bedrag">{formatEuro(u.bedrag)}</strong>
+                  <button class="entry-delete" onclick={() => verwijder(u.id)}>{E.PRULLENBAK}</button>
+                </div>
+              </div>
+            {/each}
+            <div class="dag-subtotaal">
+              <span>Optelsom {groep.label}</span>
+              <strong>{formatEuro(groep.totaal)}</strong>
+            </div>
           </div>
         {/each}
-      </div>
-    {/each}
 
-    {#if gefilterdeUitgaven.length === 0 && isGefilterd}
-      <div class="empty-state">
-        <span class="empty-icon">{E.ZOEK}</span>
-        <p>Geen uitgaven voor dit filter</p>
+        {#if gefilterdeUitgaven.length === 0 && isGefilterd}
+          <div class="empty-state">
+            <span class="empty-icon">{E.ZOEK}</span>
+            <p>Geen uitgaven voor dit filter</p>
+          </div>
+        {/if}
       </div>
-    {/if}
 
-    <div class="card verrekening-card">
-      <h3>{E.HANDDRUK} Verrekening</h3>
-      <div class="budget-rij">
-        <span>Franzi betaald</span>
-        <strong>{formatEuro(franziBetaald)}</strong>
-      </div>
-      <div class="budget-rij">
-        <span>Dennis betaald</span>
-        <strong>{formatEuro(dennisBetaald)}</strong>
-      </div>
-      <hr class="verrekening-lijn" />
-      {#if franziBetaald > dennisBetaald}
-        <div class="verrekening-resultaat">
-          <span>Dennis {E.PIJL} Franzi</span>
-          <strong>{formatEuro(verschil)}</strong>
+      <aside class="budget-side-col">
+        <div class="card verrekening-card">
+          <h3>{E.HANDDRUK} Verrekening</h3>
+          <div class="budget-rij">
+            <span>Franzi betaald</span>
+            <strong>{formatEuro(franziBetaald)}</strong>
+          </div>
+          <div class="budget-rij">
+            <span>Dennis betaald</span>
+            <strong>{formatEuro(dennisBetaald)}</strong>
+          </div>
+          <hr class="verrekening-lijn" />
+          {#if franziBetaald > dennisBetaald}
+            <div class="verrekening-resultaat">
+              <span>Dennis {E.PIJL} Franzi</span>
+              <strong>{formatEuro(verschil)}</strong>
+            </div>
+          {:else if dennisBetaald > franziBetaald}
+            <div class="verrekening-resultaat">
+              <span>Franzi {E.PIJL} Dennis</span>
+              <strong>{formatEuro(verschil)}</strong>
+            </div>
+          {:else}
+            <div class="verrekening-resultaat quitte">
+              <span>{E.CHECK} Quitte!</span>
+            </div>
+          {/if}
         </div>
-      {:else if dennisBetaald > franziBetaald}
-        <div class="verrekening-resultaat">
-          <span>Franzi {E.PIJL} Dennis</span>
-          <strong>{formatEuro(verschil)}</strong>
-        </div>
-      {:else}
-        <div class="verrekening-resultaat quitte">
-          <span>{E.CHECK} Quitte!</span>
-        </div>
-      {/if}
+      </aside>
     </div>
   {:else}
     <div class="empty-state">
@@ -443,28 +454,69 @@
     padding: 2px 8px;
   }
 
-  .dag-groep { margin-bottom: 16px; }
-  .dag-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 4px 6px 4px; border-bottom: 2px solid #e2e8f0; margin-bottom: 6px;
+  .budget-content-grid {
+    display: grid;
+    gap: 14px;
+    align-items: start;
   }
-  .dag-label { font-weight: 700; font-size: var(--font-size-sm); color: #1a5276; }
-  .dag-totaal {
-    font-weight: 600; font-size: var(--font-size-sm); color: #475569;
-    background: #f1f5f9; padding: 3px 10px; border-radius: 8px;
+  .budget-main-col,
+  .budget-side-col {
+    min-width: 0;
+  }
+  .dag-groep { margin-bottom: 14px; }
+  .dag-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 4px 4px 8px;
+    margin-bottom: 2px;
+  }
+  .dag-label {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: #1a5276;
+  }
+  .dag-subtotaal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #dbe4f0;
+    margin-top: 4px;
+    padding: 10px 6px 2px;
+    color: #475569;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-medium);
+  }
+  .dag-subtotaal strong {
+    color: var(--heading);
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-bold);
   }
 
   .entries-header { margin: 16px 0 8px 0; }
   .entries-header h3 { font-size: 1rem; color: #475569; margin: 0; }
   .entry-item {
-    display: flex; align-items: center; gap: 10px;
-    background: white; border-radius: 12px; padding: 12px;
-    margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border-radius: 12px;
+    padding: 11px 12px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
   .entry-emoji { font-size: 1.4rem; flex-shrink: 0; }
   .entry-info { flex: 1; min-width: 0; }
   .entry-info strong { display: block; font-size: var(--font-size-sm); color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .entry-info small { color: #64748b; font-size: var(--font-size-xs); }
+  .entry-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+  }
   .entry-bedrag { font-size: var(--font-size-md); color: #1e293b; white-space: nowrap; flex-shrink: 0; }
   .entry-delete {
     background: none;
@@ -484,12 +536,43 @@
   .empty-state p { margin-top: 8px; font-size: var(--font-size-sm); }
 
   .budget-rij { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-  .verrekening-card { margin-top: 20px; border-top: 3px solid #e2e8f0; }
+  .verrekening-card { margin-top: 0; border-top: 3px solid #e2e8f0; }
   .verrekening-lijn { border: none; border-top: 1px solid #e2e8f0; margin: 8px 0; }
   .verrekening-resultaat { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 1rem; }
   .verrekening-resultaat.quitte { justify-content: center; color: var(--groen); }
   .budget-bottom-spacer {
     height: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 24px);
+  }
+
+  @media (min-width: 980px) {
+    .budget-content-grid {
+      grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+      gap: 16px;
+    }
+    .budget-side-col .verrekening-card {
+      position: sticky;
+      top: 12px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .entry-item {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      row-gap: 4px;
+    }
+    .entry-emoji {
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+    .entry-right {
+      grid-column: 2;
+      justify-self: end;
+      gap: 8px;
+    }
+    .dag-subtotaal {
+      padding-top: 8px;
+    }
   }
 
 
