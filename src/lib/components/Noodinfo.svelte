@@ -6,16 +6,16 @@
   <h2>{E.WARN} Noodinfo</h2>
   <div class="card" style="background:#fee;border-left:4px solid var(--rood);">
     <h3>&#128222; Alarmnummers</h3>
-    <p><a href="tel:112"><strong>112</strong></a> — Algemeen noodgeval</p>
-    <p><a href="tel:15"><strong>15</strong></a> — SAMU (ambulance)</p>
-    <p><a href="tel:18"><strong>18</strong></a> — Pompiers (brandweer)</p>
-    <p><a href="tel:17"><strong>17</strong></a> — Gendarmerie (politie)</p>
+    <p><a href="tel:112"><strong>112</strong></a> - Algemeen noodgeval</p>
+    <p><a href="tel:15"><strong>15</strong></a> - SAMU (ambulance)</p>
+    <p><a href="tel:18"><strong>18</strong></a> - Pompiers (brandweer)</p>
+    <p><a href="tel:17"><strong>17</strong></a> - Gendarmerie (politie)</p>
   </div>
   <div class="card">
     <h3>&#127976; Ziekenhuizen</h3>
-    <p><strong>Lozère:</strong> CH Mende</p>
+    <p><strong>Loz&egrave;re:</strong> CH Mende</p>
     <p><strong>Cantal:</strong> CH Aurillac / CH Saint-Flour</p>
-    <p><strong>Ariège:</strong> CH Foix / CH Saint-Girons</p>
+    <p><strong>Ari&egrave;ge:</strong> CH Foix / CH Saint-Girons</p>
   </div>
   <div class="card">
     <h3>&#128138; Nachtapotheek</h3>

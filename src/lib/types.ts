@@ -13,7 +13,7 @@ export interface Spotting {
     id?: string;
     gespot: boolean;
     door: string;
-    datum: string;
+    datum: Timestamp | string;
     notitie?: string;
     locatie?: string;
 }

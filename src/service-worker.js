@@ -56,7 +56,11 @@ self.addEventListener("fetch", (event) => {
 
   // Same origin (App shell + assets)
   if (url.origin === self.location.origin) {
-    event.respondWith(cacheFirst(event.request, STATIC_CACHE));
+    if (event.request.mode === "navigate" || event.request.destination === "document") {
+      event.respondWith(networkFirst(event.request, RUNTIME_CACHE, MAX_RUNTIME));
+    } else {
+      event.respondWith(cacheFirst(event.request, STATIC_CACHE));
+    }
     return;
   }
 });
@@ -69,7 +73,7 @@ async function cacheFirst(request, cacheName, maxItems) {
     if (response.ok) {
       const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
-      if (maxItems) trimCache(cacheName, maxItems);
+      if (maxItems) await trimCache(cacheName, maxItems);
     }
     return response;
   } catch (e) {
@@ -84,7 +88,7 @@ async function networkFirst(request, cacheName, maxItems) {
     if (response.ok) {
       const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
-      if (maxItems) trimCache(cacheName, maxItems);
+      if (maxItems) await trimCache(cacheName, maxItems);
     }
     return response;
   } catch (e) {
@@ -96,9 +100,9 @@ async function networkFirst(request, cacheName, maxItems) {
 
 async function trimCache(cacheName, maxItems) {
   const cache = await caches.open(cacheName);
-  const keys = await cache.keys();
-  if (keys.length > maxItems) {
+  let keys = await cache.keys();
+  while (keys.length > maxItems) {
     await cache.delete(keys[0]);
-    trimCache(cacheName, maxItems);
+    keys = await cache.keys();
   }
 }

@@ -1,8 +1,12 @@
 // Haptic feedback utility voor mobiel
 
+/**
+ * @param {"light"|"medium"|"heavy"|"success"|"error"} [type]
+ */
 export function haptic(type = 'light') {
-  if (!navigator || !navigator.vibrate) return;
+  if (typeof navigator === "undefined" || !navigator.vibrate) return;
 
+  /** @type {Record<"light"|"medium"|"heavy"|"success"|"error", number[]>} */
   const patterns = {
     light: [10],
     medium: [25],

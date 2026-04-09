@@ -44,6 +44,7 @@
     };
     if (afvinkbaar) data.gedaan = false;
     if (extraVeld.trim()) data.notities = extraVeld.trim();
+    if (metLink && linkVeld.trim()) data.mapsLink = linkVeld.trim();
     try {
       await addDoc(collection(db, collectie), data);
       nieuwItem = '';
@@ -69,7 +70,7 @@
     }
   }
 
-  async function verwijder(id) {
+  async function verwijder(id: string) {
     if (confirm('Verwijderen?')) {
       try {
         await deleteDoc(doc(db, collectie, id));

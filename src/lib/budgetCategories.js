@@ -10,7 +10,8 @@ export const budgetCategorieen = [
   { id: "overig",       emoji: E.DOOS,     label: "Overig",       kleur: "#636E72" },
 ];
 
+/** @type {Record<string, (typeof budgetCategorieen)[number]>} */
 export const budgetCatMap = budgetCategorieen.reduce((map, cat) => {
   map[cat.id] = cat;
   return map;
-}, {});
+}, /** @type {Record<string, (typeof budgetCategorieen)[number]>} */ ({}));

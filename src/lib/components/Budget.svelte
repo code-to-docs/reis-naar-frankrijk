@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import {
-    collection, onSnapshot, addDoc, deleteDoc,
-    doc as firestoreDoc, serverTimestamp, setDoc
+    collection, onSnapshot, addDoc, deleteDoc, query, orderBy,
+    doc as firestoreDoc, setDoc, type Unsubscribe, type DocumentData, type QuerySnapshot
   } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState, toonSnackbar } from "$lib/stores.svelte.js";
@@ -11,72 +11,59 @@
   import { budgetCategorieen as cats, budgetCatMap } from "$lib/budgetCategories.js";
   import { E } from "$lib/emojis.js";
   import { 
-    formatEuro, formatEuroGroot, formatTime, 
-    getFriendlyDayLabel, getDayKey 
+    formatEuro, formatEuroGroot, formatTime
   } from "$lib/utils/formatters.js";
+  import {
+    mapUitgavenSnapshot,
+    groepeerUitgaven,
+    berekenVerrekening,
+    type UitgaveItem
+  } from "$lib/utils/budget";
 
-  let uitgaven = $state([]);
+  type HerstelbareUitgave = Omit<UitgaveItem, "id"> | null;
+
+  let uitgaven = $state<UitgaveItem[]>([]);
   let budget = $state(2500);
-  let laatsteVerwijderd = $state(null);
-  let undoTimer = null;
+  let laatsteVerwijderd = $state<HerstelbareUitgave>(null);
+  let undoTimer: ReturnType<typeof setTimeout> | null = null;
   let toonBudgetEdit = $state(false);
   let nieuwBudget = $state("");
-  let unsubscribe;
-  let unsubBudget;
+  let unsubscribe: Unsubscribe | undefined;
+  let unsubBudget: Unsubscribe | undefined;
 
   let filterPersoon = $state("alle");
   let filterCat = $state("alle");
 
-  let totaal = $derived(uitgaven.reduce((sum, u) => sum + u.bedrag, 0));
+  let totaal = $derived(uitgaven.reduce((sum, u) => sum + (Number(u.bedrag) || 0), 0));
   let resterend = $derived(budget - totaal);
   let percentage = $derived(budget > 0 ? Math.round((totaal / budget) * 100) : 0);
 
-  let actieveCats = $derived(
-    cats.filter(c => uitgaven.some(u => u.categorie === c.id))
-  );
+  let actieveCats = $derived(cats.filter((c) => uitgaven.some((u) => u.categorie === c.id)));
 
   let gefilterdeUitgaven = $derived.by(() => {
     let result = uitgaven;
-    if (filterPersoon !== "alle") result = result.filter(u => u.door === filterPersoon);
-    if (filterCat !== "alle") result = result.filter(u => u.categorie === filterCat);
+    if (filterPersoon !== "alle") result = result.filter((u) => u.door === filterPersoon);
+    if (filterCat !== "alle") result = result.filter((u) => u.categorie === filterCat);
     return result;
   });
 
-  let gefilterdTotaal = $derived.by(() => gefilterdeUitgaven.reduce((sum, u) => sum + u.bedrag, 0));
+  let gefilterdTotaal = $derived.by(() => gefilterdeUitgaven.reduce((sum, u) => sum + (Number(u.bedrag) || 0), 0));
   let isGefilterd = $derived(filterPersoon !== "alle" || filterCat !== "alle");
 
   let gegroepeerdeUitgaven = $derived.by(() => {
-    const items = gefilterdeUitgaven;
-    const groepen = [];
-    const groepMap = {};
-    for (const u of items) {
-      const key = getDayKey(u.datum);
-      if (!groepMap[key]) {
-        groepMap[key] = { key, label: getFriendlyDayLabel(u.datum), items: [], totaal: 0 };
-        groepen.push(groepMap[key]);
-      }
-      groepMap[key].items.push(u);
-      groepMap[key].totaal += u.bedrag;
-    }
-    return groepen;
+    return groepeerUitgaven(gefilterdeUitgaven);
   });
 
-  let { franziBetaald, dennisBetaald } = $derived.by(() => {
-    let f = 0, d = 0;
-    for (const u of uitgaven) {
-      if (u.door === "Franzi") f += u.bedrag;
-      else if (u.door === "Dennis") d += u.bedrag;
-    }
-    return { franziBetaald: f, dennisBetaald: d };
-  });
+  let { franziBetaald, dennisBetaald, verschil } = $derived.by(() => berekenVerrekening(uitgaven));
 
-  let verschil = $derived(Math.abs(franziBetaald - dennisBetaald) / 2);
-
-  function resetFilters() { filterPersoon = "alle"; filterCat = "alle"; }
+  function resetFilters() {
+    filterPersoon = "alle";
+    filterCat = "alle";
+  }
 
   async function slabudgetOp() {
-    const val = parseFloat(nieuwBudget);
-    if (!val || val <= 0) return;
+    const val = Number.parseFloat(nieuwBudget);
+    if (!Number.isFinite(val) || val <= 0) return;
     try {
       await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: val });
       toonBudgetEdit = false;
@@ -89,17 +76,28 @@
   }
 
   onMount(() => {
-    unsubscribe = onSnapshot(collection(db, "uitgaven"), (snapshot) => {
-      uitgaven = snapshot.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .sort((a, b) => (b.datum?.seconds || 0) - (a.datum?.seconds || 0));
-    });
-    unsubBudget = onSnapshot(firestoreDoc(db, "instellingen", "budget"), (snap) => {
-      if (snap.exists()) {
-        const val = snap.data().bedrag;
-        if (val && val > 0) budget = val;
+    const uitgavenRef = collection(db, "uitgaven");
+    const sortedQuery = query(uitgavenRef, orderBy("datum", "desc"));
+    const onData = (snapshot: QuerySnapshot<DocumentData>) => {
+      uitgaven = mapUitgavenSnapshot(snapshot);
+    };
+
+    unsubscribe = onSnapshot(
+      sortedQuery,
+      onData,
+      (error) => {
+        console.warn("Gesorteerde query mislukt, fallback naar client-side sortering.", error);
+        unsubscribe?.();
+        unsubscribe = onSnapshot(uitgavenRef, onData);
       }
+    );
+
+    unsubBudget = onSnapshot(firestoreDoc(db, "instellingen", "budget"), (snap) => {
+      if (!snap.exists()) return;
+      const val = Number(snap.data().bedrag);
+      if (Number.isFinite(val) && val > 0) budget = val;
     });
+
     return () => {
       unsubscribe?.();
       unsubBudget?.();
@@ -107,16 +105,24 @@
     };
   });
 
-
-
-  async function verwijder(id) {
-    const item = uitgaven.find(u => u.id === id);
+  async function verwijder(id: string) {
+    const item = uitgaven.find((u) => u.id === id);
     if (!item) return;
-    laatsteVerwijderd = { bedrag: item.bedrag, categorie: item.categorie, omschrijving: item.omschrijving, door: item.door, datum: item.datum };
+
+    laatsteVerwijderd = {
+      bedrag: item.bedrag,
+      categorie: item.categorie,
+      omschrijving: item.omschrijving,
+      door: item.door,
+      datum: item.datum
+    };
+
     try {
       await deleteDoc(firestoreDoc(db, "uitgaven", id));
       if (undoTimer) clearTimeout(undoTimer);
-      undoTimer = setTimeout(() => { laatsteVerwijderd = null; }, 5000);
+      undoTimer = setTimeout(() => {
+        laatsteVerwijderd = null;
+      }, 5000);
     } catch (e) {
       console.error(e);
       toonSnackbar("Kon niet verwijderen", "error", E.KRUIS);
@@ -205,7 +211,7 @@
 
     {#if isGefilterd}
       <div class="filter-info">
-        <span>{E.ZOEK} {gefilterdeUitgaven.length} resultaten — {formatEuro(gefilterdTotaal)}</span>
+        <span>{E.ZOEK} {gefilterdeUitgaven.length} resultaten - {formatEuro(gefilterdTotaal)}</span>
         <button class="filter-reset" onclick={resetFilters}>{E.KRUIS} Reset</button>
       </div>
     {/if}
@@ -218,7 +224,7 @@
         </div>
         {#each groep.items as u (u.id)}
           <div class="entry-item">
-            <span class="entry-emoji">{cats.find(c => c.id === u.categorie)?.emoji || E.LEEG}</span>
+            <span class="entry-emoji">{budgetCatMap[u.categorie]?.emoji || E.LEEG}</span>
             <div class="entry-info">
               <strong>{u.omschrijving}</strong>
               <small>{u.door} {formatTime(u.datum)}</small>
@@ -454,3 +460,4 @@
 
 
 </style>
+

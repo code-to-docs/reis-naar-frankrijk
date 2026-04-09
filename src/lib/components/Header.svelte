@@ -9,9 +9,9 @@
       case "/budget": return `${E.GELD} Vakantiebudget`;
       case "/campings": return `${E.CAMPING} Campings`;
       case "/poi": return `${E.PIN} Bezienswaardigheden`;
-      case "/meer": return `Menu & Instellingen`;
+      case "/meer": return "Menu & Instellingen";
       default:
-        if ($page.url.pathname.startsWith('/meer/wildlife')) return `🐾 Wildlife`;
+        if ($page.url.pathname.startsWith("/meer/wildlife")) return `${E.VOGEL} Wildlife`;
         return `${E.VLAG} Frankrijk`;
     }
   });
@@ -26,12 +26,12 @@
 
 <style>
   .header {
-    background: linear-gradient(135deg, #002654 0%, #1a5276 100%); 
+    background: linear-gradient(135deg, var(--header-bg) 0%, #1a5276 100%);
     color: white;
-    padding: 24px 16px; 
+    padding: 24px 16px;
     text-align: center;
-    position: sticky; 
-    top: 0; 
+    position: sticky;
+    top: 0;
     z-index: 99;
     border-bottom: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -45,5 +45,11 @@
     color: rgba(255, 255, 255, 0.85);
     font-size: 0.95rem;
     margin: 0;
+  }
+
+  :global(html.dark) .header {
+    background: linear-gradient(135deg, #0c2d48 0%, #1e3a5f 100%);
+    border-bottom-color: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   }
 </style>

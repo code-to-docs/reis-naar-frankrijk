@@ -18,7 +18,9 @@ const euroGrootFormatter = new Intl.NumberFormat('nl-NL', {
   maximumFractionDigits: 0
 });
 
+/** @param {number | null | undefined} val */
 export const formatEuro = (val) => euroFormatter.format(val || 0);
+/** @param {number | null | undefined} val */
 export const formatEuroGroot = (val) => euroGrootFormatter.format(val || 0);
 
 // --- DATE & TIME FORMATTING ---
@@ -42,21 +44,31 @@ const timeFormatter = new Intl.DateTimeFormat('nl-NL', {
   minute: '2-digit'
 });
 
-export const formatFullDate = (date) => fullDateFormatter.format(new Date(date));
-export const formatShortDate = (date) => shortDateFormatter.format(new Date(date));
-export const formatTime = (date) => timeFormatter.format(new Date(date));
+/**
+ * @param {any} dateValue
+ * @returns {Date}
+ */
+function toDate(dateValue) {
+  if (!dateValue) return new Date();
+  if (dateValue instanceof Date) return dateValue;
+  if (dateValue?.toDate && typeof dateValue.toDate === 'function') return dateValue.toDate();
+  if (dateValue?.seconds) return new Date(dateValue.seconds * 1000);
+  return new Date(dateValue);
+}
+
+/** @param {any} date */
+export const formatFullDate = (date) => fullDateFormatter.format(toDate(date));
+/** @param {any} date */
+export const formatShortDate = (date) => shortDateFormatter.format(toDate(date));
+/** @param {any} date */
+export const formatTime = (date) => timeFormatter.format(toDate(date));
 
 /**
  * Returns a human-friendly label for a date key (YYYY-MM-DD or Firestore timestamp)
+ * @param {any} dateValue
  */
 export function getFriendlyDayLabel(dateValue) {
-  let date;
-  if (dateValue?.seconds) {
-    date = new Date(dateValue.seconds * 1000);
-  } else {
-    // Assume YYYY-MM-DD string or Date object
-    date = new Date(dateValue);
-  }
+  const date = toDate(dateValue);
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -75,8 +87,9 @@ export function getFriendlyDayLabel(dateValue) {
 
 /**
  * Returns a sortable day key (YYYY-MM-DD) from a date/timestamp
+ * @param {any} dateValue
  */
 export function getDayKey(dateValue) {
-  const d = dateValue?.seconds ? new Date(dateValue.seconds * 1000) : new Date(dateValue);
+  const d = toDate(dateValue);
   return d.toISOString().split('T')[0];
 }

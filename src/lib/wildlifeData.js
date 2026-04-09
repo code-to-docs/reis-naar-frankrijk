@@ -447,22 +447,22 @@ export const wildlifeData = [
 
 // Categorie labels en emoji's
 export const categorieLabels = {
-  roofvogel: { label: 'Vogels', emoji: '🦅' },
-  zoogdier: { label: 'Zoogdieren', emoji: '🦌' },
-  reptiel_amfibie: { label: 'Reptielen & amfibieën', emoji: '🦎' },
-  insect: { label: 'Insecten & spinnen', emoji: '🦋' },
+  roofvogel: { label: 'Vogels', emoji: '\u{1F986}' },
+  zoogdier: { label: 'Zoogdieren', emoji: '\u{1F98C}' },
+  reptiel_amfibie: { label: 'Reptielen & amfibie\u00EBn', emoji: '\u{1F98E}' },
+  insect: { label: 'Insecten & spinnen', emoji: '\u{1F98B}' },
 };
 
 // Regio labels en emoji's
 export const regioLabels = {
-  lozere: { label: 'Lozère', emoji: '🏔️' },
-  cantal: { label: 'Cantal', emoji: '🌋' },
-  pyrenees: { label: 'Pyrénées', emoji: '🐻' },
+  lozere: { label: 'Loz\u00E8re', emoji: '\u{1F3D4}\uFE0F' },
+  cantal: { label: 'Cantal', emoji: '\u{1F30B}' },
+  pyrenees: { label: 'Pyr\u00E9n\u00E9es', emoji: '\u{1F43B}' },
 };
 
 // Zeldzaamheid labels
 export const zeldzaamheidLabels = {
-  1: { label: 'Veel voorkomend', emoji: '⭐', kleur: '#4CAF50' },
-  2: { label: 'Ongewoon', emoji: '⭐⭐', kleur: '#FF9800' },
-  3: { label: 'Zeldzaam', emoji: '⭐⭐⭐', kleur: '#F44336' },
+  1: { label: 'Veel voorkomend', emoji: '\u2B50', kleur: '#4CAF50' },
+  2: { label: 'Ongewoon', emoji: '\u2B50\u2B50', kleur: '#FF9800' },
+  3: { label: 'Zeldzaam', emoji: '\u2B50\u2B50\u2B50', kleur: '#F44336' },
 };

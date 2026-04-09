@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { doc, setDoc, deleteDoc } from "firebase/firestore";
+  import { doc, setDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { toonSnackbar } from "$lib/stores.svelte.js";
   import { haptic } from "$lib/utils/haptic.js";
   import { categorieLabels, regioLabels, zeldzaamheidLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
+  import { formatFullDate } from "$lib/utils/formatters.js";
   import type { Spotting } from "$lib/types";
 
   let { 
@@ -85,7 +86,7 @@
       await setDoc(doc(db, "wildlife", dier.id), {
         gespot: true,
         door: currentUser,
-        datum: new Date().toISOString(),
+        datum: serverTimestamp(),
         notitie: spotNotitie,
         locatie: spotLocatie,
       });
@@ -169,19 +170,19 @@
       </div>
 
       <div class="wl-section">
-        <strong>👁️ Herkenningspunten</strong>
+        <strong>{E.TIP} Herkenningspunten</strong>
         <p class="wl-beschrijving">{dier.kenmerken}</p>
       </div>
 
       <div class="wl-section">
-        <strong>🗺️ Waar & Wanneer</strong>
+        <strong>{E.PIN} Waar & Wanneer</strong>
         <p class="wl-beschrijving">{dier.waar_wanneer}</p>
       </div>
       {#if spotting}
         <div class="wl-spotting">
           <div class="wl-spotting-head">{E.CHECK} Gespot door {spotting.door}</div>
           {#if spotting.datum}
-            <div class="wl-spotting-row">{E.KALENDER} {new Date(spotting.datum).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" })}</div>
+            <div class="wl-spotting-row">{E.KALENDER} {formatFullDate(spotting.datum)}</div>
           {/if}
           {#if spotting.locatie}
             <div class="wl-spotting-row">{E.PIN} {spotting.locatie}</div>
@@ -199,7 +200,7 @@
               {#if gettingLocation}
                 <svg class="spin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
               {:else}
-                📍
+                {E.PIN}
               {/if}
             </button>
           </div>
@@ -245,7 +246,6 @@
   .wl-naam-rij { display: flex; align-items: center; gap: 6px; }
   .wl-naam { font-size: 0.95rem; color: #1e293b; }
   .wl-ster { font-size: 0.7rem; letter-spacing: -1px; }
-  .wl-frans { font-size: 0.78rem; color: #94a3b8; font-style: italic; }
   .wl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
   .wl-tag { font-size: 0.68rem; background: #f1f5f9; padding: 2px 7px; border-radius: 8px; color: #64748b; }
   .wl-chevron { flex-shrink: 0; transition: transform 0.2s ease; }
@@ -315,3 +315,4 @@
   :global(html.dark) .wl-link.wiki { background: #1e3a5f; color: #93c5fd; }
   :global(html.dark) .wl-link.geluid { background: #3b2006; color: #fdba74; }
 </style>
+

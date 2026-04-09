@@ -10,6 +10,7 @@
   let dierInfo: any = $state(null);
   let foto = $state('');
   let imgError = $state(false);
+  let laatstFotoDierId = "";
 
   onMount(() => {
     const ref = collection(db, 'wildlife');
@@ -24,12 +25,16 @@
         laatsteSpotting = nieuwste;
         dierInfo = wildlifeData.find(d => d.id === nieuwste.id) || null;
         if (dierInfo) {
+          if (laatstFotoDierId === dierInfo.id && foto) return;
+
+          imgError = false;
           try {
             const cached = localStorage.getItem('wildlife_fotos_v2');
             if (cached) {
               const parsed = JSON.parse(cached);
               if (parsed.data && parsed.data[dierInfo.id]) {
                 foto = parsed.data[dierInfo.id];
+                laatstFotoDierId = dierInfo.id;
                 return;
               }
             }
@@ -40,7 +45,10 @@
           })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
-              if (data && data.thumbnail && data.thumbnail.source) foto = data.thumbnail.source;
+              if (data && data.thumbnail && data.thumbnail.source) {
+                foto = data.thumbnail.source;
+                laatstFotoDierId = dierInfo.id;
+              }
             })
             .catch(() => {});
         }

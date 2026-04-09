@@ -1,24 +1,25 @@
-<script>
+<script lang="ts">
   import { page } from "$app/stores";
   import { onMount } from "svelte";
-
-  let online = $state(true);
   import { E } from "$lib/emojis.js";
 
+  let online = $state(true);
+
   const paginas = [
-    { id: "/",         emoji: "\u{1F3E0}", label: "Home" },
+    { id: "/", emoji: "\u{1F3E0}", label: "Home" },
     { id: "/campings", emoji: E.CAMPING, label: "Campings" },
-    { id: "/poi",      emoji: E.PIN,  label: "POIs" },
-    { id: "/budget",   emoji: E.GELD, label: "Budget" },
-    { id: "/meer",     emoji: "\u2630", label: "Meer" },
+    { id: "/poi", emoji: E.PIN, label: "POIs" },
+    { id: "/budget", emoji: E.GELD, label: "Budget" },
+    { id: "/meer", emoji: "\u2630", label: "Meer" }
   ];
 
-  const isActive = (path) => $page.url.pathname === path || ($page.url.pathname.startsWith('/meer') && path === '/meer');
+  const isActive = (path: string) =>
+    $page.url.pathname === path || ($page.url.pathname.startsWith("/meer") && path === "/meer");
 
   onMount(() => {
     online = navigator.onLine;
-    const goOnline = () => online = true;
-    const goOffline = () => online = false;
+    const goOnline = () => (online = true);
+    const goOffline = () => (online = false);
     window.addEventListener("online", goOnline);
     window.addEventListener("offline", goOffline);
     return () => {
@@ -31,7 +32,7 @@
 {#if !online}
   <div class="offline-bar">
     <span class="offline-dot"></span>
-    <span>Geen internet — data wordt lokaal bewaard</span>
+    <span>Geen internet - data wordt lokaal bewaard</span>
   </div>
 {/if}
 

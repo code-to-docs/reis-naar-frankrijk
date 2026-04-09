@@ -1,17 +1,15 @@
 <script>
-  import { appState } from "$lib/stores.svelte.js";
   import WeerWidget from "$lib/components/WeerWidget.svelte";
   import SpotVanDeDag from "$lib/components/SpotVanDeDag.svelte";
-  import { page } from '$app/stores';
   import { E } from "$lib/emojis.js";
 
-  const vertrekDatum = new Date("2025-07-14");
+  const vandaag = new Date();
+  const vertrekDatum = new Date(vandaag.getFullYear(), 6, 14);
+  if (vandaag > vertrekDatum) vertrekDatum.setFullYear(vandaag.getFullYear() + 1);
   const dagen = Math.ceil((vertrekDatum.getTime() - new Date().getTime()) / 86400000);
 
-  // Route tekst als JS variabele (unicode fix)
-  const routeTekst = "Loz\u00E8re " + "\u2192" + " Cantal " + "\u2192" + " Pyr\u00E9n\u00E9es Ari\u00E9geoises";
+  const routeTekst = "Loz\u00E8re \u2192 Cantal \u2192 Pyr\u00E9n\u00E9es Ari\u00E9geoises";
 
-  // Aftelling tekst
   function getAftelTekst() {
     if (dagen > 1) return E.KALENDER + " Nog " + dagen + " dagen";
     if (dagen === 1) return E.KALENDER + " Nog 1 dag!";
@@ -19,8 +17,6 @@
     return E.AUTO + " We zijn onderweg!";
   }
 </script>
-
-
 
 <div class="page-transition">
   <WeerWidget />
@@ -40,7 +36,7 @@
       <span>Nieuwe uitgave</span>
     </a>
     <a href="/meer/wildlife" class="quick-btn">
-      <div class="icon">🐾</div>
+      <div class="icon">{E.POOT}</div>
       <span>Wildlife zoeken</span>
     </a>
     <a href="/campings" class="quick-btn">
@@ -55,8 +51,6 @@
 </div>
 
 <style>
-  /* Aftelling kaart */
-  /* Aftelling kaart */
   .countdown-card {
     text-align: center;
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
@@ -75,7 +69,6 @@
   .aftelling-tekst { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: white; }
   .aftelling-route { font-size: 14px; opacity: 0.9; color: white; }
 
-  /* Quick actions */
   .quick-actions {
     display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     padding: 0 16px 24px 16px;

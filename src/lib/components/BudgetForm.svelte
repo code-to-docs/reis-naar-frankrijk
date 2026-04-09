@@ -94,4 +94,4 @@
     z-index: 70;
     animation: slideUp 0.2s ease-out;
   }
-</style
+</style>

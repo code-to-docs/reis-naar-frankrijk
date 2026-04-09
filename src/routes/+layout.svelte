@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import "../app.css";
   import Navigation from "$lib/components/Navigation.svelte";
   import { appState } from "$lib/stores.svelte.js";
@@ -18,11 +19,22 @@
     }
   }
 
+  /** @param {string} n */
   function kiesNaam(n) {
     naam = n;
     localStorage.setItem("naam", n);
     appState.init(n);
   }
+
+  onMount(() => {
+    if (naam) appState.init(naam);
+    else appState.applyDarkMode();
+  });
+
+  $effect(() => {
+    const _dark = appState.isDarkMode;
+    appState.applyDarkMode();
+  });
 </script>
 
 {#if !naam}

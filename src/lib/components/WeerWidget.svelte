@@ -4,7 +4,7 @@
 
   let datum = $state("");
   let dagNaam = $state("");
-  let weer = $state(null);
+  let weer = $state<any[]>([]);
   let laden = $state(true);
   let fout = $state("");
   let locatieNaam = $state("");
@@ -79,17 +79,23 @@
       }));
       laden = false;
       const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
-      localStorage.setItem(cacheKey, JSON.stringify({t: Date.now(), weer}));
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), weer }));
+      } catch (e) {}
     } catch (e) {
       // Probeer cache
       const cacheKey = "weer_" + Math.round(lat*10)/10 + "_" + Math.round(lon*10)/10;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Date.now() - parsed.t < 4 * 3600 * 1000) {
-          weer = parsed.weer;
-          laden = false;
-          return;
+        try {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.t < 4 * 3600 * 1000) {
+            weer = parsed.weer;
+            laden = false;
+            return;
+          }
+        } catch (e) {
+          // Corrupted cache, ignore and continue to error state
         }
       }
       fout = "Weer laden mislukt (offline?)";
@@ -119,7 +125,9 @@
           parts.push(data.address.county || data.address.state);
         }
         locatieNaam = parts.join(", ") || "Frankrijk";
-        localStorage.setItem(cacheKey, locatieNaam);
+        try {
+          localStorage.setItem(cacheKey, locatieNaam);
+        } catch (e) {}
       }
     } catch (e) {}
   }
@@ -180,7 +188,7 @@
     </div>
   {:else if fout}
     <div class="weer-fout">{fout}</div>
-  {:else if weer}
+  {:else if weer.length > 0}
     <div class="weer-dagen">
       {#each weer as dag, i}
         <div class="weer-dag" class:vandaag={i === 0}>

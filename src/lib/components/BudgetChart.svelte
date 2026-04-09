@@ -1,36 +1,64 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
-  import { Chart, DoughnutController, ArcElement, Tooltip } from "chart.js";
-  Chart.register(DoughnutController, ArcElement, Tooltip);
-
+  import {
+    Chart,
+    DoughnutController,
+    ArcElement,
+    Tooltip,
+    type Chart as ChartJs,
+    type ChartConfiguration,
+    type Plugin
+  } from "chart.js";
   import { budgetCatMap } from "$lib/budgetCategories.js";
   import { E } from "$lib/emojis.js";
 
-  let { uitgaven = [], budget = 2500 } = $props();
+  Chart.register(DoughnutController, ArcElement, Tooltip);
+
+  type UitgaveLike = { categorie?: string; bedrag?: number | string };
+  type PerCat = Record<string, number>;
+  type LegendaItem = { label: string; kleur: string; bedrag: string };
+
+  let { uitgaven = [], budget = 2500 } = $props<{ uitgaven?: UitgaveLike[]; budget?: number }>();
 
   const EURO = E.EURO;
+  let canvasEl = $state<HTMLCanvasElement | null>(null);
+  let chartInstance: ChartJs<"doughnut", number[], string> | null = null;
+  let legendaItems = $state<LegendaItem[]>([]);
+  let centerPercentage = 0;
 
-  let canvasEl = $state(null);
-  let chartInstance = null;
-  let legendaItems = $state([]);
-
-  function getTotaalPerCategorie() {
-    const result = {};
+  function getTotaalPerCategorie(): PerCat {
+    const result: PerCat = {};
     for (const key of Object.keys(budgetCatMap)) result[key] = 0;
+    if (result.overig === undefined) result.overig = 0;
+
     for (const u of uitgaven) {
-      const cat = u.categorie || "overig";
-      if (result[cat] !== undefined) result[cat] += Number(u.bedrag) || 0;
-      else result["overig"] += Number(u.bedrag) || 0;
+      const cat = typeof u.categorie === "string" && result[u.categorie] !== undefined ? u.categorie : "overig";
+      result[cat] += Number(u.bedrag) || 0;
     }
     return result;
   }
 
-  function getTotaal(perCat) {
+  function getTotaal(perCat: PerCat) {
     return Object.values(perCat).reduce((a, b) => a + b, 0);
   }
 
-  function updateLegenda() {
-    const perCat = getTotaalPerCategorie();
+  function getVisualData(perCat: PerCat) {
+    const actief = Object.entries(perCat).filter(([_, v]) => v > 0);
+    if (actief.length === 0) {
+      return {
+        labels: ["Nog niets"],
+        data: [1],
+        colors: ["#e2e8f0"]
+      };
+    }
+    return {
+      labels: actief.map(([k]) => budgetCatMap[k]?.label || k),
+      data: actief.map(([_, v]) => v),
+      colors: actief.map(([k]) => budgetCatMap[k]?.kleur || "#64748b")
+    };
+  }
+
+  function updateLegenda(perCat: PerCat) {
     legendaItems = Object.entries(budgetCatMap)
       .filter(([key]) => perCat[key] > 0)
       .map(([key, cat]) => ({
@@ -40,60 +68,49 @@
       }));
   }
 
-  const centerTextPlugin = {
+  const centerTextPlugin: Plugin<"doughnut"> = {
     id: "centerText",
     afterDraw(chart) {
       const { ctx, chartArea } = chart;
       if (!chartArea) return;
+
       const centerX = (chartArea.left + chartArea.right) / 2;
       const centerY = (chartArea.top + chartArea.bottom) / 2;
-      const pct = chart.config.options.plugins.centerText.percentage;
 
       ctx.save();
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-
       ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
-      const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains("dark");
+      const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
       ctx.fillStyle = isDark ? "#e2e8f0" : "#1e293b";
-      ctx.fillText(pct + "%", centerX, centerY);
-
+      ctx.fillText(`${centerPercentage}%`, centerX, centerY);
       ctx.restore();
     }
   };
 
   function buildChart() {
     if (!canvasEl) return;
-    if (chartInstance) chartInstance.destroy();
+    chartInstance?.destroy();
 
     const perCat = getTotaalPerCategorie();
     const totaal = getTotaal(perCat);
-    const pct = totaal === 0 ? 0 : Math.round((totaal / budget) * 100);
-    const actief = Object.entries(perCat).filter(([_, v]) => v > 0);
+    centerPercentage = totaal === 0 || budget <= 0 ? 0 : Math.round((totaal / budget) * 100);
+    const { labels, data, colors } = getVisualData(perCat);
 
-    let labels, data, colors;
-    if (actief.length === 0) {
-      labels = ["Nog niets"];
-      data = [1];
-      colors = ["#e2e8f0"];
-    } else {
-      labels = actief.map(([k]) => budgetCatMap[k].label);
-      data = actief.map(([_, v]) => v);
-      colors = actief.map(([k]) => budgetCatMap[k].kleur);
-    }
-
-    chartInstance = new Chart(canvasEl, {
+    const config: ChartConfiguration<"doughnut", number[], string> = {
       type: "doughnut",
       data: {
         labels,
-        datasets: [{
-          data,
-          backgroundColor: colors,
-          borderWidth: 2,
-          borderColor: "#ffffff",
-          borderRadius: 4,
-          spacing: 2
-        }]
+        datasets: [
+          {
+            data,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: "#ffffff",
+            borderRadius: 4,
+            spacing: 2
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -107,53 +124,47 @@
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: function(ctx) { return " " + EURO + ctx.parsed.toFixed(2); }
+              label: (ctx) => " " + EURO + ctx.parsed.toFixed(2)
             }
-          },
-          centerText: { percentage: pct }
+          }
         }
       },
       plugins: [centerTextPlugin]
-    });
-    updateLegenda();
+    };
+
+    chartInstance = new Chart(canvasEl, config);
+    updateLegenda(perCat);
   }
 
   function updateChart() {
     if (!chartInstance) return buildChart();
-    
+
     const perCat = getTotaalPerCategorie();
     const totaal = getTotaal(perCat);
-    const pct = totaal === 0 ? 0 : Math.round((totaal / budget) * 100);
-    const actief = Object.entries(perCat).filter(([_, v]) => v > 0);
-    
-    let labels, data, colors;
-    if (actief.length === 0) {
-      labels = ["Nog niets"];
-      data = [1];
-      colors = ["#e2e8f0"];
-    } else {
-      labels = actief.map(([k]) => budgetCatMap[k].label);
-      data = actief.map(([_, v]) => v);
-      colors = actief.map(([k]) => budgetCatMap[k].kleur);
-    }
+    centerPercentage = totaal === 0 || budget <= 0 ? 0 : Math.round((totaal / budget) * 100);
+    const { labels, data, colors } = getVisualData(perCat);
 
     chartInstance.data.labels = labels;
-    chartInstance.data.datasets[0].data = data;
-    chartInstance.data.datasets[0].backgroundColor = colors;
-    chartInstance.options.plugins.centerText.percentage = pct;
+    const dataset = chartInstance.data.datasets[0];
+    if (dataset) {
+      dataset.data = data;
+      dataset.backgroundColor = colors;
+    }
     chartInstance.update();
-    
-    updateLegenda();
+    updateLegenda(perCat);
   }
 
   onMount(() => {
     buildChart();
-    return () => { if (chartInstance) chartInstance.destroy(); };
+    return () => {
+      chartInstance?.destroy();
+      chartInstance = null;
+    };
   });
 
   $effect(() => {
-    const _t1 = uitgaven.length;
-    const _t2 = budget;
+    const _count = uitgaven.length;
+    const _budget = budget;
     if (chartInstance) updateChart();
     else if (canvasEl) buildChart();
   });
