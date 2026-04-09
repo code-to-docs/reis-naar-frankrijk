@@ -11,7 +11,7 @@
   import { budgetCategorieen as cats, budgetCatMap } from "$lib/budgetCategories.js";
   import { E } from "$lib/emojis.js";
   import { 
-    formatEuro, formatEuroGroot, formatTime
+    formatEuro, formatEuroGroot, formatTime, parseLocalizedNumber
   } from "$lib/utils/formatters.js";
   import {
     mapUitgavenSnapshot,
@@ -62,10 +62,13 @@
   }
 
   async function slabudgetOp() {
-    const val = Number.parseFloat(nieuwBudget);
-    if (!Number.isFinite(val) || val <= 0) return;
+    const val = parseLocalizedNumber(nieuwBudget);
+    if (!Number.isFinite(val) || val <= 0) {
+      toonSnackbar("Vul een geldig budgetbedrag in", "warning", E.WARN);
+      return;
+    }
     try {
-      await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: val });
+      await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: Number(val.toFixed(2)) });
       toonBudgetEdit = false;
       nieuwBudget = "";
       toonSnackbar("Budget aangepast", "success", E.CHECK);
@@ -151,7 +154,7 @@
       <div class="hero-info">
         <div class="hero-label">Resterend</div>
         <div class="hero-bedrag" style="color:{resterend >= 0 ? '#10b981' : '#ef4444'}">
-          {formatEuroGroot(Math.abs(resterend))}
+          {resterend < 0 ? '-' : ''}{formatEuroGroot(Math.abs(resterend))}
         </div>
         <div class="hero-sub">
           <span>van {formatEuroGroot(budget)}</span>
@@ -173,7 +176,13 @@
       <div class="budget-edit-titel">Budget aanpassen</div>
       <form onsubmit={(e) => { e.preventDefault(); slabudgetOp(); }}>
         <div class="budget-edit-row">
-          <input type="number" step="50" bind:value={nieuwBudget} placeholder="Nieuw budget" class="budget-edit-input" />
+          <input
+            type="text"
+            inputmode="decimal"
+            bind:value={nieuwBudget}
+            placeholder="Nieuw budget"
+            class="budget-edit-input"
+          />
           <button type="submit" class="btn-success budget-edit-save"><span style="color:white;font-weight:800;font-size:1.1rem;">OK</span></button>
           <button type="button" class="btn-danger budget-edit-cancel" onclick={() => toonBudgetEdit = false}><span style="color:white;font-weight:800;font-size:1.1rem;">X</span></button>
         </div>

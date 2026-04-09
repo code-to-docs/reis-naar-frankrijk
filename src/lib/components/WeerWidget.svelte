@@ -14,6 +14,13 @@
   const FALLBACK_LAT = 44.5;
   const FALLBACK_LON = 3.5;
   const FALLBACK_NAAM = "Loz\u00E8re";
+  const WEATHER_CACHE_MAX_AGE = 4 * 3600 * 1000;
+
+  let isAlive = false;
+  let gpsFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+  let weerRequestCounter = 0;
+  let actiefWeerAbort: AbortController | null = null;
+  let actiefLocatieAbort: AbortController | null = null;
 
   // Emoji variabelen (komen nu the E object)
 
@@ -50,6 +57,22 @@
 
   let weergegevenDagen = $derived.by(() => weer.slice(0, zichtbareDagen));
 
+  function storageGet(key: string) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  function storageSet(key: string, value: string) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Ignore storage quota / private mode errors.
+    }
+  }
+
   function weatherCacheKey(lat: number, lon: number) {
     return "weer_v2_" + Math.round(lat * 10) / 10 + "_" + Math.round(lon * 10) / 10;
   }
@@ -78,11 +101,17 @@
 
   async function laadWeer(lat: number, lon: number) {
     const cacheKey = weatherCacheKey(lat, lon);
+    const requestId = ++weerRequestCounter;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    fout = "";
+    laden = true;
+
+    if (actiefWeerAbort) actiefWeerAbort.abort();
+    const controller = new AbortController();
+    actiefWeerAbort = controller;
+
     try {
       const url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,windspeed_10m_max,sunrise,sunset&timezone=Europe/Paris&forecast_days=7";
-
-      const controller = new AbortController();
       timeoutId = setTimeout(() => controller.abort(), 5000);
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -90,6 +119,8 @@
       
       if (!res.ok) throw new Error("fail");
       const data = await res.json();
+      if (!isAlive || requestId !== weerRequestCounter) return;
+
       weer = data.daily.time.map((dag: string, i: number) => ({
         datum: dag,
         dagNaam: formatDag(dag),
@@ -105,16 +136,15 @@
         zonsondergang: formatTijdKort(data.daily.sunset?.[i]),
       }));
       laden = false;
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), weer }));
-      } catch (e) {}
+      storageSet(cacheKey, JSON.stringify({ t: Date.now(), weer }));
     } catch (e) {
+      if (!isAlive || requestId !== weerRequestCounter) return;
       // Probeer cache
-      const cached = localStorage.getItem(cacheKey);
+      const cached = storageGet(cacheKey);
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.t < 4 * 3600 * 1000) {
+          if (Date.now() - parsed.t < WEATHER_CACHE_MAX_AGE) {
             weer = parsed.weer;
             laden = false;
             return;
@@ -127,6 +157,7 @@
       laden = false;
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
+      if (actiefWeerAbort === controller) actiefWeerAbort = null;
     }
   }
 
@@ -134,16 +165,31 @@
     const latRnd = Math.round(lat * 100) / 100;
     const lonRnd = Math.round(lon * 100) / 100;
     const cacheKey = "loc_" + latRnd + "_" + lonRnd;
-    const cached = localStorage.getItem(cacheKey);
+    const cached = storageGet(cacheKey);
     if (cached) {
       locatieNaam = cached;
       return;
     }
     
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (actiefLocatieAbort) actiefLocatieAbort.abort();
+    const controller = new AbortController();
+    actiefLocatieAbort = controller;
+
     try {
-      const res = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json&zoom=10&accept-language=nl");
+      timeoutId = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch(
+        "https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json&zoom=10&accept-language=nl",
+        { signal: controller.signal }
+      );
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
       if (res.ok) {
         const data = await res.json();
+        if (!isAlive || actiefLocatieAbort !== controller) return;
+
         const parts = [];
         if (data.address?.village || data.address?.town || data.address?.city) {
           parts.push(data.address.village || data.address.town || data.address.city);
@@ -152,14 +198,18 @@
           parts.push(data.address.county || data.address.state);
         }
         locatieNaam = parts.join(", ") || "Frankrijk";
-        try {
-          localStorage.setItem(cacheKey, locatieNaam);
-        } catch (e) {}
+        storageSet(cacheKey, locatieNaam);
       }
-    } catch (e) {}
+    } catch {
+      // Ignore geocoder failures; fallback location remains visible.
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (actiefLocatieAbort === controller) actiefLocatieAbort = null;
+    }
   }
 
   onMount(() => {
+    isAlive = true;
     updateViewportSettings();
     const onResize = () => updateViewportSettings();
     window.addEventListener("resize", onResize, { passive: true });
@@ -174,18 +224,26 @@
         (pos) => {
           if (gpsDone) return;
           gpsDone = true;
+          if (gpsFallbackTimer) {
+            clearTimeout(gpsFallbackTimer);
+            gpsFallbackTimer = null;
+          }
           laadWeer(pos.coords.latitude, pos.coords.longitude);
           getLocatieNaam(pos.coords.latitude, pos.coords.longitude);
         },
         () => {
           if (gpsDone) return;
           gpsDone = true;
+          if (gpsFallbackTimer) {
+            clearTimeout(gpsFallbackTimer);
+            gpsFallbackTimer = null;
+          }
           locatieNaam = FALLBACK_NAAM;
           laadWeer(FALLBACK_LAT, FALLBACK_LON);
         },
         { timeout: 5000, maximumAge: 600000 }
       );
-      setTimeout(() => {
+      gpsFallbackTimer = setTimeout(() => {
         if (!gpsDone) {
           gpsDone = true;
           locatieNaam = FALLBACK_NAAM;
@@ -198,6 +256,10 @@
     }
 
     return () => {
+      isAlive = false;
+      if (gpsFallbackTimer) clearTimeout(gpsFallbackTimer);
+      if (actiefWeerAbort) actiefWeerAbort.abort();
+      if (actiefLocatieAbort) actiefLocatieAbort.abort();
       window.removeEventListener("resize", onResize);
     };
   });
@@ -247,7 +309,7 @@
             <div class="weer-desktop-meta">
               <span>Voelt als {dag.gevoelMax}{E.GRADEN}/{dag.gevoelMin}{E.GRADEN}</span>
               {#if dag.zonsopkomst && dag.zonsondergang}
-                <span>☀️ {dag.zonsopkomst} · 🌙 {dag.zonsondergang}</span>
+                <span>Zon {dag.zonsopkomst} - Maan {dag.zonsondergang}</span>
               {/if}
             </div>
           {/if}

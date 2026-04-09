@@ -176,13 +176,14 @@
   });
 
   let gefilterd = $derived.by(() => {
+    const zoekLower = zoek.trim().toLowerCase();
     return gerechtenData.filter((gerecht) => {
       const check = checksByDish[gerecht.id]?.[userKey];
       const zoekMatch =
-        !zoek ||
-        gerecht.naam.toLowerCase().includes(zoek.toLowerCase()) ||
-        gerecht.frans.toLowerCase().includes(zoek.toLowerCase()) ||
-        gerecht.omschrijving.toLowerCase().includes(zoek.toLowerCase());
+        !zoekLower ||
+        gerecht.naam.toLowerCase().includes(zoekLower) ||
+        gerecht.frans.toLowerCase().includes(zoekLower) ||
+        gerecht.omschrijving.toLowerCase().includes(zoekLower);
 
       const dieetMatch =
         filterDieet === "alle" ||
@@ -243,7 +244,8 @@
 
   let dagTip = $derived.by(() => {
     if (!dagTipKandidaten.length) return null;
-    const daySeed = Math.floor(Date.now() / 86400000);
+    const nu = new Date();
+    const daySeed = Number(`${nu.getFullYear()}${String(nu.getMonth() + 1).padStart(2, "0")}${String(nu.getDate()).padStart(2, "0")}`);
     return dagTipKandidaten[daySeed % dagTipKandidaten.length];
   });
 

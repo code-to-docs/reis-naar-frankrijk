@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import { appState } from '$lib/stores.svelte.js';
   import { haptic } from '$lib/utils/haptic.js';
 
   let zichtbaar = $state(false);
   let verdwijnt = $state(false);
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let dismissTimer: ReturnType<typeof setTimeout> | null = null;
 
   let snack = $derived(appState.snackbar);
 
@@ -13,19 +15,25 @@
       verdwijnt = false;
       zichtbaar = true;
       haptic('light');
-      clearTimeout(timer);
+      if (timer) clearTimeout(timer);
       timer = setTimeout(() => dismiss(), 2500);
     }
   });
 
   function dismiss() {
     verdwijnt = true;
-    setTimeout(() => {
+    if (dismissTimer) clearTimeout(dismissTimer);
+    dismissTimer = setTimeout(() => {
       zichtbaar = false;
       verdwijnt = false;
       appState.snackbar = null;
     }, 300);
   }
+
+  onDestroy(() => {
+    if (timer) clearTimeout(timer);
+    if (dismissTimer) clearTimeout(dismissTimer);
+  });
 </script>
 
 {#if zichtbaar && snack}

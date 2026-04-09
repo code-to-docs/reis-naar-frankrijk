@@ -1,18 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import {
-    Chart,
-    DoughnutController,
-    ArcElement,
-    Tooltip,
-    type Chart as ChartJs,
-    type ChartConfiguration,
-    type Plugin
-  } from "chart.js";
   import { budgetCatMap } from "$lib/budgetCategories.js";
   import { E } from "$lib/emojis.js";
-
-  Chart.register(DoughnutController, ArcElement, Tooltip);
 
   type UitgaveLike = { categorie?: string; bedrag?: number | string };
   type PerCat = Record<string, number>;
@@ -21,163 +9,95 @@
   let { uitgaven = [], budget = 2500 } = $props<{ uitgaven?: UitgaveLike[]; budget?: number }>();
 
   const EURO = E.EURO;
-  let canvasEl = $state<HTMLCanvasElement | null>(null);
-  let chartInstance: ChartJs<"doughnut", number[], string> | null = null;
-  let legendaItems = $state<LegendaItem[]>([]);
-  let centerPercentage = 0;
 
-  function getTotaalPerCategorie(): PerCat {
-    const result: PerCat = {};
-    for (const key of Object.keys(budgetCatMap)) result[key] = 0;
-    if (result.overig === undefined) result.overig = 0;
+  function calcPerCategorie(items: UitgaveLike[]): { perCat: PerCat; totaal: number } {
+    const perCat: PerCat = {};
+    for (const key of Object.keys(budgetCatMap)) perCat[key] = 0;
+    if (perCat.overig === undefined) perCat.overig = 0;
 
-    for (const u of uitgaven) {
-      const cat = typeof u.categorie === "string" && result[u.categorie] !== undefined ? u.categorie : "overig";
-      result[cat] += Number(u.bedrag) || 0;
+    for (const u of items) {
+      const cat = typeof u.categorie === "string" && perCat[u.categorie] !== undefined ? u.categorie : "overig";
+      perCat[cat] += Number(u.bedrag) || 0;
     }
-    return result;
+
+    const totaal = Object.values(perCat).reduce((sum, val) => sum + val, 0);
+    return { perCat, totaal };
   }
 
-  function getTotaal(perCat: PerCat) {
-    return Object.values(perCat).reduce((a, b) => a + b, 0);
-  }
-
-  function getVisualData(perCat: PerCat) {
+  let chartData = $derived.by(() => {
+    const { perCat, totaal } = calcPerCategorie(uitgaven);
     const actief = Object.entries(perCat).filter(([_, v]) => v > 0);
-    if (actief.length === 0) {
-      return {
-        labels: ["Nog niets"],
-        data: [1],
-        colors: ["#e2e8f0"]
-      };
-    }
-    return {
-      labels: actief.map(([k]) => budgetCatMap[k]?.label || k),
-      data: actief.map(([_, v]) => v),
-      colors: actief.map(([k]) => budgetCatMap[k]?.kleur || "#64748b")
-    };
-  }
+    return { perCat, totaal, actief };
+  });
 
-  function updateLegenda(perCat: PerCat) {
-    legendaItems = Object.entries(budgetCatMap)
-      .filter(([key]) => perCat[key] > 0)
+  let centerPercentage = $derived.by(() => {
+    return chartData.totaal === 0 || budget <= 0 ? 0 : Math.round((chartData.totaal / budget) * 100);
+  });
+
+  let legendaItems = $derived.by(() => {
+    return Object.entries(budgetCatMap)
+      .filter(([key]) => chartData.perCat[key] > 0)
+      .sort((a, b) => chartData.perCat[b[0]] - chartData.perCat[a[0]])
       .map(([key, cat]) => ({
         label: cat.label,
         kleur: cat.kleur,
-        bedrag: EURO + perCat[key].toFixed(0)
+        bedrag: EURO + chartData.perCat[key].toFixed(0)
       }));
-  }
-
-  const centerTextPlugin: Plugin<"doughnut"> = {
-    id: "centerText",
-    afterDraw(chart) {
-      // Verberg het midden-percentage terwijl tooltip/details zichtbaar zijn,
-      // anders overlappen tekstlagen op mobiel.
-      if (chart.tooltip && chart.tooltip.opacity > 0) return;
-
-      const { ctx, chartArea } = chart;
-      if (!chartArea) return;
-
-      const centerX = (chartArea.left + chartArea.right) / 2;
-      const centerY = (chartArea.top + chartArea.bottom) / 2;
-
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
-      const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-      ctx.fillStyle = isDark ? "#e2e8f0" : "#1e293b";
-      ctx.fillText(`${centerPercentage}%`, centerX, centerY);
-      ctx.restore();
-    }
-  };
-
-  function buildChart() {
-    if (!canvasEl) return;
-    chartInstance?.destroy();
-
-    const perCat = getTotaalPerCategorie();
-    const totaal = getTotaal(perCat);
-    centerPercentage = totaal === 0 || budget <= 0 ? 0 : Math.round((totaal / budget) * 100);
-    const { labels, data, colors } = getVisualData(perCat);
-
-    const config: ChartConfiguration<"doughnut", number[], string> = {
-      type: "doughnut",
-      data: {
-        labels,
-        datasets: [
-          {
-            data,
-            backgroundColor: colors,
-            borderWidth: 2,
-            borderColor: "#ffffff",
-            borderRadius: 4,
-            spacing: 2
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        cutout: "70%",
-        animation: { duration: 600, easing: "easeOutQuart" },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#1e293b",
-            padding: 10,
-            cornerRadius: 8,
-            callbacks: {
-              label: (ctx) => " " + EURO + ctx.parsed.toFixed(2)
-            }
-          }
-        }
-      },
-      plugins: [centerTextPlugin]
-    };
-
-    chartInstance = new Chart(canvasEl, config);
-    updateLegenda(perCat);
-  }
-
-  function updateChart() {
-    if (!chartInstance) return buildChart();
-
-    const perCat = getTotaalPerCategorie();
-    const totaal = getTotaal(perCat);
-    centerPercentage = totaal === 0 || budget <= 0 ? 0 : Math.round((totaal / budget) * 100);
-    const { labels, data, colors } = getVisualData(perCat);
-
-    chartInstance.data.labels = labels;
-    const dataset = chartInstance.data.datasets[0];
-    if (dataset) {
-      dataset.data = data;
-      dataset.backgroundColor = colors;
-    }
-    chartInstance.update();
-    updateLegenda(perCat);
-  }
-
-  onMount(() => {
-    buildChart();
-    return () => {
-      chartInstance?.destroy();
-      chartInstance = null;
-    };
   });
 
-  $effect(() => {
-    // Serialize key fields to detect edits, not just additions/removals
-    const _digest = JSON.stringify(uitgaven.map((u: UitgaveLike) => [u.categorie, u.bedrag]));
-    const _budget = budget;
-    if (chartInstance) updateChart();
-    else if (canvasEl) buildChart();
+  let segments = $derived.by(() => {
+    const r = 38; // Radius of SVG circle
+    const c = 2 * Math.PI * r; // Circumference
+    const { totaal, actief } = chartData;
+
+    // Empty state placeholder
+    if (actief.length === 0) {
+      return [{
+        kleur: "#e2e8f0",
+        dashArray: `${c} ${c}`,
+        transform: "rotate(-90 50 50)"
+      }];
+    }
+
+    // Dynamic segments
+    let currentAngle = -90;
+    return actief.map(([k, v]) => {
+      const percentage = v / totaal;
+      const spacing = actief.length > 1 ? 2 : 0; // Small visual gap between slices
+      const dashLength = Math.max(0, (percentage * c) - spacing);
+      
+      const segmentData = {
+        kleur: budgetCatMap[k]?.kleur || "#64748b",
+        dashArray: `${dashLength} ${c}`,
+        transform: `rotate(${currentAngle} 50 50)`
+      };
+
+      currentAngle += percentage * 360;
+      return segmentData;
+    });
   });
 </script>
 
-<div class="chart-mini">
-  <canvas bind:this={canvasEl}></canvas>
+<div class="chart-container">
+  <svg viewBox="0 0 100 100" class="donut-svg">
+    {#each segments as seg, idx (`${idx}-${seg.kleur}`)}
+      <circle
+        cx="50" cy="50" r="38"
+        fill="transparent"
+        stroke={seg.kleur}
+        stroke-width="12"
+        stroke-linecap="round"
+        stroke-dasharray={seg.dashArray}
+        transform={seg.transform}
+        style="transition: stroke-dasharray 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);"
+      />
+    {/each}
+  </svg>
+  <div class="donut-center">
+    <span>{centerPercentage}%</span>
+  </div>
 </div>
+
 {#if legendaItems.length > 0}
   <div class="chart-legenda">
     {#each legendaItems as item}
@@ -191,10 +111,28 @@
 {/if}
 
 <style>
-  .chart-mini {
+  .chart-container {
+    position: relative;
     width: 120px;
     height: 120px;
     flex-shrink: 0;
+  }
+  .donut-svg {
+    width: 100%;
+    height: 100%;
+    transform: scale(1.05); /* Slight optical bump */
+  }
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    pointer-events: none;
   }
   .chart-legenda {
     display: flex;
@@ -217,6 +155,7 @@
   .legenda-label { color: #64748b; transition: color 0.2s; }
   .legenda-bedrag { color: #1e293b; font-weight: 600; transition: color 0.2s; }
 
+  :global(html.dark) .donut-center { color: #e2e8f0; }
   :global(html.dark) .legenda-label { color: #94a3b8; }
   :global(html.dark) .legenda-bedrag { color: #e2e8f0; }
 </style>

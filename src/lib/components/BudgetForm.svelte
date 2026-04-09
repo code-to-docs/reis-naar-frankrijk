@@ -3,6 +3,7 @@
   import { db } from "$lib/firebase.js";
   import { appState, toonSnackbar } from "$lib/stores.svelte.js";
   import { E } from "$lib/emojis.js";
+  import { parseLocalizedNumber } from "$lib/utils/formatters.js";
 
   let { cats } = $props();
 
@@ -11,13 +12,31 @@
   let omschrijving = $state("");
   let toonForm = $state(false);
 
+  /** @param {string} raw */
+  function parseBedrag(raw) {
+    return parseLocalizedNumber(raw);
+  }
+
+  let bedragWaarde = $derived.by(() => parseBedrag(bedrag));
+  let omschrijvingTrimmed = $derived.by(() => omschrijving.trim());
+  let kanOpslaan = $derived.by(
+    () =>
+      Number.isFinite(bedragWaarde) &&
+      bedragWaarde > 0 &&
+      omschrijvingTrimmed.length >= 2
+  );
+
   async function voegToe() {
-    if (!bedrag || !omschrijving.trim()) return;
+    if (!kanOpslaan) {
+      toonSnackbar("Vul een geldig bedrag en omschrijving in", "warning", E.WARN);
+      return;
+    }
+
     try {
       await addDoc(collection(db, "uitgaven"), {
-        bedrag: parseFloat(bedrag),
+        bedrag: Number(bedragWaarde.toFixed(2)),
         categorie,
-        omschrijving: omschrijving.trim(),
+        omschrijving: omschrijvingTrimmed,
         door: appState.gebruiker,
         datum: serverTimestamp()
       });
@@ -45,8 +64,7 @@
         <span class="field-label">Bedrag</span>
         <input
           class="field-input"
-          type="number"
-          step="0.01"
+          type="text"
           bind:value={bedrag}
           placeholder="0,00"
           inputmode="decimal"
@@ -64,11 +82,16 @@
 
       <label class="field-group">
         <span class="field-label">Omschrijving</span>
-        <input class="field-input" bind:value={omschrijving} placeholder="Bijv. lunch op camping" />
+        <input
+          class="field-input"
+          bind:value={omschrijving}
+          placeholder="Bijv. lunch op camping"
+          maxlength="80"
+        />
       </label>
 
       <div class="form-actions">
-        <button type="submit" class="action-save">Opslaan</button>
+        <button type="submit" class="action-save" disabled={!kanOpslaan}>Opslaan</button>
         <button type="button" class="action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
           {E.X}
         </button>
@@ -204,6 +227,11 @@
     font-weight: 800;
     letter-spacing: 0.01em;
     border: none;
+  }
+  .action-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: saturate(0.8);
   }
   .action-cancel {
     width: 50px;
