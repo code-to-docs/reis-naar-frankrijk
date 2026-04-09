@@ -51,11 +51,6 @@
   </div>
 {:else if alerts}
   <div class="alerts-panel">
-    <div class="alerts-header">
-      <span>{E.WARN} Offici&#235;le alerts</span>
-      <small>M&#233;t&#233;o-France voor je route</small>
-    </div>
-
     <div class="alerts-grid">
       {#if actieveOfficieleAlerts().length > 0}
         {#each actieveOfficieleAlerts() as alert}
@@ -77,7 +72,7 @@
             <span class="alert-source">M&#233;t&#233;o-France Vigilance</span>
             <span class="alert-badge">Groen</span>
           </div>
-          <div class="alert-region">Route rustig</div>
+          <div class="alert-region">Geen weeralarm van kracht</div>
           <div class="alert-summary">Loz&#232;re, Cantal en Ari&#232;ge staan nu op groen.</div>
           {#if alerts.officialAlerts[0]?.updatedAt}
             <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
@@ -97,25 +92,6 @@
 <style>
   .alerts-panel {
     margin-bottom: 12px;
-  }
-  .alerts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .alerts-header span {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #10233a;
-    letter-spacing: -0.01em;
-  }
-  .alerts-header small {
-    font-size: 0.78rem;
-    color: #64748b;
-    font-weight: 600;
   }
   .alerts-grid {
     display: grid;
