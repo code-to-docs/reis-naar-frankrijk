@@ -7,19 +7,8 @@
   import { db } from "$lib/firebase.js";
   import { gebruiker, toonSnackbar } from "$lib/stores.js";
   import BudgetChart from "./BudgetChart.svelte";
-
-  const E_GELD = "\u{1F4B0}";
-  const E_HANDDRUK = "\u{1F91D}";
-  const E_PIJL = "\u2192";
-  const E_CHECK = "\u2705";
-  const E_PRULLENBAK = "\u{1F5D1}\uFE0F";
-  const E_EURO = "\u20AC";
-  const E_KRUIS = "\u2715";
-  const E_UNDO = "\u21A9\uFE0F";
-  const E_LEEG = "\u{1F4AD}";
-  const E_FILTER = "\u{1F50D}";
-  const E_KALENDER = "\u{1F4C5}";
-  const E_PEN = "\u270F\uFE0F";
+  import BudgetForm from "./BudgetForm.svelte";
+  import { E } from "$lib/emojis.js";
 
   const cats = [
     { id:"dining",       emoji:"\u{1F37D}\uFE0F", label:"Uit eten",     kleur:"#FF6B6B" },
@@ -33,10 +22,6 @@
 
   let uitgaven = $state([]);
   let budget = $state(2500);
-  let bedrag = $state("");
-  let categorie = $state("dining");
-  let omschrijving = $state("");
-  let toonForm = $state(false);
   let laatsteVerwijderd = $state(null);
   let undoTimer = null;
   let toonBudgetEdit = $state(false);
@@ -130,7 +115,7 @@
     await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: val });
     toonBudgetEdit = false;
     nieuwBudget = "";
-    toonSnackbar("Budget aangepast", "success", E_CHECK);
+    toonSnackbar("Budget aangepast", "success", E.CHECK);
   }
 
   onMount(() => {
@@ -152,20 +137,7 @@
     };
   });
 
-  async function voegToe() {
-    if (!bedrag || !omschrijving.trim()) return;
-    await addDoc(collection(db, "uitgaven"), {
-      bedrag: parseFloat(bedrag),
-      categorie,
-      omschrijving: omschrijving.trim(),
-      door: $gebruiker,
-      datum: serverTimestamp()
-    });
-    bedrag = "";
-    omschrijving = "";
-    toonForm = false;
-    toonSnackbar("Uitgave toegevoegd", "success", E_CHECK);
-  }
+
 
   async function verwijder(id) {
     const item = uitgaven.find(u => u.id === id);
@@ -181,7 +153,7 @@
     await addDoc(collection(db, "uitgaven"), laatsteVerwijderd);
     laatsteVerwijderd = null;
     if (undoTimer) clearTimeout(undoTimer);
-    toonSnackbar("Uitgave hersteld", "success", E_UNDO);
+    toonSnackbar("Uitgave hersteld", "success", E.UNDO);
   }
 </script>
 
@@ -192,11 +164,11 @@
       <div class="hero-info">
         <div class="hero-label">Resterend</div>
         <div class="hero-bedrag" style="color:{resterend >= 0 ? '#10b981' : '#ef4444'}">
-          {E_EURO}{formatBedragGroot(Math.abs(resterend))}
+          {E.EURO}{formatBedragGroot(Math.abs(resterend))}
         </div>
         <div class="hero-sub">
-          <span>van {E_EURO}{formatBedragGroot(budget)}</span>
-          <button class="edit-budget-btn" onclick={() => { toonBudgetEdit = !toonBudgetEdit; nieuwBudget = String(budget); }}>{E_PEN}</button>
+          <span>van {E.EURO}{formatBedragGroot(budget)}</span>
+          <button class="edit-budget-btn" onclick={() => { toonBudgetEdit = !toonBudgetEdit; nieuwBudget = String(budget); }}>{E.PEN}</button>
         </div>
         <div class="hero-bar">
           <div class="hero-bar-fill" style="
@@ -204,7 +176,7 @@
             background:{percentage <= 70 ? '#10b981' : percentage <= 90 ? '#f59e0b' : '#ef4444'}">
           </div>
         </div>
-        <div class="hero-uitgegeven">{E_EURO}{formatBedragGroot(totaal)} uitgegeven</div>
+        <div class="hero-uitgegeven">{E.EURO}{formatBedragGroot(totaal)} uitgegeven</div>
       </div>
     </div>
   </div>
@@ -225,7 +197,7 @@
   {#if laatsteVerwijderd}
     <div class="undo-bar">
       <span>Uitgave verwijderd</span>
-      <button class="undo-btn" onclick={ongedaanMaken}>{E_UNDO} Ongedaan maken</button>
+      <button class="undo-btn" onclick={ongedaanMaken}>{E.UNDO} Ongedaan maken</button>
     </div>
   {/if}
 
@@ -252,26 +224,26 @@
 
     {#if isGefilterd}
       <div class="filter-info">
-        <span>{E_FILTER} {gefilterdeUitgaven().length} resultaten — {E_EURO}{gefilterdTotaal().toFixed(2)}</span>
-        <button class="filter-reset" onclick={resetFilters}>{E_KRUIS} Reset</button>
+        <span>{E.ZOEK} {gefilterdeUitgaven().length} resultaten — {E.EURO}{gefilterdTotaal().toFixed(2)}</span>
+        <button class="filter-reset" onclick={resetFilters}>{E.KRUIS} Reset</button>
       </div>
     {/if}
 
     {#each gegroepeerdeUitgaven() as groep (groep.key)}
       <div class="dag-groep">
         <div class="dag-header">
-          <span class="dag-label">{E_KALENDER} {groep.label}</span>
-          <span class="dag-totaal">{E_EURO}{groep.totaal.toFixed(2)}</span>
+          <span class="dag-label">{E.KALENDER} {groep.label}</span>
+          <span class="dag-totaal">{E.EURO}{groep.totaal.toFixed(2)}</span>
         </div>
         {#each groep.items as u (u.id)}
           <div class="entry-item">
-            <span class="entry-emoji">{cats.find(c => c.id === u.categorie)?.emoji || E_LEEG}</span>
+            <span class="entry-emoji">{cats.find(c => c.id === u.categorie)?.emoji || E.LEEG}</span>
             <div class="entry-info">
               <strong>{u.omschrijving}</strong>
               <small>{u.door} {formatTijd(u.datum)}</small>
             </div>
-            <strong class="entry-bedrag">{E_EURO}{u.bedrag.toFixed(2)}</strong>
-            <button class="entry-delete" onclick={() => verwijder(u.id)}>{E_PRULLENBAK}</button>
+            <strong class="entry-bedrag">{E.EURO}{u.bedrag.toFixed(2)}</strong>
+            <button class="entry-delete" onclick={() => verwijder(u.id)}>{E.PRULLENBAK}</button>
           </div>
         {/each}
       </div>
@@ -279,41 +251,41 @@
 
     {#if gefilterdeUitgaven().length === 0 && isGefilterd}
       <div class="empty-state">
-        <span class="empty-icon">{E_FILTER}</span>
+        <span class="empty-icon">{E.ZOEK}</span>
         <p>Geen uitgaven voor dit filter</p>
       </div>
     {/if}
 
     <div class="card verrekening-card">
-      <h3>{E_HANDDRUK} Verrekening</h3>
+      <h3>{E.HANDDRUK} Verrekening</h3>
       <div class="budget-rij">
         <span>Franzi betaald</span>
-        <strong>{E_EURO}{franziBetaald.toFixed(2)}</strong>
+        <strong>{E.EURO}{franziBetaald.toFixed(2)}</strong>
       </div>
       <div class="budget-rij">
         <span>Dennis betaald</span>
-        <strong>{E_EURO}{dennisBetaald.toFixed(2)}</strong>
+        <strong>{E.EURO}{dennisBetaald.toFixed(2)}</strong>
       </div>
       <hr class="verrekening-lijn" />
       {#if franziBetaald > dennisBetaald}
         <div class="verrekening-resultaat">
-          <span>Dennis {E_PIJL} Franzi</span>
-          <strong>{E_EURO}{verschil.toFixed(2)}</strong>
+          <span>Dennis {E.PIJL} Franzi</span>
+          <strong>{E.EURO}{verschil.toFixed(2)}</strong>
         </div>
       {:else if dennisBetaald > franziBetaald}
         <div class="verrekening-resultaat">
-          <span>Franzi {E_PIJL} Dennis</span>
-          <strong>{E_EURO}{verschil.toFixed(2)}</strong>
+          <span>Franzi {E.PIJL} Dennis</span>
+          <strong>{E.EURO}{verschil.toFixed(2)}</strong>
         </div>
       {:else}
         <div class="verrekening-resultaat quitte">
-          <span>{E_CHECK} Quitte!</span>
+          <span>{E.CHECK} Quitte!</span>
         </div>
       {/if}
     </div>
   {:else}
     <div class="empty-state">
-      <span class="empty-icon">{E_LEEG}</span>
+      <span class="empty-icon">{E.LEEG}</span>
       <p>Nog geen uitgaven toegevoegd</p>
     </div>
   {/if}
@@ -321,26 +293,7 @@
   <div style="height:90px;"></div>
 </div>
 
-{#if toonForm}
-  <button type="button" class="fab-overlay" onclick={() => toonForm = false} aria-label="Sluiten"></button>
-  <div class="fab-form">
-    <form onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
-      <input type="number" step="0.01" bind:value={bedrag} placeholder="Bedrag" />
-      <select bind:value={categorie}>
-        {#each cats as c}
-          <option value={c.id}>{c.emoji} {c.label}</option>
-        {/each}
-      </select>
-      <input bind:value={omschrijving} placeholder="Omschrijving" />
-      <div style="display:flex;gap:8px;">
-        <button type="submit" class="btn-success" style="flex:1;color:white;font-weight:700;">Opslaan</button>
-        <button type="button" class="btn-danger" onclick={() => toonForm = false}><span style="color:white;font-weight:800;font-size:1.1rem;">X</span></button>
-      </div>
-    </form>
-  </div>
-{:else}
-  <button class="fab" onclick={() => toonForm = true}>+</button>
-{/if}
+<BudgetForm {cats} />
 
 <style>
   .budget-page { padding: 16px; }
@@ -518,44 +471,5 @@
   .verrekening-resultaat { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 1rem; }
   .verrekening-resultaat.quitte { justify-content: center; color: var(--groen); }
 
-  .fab {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: #1a5276;
-    color: white;
-    font-size: 28px;
-    font-weight: 300;
-    border: none;
-    box-shadow: 0 4px 14px rgba(26,82,118,0.4);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    transition: transform 0.15s ease;
-  }
-  .fab:active { transform: scale(0.92); }
 
-  .fab-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.3);
-    z-index: 60;
-  }
-  .fab-form {
-    position: fixed;
-    bottom: 70px;
-    left: 16px;
-    right: 16px;
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    z-index: 70;
-    animation: slideUp 0.2s ease-out;
-  }
 </style>

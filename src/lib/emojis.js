@@ -18,6 +18,7 @@ export const E = {
   PEN: "\u270F\uFE0F",
   PRULLENBAK: "\u{1F5D1}\uFE0F",
   KALENDER: "\u{1F4C5}",
+  PERSOON: "\u{1F464}",
 
   // Budget
   GELD: "\u{1F4B0}",

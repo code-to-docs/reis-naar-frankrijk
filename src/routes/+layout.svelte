@@ -1,28 +1,34 @@
 <script>
   import "../app.css";
   import Navigation from "$lib/components/Navigation.svelte";
-  import { gebruiker } from "$lib/stores.js";
+  import { gebruiker, initDarkMode } from "$lib/stores.js";
   import Snackbar from "$lib/components/Snackbar.svelte";
 
   let { children } = $props();
   let naam = $state("");
 
+  const E_VLAG = "\u{1F1EB}\u{1F1F7}";
+
   if (typeof localStorage !== "undefined") {
     const opgeslagen = localStorage.getItem("naam") || "";
     naam = opgeslagen;
-    if (opgeslagen) gebruiker.set(opgeslagen);
+    if (opgeslagen) {
+      gebruiker.set(opgeslagen);
+      initDarkMode(opgeslagen);
+    }
   }
 
   function kiesNaam(n) {
     naam = n;
     localStorage.setItem("naam", n);
     gebruiker.set(n);
+    initDarkMode(n);
   }
 </script>
 
 {#if !naam}
   <div class="kies-scherm">
-    <h1 style="font-size:80px;">\u{1F1EB}\u{1F1F7}</h1>
+    <h1 style="font-size:80px;">{E_VLAG}</h1>
     <h2>Reis naar Frankrijk</h2>
     <p>Wie ben je?</p>
     <div style="display:flex;gap:16px;margin-top:20px;">

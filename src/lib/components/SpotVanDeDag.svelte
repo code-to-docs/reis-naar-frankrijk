@@ -1,28 +1,23 @@
 <script>
   import { onMount } from 'svelte';
-  import { collection, onSnapshot } from 'firebase/firestore';
+  import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
   import { db } from '$lib/firebase.js';
+  import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
   import { activePagina } from '$lib/stores.js';
   let laatsteSpotting = $state(null);
   let dierInfo = $state(null);
   let foto = $state('');
-  const EAGLE = "\u{1F985}";
-  const CALENDAR = "\u{1F4C5}";
-  const PERSON = "\u{1F464}";
-  const PIN = "\u{1F4CD}";
-  const MEMO = "\u{1F4DD}";
-  const PAW = "\u{1F43E}";
+
   onMount(() => {
     const ref = collection(db, 'wildlife');
-    const unsub = onSnapshot(ref, (snapshot) => {
+    const q = query(ref, orderBy("datum", "desc"), limit(1));
+    const unsub = onSnapshot(q, (snapshot) => {
       let nieuwste = null;
-      snapshot.forEach((d) => {
-        const data = d.data();
-        if (data.datum && (!nieuwste || data.datum > nieuwste.datum)) {
-          nieuwste = { id: d.id, ...data };
-        }
-      });
+      if (!snapshot.empty) {
+        const d = snapshot.docs[0];
+        nieuwste = { id: d.id, ...d.data() };
+      }
       if (nieuwste) {
         laatsteSpotting = nieuwste;
         dierInfo = wildlifeData.find(d => d.id === nieuwste.id) || null;
@@ -54,13 +49,13 @@
 {#if laatsteSpotting && dierInfo}
 <div class="spot-card">
   <div class="spot-header">
-    <span class="spot-label">{EAGLE} Laatste spotting</span>
+    <span class="spot-label">{E.VOGEL} Laatste spotting</span>
   </div>
   <div class="spot-content">
     {#if foto}
       <img src={foto} alt={dierInfo.naam} class="spot-foto" />
     {:else}
-      <div class="spot-foto-placeholder">{categorieLabels[dierInfo.categorie]?.emoji || PAW}</div>
+      <div class="spot-foto-placeholder">{categorieLabels[dierInfo.categorie]?.emoji || E.POOT}</div>
     {/if}
     <div class="spot-info">
       <div class="spot-naam">
@@ -71,14 +66,14 @@
       </div>
       <div class="spot-frans">{dierInfo.frans}</div>
       <div class="spot-meta">
-        <span>{CALENDAR} {formatDate(laatsteSpotting.datum)}</span>
-        <span>{PERSON} {laatsteSpotting.door}</span>
+        <span>{E.KALENDER} {formatDate(laatsteSpotting.datum)}</span>
+        <span>{E.PERSOON} {laatsteSpotting.door}</span>
       </div>
       {#if laatsteSpotting.locatie}
-        <div class="spot-detail">{PIN} {laatsteSpotting.locatie}</div>
+        <div class="spot-detail">{E.PIN} {laatsteSpotting.locatie}</div>
       {/if}
       {#if laatsteSpotting.notitie}
-        <div class="spot-detail">{MEMO} {laatsteSpotting.notitie}</div>
+        <div class="spot-detail">{E.NOTITIE} {laatsteSpotting.notitie}</div>
       {/if}
       <div class="spot-regios">
         {#each dierInfo.regios as regio}

@@ -1,8 +1,8 @@
-
 /* Mobile viewport fix */
 html, body {
   min-height: 100dvh;
 }
+
 :root {
   --blauw: #002654;
   --wit: #ffffff;
@@ -12,7 +12,52 @@ html, body {
   --groen: #27ae60;
   --oranje: #f39c12;
   --rood: #e74c3c;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0,0,0,0.08);
+  --input-bg: #ffffff;
+  --input-border: #e0e0e0;
+  --input-focus: #002654;
+  --input-placeholder: #999;
+  --heading: #002654;
+  --border-subtle: #f1f5f9;
+  --hover-bg: #f8fafc;
+  --nav-bg: #ffffff;
+  --nav-shadow: rgba(0,0,0,0.08);
+  --nav-text: #94a3b8;
+  --nav-active: #1a5276;
+  --header-bg: #002654;
+  --scrollbar-thumb: rgba(0,0,0,0.15);
+  --scrollbar-hover: rgba(0,0,0,0.25);
 }
+
+/* ========== DARK MODE VARIABLES ========== */
+html.dark {
+  --blauw: #1a5276;
+  --wit: #000000;
+  --grijs-licht: #000000;
+  --grijs: #334155;
+  --tekst: #e2e8f0;
+  --groen: #10b981;
+  --oranje: #f59e0b;
+  --rood: #ef4444;
+  --card-bg: #111111;
+  --card-shadow: rgba(0,0,0,0.3);
+  --input-bg: #111111;
+  --input-border: #334155;
+  --input-focus: #3b82f6;
+  --input-placeholder: #64748b;
+  --heading: #f1f5f9;
+  --border-subtle: #334155;
+  --hover-bg: #334155;
+  --nav-bg: #111111;
+  --nav-shadow: rgba(0,0,0,0.3);
+  --nav-text: #94a3b8;
+  --nav-active: #3b82f6;
+  --header-bg: #0c2d48;
+  --scrollbar-thumb: rgba(255,255,255,0.15);
+  --scrollbar-hover: rgba(255,255,255,0.25);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -22,14 +67,17 @@ body {
   margin: 0 auto;
   padding-bottom: 80px;
 }
-h1,h2,h3 { color: var(--blauw); }
+
+h1, h2, h3 { color: var(--heading); }
+
 .card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   margin: 12px 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px var(--card-shadow);
 }
+
 button {
   border: none; border-radius: 8px;
   padding: 10px 16px; font-size: 16px; cursor: pointer;
@@ -38,14 +86,21 @@ button:active { transform: scale(0.95); }
 .btn-primary { background: var(--blauw); color: white; }
 .btn-danger { background: var(--rood); color: white; }
 .btn-success { background: var(--groen); color: white; }
+
 input, select, textarea {
   width: 100%; padding: 12px;
-  border: 2px solid var(--grijs);
+  border: 2px solid var(--input-border);
   border-radius: 8px; font-size: 16px; margin-bottom: 8px;
+  background: var(--input-bg);
+  color: var(--tekst);
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--blauw); outline: none;
+  border-color: var(--input-focus); outline: none;
 }
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
 .checklist-item {
   display: flex; align-items: center; gap: 12px;
   padding: 12px; border-bottom: 1px solid var(--grijs);
@@ -56,6 +111,7 @@ input:focus, select:focus, textarea:focus {
 .checklist-item input[type="checkbox"] {
   width: 24px; height: 24px; margin: 0;
 }
+
 .progress-bar {
   width: 100%; height: 24px; background: var(--grijs);
   border-radius: 12px; overflow: hidden; margin: 8px 0;
@@ -66,23 +122,26 @@ input:focus, select:focus, textarea:focus {
   color: white; font-size: 12px; font-weight: bold;
   transition: width 0.5s ease;
 }
+
 .nav-bar {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: white; display: flex; justify-content: space-around;
-  padding: 8px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  background: var(--nav-bg); display: flex; justify-content: space-around;
+  padding: 8px 0; box-shadow: 0 -2px 10px var(--nav-shadow);
   z-index: 100; max-width: 600px; margin: 0 auto;
 }
 .nav-item {
   display: flex; flex-direction: column; align-items: center;
-  font-size: 10px; color: #999; background: none; padding: 4px 8px;
+  font-size: 10px; color: var(--nav-text); background: none; padding: 4px 8px;
 }
-.nav-item.active { color: var(--blauw); }
+.nav-item.active { color: var(--nav-active); }
 .nav-item .emoji { font-size: 24px; margin-bottom: 2px; }
+
 .header {
-  background: var(--blauw); color: white;
+  background: var(--header-bg); color: white;
   padding: 16px; text-align: center;
   position: sticky; top: 0; z-index: 99;
 }
+
 .add-form { display: flex; gap: 8px; padding: 12px 16px; }
 .add-form input { flex: 1; margin: 0; }
 
@@ -151,165 +210,141 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.25);
+  background: var(--scrollbar-hover);
 }
 
-/* ========== EINDE UX-UPGRADES ========== */
+/* ========== DARK MODE COMPONENT OVERRIDES ========== */
 
-/* ========== DARK MODE ========== */
+html.dark .hero-card,
+html.dark .budget-chart-wrapper,
+html.dark .budget-edit-card { background: var(--card-bg) !important; }
+html.dark .hero-label { color: #94a3b8 !important; }
+html.dark .hero-sub { color: #64748b !important; }
+html.dark .hero-uitgegeven { color: #64748b !important; }
+html.dark .hero-bar { background: #334155 !important; }
+html.dark .entry-item { background: var(--card-bg) !important; }
+html.dark .entry-info strong { color: #e2e8f0 !important; }
+html.dark .entry-bedrag { color: #e2e8f0 !important; }
+html.dark .dag-header { border-bottom-color: #334155 !important; }
+html.dark .dag-totaal { background: #334155 !important; color: #e2e8f0 !important; }
+html.dark .verrekening-card { border-top-color: #334155 !important; }
+html.dark .verrekening-lijn { border-top-color: #334155 !important; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --blauw: #1a5276;
-    --wit: #0f172a;
-    --grijs-licht: #0f172a;
-    --grijs: #334155;
-    --tekst: #e2e8f0;
-    --groen: #10b981;
-    --oranje: #f59e0b;
-    --rood: #ef4444;
-  }
+html.dark .pill,
+html.dark .wl-pill,
+html.dark .cat-pill {
+  background: var(--card-bg) !important;
+  border-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+html.dark .pill.active,
+html.dark .wl-pill.active {
+  background: #1a5276 !important;
+  color: white !important;
+  border-color: #1a5276 !important;
+}
+html.dark .filter-info { background: #1e3a5f !important; }
 
-  body {
-    background: #0f172a;
-    color: #e2e8f0;
-  }
+html.dark .wl-stats-card { background: var(--card-bg) !important; }
+html.dark .wl-stats-groot { color: #f1f5f9 !important; }
+html.dark .wl-zoek {
+  background: var(--card-bg) !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+html.dark .wl-filter-toggle {
+  background: var(--card-bg) !important;
+  border-color: #334155 !important;
+}
+html.dark .wl-filters-card { background: var(--card-bg) !important; }
+html.dark .wl-card { background: var(--card-bg) !important; }
+html.dark .wl-card.gespot { background: #071a10 !important; border-color: #10b981 !important; }
+html.dark .wl-naam { color: #e2e8f0 !important; }
+html.dark .wl-foto-ph { background: #334155 !important; }
+html.dark .wl-detail { border-top-color: #334155 !important; }
+html.dark .wl-beschrijving { color: #94a3b8 !important; }
+html.dark .wl-tip { background: #1e3a5f !important; }
+html.dark .wl-tip-tekst { color: #93c5fd !important; }
+html.dark .wl-spotting { background: #0f2d1c !important; }
+html.dark .wl-spotting-head { color: #34d399 !important; }
+html.dark .wl-spot-input {
+  background: #000000 !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+html.dark .wl-tag { background: #334155 !important; color: #94a3b8 !important; }
+html.dark .wl-link.wiki { background: #1e3a5f !important; color: #93c5fd !important; }
+html.dark .wl-link.geluid { background: #3b2006 !important; color: #fdba74 !important; }
 
-  h1, h2, h3 { color: #f1f5f9; }
+html.dark .weer-card { background: var(--card-bg) !important; }
+html.dark .weer-dag { background: #000000 !important; }
+html.dark .weer-dag.vandaag { background: #1e3a5f !important; border-color: #3b82f6 !important; }
+html.dark .weer-dag-naam { color: #f1f5f9 !important; }
+html.dark .weer-beschrijving { color: #94a3b8 !important; }
+html.dark .weer-locatie { background: #1e3a5f !important; color: #93c5fd !important; }
+html.dark .datum-dag { color: #f1f5f9 !important; }
+html.dark .datum-volledig { color: #94a3b8 !important; }
 
-  .card {
-    background: #1e293b;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
+html.dark .spot-card { background: linear-gradient(135deg, #071a10, #0f2d1c) !important; }
+html.dark .spot-label { color: #34d399 !important; }
+html.dark .spot-naam { color: #ecfdf5 !important; }
+html.dark .spot-frans { color: #6ee7b7 !important; }
+html.dark .spot-meta { color: #a7f3d0 !important; }
+html.dark .spot-regio-tag { background: rgba(255,255,255,0.1) !important; color: #e2e8f0 !important; }
 
-  input, select, textarea {
-    background: #1e293b;
-    border-color: #334155;
-    color: #e2e8f0;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: #3b82f6;
-  }
-  input::placeholder { color: #64748b; }
+html.dark .meer-groep-items { background: var(--card-bg) !important; }
+html.dark .meer-item { border-bottom-color: #334155 !important; }
+html.dark .meer-item:active { background: #334155 !important; }
+html.dark .meer-label { color: #e2e8f0 !important; }
+html.dark .meer-uitloggen { border-color: #7f1d1d !important; }
 
-  .checklist-item {
-    border-bottom-color: #334155;
-  }
+html.dark .fab { background: #3b82f6 !important; box-shadow: 0 4px 14px rgba(59,130,246,0.4) !important; }
+html.dark .fab-form { background: var(--card-bg) !important; box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important; }
 
-  .progress-bar { background: #334155; }
+html.dark .undo-bar { background: #334155 !important; }
 
-  .nav-bar {
-    background: #1e293b;
-    box-shadow: 0 -1px 10px rgba(0,0,0,0.3);
-  }
+html.dark .offline-bar { background: #450a0a !important; color: #fca5a5 !important; }
 
-  .header {
-    background: #0c2d48;
-  }
+/* ========== DARK MODE TOGGLE ========== */
+.dark-toggle-item {
+  width: 100%; display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: none; border: none;
+  border-bottom: 1px solid var(--border-subtle); cursor: pointer;
+  text-align: left;
+}
+.dark-toggle-item:last-child { border-bottom: none; }
+.dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.dark-toggle-label { flex: 1; font-size: 0.95rem; font-weight: 500; color: var(--tekst); }
 
-  /* Budget dark overrides */
-  .hero-card,
-  .budget-chart-wrapper,
-  .budget-edit-card { background: #1e293b !important; }
-  .hero-label { color: #94a3b8 !important; }
-  .hero-sub { color: #64748b !important; }
-  .hero-uitgegeven { color: #64748b !important; }
-  .hero-bar { background: #334155 !important; }
-  .entry-item { background: #1e293b !important; }
-  .entry-info strong { color: #e2e8f0 !important; }
-  .entry-bedrag { color: #e2e8f0 !important; }
-  .dag-header { border-bottom-color: #334155 !important; }
-  .dag-totaal { background: #334155 !important; color: #e2e8f0 !important; }
-  .verrekening-card { border-top-color: #334155 !important; }
-  .verrekening-lijn { border-top-color: #334155 !important; }
-
-  .pill, .wl-pill, .cat-pill {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #94a3b8 !important;
-  }
-  .pill.active, .wl-pill.active {
-    background: #1a5276 !important;
-    color: white !important;
-    border-color: #1a5276 !important;
-  }
-  .filter-info { background: #1e3a5f !important; }
-
-  /* Wildlife dark overrides */
-  .wl-stats-card { background: #1e293b !important; }
-  .wl-stats-groot { color: #f1f5f9 !important; }
-  .wl-zoek {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e2e8f0 !important;
-  }
-  .wl-filter-toggle {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-  }
-  .wl-filters-card { background: #1e293b !important; }
-  .wl-card { background: #1e293b !important; }
-  .wl-card.gespot { background: #0f2d1c !important; border-color: #10b981 !important; }
-  .wl-naam { color: #e2e8f0 !important; }
-  .wl-foto-ph { background: #334155 !important; }
-  .wl-detail { border-top-color: #334155 !important; }
-  .wl-beschrijving { color: #94a3b8 !important; }
-  .wl-tip { background: #1e3a5f !important; }
-  .wl-tip-tekst { color: #93c5fd !important; }
-  .wl-spotting { background: #0f2d1c !important; }
-  .wl-spotting-head { color: #34d399 !important; }
-  .wl-spot-input {
-    background: #0f172a !important;
-    border-color: #334155 !important;
-    color: #e2e8f0 !important;
-  }
-  .wl-tag { background: #334155 !important; color: #94a3b8 !important; }
-  .wl-link.wiki { background: #1e3a5f !important; color: #93c5fd !important; }
-  .wl-link.geluid { background: #3b2006 !important; color: #fdba74 !important; }
-
-  /* Weer dark overrides */
-  .weer-card { background: #1e293b !important; }
-  .weer-dag { background: #0f172a !important; }
-  .weer-dag.vandaag { background: #1e3a5f !important; border-color: #3b82f6 !important; }
-  .weer-dag-naam { color: #f1f5f9 !important; }
-  .weer-beschrijving { color: #94a3b8 !important; }
-  .weer-locatie { background: #1e3a5f !important; color: #93c5fd !important; }
-  .datum-dag { color: #f1f5f9 !important; }
-  .datum-volledig { color: #94a3b8 !important; }
-
-  /* Spot van de dag dark */
-  .spot-card { background: linear-gradient(135deg, #0f2d1c, #1a3a2a) !important; }
-  .spot-label { color: #34d399 !important; }
-  .spot-naam { color: #ecfdf5 !important; }
-  .spot-frans { color: #6ee7b7 !important; }
-  .spot-meta { color: #a7f3d0 !important; }
-  .spot-regio-tag { background: rgba(255,255,255,0.1) !important; color: #e2e8f0 !important; }
-
-  /* Meer menu dark */
-  .meer-groep-items { background: #1e293b !important; }
-  .meer-item { border-bottom-color: #334155 !important; }
-  .meer-item:active { background: #334155 !important; }
-  .meer-label { color: #e2e8f0 !important; }
-  .meer-uitloggen { border-color: #7f1d1d !important; }
-
-  /* FAB dark */
-  .fab { background: #3b82f6 !important; box-shadow: 0 4px 14px rgba(59,130,246,0.4) !important; }
-  .fab-form { background: #1e293b !important; box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important; }
-
-  /* Undo bar */
-  .undo-bar { background: #334155 !important; }
-
-  /* Offline bar */
-  .offline-bar { background: #450a0a !important; color: #fca5a5 !important; }
-
-  /* Scrollbar dark */
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15) !important; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25) !important; }
+.toggle-track {
+  width: 48px; height: 28px;
+  background: #cbd5e1;
+  border-radius: 14px;
+  position: relative;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+}
+.toggle-track.active {
+  background: #3b82f6;
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-track.active .toggle-thumb {
+  transform: translateX(20px);
 }
 
 /* ========== EINDE DARK MODE ========== */

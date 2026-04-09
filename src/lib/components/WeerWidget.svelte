@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { E } from "$lib/emojis.js";
 
   let datum = $state("");
   let dagNaam = $state("");
@@ -12,12 +13,7 @@
   const FALLBACK_LON = 3.5;
   const FALLBACK_NAAM = "Loz\u00E8re";
 
-  // Emoji variabelen (workaround voor Svelte template unicode issue)
-  const EMOJI_WEER = "\u{1F324}\uFE0F";
-  const EMOJI_PIN = "\u{1F4CD}";
-  const EMOJI_DROP = "\u{1F4A7}";
-  const EMOJI_WIND = "\u{1F4A8}";
-  const GRADEN = "\u00B0";
+  // Emoji variabelen (komen nu the E object)
 
   const weerCodes = {
     0: { emoji: "\u2600\uFE0F", tekst: "Zonnig" },
@@ -84,6 +80,15 @@
   }
 
   async function getLocatieNaam(lat, lon) {
+    const latRnd = Math.round(lat * 100) / 100;
+    const lonRnd = Math.round(lon * 100) / 100;
+    const cacheKey = "loc_" + latRnd + "_" + lonRnd;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      locatieNaam = cached;
+      return;
+    }
+    
     try {
       const res = await fetch("https://nominatim.openstreetmap.org/reverse?lat=" + lat + "&lon=" + lon + "&format=json&zoom=10&accept-language=nl");
       if (res.ok) {
@@ -96,6 +101,7 @@
           parts.push(data.address.county || data.address.state);
         }
         locatieNaam = parts.join(", ") || "Frankrijk";
+        localStorage.setItem(cacheKey, locatieNaam);
       }
     } catch (e) {}
   }
@@ -143,9 +149,9 @@
 
 <div class="weer-card">
   <div class="weer-titel-rij">
-    <span class="weer-titel">{EMOJI_WEER} Weer</span>
+    <span class="weer-titel">{E.WEER} Weer</span>
     {#if locatieNaam}
-      <span class="weer-locatie">{EMOJI_PIN} {locatieNaam}</span>
+      <span class="weer-locatie">{E.PIN} {locatieNaam}</span>
     {/if}
   </div>
 
@@ -165,14 +171,14 @@
           <div class="weer-emoji">{dag.weerInfo.emoji}</div>
           <div class="weer-beschrijving">{dag.weerInfo.tekst}</div>
           <div class="weer-temps">
-            <span class="temp-max">{dag.maxTemp}{GRADEN}</span>
-            <span class="temp-min">{dag.minTemp}{GRADEN}</span>
+            <span class="temp-max">{dag.maxTemp}{E.GRADEN}</span>
+            <span class="temp-min">{dag.minTemp}{E.GRADEN}</span>
           </div>
           <div class="weer-extra">
             {#if dag.neerslagKans > 0}
-              <span>{EMOJI_DROP} {dag.neerslagKans}%</span>
+              <span>{E.DRUPPEL} {dag.neerslagKans}%</span>
             {/if}
-            <span>{EMOJI_WIND} {dag.windMax} km/u</span>
+            <span>{E.WIND} {dag.windMax} km/u</span>
           </div>
         </div>
       {/each}

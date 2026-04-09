@@ -4,12 +4,18 @@
 
   let online = $state(true);
 
+  const E_HOME = "\u{1F3E0}";
+  const E_CAMP = "\u{1F3D5}\uFE0F";
+  const E_PIN = "\u{1F4CD}";
+  const E_GELD = "\u{1F4B0}";
+  const E_MEER = "\u2630";
+
   const paginas = [
-    { id: "home",     emoji: "\u{1F3E0}", label: "Home" },
-    { id: "campings", emoji: "\u{1F3D5}\uFE0F", label: "Campings" },
-    { id: "poi",      emoji: "\u{1F4CD}", label: "POIs" },
-    { id: "budget",   emoji: "\u{1F4B0}", label: "Budget" },
-    { id: "meer",     emoji: "\u2630",    label: "Meer" },
+    { id: "home",     emoji: E_HOME, label: "Home" },
+    { id: "campings", emoji: E_CAMP, label: "Campings" },
+    { id: "poi",      emoji: E_PIN,  label: "POIs" },
+    { id: "budget",   emoji: E_GELD, label: "Budget" },
+    { id: "meer",     emoji: E_MEER, label: "Meer" },
   ];
 
   onMount(() => {
@@ -82,11 +88,11 @@
   .nav-bar {
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    background: white;
+    background: var(--nav-bg);
     display: flex;
     justify-content: space-around;
     padding: 6px 0 env(safe-area-inset-bottom, 8px) 0;
-    box-shadow: 0 -1px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 -1px 10px var(--nav-shadow);
     z-index: 100;
     max-width: 600px;
     margin: 0 auto;
@@ -117,11 +123,11 @@
   .nav-label {
     font-size: 10px;
     font-weight: 500;
-    color: #94a3b8;
+    color: var(--nav-text);
     transition: color 0.2s ease;
   }
   .nav-item.active .nav-label {
-    color: #1a5276;
+    color: var(--nav-active);
     font-weight: 700;
   }
 
@@ -130,7 +136,7 @@
     top: -6px;
     width: 20px;
     height: 3px;
-    background: #1a5276;
+    background: var(--nav-active);
     border-radius: 2px;
   }
 </style>
