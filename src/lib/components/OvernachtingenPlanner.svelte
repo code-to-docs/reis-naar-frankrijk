@@ -773,7 +773,7 @@
         </div>
 
         <div class="ov-actions">
-          <button class="btn-success" type="submit">{E.CHECK} Opslaan</button>
+          <button class="btn-save" type="submit">Opslaan</button>
           <button class="btn-danger" type="button" onclick={() => { toonForm = false; resetForm(); }}>{E.X}</button>
         </div>
       </form>
@@ -831,7 +831,7 @@
         </div>
 
         <div class="ov-actions">
-          <button class="btn-success" type="submit">{E.CHECK} Naar shortlist</button>
+          <button class="btn-save" type="submit">Naar shortlist</button>
           <button class="btn-danger" type="button" onclick={() => { toonShortlistForm = false; resetForm(); }}>{E.X}</button>
         </div>
       </form>
@@ -1132,9 +1132,9 @@
     display: flex;
     gap: 8px;
   }
-  .ov-actions .btn-success {
+  .ov-actions .btn-save {
     flex: 1;
-    font-weight: 700;
+    width: auto;
   }
   .ov-actions .btn-danger {
     width: 52px;

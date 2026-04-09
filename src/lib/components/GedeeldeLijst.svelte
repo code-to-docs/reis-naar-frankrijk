@@ -148,9 +148,7 @@
         {/if}
         <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
         <div class="gl-form-actions">
-          <button type="submit" class="btn-success gl-submit">
-            {E.CHECK} Opslaan
-          </button>
+          <button type="submit" class="btn-save gl-submit">Opslaan</button>
           <button type="button" class="btn-danger gl-cancel" onclick={() => toonForm = false}>{E.X}</button>
         </div>
       </form>

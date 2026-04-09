@@ -91,7 +91,7 @@
       </label>
 
       <div class="form-actions">
-        <button type="submit" class="action-save" disabled={!kanOpslaan}>Opslaan</button>
+        <button type="submit" class="btn-save action-save" disabled={!kanOpslaan}>Opslaan</button>
         <button type="button" class="action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
           {E.X}
         </button>
@@ -220,19 +220,7 @@
   }
   .action-save {
     flex: 1;
-    min-height: 44px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #1c9d60, #1fa968);
-    color: #fff;
-    font-size: 1.02rem;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    border: none;
-  }
-  .action-save:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    filter: saturate(0.8);
+    width: auto;
   }
   .action-cancel {
     width: 50px;
@@ -300,6 +288,5 @@
     background: #0f172a;
   }
   :global(html.dark) .field-input::placeholder { color: #64748b; }
-  :global(html.dark) .action-save { background: #22c55e; }
   :global(html.dark) .action-cancel { background: #dc2626; }
 </style>
