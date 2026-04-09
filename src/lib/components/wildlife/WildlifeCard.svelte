@@ -28,6 +28,8 @@
 
   let spotNotitie = $state("");
   let spotLocatie = $state("");
+  let spotLatitude = $state<number | null>(null);
+  let spotLongitude = $state<number | null>(null);
 
   let imgError = $state(false);
   let gettingLocation = $state(false);
@@ -49,37 +51,70 @@
     };
   });
 
-  async function autoLocatie() {
-    if (spotLocatie !== "" || gettingLocation) return;
-    if (!("geolocation" in navigator)) return;
-    
-    gettingLocation = true;
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      try {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
-          headers: { "Accept-Language": "nl", "User-Agent": "ReisNaarFrankrijkApp/1.0" }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const city = data.address?.city || data.address?.town || data.address?.village || data.address?.municipality || "";
-          const county = data.address?.county || data.address?.state || "";
-          
-          if (city && county) spotLocatie = `${city}, ${county}`;
-          else if (city) spotLocatie = city;
-          else if (county) spotLocatie = county;
-          else spotLocatie = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-        } else {
-          spotLocatie = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  function getCurrentCoords(): Promise<{ lat: number; lon: number } | null> {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      return Promise.resolve(null);
+    }
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        }),
+        () => resolve(null),
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 60000
         }
-      } catch (e) {
-        spotLocatie = `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
-      }
-      gettingLocation = false;
-    }, () => {
-      gettingLocation = false;
+      );
     });
+  }
+
+  async function reverseGeocode(lat: number, lon: number): Promise<string> {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
+        headers: { "Accept-Language": "nl", "User-Agent": "ReisNaarFrankrijkApp/1.0" }
+      });
+      if (!res.ok) return `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+      const data = await res.json();
+      const city = data.address?.city || data.address?.town || data.address?.village || data.address?.municipality || "";
+      const county = data.address?.county || data.address?.state || "";
+
+      if (city && county) return `${city}, ${county}`;
+      if (city) return city;
+      if (county) return county;
+      return `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    } catch {
+      return `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    }
+  }
+
+  function buildMapsLinks(lat: number, lon: number) {
+    const q = `${lat},${lon}`;
+    return {
+      google: `https://www.google.com/maps?q=${encodeURIComponent(q)}`,
+      osm: `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}`
+    };
+  }
+
+  async function autoLocatie() {
+    if (gettingLocation) return;
+    gettingLocation = true;
+
+    const coords = await getCurrentCoords();
+    if (!coords) {
+      gettingLocation = false;
+      return;
+    }
+
+    spotLatitude = coords.lat;
+    spotLongitude = coords.lon;
+    if (!spotLocatie) {
+      spotLocatie = await reverseGeocode(coords.lat, coords.lon);
+    }
+    gettingLocation = false;
   }
 
   $effect(() => {
@@ -94,18 +129,39 @@
 
   async function saveSpottingDetails() {
     try {
+      gettingLocation = true;
+      const coords = await getCurrentCoords();
+      gettingLocation = false;
+
+      const lat = coords?.lat ?? spotLatitude;
+      const lon = coords?.lon ?? spotLongitude;
+      if (coords) {
+        spotLatitude = coords.lat;
+        spotLongitude = coords.lon;
+      }
+
+      const hasCoords = typeof lat === "number" && typeof lon === "number";
+      const locatie = spotLocatie || (hasCoords ? await reverseGeocode(lat, lon) : "");
+      const links = hasCoords ? buildMapsLinks(lat, lon) : null;
+
       await setDoc(doc(db, "wildlife", dier.id), {
         gespot: true,
         door: currentUser,
         datum: serverTimestamp(),
         notitie: spotNotitie,
-        locatie: spotLocatie,
+        locatie,
+        latitude: hasCoords ? lat : null,
+        longitude: hasCoords ? lon : null,
+        googleMapsUrl: links?.google || null,
+        openStreetMapUrl: links?.osm || null
       });
       haptic("success");
       const emoji = (categorieLabels as any)[dier.categorie]?.emoji || E.POOT;
       toonSnackbar(dier.naam + " gespot!", "success", emoji);
       spotNotitie = "";
       spotLocatie = "";
+      spotLatitude = null;
+      spotLongitude = null;
       onToggle(); // Close after saving
     } catch (e) {
       console.error(e);
@@ -178,7 +234,6 @@
 
       <div class="wl-names">
         <div class="wl-name-row"><strong>NL</strong> {dier.naam}</div>
-        <div class="wl-name-row"><strong>FR</strong> {dier.frans}</div>
         <div class="wl-name-row"><strong>DE</strong> {dier.duits}</div>
         <div class="wl-name-row"><strong>LAT</strong> <i>{dier.latijn}</i></div>
       </div>
@@ -200,6 +255,13 @@
           {/if}
           {#if spotting.locatie}
             <div class="wl-spotting-row">{E.PIN} {spotting.locatie}</div>
+          {/if}
+          {#if typeof spotting.latitude === "number" && typeof spotting.longitude === "number"}
+            <div class="wl-spotting-row">{E.PIN} {spotting.latitude.toFixed(5)}, {spotting.longitude.toFixed(5)}</div>
+            <div class="wl-links wl-map-links">
+              <a href={spotting.googleMapsUrl || `https://www.google.com/maps?q=${encodeURIComponent(`${spotting.latitude},${spotting.longitude}`)}`} target="_blank" rel="noopener" class="wl-link maps-google">Google Maps</a>
+              <a href={spotting.openStreetMapUrl || `https://www.openstreetmap.org/?mlat=${spotting.latitude}&mlon=${spotting.longitude}#map=15/${spotting.latitude}/${spotting.longitude}`} target="_blank" rel="noopener" class="wl-link maps-osm">OpenStreetMap</a>
+            </div>
           {/if}
           {#if spotting.notitie}
             <div class="wl-spotting-row">{E.NOTITIE} {spotting.notitie}</div>
@@ -383,6 +445,9 @@
   }
   .wl-link.wiki { background: #EBF5FB; color: #1565C0; }
   .wl-link.geluid { background: #FFF7ED; color: #c2410c; }
+  .wl-map-links { margin-top: 8px; }
+  .wl-link.maps-google { background: #dcfce7; color: #166534; }
+  .wl-link.maps-osm { background: #f1f5f9; color: #334155; }
   .wl-link:active { opacity: 0.7; }
   
   :global(html.dark) .wl-card { background: var(--card-bg); }
@@ -403,5 +468,7 @@
   :global(html.dark) .wl-tag { background: #334155; color: #94a3b8; }
   :global(html.dark) .wl-link.wiki { background: #1e3a5f; color: #93c5fd; }
   :global(html.dark) .wl-link.geluid { background: #3b2006; color: #fdba74; }
+  :global(html.dark) .wl-link.maps-google { background: #0f2d1c; color: #86efac; }
+  :global(html.dark) .wl-link.maps-osm { background: #1e293b; color: #cbd5e1; }
 </style>
 

@@ -3,7 +3,7 @@
   import { E } from "$lib/emojis.js";
 </script>
 
-<div class="page-transition">
+<div class="page-transition page-shell">
   <GedeeldeLijst titel="Bezienswaardigheden" emoji={E.PIN}
     collectie="pois" metLink={true}
     placeholder="Naam plek..." />

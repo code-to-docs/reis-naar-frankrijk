@@ -9,8 +9,8 @@
   let id = $derived($page.params.id);
 </script>
 
-<div class="page-transition">
-  <div style="padding: 16px 16px 0 16px;">
+<div class="page-transition page-shell">
+  <div class="terug-wrap">
     <a href="/meer" class="terug-btn">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M11 4L6 9L11 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,6 +56,9 @@
 </div>
 
 <style>
+  .terug-wrap {
+    padding: 0 0 10px 0;
+  }
   .terug-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 16px; background: var(--blauw);

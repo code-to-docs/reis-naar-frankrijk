@@ -283,7 +283,7 @@
 <BudgetForm {cats} />
 
 <style>
-  .budget-page { padding: 16px; }
+  .budget-page { padding: 0; }
 
   .hero-card {
     background: white;

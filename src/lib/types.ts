@@ -16,6 +16,10 @@ export interface Spotting {
     datum: Timestamp | string;
     notitie?: string;
     locatie?: string;
+    latitude?: number;
+    longitude?: number;
+    googleMapsUrl?: string;
+    openStreetMapUrl?: string;
 }
 
 export interface LijstItem {

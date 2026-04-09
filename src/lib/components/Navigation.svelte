@@ -64,7 +64,7 @@
     font-size: 0.75rem;
     font-weight: 500;
     z-index: 99;
-    max-width: 600px;
+    max-width: var(--app-max-width);
     margin: 0 auto;
     animation: slideUp 0.3s ease-out;
   }
@@ -92,7 +92,7 @@
     padding: 6px 0 env(safe-area-inset-bottom, 8px) 0;
     box-shadow: 0 -1px 10px var(--nav-shadow);
     z-index: 100;
-    max-width: 600px;
+    max-width: var(--app-max-width);
     margin: 0 auto;
   }
 

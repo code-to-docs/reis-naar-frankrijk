@@ -147,7 +147,7 @@
 </div>
 
 <style>
-  .gl-container { padding: 16px; }
+  .gl-container { padding: 0; }
   .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: 0.9rem; }
   .progress-fill { background: var(--groen); }
   .gl-item-content { flex: 1; min-width: 0; }
@@ -166,5 +166,5 @@
   .gl-form-actions { display: flex; gap: 8px; }
   .gl-submit { flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
-  .gl-add-btn { width: calc(100% - 32px); margin: 16px; padding: 14px; font-size: 18px; font-weight: 600; }
+  .gl-add-btn { width: 100%; margin-top: 12px; padding: 14px; font-size: 18px; font-weight: 600; }
 </style>

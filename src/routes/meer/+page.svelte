@@ -35,7 +35,7 @@
   }
 </script>
 
-<div class="page-transition meer-menu">
+<div class="page-transition page-shell meer-menu">
   {#each meerGroepen as groep}
     <div class="meer-groep">
       <div class="meer-groep-label">{groep.label}</div>
@@ -74,7 +74,7 @@
 </div>
 
 <style>
-  .meer-menu { padding: 16px; }
+  .meer-menu { padding-top: 12px; }
   .meer-groep { margin-bottom: 16px; }
   .meer-groep-label {
     font-size: 0.72rem; font-weight: 600; color: var(--nav-text);
