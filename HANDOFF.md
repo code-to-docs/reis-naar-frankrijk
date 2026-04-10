@@ -257,12 +257,15 @@ export interface GerechtCheck {
 
 ### Product doorontwikkeling
 
-1. Multi-trip model introduceren (`tripId`) voor schaalbare data-isolatie.
-2. Auth toevoegen i.p.v. alleen localStorage-identity.
-3. POI uitbreiding:
+1. Grote Kaart (integratie van overnachtingen, POI en zwemplekken) volgens plan in sectie 12.
+2. Offline-first doorontwikkeling (Firestore + Service Worker + sync-UX) volgens plan in sectie 12.
+3. Routeplanning (afstand/reistijd tussen overnachtingen) volgens plan in sectie 12.
+4. Multi-trip model introduceren (`tripId`) voor schaalbare data-isolatie.
+5. Auth toevoegen i.p.v. alleen localStorage-identity.
+6. POI uitbreiding:
    - optionele afstand/regio hints
    - planning-koppeling met overnachtingen
-4. Observability verbeteren (error reporting / runtime logging).
+7. Observability verbeteren (error reporting / runtime logging).
 
 ---
 
@@ -359,7 +362,181 @@ Voor featuregroei is het raadzaam om als volgende architectuurstap `tripId` en e
 
 ---
 
-## 12) Onderhoudslog
+## 12) Implementatieplan Nieuwe Features (Q2 2026)
+
+### 12.1 Doel en randvoorwaarden
+
+Doel:
+- Grote Kaart: alle relevante reispunten in 1 overzicht.
+- Offline-first: bruikbaar zonder bereik in berggebied.
+- Routeplanning: automatische afstand en reistijd tussen overnachtingen.
+
+Niet-onderhandelbare randvoorwaarden:
+- UI-conformiteit met `docs/UI_NORMPROFIEL.txt` en tokens in `src/lib/styles/ui-norm-profile.css`.
+- Consistente UX-patronen: card-opbouw, action-rows, touch-targets en chip-stijl.
+- Mobile-first performance: geen extra server-latentie introduceren (SSR blijft uit voor app-shell).
+- Progressieve uitrol: elke fase levert zelfstandig waarde en heeft rollback-optie.
+
+### 12.2 Feature 1: Grote Kaart
+
+Fase 1A - Datamodel en adapters:
+- Introduceer `MapItem`-contract in `src/lib/types.ts` (of `src/lib/types/map.ts`) met:
+  - `id`, `bron`, `categorie`, `titel`, `subtitel`, `lat`, `lon`, `status`, `links`.
+- Voeg adapters toe:
+  - `campings` -> `MapItem`
+  - `poi_suggesties` -> `MapItem`
+  - `zwemplekken` -> `MapItem` (coordinaten uit link of expliciet veld)
+- Voeg validatie toe voor ontbrekende coordinaten (items blijven zichtbaar in lijst, niet op kaart).
+
+Fase 1B - Nieuwe route en navigatie:
+- Nieuwe pagina `src/routes/kaart/+page.svelte`.
+- Voeg entry toe in `src/routes/meer/+page.svelte` en `src/lib/components/Navigation.svelte`.
+- Pagina-opbouw volgens UI-profiel:
+  - header + filterchips + kaartvlak + detailpaneel/bottom-sheet.
+
+Fase 1C - Kaartengine:
+- Start met Leaflet (snelle implementatie, licht en stabiel), met adapterlaag voor latere MapLibre-switch.
+- Lazy-load van kaartcomponent in browser (`onMount`) om init-kosten te beperken.
+- Marker-clustering en categoriegebonden markerstijlen (token-driven kleuren).
+
+Fase 1D - Interactie en UX-uniformiteit:
+- Uniforme filterchips (`.ui-chip` varianten), geen ad-hoc styling.
+- Klik op marker opent gestandaardiseerde detailcard (zelfde info-ritme als andere modules).
+- Lijst<->kaart synchronisatie (selectie in kaart highlight in lijst en omgekeerd).
+
+Fase 1E - Acceptatie:
+- Functioneel:
+  - alle punten met geldige coordinaten zichtbaar op kaart;
+  - filtering werkt consistent op mobiel en desktop.
+- UX:
+  - alle controls minimaal `--ui-touch-compact`/`--ui-touch-min`;
+  - dark mode en contrast volgens normprofiel.
+- Performance:
+  - geen regressie op TTFB;
+  - kaart init pas na client-hydratatie.
+
+### 12.3 Feature 2: Offline-first
+
+Fase 2A - Baseline en audit:
+- Behoud huidige Firestore offline persistence (`persistentLocalCache`) als basis.
+- Audit van offline gedrag per kernmodule: budget, campings, POI, wildlife, zwemplekken.
+
+Fase 2B - Service Worker strategie aanscherpen:
+- Uitbreid `src/service-worker.js` met duidelijke cache-strategieën:
+  - app shell/static: cache-first;
+  - eigen API (`/api/*`): network-first + cache fallback;
+  - kaarttiles/externen: stale-while-revalidate met harde limiet.
+- Cache-limieten per bron instellen om storage-bloat te voorkomen.
+
+Fase 2C - Offline synchronisatie-UX:
+- Centrale sync-state store (`online`, `pendingWrites`, `lastSyncAt`, `syncErrors`).
+- Uniforme statusindicator in header/nav (token-based chip, geen aparte visuele taal).
+- Per formulier duidelijke states:
+  - "Lokaal opgeslagen"
+  - "Wacht op synchronisatie"
+  - "Gesynchroniseerd"
+
+Fase 2D - Conflictbeleid:
+- Laatste write wint waar acceptabel; voor kritische velden optioneel merge-notitie.
+- Timestamps normaliseren en conflictgeval loggen (runtime observability).
+
+Fase 2E - Acceptatie:
+- App bruikbaar voor kernflows zonder netwerk.
+- Herconnectie synchroniseert zonder dataverlies.
+- UX blijft consistent met bestaande action-rows, chips en feedbackpatronen.
+
+### 12.4 Feature 3: Routeplanning tussen overnachtingen
+
+Fase 3A - Provider-abstraction:
+- Introduceer `routeProvider` interface in `src/lib/services/routes/`:
+  - `getRoute(from, to) -> { distanceKm, durationMin, polyline }`.
+- Start met 1 provider (bijv. OSRM of OpenRouteService) achter adapter.
+- Geen provider-lock-in in componentcode.
+
+Fase 3B - Datastroom:
+- Gebruik geordende overnachtingen (`startDatum`) als input.
+- Bereken segmenten tussen opeenvolgende overnachtingen.
+- Cache segmenten lokaal met TTL om API-calls te beperken.
+
+Fase 3C - UI integratie:
+- In `campings`:
+  - toon per overgang `afstand` + `reistijd` als compacte infochips;
+  - toon totaalsom per trajectblok.
+- In `kaart`:
+  - optionele route-lijn overlay;
+  - toggles voor zichtbaarheid (route aan/uit).
+- Styling conform UI-profiel, geen losse typografie/kleurpatronen.
+
+Fase 3D - Fallbacks:
+- Bij geen routeprovider of timeout: toon rechte-lijn afstand als benadering met duidelijke label.
+- Offline: toon laatst bekende routeberekening uit cache.
+
+Fase 3E - Acceptatie:
+- Segmenten correct voor alle geplande overnachtingen met coordinaten.
+- Duidelijke fout-/fallbackstates zonder UX-breuk.
+- Geen TTFB-regressie door routecalls (alles client-side of async achtergrondflow).
+
+### 12.5 Volgorde en delivery-plan
+
+Stap 1 (laag risico, hoog rendement):
+- Fase 1A + 1B + 1C (kaart basis met markers).
+
+Stap 2:
+- Fase 2A + 2B (offline cachestrategie) parallel met 1D.
+
+Stap 3:
+- Fase 3A + 3B (route-engine basis en caching).
+
+Stap 4:
+- Fase 2C + 2D + 3C (sync-UX en route in UI).
+
+Stap 5:
+- End-to-end QA, performance-check, accessibility-check, gefaseerde rollout.
+
+### 12.6 Test- en kwaliteitsstrategie
+
+- Unit tests:
+  - map-adapters, routeberekening, offline cachehelpers.
+- Component tests:
+  - kaartfilters, routechips, sync-statusweergave.
+- Handmatige e2e-checks:
+  - mobiel online/offline wissel;
+  - koude start + navigatie naar `/kaart`, `/campings`, `/poi`.
+- UI-review checklist verplicht per feature PR op basis van UI normprofiel.
+
+---
+
+## 13) Onderhoudslog
+
+### 2026-04-10 14:22:26 +02:00
+
+- Nieuw, gefaseerd implementatieplan toegevoegd voor:
+  - Grote Kaart (Map view overnachtingen + POI + zwemplekken),
+  - Offline-first doorontwikkeling,
+  - Routeplanning tussen overnachtingen.
+- Plan bevat:
+  - technische fasering,
+  - UX/UI-conformiteitseisen,
+  - acceptatiecriteria,
+  - test- en rolloutvolgorde.
+- Product-roadmap (sectie 5) bijgewerkt met expliciete verwijzing naar plan in sectie 12.
+
+### 2026-04-10 14:17:19 +02:00
+
+- TTFB-optimalisatie voor mobiele Vercel-metrics:
+  - SSR uitgeschakeld op layout-niveau via `src/routes/+layout.js` (`export const ssr = false`).
+  - `injectSpeedInsights()` alleen nog in browser-context aangeroepen.
+  - `static/favicon.ico` toegevoegd om standaard `/favicon.ico` 404-verkeer te reduceren.
+- Doel van deze wijziging:
+  - server-render vertraging op routes zoals `/` en `/campings` verminderen;
+  - pieken in P99 TTFB dempen die passen bij server-side render + cold-start gedrag.
+- Observatie uit Vercel runtime logs (laatste 7 dagen):
+  - incidentele `500` op `/` en `/campings` gezien vóór deze wijziging;
+  - `404` op `/favicon.ico` gezien vóór deze wijziging.
+- Validatie na wijziging:
+  - `npm run test` OK (12 tests)
+  - `npm run check` OK (0 errors/warnings)
+  - `npm run build` OK
 
 ### 2026-04-10 14:11:52 +02:00
 
@@ -376,23 +553,6 @@ Voor featuregroei is het raadzaam om als volgende architectuurstap `tripId` en e
   - `wildlife/WildlifeCard.svelte`: 666 regels (was ~708)
   - `Budget.svelte`: 401 regels (was ~549)
 - Validatie na refactor:
-  - `npm run test` OK (12 tests)
-  - `npm run check` OK (0 errors/warnings)
-  - `npm run build` OK
-
-### 2026-04-10 14:17:19 +02:00
-
-- TTFB-optimalisatie voor mobiele Vercel-metrics:
-  - SSR uitgeschakeld op layout-niveau via `src/routes/+layout.js` (`export const ssr = false`).
-  - `injectSpeedInsights()` alleen nog in browser-context aangeroepen.
-  - `static/favicon.ico` toegevoegd om standaard `/favicon.ico` 404-verkeer te reduceren.
-- Doel van deze wijziging:
-  - server-render vertraging op routes zoals `/` en `/campings` verminderen;
-  - pieken in P99 TTFB dempen die passen bij server-side render + cold-start gedrag.
-- Observatie uit Vercel runtime logs (laatste 7 dagen):
-  - incidentele `500` op `/` en `/campings` gezien vóór deze wijziging;
-  - `404` op `/favicon.ico` gezien vóór deze wijziging.
-- Validatie na wijziging:
   - `npm run test` OK (12 tests)
   - `npm run check` OK (0 errors/warnings)
   - `npm run build` OK
