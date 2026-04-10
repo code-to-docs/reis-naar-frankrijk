@@ -316,9 +316,9 @@
     height: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-6));
   }
 
-  @media (min-width: 980px) {
+  @media (min-width: var(--breakpoint-lg)) {
     .budget-content-grid {
-      grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+      grid-template-columns: minmax(0, 1.7fr) minmax(var(--space-75), 1fr);
       gap: var(--space-4);
     }
     .budget-side-col {

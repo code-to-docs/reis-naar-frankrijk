@@ -50,7 +50,7 @@
   }
   .verrekening-card {
     margin-top: 0;
-    border-top: 3px solid var(--border-default);
+    border-top: var(--space-0-75) solid var(--border-default);
   }
   .verrekening-lijn {
     border: none;

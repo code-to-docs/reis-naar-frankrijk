@@ -12,7 +12,7 @@ const SRC_DIR = './src';
 // Regex voor verboden patterns
 const PROHIBITED_HEX = /#(?!([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b)[a-fA-F0-9]+/g; // Simplified for focus
 const HEX_PATTERN = /#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b/g;
-const PX_PATTERN = /\b\d+px\b/g;
+const PX_PATTERN = /\b[0-9.]+px\b/g;
 const RGB_PATTERN = /rgba?\([^)]+\)/g;
 
 // Uitzonderingen voor SVG metadata

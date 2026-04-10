@@ -10,17 +10,17 @@
 
   let { alerts, alertsLaden, alertsFout }: Props = $props();
 
-  function alertTone(level: number | undefined, fallback = "green") {
-    if (level === 4) return "red";
-    if (level === 3) return "orange";
-    if (level === 2) return "yellow";
+  function alertTone(level: number | undefined, fallback = "calm") {
+    if (level === 4) return "danger";
+    if (level === 3) return "warning";
+    if (level === 2) return "caution";
     return fallback;
   }
 
   function alertChipClass(level: number | undefined) {
     const tone = alertTone(level);
-    if (tone === "red") return "ui-chip--danger";
-    if (tone === "orange" || tone === "yellow") return "ui-chip--warning";
+    if (tone === "danger") return "ui-chip--danger";
+    if (tone === "warning" || tone === "caution") return "ui-chip--warning";
     return "ui-chip--success";
   }
 
@@ -160,15 +160,15 @@
     background: linear-gradient(135deg, var(--color-success-light) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-success-base) 30%, var(--border-default));
   }
-  .tone-yellow {
+  .tone-caution {
     background: linear-gradient(135deg, var(--color-warning-light) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-warning-base) 36%, var(--border-default));
   }
-  .tone-orange {
+  .tone-warning {
     background: linear-gradient(135deg, color-mix(in srgb, var(--color-warning-base) 24%, var(--bg-surface)) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-warning-base) 42%, var(--border-default));
   }
-  .tone-red {
+  .tone-danger {
     background: linear-gradient(135deg, var(--color-error-light) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-error-base) 38%, var(--border-default));
   }
@@ -184,7 +184,7 @@
     margin-bottom: var(--space-3);
   }
   .alert-skeleton {
-    height: 86px;
+    height: var(--space-21-5);
     border-radius: var(--radius-xl);
     background: linear-gradient(90deg, var(--bg-surface-sunken) 25%, var(--bg-surface) 50%, var(--bg-surface-sunken) 75%);
     background-size: 200% 100%;

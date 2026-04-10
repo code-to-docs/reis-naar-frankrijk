@@ -113,8 +113,8 @@
 <style>
   .chart-container {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: var(--space-30);
+    height: var(--space-30);
     flex-shrink: 0;
   }
   .donut-svg {
@@ -146,8 +146,8 @@
     font-size: var(--text-xs);
   }
   .legenda-kleur {
-    width: 9px;
-    height: 9px;
+    width: var(--space-2);
+    height: var(--space-2);
     border-radius: var(--radius-sm);
     border: 1px solid color-mix(in srgb, var(--border-default) 86%, var(--text-primary));
     flex-shrink: 0;

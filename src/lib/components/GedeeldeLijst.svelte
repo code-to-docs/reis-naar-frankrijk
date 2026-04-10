@@ -175,7 +175,7 @@
         <small class="gl-meta">({item.door})</small>
       </div>
       <button
-        class="gl-delete btn-icon btn-ghost"
+        class="gl-delete btn-icon btn-danger"
         aria-label={`Verwijder ${item.naam}`}
         onclick={() => verwijder(item.id)}
       >
@@ -199,7 +199,7 @@
         {/if}
         <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
         <div class="gl-form-actions">
-          <button type="submit" class="btn-save gl-submit">Opslaan</button>
+          <button type="submit" class="btn-success gl-submit">Opslaan</button>
           <button
             type="button"
             class="btn-danger btn-icon gl-cancel"
@@ -247,7 +247,7 @@
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: var(--weight-bold); width: var(--space-12); }
   .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--text-lg); font-weight: var(--ui-weight-semibold); }
 
-  @media (min-width: 1100px) {
+  @media (min-width: var(--breakpoint-lg)) {
     .gl-title.desktop-hidden {
       display: none;
     }

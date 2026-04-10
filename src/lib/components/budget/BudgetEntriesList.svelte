@@ -72,7 +72,7 @@
     margin: 0;
   }
   .dag-groep {
-    margin-bottom: 14px;
+    margin-bottom: var(--space-3-5);
   }
   .dag-header {
     display: flex;
@@ -111,9 +111,9 @@
     gap: var(--space-2-5);
     background: var(--bg-surface);
     border-radius: var(--radius-lg);
-    padding: 11px var(--space-3);
+    padding: var(--space-2-5) var(--space-3);
     margin-bottom: var(--space-1-5);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
   }
   .entry-emoji {
     font-size: 1.4rem;
@@ -174,14 +174,6 @@
     margin-top: var(--space-2);
     font-size: var(--text-sm);
   }
-
-  @media (max-width: 760px) {
-    .entry-item {
-      grid-template-columns: auto minmax(0, 1fr);
-      grid-template-rows: auto auto;
-      row-gap: var(--space-1);
-    }
-    .entry-emoji {
       grid-row: 1 / span 2;
       align-self: center;
     }

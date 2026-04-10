@@ -132,13 +132,13 @@
     position: fixed;
     bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-3));
     right: var(--space-5);
-    width: 56px;
-    height: 56px;
-    min-height: 56px;
+    width: var(--space-14);
+    height: var(--space-14);
+    min-height: var(--space-14);
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
     color: var(--text-inverse);
-    font-size: 1.4rem;
+    font-size: var(--text-lg);
     font-weight: var(--ui-weight-bold);
     border: none;
     box-shadow: 0 var(--space-2) var(--space-6) var(--card-shadow);
@@ -147,8 +147,8 @@
     align-items: center;
     justify-content: center;
     z-index: 120;
-    transition: transform 0.15s ease;
-    animation: fabIn 0.18s ease-out;
+    transition: transform var(--duration-fast) var(--ease-default);
+    animation: fabIn var(--duration-normal) var(--ease-out);
   }
   .fab:active { transform: scale(0.92); }
   .fab-icon {
@@ -164,7 +164,7 @@
   .fab-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.3);
+    background: var(--bg-overlay);
     z-index: 130;
   }
   .fab-form {
@@ -177,11 +177,11 @@
     padding: var(--ui-space-5);
     box-shadow: 0 var(--space-3) var(--space-8) var(--card-shadow);
     border: 1px solid var(--border-subtle);
-    max-height: min(76dvh, 540px);
+    max-height: min(76dvh, var(--space-135));
     overflow: auto;
     padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, var(--space-2)));
     z-index: 140;
-    animation: slideUp 0.2s ease-out;
+    animation: slideUp var(--duration-normal) var(--ease-out);
   }
 
   @keyframes fabIn {
@@ -200,7 +200,7 @@
   }
   .form-header {
     display: grid;
-    gap: 3px;
+    gap: var(--space-0-5);
   }
   .form-header h3 {
     font-size: var(--text-lg);
@@ -232,7 +232,7 @@
     margin-bottom: 0;
     border-radius: var(--radius-md);
     border: 1.5px solid var(--input-border);
-    min-height: 46px;
+    min-height: var(--ui-touch-min);
     padding: var(--space-2-5) var(--space-3);
     font-size: var(--text-base);
     line-height: var(--ui-line-compact);
@@ -251,27 +251,27 @@
   .form-actions {
     display: flex;
     gap: var(--ui-actions-gap);
-    margin-top: 2px;
+    margin-top: var(--space-0-5);
   }
   .action-save {
     flex: 1;
     width: auto;
   }
   .action-cancel {
-    width: 50px;
-    min-width: 50px;
+    width: var(--space-12-5);
+    min-width: var(--space-12-5);
     font-size: var(--text-lg);
     padding: 0;
     line-height: 1;
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: var(--breakpoint-lg)) {
     .fab {
       bottom: var(--space-6);
       right: max(var(--space-6), calc((100vw - var(--app-max-width)) / 2 + var(--space-6)));
       width: auto;
-      min-width: 176px;
-      height: 54px;
+      min-width: var(--space-44);
+      height: var(--space-13-5);
       border-radius: var(--radius-md);
       padding: 0 var(--space-4);
       gap: var(--space-2);
@@ -282,15 +282,15 @@
       display: inline;
     }
     .fab-form {
-      bottom: 18px;
-      max-width: 520px;
+      bottom: var(--space-4-5);
+      max-width: var(--space-130);
       left: auto;
       right: max(var(--space-6), calc((100vw - var(--app-max-width)) / 2 + var(--space-6)));
-      max-height: min(82dvh, 620px);
-      padding: 22px;
+      max-height: min(82dvh, var(--space-155));
+      padding: var(--space-5-5);
     }
     .budget-add-form {
-      gap: 13px;
+      gap: var(--space-3);
     }
     .form-header h3 {
       font-size: var(--text-lg);
