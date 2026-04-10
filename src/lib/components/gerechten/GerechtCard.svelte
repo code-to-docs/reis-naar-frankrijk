@@ -113,7 +113,7 @@
 </script>
 
 <div class="gr-card" class:done={heeftGeproefd}>
-  <button type="button" class="gr-head" onclick={onToggle}>
+  <button type="button" class="gr-head" onclick={onToggle} aria-expanded={isExpanded}>
     <div class="gr-emoji">{gerecht.emoji}</div>
     <div class="gr-main">
       <div class="gr-title-row">
