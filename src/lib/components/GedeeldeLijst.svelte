@@ -40,6 +40,26 @@
 
   let aantalGedaan = $derived(items.filter(i => i.gedaan).length);
 
+  function normalizeHttpUrl(raw: string): string | null {
+    const trimmed = String(raw || "").trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+    try {
+      const parsed = new URL(withProtocol);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.href;
+    } catch {
+      return null;
+    }
+
+    return null;
+  }
+
+  function getSafeMapLink(item: GedeeldLijstItem): string | null {
+    return normalizeHttpUrl(item.mapsLink || "");
+  }
+
   function mapItems(snapshot: QuerySnapshot<DocumentData>, sorteerClientSide = false) {
     const mapped: GedeeldLijstItem[] = snapshot.docs.map((entry) => ({
       id: entry.id,
@@ -76,7 +96,14 @@
     };
     if (afvinkbaar) data.gedaan = false;
     if (extraVeld.trim()) data.notities = extraVeld.trim();
-    if (metLink && linkVeld.trim()) data.mapsLink = linkVeld.trim();
+    if (metLink && linkVeld.trim()) {
+      const veiligeLink = normalizeHttpUrl(linkVeld);
+      if (!veiligeLink) {
+        toonSnackbar("Gebruik een geldige http(s)-link", "warning", E.WARN);
+        return;
+      }
+      data.mapsLink = veiligeLink;
+    }
     try {
       await addDoc(collection(db, collectie), data);
       nieuwItem = '';
@@ -128,6 +155,7 @@
   {/if}
 
   {#each items as item (item.id)}
+    {@const veiligeMapsLink = getSafeMapLink(item)}
     <div class="checklist-item" class:gedaan={item.gedaan}>
       {#if afvinkbaar}
         <input type="checkbox" checked={item.gedaan}
@@ -138,8 +166,8 @@
         {#if item.notities}
           <p class="gl-notitie">{item.notities}</p>
         {/if}
-        {#if item.mapsLink}
-          <a href={item.mapsLink} target="_blank" rel="noopener noreferrer" class="gl-maps-link">
+        {#if veiligeMapsLink}
+          <a href={veiligeMapsLink} target="_blank" rel="noopener noreferrer" class="gl-maps-link">
             {E.PIN} Open in Maps
           </a>
         {/if}

@@ -3,6 +3,7 @@
   import { collection, onSnapshot, doc, setDoc, deleteDoc } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState } from "$lib/stores.svelte.js";
+  import { fetchWikipediaSummaryImage } from "$lib/api/wikiApi.js";
   import type { Spotting, Wildlife, WildlifeCategorie, WildlifeRegio } from "$lib/types.js";
   import { wildlifeData, categorieLabels, regioLabels } from "$lib/wildlifeData.js";
   import { E } from "$lib/emojis.js";
@@ -79,24 +80,16 @@
 
     async function laadEnkel(dier: Wildlife): Promise<WildlifePhotoResult> {
       try {
-        const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dier.wiki), {
-          headers: { "Api-User-Agent": "ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)" }
-        });
-        if (res.status === 429) return { id: dier.id, retry: true };
-        if (res.ok) {
-          const data = await res.json() as {
-            thumbnail?: { source?: string };
-            originalimage?: { source?: string };
+        const image = await fetchWikipediaSummaryImage(dier.wiki);
+        if (image && "retry" in image) return { id: dier.id, retry: true };
+        if (image && "thumb" in image) {
+          return {
+            id: dier.id,
+            thumb: image.thumb,
+            full: image.full || maakGrotereThumbUrl(image.thumb)
           };
-          if (data.thumbnail && data.thumbnail.source) {
-            return {
-              id: dier.id,
-              thumb: data.thumbnail.source,
-              full: data.originalimage?.source || maakGrotereThumbUrl(data.thumbnail.source)
-            };
-          }
         }
-        } catch {}
+      } catch {}
       return null;
     }
 

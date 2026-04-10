@@ -75,7 +75,11 @@
       return;
     }
     try {
-      await setDoc(firestoreDoc(db, "instellingen", "budget"), { bedrag: Number(val.toFixed(2)) });
+      await setDoc(
+        firestoreDoc(db, "instellingen", "budget"),
+        { bedrag: Number(val.toFixed(2)) },
+        { merge: true }
+      );
       toonBudgetEdit = false;
       nieuwBudget = "";
       toonSnackbar("Budget aangepast", "success", E.CHECK);

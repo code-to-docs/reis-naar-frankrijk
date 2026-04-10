@@ -79,13 +79,17 @@
         await deleteDoc(ref);
         toonSnackbar(`${gerecht.naam} verwijderd uit jouw lijst`, "warning", E.UNDO);
       } else {
-        await setDoc(ref, {
-          gerechtId: gerecht.id,
-          door: naam,
-          geproefd: true,
-          datum: serverTimestamp(),
-          rating: 0
-        });
+        await setDoc(
+          ref,
+          {
+            gerechtId: gerecht.id,
+            door: naam,
+            geproefd: true,
+            datum: serverTimestamp(),
+            rating: 0
+          },
+          { merge: true }
+        );
         toonSnackbar(`${gerecht.naam} geproefd!`, "success", E.CHECK);
       }
     } catch (error) {

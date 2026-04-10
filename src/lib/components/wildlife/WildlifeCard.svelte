@@ -164,17 +164,21 @@
       const locatie = spotLocatie || (hasCoords ? await reverseGeocode(lat, lon) : "");
       const links = hasCoords ? buildMapsLinks(lat, lon) : null;
 
-      await setDoc(doc(db, "wildlife", dier.id), {
-        gespot: true,
-        door: currentUser,
-        datum: serverTimestamp(),
-        notitie: spotNotitie,
-        locatie,
-        latitude: hasCoords ? lat : null,
-        longitude: hasCoords ? lon : null,
-        googleMapsUrl: links?.google || null,
-        openStreetMapUrl: links?.osm || null
-      });
+      await setDoc(
+        doc(db, "wildlife", dier.id),
+        {
+          gespot: true,
+          door: currentUser,
+          datum: serverTimestamp(),
+          notitie: spotNotitie,
+          locatie,
+          latitude: hasCoords ? lat : null,
+          longitude: hasCoords ? lon : null,
+          googleMapsUrl: links?.google || null,
+          openStreetMapUrl: links?.osm || null
+        },
+        { merge: true }
+      );
       haptic("success");
       const emoji = getCategorieEmoji();
       toonSnackbar(dier.naam + " gespot!", "success", emoji);

@@ -41,6 +41,7 @@ const MIN_SCORE = 5.8;
 const SEARCH_DELAY_MS = 350;
 const WIKI_LIMIT = 6;
 const COMMONS_LIMIT = 8;
+const WIKI_USER_AGENT = "ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)";
 
 const STOPWORDS = new Set([
   "de",
@@ -124,6 +125,44 @@ async function rateLimitedFetch(url: string, init?: RequestInit) {
   }
 
   return fetch(url, init);
+}
+
+export async function fetchWikipediaSummaryImage(
+  pageTitle: string,
+  signal?: AbortSignal
+): Promise<{ thumb: string; full: string } | { retry: true } | null> {
+  try {
+    const response = await rateLimitedFetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`,
+      {
+        signal,
+        headers: {
+          Accept: "application/json",
+          "Api-User-Agent": WIKI_USER_AGENT
+        }
+      }
+    );
+
+    if (response.status === 429) return { retry: true };
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      thumbnail?: { source?: string };
+      originalimage?: { source?: string };
+    };
+
+    const thumb = data.thumbnail?.source || data.originalimage?.source || "";
+    const full = data.originalimage?.source || data.thumbnail?.source || "";
+    if (!thumb && !full) return null;
+
+    return {
+      thumb: thumb || full,
+      full: full || thumb
+    };
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") return null;
+    return null;
+  }
 }
 
 function normalizeText(text: string): string {
@@ -284,7 +323,10 @@ export async function zoekWikipediaFoto(term: string, gerecht: Gerecht): Promise
     });
 
     const res = await rateLimitedFetch(`https://fr.wikipedia.org/w/api.php?${params.toString()}`, {
-      headers: { Accept: "application/json" }
+      headers: {
+        Accept: "application/json",
+        "Api-User-Agent": WIKI_USER_AGENT
+      }
     });
 
     if (res.status === 429) return { retry: true };
@@ -336,7 +378,10 @@ export async function zoekCommonsFoto(term: string, gerecht: Gerecht): Promise<F
     });
 
     const res = await rateLimitedFetch(`https://commons.wikimedia.org/w/api.php?${params.toString()}`, {
-      headers: { Accept: "application/json" }
+      headers: {
+        Accept: "application/json",
+        "Api-User-Agent": WIKI_USER_AGENT
+      }
     });
 
     if (res.status === 429) return { retry: true };

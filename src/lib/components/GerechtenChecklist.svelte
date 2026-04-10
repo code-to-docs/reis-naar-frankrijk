@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { collection, onSnapshot } from "firebase/firestore";
+  import { collection, onSnapshot, query, where } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState } from "$lib/stores.svelte.js";
   import type { Gerecht, GerechtCheck } from "$lib/types.js";
@@ -29,6 +29,7 @@
 
   const TIP_MAX_AFSTAND_KM = 20;
   const REGIO_DETECTIE_MAX_KM = 70;
+  const CHECKS_QUERY_CHUNK_SIZE = 10;
 
   let checksByDish: Record<string, GerechtChecksPerUser> = $state({});
   let fotos: Record<string, string> = $state({});
@@ -54,6 +55,15 @@
 
   let userKey = $derived((appState.gebruiker || "").toLowerCase());
   let isFranzi = $derived(userKey === "franzi");
+
+  function chunkArray<T>(items: T[], size: number): T[][] {
+    if (size <= 0) return [items];
+    const chunks: T[][] = [];
+    for (let i = 0; i < items.length; i += size) {
+      chunks.push(items.slice(i, i + size));
+    }
+    return chunks;
+  }
 
   function afstandKm(van: Coords, naar: Coords): number {
     const toRad = (deg: number) => (deg * Math.PI) / 180;
@@ -174,21 +184,50 @@
   }
 
   onMount(() => {
-    const unsub = onSnapshot(collection(db, "gerechten_checks"), (snapshot) => {
+    const relevanteGerechtIds = gerechtenData.map((gerecht) => gerecht.id);
+    const idChunks = chunkArray(relevanteGerechtIds, CHECKS_QUERY_CHUNK_SIZE);
+    const rowsByDocId = new Map<string, Omit<GerechtCheck, "id">>();
+    const docIdsPerChunk = new Map<number, Set<string>>();
+
+    const rebuildChecksByDish = () => {
       const grouped: Record<string, GerechtChecksPerUser> = {};
-      snapshot.forEach((rowDoc) => {
-        const row = rowDoc.data() as Omit<GerechtCheck, "id">;
-        if (!row?.gerechtId || !row?.door) return;
+      for (const [docId, row] of rowsByDocId.entries()) {
+        if (!row?.gerechtId || !row?.door) continue;
         const dishId = String(row.gerechtId);
         const key = String(row.door).toLowerCase();
         if (!grouped[dishId]) grouped[dishId] = {};
-        grouped[dishId][key] = { id: rowDoc.id, ...row };
-      });
+        grouped[dishId][key] = { id: docId, ...row };
+      }
       checksByDish = grouped;
-    });
+    };
+
+    const unsubscribers = idChunks.map((chunk, index) =>
+      onSnapshot(
+        query(collection(db, "gerechten_checks"), where("gerechtId", "in", chunk)),
+        (snapshot) => {
+          const vorigeDocIds = docIdsPerChunk.get(index);
+          if (vorigeDocIds) {
+            for (const docId of vorigeDocIds) {
+              rowsByDocId.delete(docId);
+            }
+          }
+
+          const huidigeDocIds = new Set<string>();
+          snapshot.forEach((rowDoc) => {
+            const row = rowDoc.data() as Omit<GerechtCheck, "id">;
+            if (!row?.gerechtId || !row?.door) return;
+            huidigeDocIds.add(rowDoc.id);
+            rowsByDocId.set(rowDoc.id, row);
+          });
+
+          docIdsPerChunk.set(index, huidigeDocIds);
+          rebuildChecksByDish();
+        }
+      )
+    );
 
     void refreshGpsTip();
-    return () => unsub();
+    return () => unsubscribers.forEach((unsub) => unsub());
   });
 
   onMount(() => {

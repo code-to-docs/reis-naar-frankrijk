@@ -4,6 +4,7 @@
   import { db } from '$lib/firebase.js';
   import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
+  import { fetchWikipediaSummaryImage } from '$lib/api/wikiApi.js';
   import { formatFullDate } from '$lib/utils/formatters.js';
   import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from '$lib/types.js';
 
@@ -12,6 +13,8 @@
   let foto = $state('');
   let imgError = $state(false);
   let laatstFotoDierId = "";
+  let actiefFetchId = 0;
+  let wikiController: AbortController | null = null;
 
   function getCategorieEmoji(dier: Wildlife) {
     return categorieLabels[dier.categorie]?.emoji || E.POOT;
@@ -33,6 +36,11 @@
       if (!snapshot.empty) {
         const d = snapshot.docs[0];
         nieuwste = { id: d.id, ...(d.data() as Spotting) };
+      }
+      if (!nieuwste) {
+        laatsteSpotting = null;
+        dierInfo = null;
+        return;
       }
       if (nieuwste) {
         laatsteSpotting = nieuwste;
@@ -65,21 +73,28 @@
             }
           } catch {}
           
-          fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(currentDier.wiki), {
-            headers: { 'Api-User-Agent': 'ReisNaarFrankrijkApp/1.0 (travel-app; contact@example.com)' }
-          })
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-              if (data && data.thumbnail && data.thumbnail.source) {
-                foto = data.thumbnail.source;
+          wikiController?.abort();
+          const requestId = ++actiefFetchId;
+          wikiController = new AbortController();
+
+          fetchWikipediaSummaryImage(currentDier.wiki, wikiController.signal)
+            .then((data) => {
+              if (requestId !== actiefFetchId) return;
+              if (data && "thumb" in data) {
+                foto = data.thumb;
                 laatstFotoDierId = currentDier.id;
               }
             })
-            .catch(() => {});
+            .catch((error) => {
+              if (error instanceof DOMException && error.name === "AbortError") return;
+            });
         }
       }
     });
-    return () => unsub();
+    return () => {
+      unsub();
+      wikiController?.abort();
+    };
   });
 </script>
 
