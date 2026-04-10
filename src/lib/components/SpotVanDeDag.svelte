@@ -4,7 +4,6 @@
   import { db } from '$lib/firebase.js';
   import { E } from '$lib/emojis.js';
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
-  import { getWildlifeProfile } from '$lib/wildlifeProfiles.js';
   import { formatFullDate } from '$lib/utils/formatters.js';
   import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from '$lib/types.js';
 
@@ -25,8 +24,6 @@
   function getRegioMeta(regio: WildlifeRegio) {
     return regioLabels[regio];
   }
-
-  let dierProfiel = $derived.by(() => (dierInfo ? getWildlifeProfile(dierInfo.id) : null));
 
   onMount(() => {
     const ref = collection(db, 'wildlife');
@@ -115,23 +112,6 @@
       {#if laatsteSpotting.notitie}
         <p class="ui-widget-copy spot-note">{E.NOTITIE} {laatsteSpotting.notitie}</p>
       {/if}
-      {#if dierProfiel}
-        <p class="ui-widget-copy spot-fact">{E.TIP} {dierProfiel.feitje}</p>
-        <div class="ui-widget-metrics spot-metrics">
-          <div class="ui-widget-metric">
-            <span class="ui-widget-metric-label">Gewicht</span>
-            <span class="ui-widget-metric-value">{dierProfiel.gewicht}</span>
-          </div>
-          <div class="ui-widget-metric">
-            <span class="ui-widget-metric-label">Formaat</span>
-            <span class="ui-widget-metric-value">{dierProfiel.lengte}</span>
-          </div>
-          <div class="ui-widget-metric">
-            <span class="ui-widget-metric-label">Leeftijd</span>
-            <span class="ui-widget-metric-value">{dierProfiel.leeftijd}</span>
-          </div>
-        </div>
-      {/if}
       <div class="ui-widget-chips spot-regios">
         {#if laatsteSpotting.locatie}
           <span class="spot-regio-tag ui-chip ui-chip--muted">{laatsteSpotting.locatie}</span>
@@ -184,11 +164,7 @@
   }
   .spot-zeldzaamheid { font-size: 0.65rem; letter-spacing: -1px; }
   .spot-frans { color: #14532d; }
-  .spot-fact { margin: 0; }
   .spot-note { margin: 0; }
-  .spot-metrics {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .spot-regios { margin-top: 0; }
   .spot-regio-tag {
     min-height: 28px;
@@ -201,9 +177,6 @@
     .spot-foto, .spot-foto-placeholder {
       width: 88px;
       height: 88px;
-    }
-    .spot-metrics {
-      grid-template-columns: 1fr;
     }
   }
 

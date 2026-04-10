@@ -8,7 +8,7 @@
       case "/": return `FR Frankrijk`;
       case "/budget": return `${E.GELD} Vakantiebudget`;
       case "/campings": return `${E.CAMPING} Overnachtingen`;
-      case "/poi": return `${E.PIN} Bezienswaardigheden`;
+      case "/poi": return `${E.PIN} POI suggesties`;
       case "/meer": return "Menu & Instellingen";
       default:
         if ($page.url.pathname.startsWith("/meer/wildlife")) return `${E.VOGEL} Wildlife`;
@@ -16,7 +16,16 @@
     }
   });
 
-  let subtitle = $derived($page.url.pathname === "/" ? `Hoi ${appState.gebruiker}!` : "");
+  let subtitle = $derived.by(() => {
+    switch ($page.url.pathname) {
+      case "/":
+        return `Hoi ${appState.gebruiker}!`;
+      case "/poi":
+        return "Leuke stops, uitzichten en uitstapjes voor onderweg.";
+      default:
+        return "";
+    }
+  });
 </script>
 
 <div class="header">

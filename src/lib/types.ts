@@ -61,6 +61,32 @@ export interface BudgetCategorie {
     kleur: string;
 }
 
+export type PoiCategorieId = "cultuur" | "natuur" | "activiteit" | "eten_drinken" | "winkelen" | "overig";
+export type PoiScore = 1 | 2 | 3;
+
+export interface PoiCategorie {
+    id: PoiCategorieId;
+    label: string;
+    emoji: string;
+    kleur: string;
+}
+
+export interface Poi {
+    id?: string;
+    naam: string;
+    categorie: PoiCategorieId;
+    score: PoiScore;
+    omschrijving?: string;
+    locatieNaam?: string;
+    mapsLink?: string;
+    websiteUrl?: string;
+    door: string;
+    toegevoegdOp?: Timestamp | string | null;
+    bijgewerktOp?: Timestamp | string | null;
+    bezocht?: boolean;
+    bezochtOp?: Timestamp | string | null;
+}
+
 export interface WeerInfo {
     emoji: string;
     tekst: string;

@@ -30,8 +30,8 @@
     </a>
     <a href="/poi" class="quick-btn">
       <div class="quick-content">
-        <span>Onze POIs</span>
-        <small>Routes en highlights</small>
+        <span>POI suggesties</span>
+        <small>Stops en highlights</small>
       </div>
       <div class="icon">{E.PIN}</div>
     </a>
