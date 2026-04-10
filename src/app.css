@@ -298,6 +298,7 @@ button,
   animation: fadeSlideIn var(--duration-slow) var(--ease-out);
 }
 
+.page-shell {
   width: min(100%, var(--content-max-width));
   margin: 0 auto;
   padding: var(--space-2-5) var(--page-gutter) calc(var(--nav-height) + var(--space-4-5) + env(safe-area-inset-bottom, var(--space-2)));
@@ -357,6 +358,7 @@ button,
   line-height: var(--ui-line-body);
 }
 
+.ui-widget-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-3);
@@ -608,6 +610,7 @@ html.dark .undo-bar { background: var(--bg-interactive-active); }
 html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 42%, var(--bg-surface)); color: var(--color-error-light); }
 
 /* ========== DARK MODE TOGGLE ========== */
+.dark-toggle-item {
   width: 100%; display: flex; align-items: center; gap: var(--space-3-5);
   min-height: 58px;
   padding: 0 var(--space-4); background: none; border: none;
@@ -616,6 +619,7 @@ html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 
 }
 .dark-toggle-item:last-child { border-bottom: none; }
 .dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.dark-toggle-label {
   color: var(--tekst);
 }
 
