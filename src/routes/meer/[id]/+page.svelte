@@ -5,7 +5,7 @@
   import GedeeldeLijst from '$lib/components/GedeeldeLijst.svelte';
   import Noodinfo from '$lib/components/Noodinfo.svelte';
   import WildlifeChecklist from '$lib/components/WildlifeChecklist.svelte';
-  import GerechtenChecklist from '$lib/components/GerechtenChecklist.svelte';
+  import GerechtenFeature from '$lib/features/gerechten/GerechtenFeature.svelte';
 
   let id = $derived($page.params.id);
 </script>
@@ -25,7 +25,7 @@
       collectie="activiteiten" afvinkbaar={true}
       placeholder="Nieuwe activiteit..." />
   {:else if id === "gerechten"}
-    <GerechtenChecklist />
+    <GerechtenFeature />
   {:else if id === "paklijst"}
     <GedeeldeLijst 
       titel={"Paklijst (" + appState.gebruiker + ")"} 

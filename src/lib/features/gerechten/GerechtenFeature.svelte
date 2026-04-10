@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { createGerechtenContext } from "../features/gerechten/context.svelte";
-  import GerechtenHeader from "../features/gerechten/components/GerechtenHeader.svelte";
-  import GerechtenList from "../features/gerechten/components/GerechtenList.svelte";
-  import GerechtenTipCard from "../features/gerechten/components/GerechtenTipCard.svelte";
-  import GerechtenStats from "./gerechten/GerechtenStats.svelte";
+  import { createGerechtenContext } from "./context.svelte";
+  import GerechtenHeader from "./components/GerechtenHeader.svelte";
+  import GerechtenList from "./components/GerechtenList.svelte";
+  import GerechtenTipCard from "./components/GerechtenTipCard.svelte";
+  import GerechtenStats from "./components/GerechtenStats.svelte";
   import { gerechtenData } from "$lib/gerechtenData.js";
   import { onMount } from "svelte";
 

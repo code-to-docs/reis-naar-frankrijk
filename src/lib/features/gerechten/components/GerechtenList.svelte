@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getGerechtenContext } from "../context.svelte";
-  import GerechtCard from "$lib/components/gerechten/GerechtCard.svelte";
+  import GerechtCard from "./GerechtCard.svelte";
   import { appState } from "$lib/stores.svelte.js";
 
   const { filters, checks, wiki } = getGerechtenContext();

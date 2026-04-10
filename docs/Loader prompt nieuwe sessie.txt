@@ -1,0 +1,8 @@
+Je bent een expert software-architect. We werken aan het project 'Reis naar Frankrijk' (SvelteKit + Firestore). Je neemt het stokje over van een andere AI-agent.
+
+Hieronder vind je de actuele project-context en onze administratie. Lees deze in de volgende volgorde:
+1. AGENT_PROTOCOL.md (Dit zijn je harde guardrails).
+2. SESSION_STATE.md (Dit is waar we nu zijn).
+3. KNOWN_ISSUES.md (Hier staan de resterende bugs).
+
+Lees de bestanden. Geef me GEEN code terug, maar antwoord uitsluitend met: 'Context geladen. Ik zie dat we op versie [X] zitten. Wat is de eerste taak?'

@@ -50,7 +50,7 @@
 <style>
   .snackbar-overlay {
     position: fixed;
-    bottom: 80px;
+    bottom: var(--space-20);
     left: 0;
     right: 0;
     display: flex;
@@ -66,18 +66,18 @@
     display: flex;
     align-items: center;
     gap: var(--space-2-5);
-    padding: 14px 22px;
+    padding: var(--space-3) var(--space-6);
     border-radius: var(--radius-lg);
     border: 2px solid;
-    font-size: 0.92rem;
+    font-size: var(--text-base);
     font-weight: var(--weight-semibold);
-    box-shadow: 0 var(--space-1-5) var(--space-6) rgba(0,0,0,0.18);
-    animation: snackIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-lg);
+    animation: snackIn 0.3s var(--ease-spring);
     max-width: 92%;
   }
 
   .snackbar.verdwijnt {
-    animation: snackOut 0.3s ease-in forwards;
+    animation: snackOut 0.3s var(--ease-default) forwards;
   }
 
   .snackbar-success {
@@ -102,16 +102,16 @@
   }
 
   .snackbar-emoji {
-    font-size: 1.3rem;
+    font-size: var(--text-lg);
     flex-shrink: 0;
   }
   .snackbar-tekst {
-    line-height: 1.3;
+    line-height: var(--leading-snug);
   }
 
   @keyframes snackIn {
     from {
-      transform: translateY(30px) scale(0.9);
+      transform: translateY(var(--space-8)) scale(0.9);
       opacity: 0;
     }
     to {
@@ -126,7 +126,7 @@
       opacity: 1;
     }
     to {
-      transform: translateY(30px) scale(0.9);
+      transform: translateY(var(--space-8)) scale(0.9);
       opacity: 0;
     }
   }

@@ -5,16 +5,16 @@ import type { OvernachtingView } from "./types.js";
 export const WEEKDAGEN = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
 const LOCATIE_KLEUREN = [
-  "#1d4ed8",
-  "#0284c7",
-  "#2563eb",
-  "#0f766e",
-  "#0ea5a4",
-  "#1e40af",
-  "#10b981",
-  "#0369a1",
-  "#1f7a8c",
-  "#14532d"
+  "var(--marker-1)",
+  "var(--marker-2)",
+  "var(--marker-3)",
+  "var(--marker-4)",
+  "var(--marker-5)",
+  "var(--marker-6)",
+  "var(--marker-7)",
+  "var(--marker-8)",
+  "var(--marker-9)",
+  "var(--marker-10)"
 ];
 
 export function naarLokaleDag(d: Date) {

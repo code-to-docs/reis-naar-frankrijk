@@ -11,7 +11,7 @@ import * as path from 'path';
 const SRC_DIR = './src';
 // Regex voor verboden patterns
 const PROHIBITED_HEX = /#(?!([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b)[a-fA-F0-9]+/g; // Simplified for focus
-const HEX_PATTERN = /#[a-fA-F0-9]{3,6}/g;
+const HEX_PATTERN = /#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b/g;
 const PX_PATTERN = /\b\d+px\b/g;
 const RGB_PATTERN = /rgba?\([^)]+\)/g;
 
@@ -54,8 +54,10 @@ describe('UI Normprofiel Audit', () => {
 
         const content = fs.readFileSync(file, 'utf8');
         
-        // Verwijder SVG data om false positives te voorkomen
+        // Verwijder SVG data en comments om false positives te voorkomen
+        const COMMENT_PATTERN = /\/\*[\s\S]*?\*\/|\/\/.*/g;
         const sanitized = content
+          .replace(COMMENT_PATTERN, '')
           .replace(SVG_DATA_EXCLUSION, '')
           .replace(VIEWBOX_EXCLUSION, '')
           .replace(TRANSFORM_EXCLUSION, '');

@@ -5,7 +5,7 @@ import {
   gerechtVoorFranziToegestaan, 
   gerechtBinnen20Km, 
   TIP_MAX_AFSTAND_KM 
-} from "$lib/components/gerechten/regionUtils.js";
+} from "../utils/regionUtils.js";
 import { gerechtenStreekLocaties, gerechtenStreekLabels } from "$lib/gerechtenData.js";
 import type { Gerecht } from "../types";
 

@@ -184,14 +184,14 @@
     border: 1px solid var(--border-subtle);
     border-left: var(--space-1-5) solid var(--loc-kleur);
     border-radius: var(--radius-lg);
-    padding: 11px var(--space-3);
-    background: var(--card-bg);
+    padding: var(--space-3);
+    background: var(--bg-surface);
     display: grid;
     gap: var(--space-2);
   }
   .ov-shortlist-item {
     border-left-color: color-mix(in srgb, var(--loc-kleur) 70%, var(--color-success-base));
-    background: linear-gradient(180deg, rgba(239, 246, 255, 0.52) 0%, var(--bg-surface) 72%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary-50) 52%, transparent) 0%, var(--bg-surface) 72%);
   }
   .ov-item-top {
     display: flex;
@@ -201,7 +201,7 @@
   }
   .ov-item-head {
     display: grid;
-    gap: 2px;
+    gap: var(--space-0-5);
   }
   .ov-item-head-actions {
     display: inline-flex;
@@ -239,7 +239,7 @@
     min-height: var(--btn-height-compact);
     min-width: var(--btn-height-compact);
     padding: 0;
-    font-size: 0.95rem;
+    font-size: var(--text-base);
     border-radius: var(--btn-radius);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 92%, var(--bg-surface-sunken));
@@ -247,8 +247,8 @@
     opacity: 1;
   }
   .ov-delete:hover {
-    border-color: color-mix(in srgb, var(--rood) 30%, var(--input-border));
-    color: var(--rood);
+    border-color: color-mix(in srgb, var(--color-error-base) 30%, var(--input-border));
+    color: var(--text-error);
     background: color-mix(in srgb, var(--card-bg) 78%, var(--color-error-light));
   }
   .ov-meta {
@@ -258,20 +258,20 @@
   }
   .ov-meta span {
     font-size: var(--text-sm);
-    color: var(--tekst);
+    color: var(--text-primary);
     background: var(--hover-bg);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-full);
-    padding: 3px var(--space-2);
+    padding: var(--space-1) var(--space-2);
   }
   .ov-coords {
     font-size: var(--text-sm);
-    color: var(--blauw);
+    color: var(--text-accent);
     font-weight: var(--weight-semibold);
   }
   .ov-address {
     font-size: var(--text-sm);
-    color: var(--tekst);
+    color: var(--text-primary);
     font-weight: var(--weight-medium);
   }
   .ov-links {
@@ -281,14 +281,14 @@
   }
   .ov-links a {
     font-size: var(--text-sm);
-    color: var(--blauw);
+    color: var(--text-accent);
     text-decoration: none;
     font-weight: var(--weight-bold);
   }
   .ov-note {
     margin: 0;
     font-size: var(--text-sm);
-    color: var(--tekst);
+    color: var(--text-primary);
   }
   .ov-shortlist-actions {
     margin-top: var(--space-2);
@@ -302,14 +302,14 @@
     padding: 0 var(--space-3);
   }
   .ov-empty {
-    color: var(--nav-text);
+    color: var(--text-secondary);
     margin: 0;
   }
 
   .ov-warning {
     margin: 0;
     border: 1px solid color-mix(in srgb, var(--color-warning-base) 35%, var(--border-default));
-    background: color-mix(in srgb, var(--card-bg) 84%, var(--color-warning-light));
+    background: color-mix(in srgb, var(--bg-surface) 84%, var(--color-warning-light));
   }
   .ov-warning strong {
     color: var(--text-warning);
@@ -317,10 +317,10 @@
   .ov-warning p {
     margin-top: var(--space-1);
     color: var(--text-warning);
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: var(--breakpoint-md)) {
     .ov-item-top {
       flex-direction: column;
       align-items: stretch;
@@ -360,9 +360,9 @@
   :global(html.dark) .ov-delete:hover {
     border-color: var(--color-error-base);
     color: var(--color-error-light);
-    background: rgba(127, 29, 29, 0.35);
+    background: var(--black-a35);
   }
   :global(html.dark) .ov-shortlist-item {
-    background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, var(--bg-surface-raised) 72%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary-800) 35%, transparent) 0%, var(--bg-surface-raised) 72%);
   }
 </style>

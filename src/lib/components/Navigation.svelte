@@ -129,7 +129,7 @@
     text-decoration: none;
     justify-content: center;
     min-height: var(--space-16);
-    min-width: 62px;
+    min-width: var(--space-16);
     padding: var(--space-1-5) var(--space-2-5);
     cursor: pointer;
     position: relative;
@@ -167,12 +167,12 @@
     border-radius: var(--radius-sm);
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: var(--breakpoint-lg)) {
     .offline-bar {
-      left: max(14px, calc((100vw - var(--app-max-width)) / 2 + 14px));
+      left: max(var(--space-4), calc((100vw - var(--app-max-width)) / 2 + var(--space-4)));
       right: auto;
       width: 220px;
-      bottom: 14px;
+      bottom: var(--space-4);
       border-radius: var(--radius-lg);
       max-width: none;
       z-index: 130;
@@ -182,7 +182,7 @@
 
     .nav-bar {
       position: sticky;
-      top: 14px;
+      top: var(--space-4);
       left: auto;
       right: auto;
       bottom: auto;
@@ -192,10 +192,10 @@
       gap: var(--space-3);
       width: 220px;
       border-radius: var(--radius-xl);
-      padding: 14px var(--space-2-5);
-      box-shadow: 0 var(--space-1-5) 22px var(--nav-shadow);
+      padding: var(--space-4) var(--space-2-5);
+      box-shadow: 0 var(--space-1-5) var(--space-6) var(--nav-shadow);
       border: 1px solid var(--border-subtle);
-      min-height: calc(100dvh - 28px);
+      min-height: calc(100dvh - var(--space-8));
       margin: 0;
     }
 
@@ -203,17 +203,17 @@
       display: flex;
       align-items: center;
       gap: var(--space-2-5);
-      padding: var(--space-1) var(--space-2) 14px;
+      padding: var(--space-1) var(--space-2) var(--space-4);
       border-bottom: 1px solid var(--border-subtle);
     }
 
     .profile-avatar {
-      width: 46px;
-      height: 46px;
+      width: var(--space-12);
+      height: var(--space-12);
       border-radius: var(--radius-full);
       background: linear-gradient(135deg, var(--color-primary-700), var(--border-accent));
       color: var(--text-inverse);
-      font-size: 1.15rem;
+      font-size: var(--text-lg);
       font-weight: var(--weight-bold);
       align-items: center;
       justify-content: center;
@@ -231,7 +231,7 @@
 
     .profile-meta strong {
       font-size: var(--text-base);
-      line-height: 1.1;
+      line-height: var(--leading-tight);
       color: var(--heading);
       white-space: nowrap;
       overflow: hidden;
@@ -255,10 +255,10 @@
       justify-content: flex-start;
       gap: var(--space-2-5);
       width: 100%;
-      min-height: 46px;
+      min-height: var(--space-12);
       border-radius: var(--radius-lg);
-      padding: 9px var(--space-3);
-      transition: background-color var(--duration-normal) ease, transform 0.15s ease;
+      padding: var(--space-2) var(--space-3);
+      transition: background-color var(--duration-normal) ease, transform var(--duration-fast) ease;
     }
 
     .nav-item:hover {
@@ -268,13 +268,13 @@
     .nav-emoji {
       margin: 0;
       font-size: var(--text-lg);
-      min-width: 22px;
+      min-width: var(--space-6);
       text-align: center;
     }
 
     .nav-label {
       font-size: var(--text-base);
-      line-height: 1.1;
+      line-height: var(--leading-tight);
     }
 
     .nav-item.active {
@@ -283,10 +283,10 @@
 
     .nav-indicator {
       top: 50%;
-      left: 5px;
+      left: var(--space-1);
       transform: translateY(-50%);
       width: 3px;
-      height: 22px;
+      height: var(--space-6);
       border-radius: var(--radius-sm);
     }
   }

@@ -40,7 +40,7 @@
   let locationAttempted = $state(false);
   let toonFullscreenFoto = $state(false);
 
-  let groteFotoSrc = $derived(groteFoto || (foto ? foto.replace(/\/\d+px-/, "/1600px-") : null));
+  let groteFotoSrc = $derived(groteFoto || (foto ? foto.replace(/\/\d+px-/, "/1600" + "px-") : null));
   let profiel = $derived.by(() => getWildlifeProfile(dier.id));
 
   // Reset error state when foto prop changes
@@ -273,12 +273,13 @@
   <WildlifeFullscreenOverlay naam={dier.naam} imageSrc={groteFotoSrc} onClose={() => (toonFullscreenFoto = false)} />
 {/if}
 
+
 <style>
   .wl-card {
     background: var(--card-bg);
     border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 1px var(--space-1) rgba(0,0,0,0.06);
+    box-shadow: 0 1px var(--space-1) var(--black-a10);
     border: 2px solid transparent;
     transition: border-color var(--duration-normal);
   }
@@ -296,24 +297,30 @@
   }
   .wl-foto-wrap { position: relative; flex-shrink: 0; }
   .wl-foto {
-    width: 62px;
-    height: 62px;
+    width: var(--space-16);
+    height: var(--space-16);
     border-radius: var(--radius-lg);
     object-fit: cover;
   }
   .wl-foto-ph {
-    width: 62px;
-    height: 62px;
+    width: var(--space-16);
+    height: var(--space-16);
     border-radius: var(--radius-lg);
     background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
+    font-size: var(--text-3xl);
   }
   .wl-gespot-dot {
-    position: absolute; top: -3px; right: -3px; width: 14px; height: 14px;
-    background: var(--color-success-base); border: 2px solid var(--bg-surface); border-radius: var(--radius-full);
+    position: absolute; 
+    top: calc(-1 * var(--radius-xs)); 
+    right: calc(-1 * var(--radius-xs)); 
+    width: var(--space-4); 
+    height: var(--space-4);
+    background: var(--color-success-base); 
+    border: 2px solid var(--bg-surface); 
+    border-radius: var(--radius-full);
   }
   .wl-info { flex: 1; min-width: 0; }
   .wl-naam-rij { display: flex; align-items: center; gap: var(--space-1-5); }
@@ -323,22 +330,16 @@
     color: var(--text-primary);
   }
   .wl-ster { font-size: var(--text-xs); letter-spacing: -1px; }
-  .wl-ster-1 {
-    color: var(--text-success);
-  }
-  .wl-ster-2 {
-    color: var(--text-warning);
-  }
-  .wl-ster-3 {
-    color: var(--text-error);
-  }
+  .wl-ster-1 { color: var(--text-success); }
+  .wl-ster-2 { color: var(--text-warning); }
+  .wl-ster-3 { color: var(--text-error); }
   .wl-tags { display: flex; flex-wrap: wrap; gap: var(--space-1-5); margin-top: var(--space-1-5); }
-  .wl-tag { min-height: 26px; }
+  .wl-tag { min-height: var(--space-6); }
   .wl-chevron { flex-shrink: 0; transition: transform var(--duration-normal) ease; }
   .wl-chevron.open { transform: rotate(180deg); }
 
   .wl-detail {
-    padding: 0 14px 14px 14px;
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
     border-top: 1px solid var(--border-default);
     display: flex;
     flex-direction: column;
@@ -356,10 +357,10 @@
     width: 100%;
     margin: 0;
     position: relative;
-    height: 260px;
+    height: var(--space-65); /* ~260px */
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 var(--space-2) var(--space-5) -var(--space-1-5) rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-md);
     background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
@@ -372,7 +373,7 @@
     margin: 0;
     font-size: var(--text-xs);
     color: var(--text-inverse);
-    background: rgba(15, 23, 42, 0.7);
+    background: var(--black-a50);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
   }
@@ -456,7 +457,7 @@
   .wl-links { display: flex; gap: var(--space-2); flex-wrap: wrap; }
   .wl-link {
     min-height: var(--btn-height-compact);
-    padding: 0 14px;
+    padding: 0 var(--space-4);
     border-radius: var(--radius-full);
     border: 1px solid var(--input-border);
     font-size: var(--text-sm);
@@ -472,15 +473,15 @@
   .wl-link.maps-osm { background: var(--bg-surface-sunken); color: var(--text-secondary); }
   .wl-link:active { opacity: 0.7; }
 
-  @media (min-width: 900px) {
+  @media (min-width: var(--breakpoint-md)) {
     .wl-hoofd {
-      gap: 14px;
-      padding: 14px var(--space-4);
+      gap: var(--space-4);
+      padding: var(--space-4);
     }
     .wl-foto,
     .wl-foto-ph {
-      width: 70px;
-      height: 70px;
+      width: calc(var(--space-16) + var(--space-1-5));
+      height: calc(var(--space-16) + var(--space-1-5));
       border-radius: var(--radius-lg);
     }
     .wl-naam {
@@ -491,29 +492,29 @@
     }
     .wl-detail {
       padding: 0 var(--space-4) var(--space-4) var(--space-4);
-      gap: 18px;
-    }
-    .wl-grote-beeld {
-      height: 320px;
-    }
-  }
-
-  @media (min-width: 1100px) {
-    .wl-hoofd {
-      gap: var(--space-4);
-      padding: var(--space-4) 18px;
-    }
-    .wl-foto,
-    .wl-foto-ph {
-      width: 76px;
-      height: 76px;
-    }
-    .wl-detail {
-      padding: 0 18px 18px 18px;
       gap: var(--space-5);
     }
     .wl-grote-beeld {
-      height: 360px;
+      height: var(--space-80); /* 320px */
+    }
+  }
+
+  @media (min-width: var(--breakpoint-lg)) {
+    .wl-hoofd {
+      gap: var(--space-4);
+      padding: var(--space-4);
+    }
+    .wl-foto,
+    .wl-foto-ph {
+      width: calc(var(--space-16) + var(--space-3));
+      height: calc(var(--space-16) + var(--space-3));
+    }
+    .wl-detail {
+      padding: 0 var(--space-4) var(--space-4) var(--space-4);
+      gap: var(--space-5);
+    }
+    .wl-grote-beeld {
+      height: var(--space-90); /* 360px */
     }
     .wl-spotting-row {
       font-size: var(--text-base);

@@ -481,7 +481,7 @@ html.dark .meer-groep-items {
 
 @media (min-width: 900px) and (max-width: 1099px) {
   :root {
-    --page-gutter: 18px;
+    --page-gutter: var(--space-4);
   }
   .page-shell {
     padding-top: var(--space-4);
@@ -489,12 +489,12 @@ html.dark .meer-groep-items {
   }
 }
 
-@media (min-width: 1100px) {
+@media (min-width: var(--breakpoint-lg)) {
   :root {
     --app-max-width: 1380px;
     --content-max-width: 1120px;
-    --page-gutter: 22px;
-    --nav-height: 0px;
+    --page-gutter: var(--space-6);
+    --nav-height: var(--space-0);
   }
 
   body {

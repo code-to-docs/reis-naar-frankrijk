@@ -181,6 +181,29 @@
   --content-max-width: 680px;
   --page-max-width: 1200px;
 
+  /* Breakpoints */
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1100px;
+  
+  /* Translucency */
+  --white-a05: rgba(255, 255, 255, 0.05);
+  --white-a10: rgba(255, 255, 255, 0.1);
+  --white-a15: rgba(255, 255, 255, 0.15);
+  --white-a20: rgba(255, 255, 255, 0.2);
+  --white-a80: rgba(255, 255, 255, 0.8);
+  --white-a90: rgba(255, 255, 255, 0.9);
+  
+  --black-a05: rgba(0, 0, 0, 0.05);
+  --black-a10: rgba(0, 0, 0, 0.1);
+  --black-a15: rgba(0, 0, 0, 0.15);
+  --black-a20: rgba(0, 0, 0, 0.2);
+  --black-a35: rgba(0, 0, 0, 0.35);
+  --black-a50: rgba(0, 0, 0, 0.5);
+
+  --bg-overlay-light: var(--white-a10);
+  --bg-overlay-lighter: var(--white-a05);
+  --bg-overlay-dark: var(--black-a10);
+
   /* Budget chart palette - sterk onderscheid tussen categorieen */
   --budget-cat-dining: #d97706;
   --budget-cat-boodschappen: #0f766e;
@@ -189,6 +212,18 @@
   --budget-cat-tol: #7c3aed;
   --budget-cat-uitjes: #db2777;
   --budget-cat-overig: #6b7280;
+
+  /* Marker Colors (Domain Specific) */
+  --marker-1: #1d4ed8;
+  --marker-2: #0284c7;
+  --marker-3: #2563eb;
+  --marker-4: #0f766e;
+  --marker-5: #0ea5a4;
+  --marker-6: #1e40af;
+  --marker-7: #10b981;
+  --marker-8: #0369a1;
+  --marker-9: #1f7a8c;
+  --marker-10: #14532d;
 }
 
 /* =====================================================

@@ -1,29 +1,31 @@
-# SESSION_STATE.md - 2026-04-10
+# SESSION_STATE.md
+> [!NOTE] LLM INSTRUCTION: Lees `AGENT_PROTOCOL.md` voor de levenscyclus-regels. Geef voldoende detail over de actuele status, maar COMPRIMEER oudere changelogs tot 1 overkoepelende regel. Verwijder To-Do's direct zodra ze af zijn.
 
-## Huidige Focus
-**Kwaliteit Hardening & Monoliet Refactor (v1.1.2)**
-*   Implementatie van geavanceerde UI audits (Semantische kleur-check).
-*   Setup van Visual Regression Testing framework (Playwright).
-*   Modularisering van de `GerechtenChecklist` naar Svelte 5 Composables.
+## Huidige Status
+* **Versie:** v1.1.2
+* **UI Normprofiel:** v2.0.0 (2025-01-09)
+* **Focus:** Overgang van Quality Sprint naar Phase 1 Map Integration
+* **Architectuur:** Modulair (Composables + Context), Svelte 5 Runes
+* **Testing:** Vitest 3 (23 unit/integration tests, 100% pass) + Playwright opgezet,
+  baselines nog NIET gegenereerd
 
-## Laatste Mijpaal: "The Quality Sprint" (v1.1.2)
-- [x] **Semantic Color Audit**: Geautomatiseerde check op semantisch correcte kleur-tokens.
-- [x] **Visual Regression Setup**: Playwright geïnstalleerd en geconfigureerd voor screenshot-diffing.
-- [x] **Gerechten Monoliet Refactor**: +600 regels verwijderd uit de hoofdcomponent, verdeeld over composables.
-- [x] **100% Test Pass**: Alle 23 Vitest tests (Unit + Audit) slagen.
+## Laatste Iteratie (Changelog)
+* **v1.1.2:** Semantic Color Audit geïmplementeerd. Playwright visual regression
+  framework opgezet (geen baselines). `GerechtenChecklist` monoliet gerefactored
+  (+600 regels → composables).
+* **v1.1.1:** Vitest Svelte 5 lifecycle issues en kalender hydration issues opgelost.
 
-## Systeem Toestand
-- **Architectuur**: Modulair (Composables + Context), Svelte 5 Runes.
-- **Testing**: Vitest 3 + Playwright 1.59.
-- **UI Audit**: Actief (Kleuren, Layout, Semantiek).
-- **Deployment**: Vercel-ready, Github-sync OK.
+## Volgende Stappen (To-Do)
+1. **Visual Baseline:** Playwright baselines genereren via `npm run test:visual:update`
+   — vereiste voor To-Do #2.
+2. **Phase 1 Map Integration:** Leaflet kaart bouwen volgens modulaire patronen.
+3. **Tokenization Sprint:** Token violations wegwerken — zie `KNOWN_ISSUES.md`.
+4. **Refactor Phase 2:** `WildlifeChecklist.svelte` — volg patroon van GerechtenChecklist.
 
-## Volgende Stappen
-1.  **Phase 1 Map Integration**: Start van de "Grote Kaart" (Leaflet) met de nieuwe modulaire patronen.
-2.  **Visual Baseline**: Genereren van de eerste set visual regression baseline screenshots via `npm run test:visual:update`.
-3.  **Tokenization Sprint**: Systematisch wegwerken van de violations in `KNOWN_ISSUES.md`.
-4.  **Refactor Phase 2**: Volgende monoliet op de lijst: `WildlifeChecklist.svelte`.
-
-## Aantekeningen voor Volgende Sessie
-- De `GerechtenChecklist` refactor dient als architecturaal voorbeeld (Template) voor alle toekomstige feature-modules.
-- Gebruik `getGerechtenContext()` voor toegang tot checks, filters, wiki-foto's en GPS-state.
+## Aantekeningen
+* **GerechtenChecklist = architecturaal template** voor alle nieuwe feature-modules:
+  * Bestand: `src/lib/features/gerechten/`
+  * State toegankelijk via `getGerechtenContext()`
+  * Patroon: composable voor logica, context voor distributie, component voor UI
+* **Nieuwe features:** volg altijd het gerechten-patroon. Geen monolithische bestanden
+  (signaal: >400 regels).

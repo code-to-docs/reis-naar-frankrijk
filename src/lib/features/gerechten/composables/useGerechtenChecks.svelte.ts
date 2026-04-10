@@ -1,7 +1,7 @@
 import { collection, onSnapshot, query, where, type Unsubscribe } from "firebase/firestore";
 import { db } from "$lib/firebase.js";
 import type { GerechtCheck } from "../types";
-import { chunkArray, CHECKS_QUERY_CHUNK_SIZE } from "$lib/components/gerechten/regionUtils.js";
+import { chunkArray, CHECKS_QUERY_CHUNK_SIZE } from "../utils/regionUtils.js";
 
 type GerechtChecksPerUser = Partial<Record<string, GerechtCheck>>;
 

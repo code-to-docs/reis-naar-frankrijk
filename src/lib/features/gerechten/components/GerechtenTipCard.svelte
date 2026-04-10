@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getGerechtenContext } from "../context.svelte";
   import { gerechtenSoortLabels, gerechtenStreekLabels } from "$lib/gerechtenData.js";
-  import { TIP_MAX_AFSTAND_KM } from "$lib/components/gerechten/regionUtils.js";
+  import { TIP_MAX_AFSTAND_KM } from "../utils/regionUtils.js";
 
   const { gps, isFranzi } = getGerechtenContext();
 

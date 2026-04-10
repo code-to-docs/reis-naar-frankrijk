@@ -166,16 +166,16 @@
   }
   .spot-content { display: flex; gap: var(--space-3); align-items: flex-start; }
   .spot-foto {
-    width: 104px;
-    height: 104px;
+    width: var(--space-26);
+    height: var(--space-26);
     border-radius: var(--radius-md);
     object-fit: cover;
     flex-shrink: 0;
     box-shadow: var(--shadow-sm);
   }
   .spot-foto-placeholder {
-    width: 104px;
-    height: 104px;
+    width: var(--space-26);
+    height: var(--space-26);
     border-radius: var(--radius-md);
     background: var(--bg-surface-sunken);
     display: flex;
@@ -195,7 +195,7 @@
     align-items: center;
     gap: var(--space-1-5);
   }
-  .spot-zeldzaamheid { font-size: var(--text-xs); letter-spacing: -0.06em; }
+  .spot-zeldzaamheid { font-size: var(--text-xs); letter-spacing: var(--tracking-tighter); }
   .spot-zeldzaamheid-1 {
     color: var(--text-success);
   }
@@ -209,20 +209,20 @@
   .spot-note { margin: 0; }
   .spot-regios { margin-top: 0; }
   .spot-regio-tag {
-    min-height: 28px;
+    min-height: var(--space-7);
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: var(--breakpoint-md)) {
     .spot-content {
       gap: var(--space-3);
     }
     .spot-foto, .spot-foto-placeholder {
-      width: 88px;
-      height: 88px;
+      width: var(--space-22);
+      height: var(--space-22);
     }
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: var(--breakpoint-lg)) {
     .spot-card {
       border-radius: var(--radius-xl);
     }
@@ -231,8 +231,8 @@
     }
     .spot-foto,
     .spot-foto-placeholder {
-      width: 120px;
-      height: 120px;
+      width: var(--space-30);
+      height: var(--space-30);
       border-radius: var(--radius-lg);
     }
     .spot-regio-tag {

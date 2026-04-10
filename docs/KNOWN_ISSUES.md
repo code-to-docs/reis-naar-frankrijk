@@ -1,4 +1,5 @@
 # KNOWN_ISSUES.md
+> [!NOTE] LLM INSTRUCTION: Lees `AGENT_PROTOCOL.md`. Verplaats opgeloste bugs naar 'Resolved'. Wis de volledige 'Resolved' lijst bij een versie-ophoging (Major/Minor).
 
 Dit document bevat de actuele lijst met defecten, architecturale schuld en visuele afwijkingen gedetecteerd door de automatische UI Audit.
 
@@ -31,16 +32,10 @@ Dit document bevat de actuele lijst met defecten, architecturale schuld en visue
 - **Disabled states**: Ontbrekende `--color-disabled` tokens in `BudgetForm.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`, `OvernachtingenFormPanel.svelte`.
 - **Waarschuwingen**: Ontbrekende `--color-warning` in `WeerAlerts.svelte`.
 
-## ✅ Resolved Features & Debts
-
-### 1. GerechtenChecklist Monoliet (Refactored v1.1.2)
-*De monoliet van 780+ regels is opgesplitst in een modulaire architectuur (`src/lib/features/gerechten/`) met Svelte 5 Composables en Context.*
-
-### 2. Vitest Svelte 5 Lifecycle Issues (Resolved v1.1.1)
-*Configuratie van `vitest.config.ts` met `svelteTesting()` plugin loste de `lifecycle_function_unavailable` errors op.*
-
-### 3. Kalender Svelte 5 Hydration
-*Hydration issues in `OvernachtingenCalendarBoard` zijn opgelost door browser-only guards.*
+## ✅ Resolved Features & Debts (Current Version)
+* **GerechtenChecklist Monoliet (v1.1.2):** Opgesplitst in modulaire architectuur (`src/lib/features/gerechten/`) met Svelte 5 Composables.
+* **Vitest Svelte 5 Lifecycle Issues (v1.1.1):** Opgelost in `vitest.config.ts`.
+* **Kalender Hydration:** Opgelost door browser-only guards.
 
 ## Bekende Bugs
 *Momenteel geen kritieke functionele bugs bekend.*
