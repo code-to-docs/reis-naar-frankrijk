@@ -3,7 +3,7 @@
 ## current_status
 - **sprint**: build stabilization & hardening
 - **progress**: restored 100% build compatibility; budget module hardening finalized
-- **last_action**: fixed Firebase `undefined` field error in `OvernachtingenPlanner.svelte` when saving locations without GPS.
+- **last_action**: updated budget chart palette to secondary blue/green pastels to align with "Softness" design principle.
 
 ## accomplishments
 - **build_stabilization**: resolved major build failure in `BudgetEntriesList.svelte` (Svelte/Vite syntax errors) and systematic `@media` query violations.
