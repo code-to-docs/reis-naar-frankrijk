@@ -4,7 +4,7 @@ Dit document bevat de actuele lijst met defecten, architecturale schuld en visue
 
 ## Kritieke UI Afwijkingen (Audit Failures)
 > [!WARNING]
-> De volgende bestanden bevatten hardcoded CSS-waarden (pixels, hex, rgba) die niet voldoen aan het `UI_NORMPROFIEL`. Deze moeten systematisch worden vervangen door tokens uit `ui-tokens.css`.
+> De volgende bestanden bevatten hardcoded CSS-waarden (pixels, hex, rgba) of semantische fouten die niet voldoen aan het `UI_NORMPROFIEL`. Deze moeten systematisch worden vervangen door tokens uit `ui-tokens.css`.
 
 ### Dashboard & Navigatie
 - **Header.svelte**: Veel hardcoded `rgba` schaduwen en `px` breedtes (1100px, 640px).
@@ -24,9 +24,23 @@ Dit document bevat de actuele lijst met defecten, architecturale schuld en visue
 - **Snackbar.svelte**: Hardcoded schaduwen en margins.
 - **SpotVanDeDag.svelte**: Veel hardcoded layout-geometrie.
 
-## Architecturale Schuld
-1. **GerechtenChecklist Monoliet**: De component `src/lib/components/GerechtenChecklist.svelte` is momenteel de grootste monolithische component in de app. Moet gesplitst worden.
-2. **Vitest Svelte 5 Lifecycle Error**: Component tests voor Svelte 5 Runes falen momenteel in de Vitest environment door een `lifecycle_function_unavailable` error (SSR vs Client mismatch).
+## Semantische Audit Violations (v1.1.2)
+*Gedetecteerd door `semantic-color-audit.test.ts`*
+- **Destructieve acties**: Ontbrekende `--color-error` bij delete-acties in `GedeeldeLijst.svelte`, `PoiCard.svelte`, `OvernachtingenListsSection.svelte`.
+- **Bevestigingsacties**: Ontbrekende `--color-success` bij save-acties in `BudgetForm.svelte`, `Budget.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`.
+- **Disabled states**: Ontbrekende `--color-disabled` tokens in `BudgetForm.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`, `OvernachtingenFormPanel.svelte`.
+- **Waarschuwingen**: Ontbrekende `--color-warning` in `WeerAlerts.svelte`.
+
+## ✅ Resolved Features & Debts
+
+### 1. GerechtenChecklist Monoliet (Refactored v1.1.2)
+*De monoliet van 780+ regels is opgesplitst in een modulaire architectuur (`src/lib/features/gerechten/`) met Svelte 5 Composables en Context.*
+
+### 2. Vitest Svelte 5 Lifecycle Issues (Resolved v1.1.1)
+*Configuratie van `vitest.config.ts` met `svelteTesting()` plugin loste de `lifecycle_function_unavailable` errors op.*
+
+### 3. Kalender Svelte 5 Hydration
+*Hydration issues in `OvernachtingenCalendarBoard` zijn opgelost door browser-only guards.*
 
 ## Bekende Bugs
 *Momenteel geen kritieke functionele bugs bekend.*
