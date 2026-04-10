@@ -379,3 +379,20 @@ Voor featuregroei is het raadzaam om als volgende architectuurstap `tripId` en e
   - `npm run test` OK (12 tests)
   - `npm run check` OK (0 errors/warnings)
   - `npm run build` OK
+
+### 2026-04-10 14:17:19 +02:00
+
+- TTFB-optimalisatie voor mobiele Vercel-metrics:
+  - SSR uitgeschakeld op layout-niveau via `src/routes/+layout.js` (`export const ssr = false`).
+  - `injectSpeedInsights()` alleen nog in browser-context aangeroepen.
+  - `static/favicon.ico` toegevoegd om standaard `/favicon.ico` 404-verkeer te reduceren.
+- Doel van deze wijziging:
+  - server-render vertraging op routes zoals `/` en `/campings` verminderen;
+  - pieken in P99 TTFB dempen die passen bij server-side render + cold-start gedrag.
+- Observatie uit Vercel runtime logs (laatste 7 dagen):
+  - incidentele `500` op `/` en `/campings` gezien vóór deze wijziging;
+  - `404` op `/favicon.ico` gezien vóór deze wijziging.
+- Validatie na wijziging:
+  - `npm run test` OK (12 tests)
+  - `npm run check` OK (0 errors/warnings)
+  - `npm run build` OK
