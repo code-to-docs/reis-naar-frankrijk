@@ -93,7 +93,7 @@
           required
           onchange={(event) => onFieldChange("type", (event.currentTarget as HTMLSelectElement).value)}
         >
-          {#each typeOpties as optie}
+          {#each typeOpties as optie (optie.id)}
             <option value={optie.id}>{optie.label}</option>
           {/each}
         </select>
@@ -190,7 +190,7 @@
 
       <div class="ov-actions">
         <button class="btn-save" type="submit">{editItemId ? "Wijzigingen opslaan" : "Opslaan"}</button>
-        <button class="btn-danger" type="button" onclick={onCloseForms}>X</button>
+        <button class="btn-danger" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
       </div>
     </form>
   </div>
@@ -226,7 +226,7 @@
           required
           onchange={(event) => onFieldChange("type", (event.currentTarget as HTMLSelectElement).value)}
         >
-          {#each typeOpties as optie}
+          {#each typeOpties as optie (optie.id)}
             <option value={optie.id}>{optie.label}</option>
           {/each}
         </select>
@@ -299,7 +299,7 @@
 
       <div class="ov-actions">
         <button class="btn-save" type="submit">{editItemId ? "Wijzigingen opslaan" : "Naar shortlist"}</button>
-        <button class="btn-danger" type="button" onclick={onCloseForms}>X</button>
+        <button class="btn-danger" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
       </div>
     </form>
   </div>
@@ -316,12 +316,12 @@
   }
   .ov-form-card h3 {
     margin: 0;
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
   }
   .ov-form-head p {
     margin: 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--weight-medium);
   }
   .ov-form {
@@ -333,7 +333,7 @@
     gap: 5px;
   }
   .ov-form label span {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     text-transform: uppercase;
     font-weight: var(--weight-bold);
     letter-spacing: 0.03em;
@@ -343,7 +343,7 @@
   .ov-form select,
   .ov-form textarea {
     margin: 0;
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-family: inherit;
   }
   .ov-form input,
@@ -365,7 +365,7 @@
     flex-wrap: wrap;
     color: var(--blauw);
     font-weight: var(--weight-semibold);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
   }
   .ov-gps-btn {
     width: auto;
@@ -373,7 +373,7 @@
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
@@ -411,5 +411,6 @@
     border-color: var(--border-accent);
   }
 </style>
+
 
 

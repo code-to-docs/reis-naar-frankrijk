@@ -186,7 +186,7 @@
       <label class="poi-sort">
         <span class="poi-filter-label">Sorteer</span>
         <select bind:value={sortering} aria-label="Sorteer suggesties">
-          {#each sorteerOpties as optie}
+          {#each sorteerOpties as optie (optie.value)}
             <option value={optie.value}>{optie.label}</option>
           {/each}
         </select>
@@ -199,7 +199,7 @@
         <button type="button" class="poi-pill" class:active={categorie === "alle"} onclick={() => (categorie = "alle")}>
           Alles
         </button>
-        {#each poiCategorieen as item}
+        {#each poiCategorieen as item (item.id)}
           <button
             type="button"
             class="poi-pill"
@@ -218,7 +218,7 @@
         <button type="button" class="poi-pill" class:active={score === 0} onclick={() => (score = 0)}>
           Alles
         </button>
-        {#each scoreOpties as value}
+        {#each scoreOpties as value (value)}
           <button type="button" class="poi-pill" class:active={score === value} onclick={() => (score = value)}>
             {poiScoreMeta[value].korteLabel}
           </button>
@@ -242,7 +242,7 @@
 
   {#if loading}
     <section class="poi-grid" aria-label="POI suggesties laden">
-      {#each skeletonCards as card}
+      {#each skeletonCards as card (card)}
         <article class="poi-skeleton card" aria-hidden="true">
           <div class="poi-skeleton-line poi-skeleton-line--short"></div>
           <div class="poi-skeleton-line poi-skeleton-line--title"></div>
@@ -316,7 +316,7 @@
   }
 
   .poi-kicker {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--nav-text);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -331,7 +331,7 @@
   .poi-hero p {
     margin: 0;
     color: var(--tekst);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
   }
 
@@ -361,7 +361,7 @@
 
   .poi-summary-card small {
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
   }
 
@@ -373,7 +373,7 @@
 
   .poi-summary-label,
   .poi-filter-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--nav-text);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -451,7 +451,7 @@
     border-radius: var(--radius-full);
     min-height: var(--btn-height-compact);
     padding: 0 var(--space-3);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
   }
 
@@ -475,7 +475,7 @@
     gap: var(--space-2-5);
     margin: 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
   }
 
@@ -488,7 +488,7 @@
     background: color-mix(in srgb, var(--card-bg) 85%, var(--bg-accent-subtle));
     border: 1px solid color-mix(in srgb, var(--input-border) 78%, var(--border-accent));
     color: var(--blauw);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     font-weight: var(--ui-weight-bold);
   }
 
@@ -508,13 +508,13 @@
 
   .poi-empty h3 {
     margin: 0;
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
   }
 
   .poi-empty p {
     margin: 0;
     color: var(--nav-text);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-medium);
   }
 

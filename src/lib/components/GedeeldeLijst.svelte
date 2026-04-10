@@ -159,6 +159,7 @@
     <div class="checklist-item" class:gedaan={item.gedaan}>
       {#if afvinkbaar}
         <input type="checkbox" checked={item.gedaan}
+          aria-label={`Markeer ${item.naam} als ${item.gedaan ? "niet gedaan" : "gedaan"}`}
           onchange={() => toggle(item)} />
       {/if}
       <div class="gl-item-content">
@@ -173,7 +174,13 @@
         {/if}
         <small class="gl-meta">({item.door})</small>
       </div>
-      <button class="gl-delete btn-icon btn-ghost" onclick={() => verwijder(item.id)}>{E.PRULLENBAK}</button>
+      <button
+        class="gl-delete btn-icon btn-ghost"
+        aria-label={`Verwijder ${item.naam}`}
+        onclick={() => verwijder(item.id)}
+      >
+        {E.PRULLENBAK}
+      </button>
     </div>
   {/each}
 
@@ -193,7 +200,14 @@
         <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
         <div class="gl-form-actions">
           <button type="submit" class="btn-save gl-submit">Opslaan</button>
-          <button type="button" class="btn-danger btn-icon gl-cancel" onclick={() => toonForm = false}>{E.X}</button>
+          <button
+            type="button"
+            class="btn-danger btn-icon gl-cancel"
+            aria-label="Sluit formulier"
+            onclick={() => toonForm = false}
+          >
+            {E.X}
+          </button>
         </div>
       </form>
     </div>
@@ -209,29 +223,29 @@
   .gl-title {
     margin: 0 0 var(--space-3);
     color: var(--heading);
-    font-size: clamp(1.55rem, 4.2vw, var(--space-8));
+    font-size: clamp(1.55rem, 4.2vw, var(--text-2xl));
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
-  .gl-voortgang { color: var(--nav-text); margin-bottom: var(--space-1); font-size: var(--font-size-sm); }
+  .gl-voortgang { color: var(--nav-text); margin-bottom: var(--space-1); font-size: var(--text-sm); }
   .progress-fill { background: var(--groen); }
   .gl-item-content { flex: 1; min-width: 0; }
-  .gl-notitie { color: var(--nav-text); font-size: var(--font-size-sm); margin: 2px 0; }
+  .gl-notitie { color: var(--nav-text); font-size: var(--text-sm); margin: var(--space-1) 0; }
   .gl-maps-link {
     display: inline-flex; align-items: center; gap: var(--space-1-5);
-    color: var(--blauw); font-size: var(--font-size-xs); text-decoration: none;
+    color: var(--blauw); font-size: var(--text-xs); text-decoration: none;
     background: var(--hover-bg); padding: var(--space-1) var(--space-2-5); border-radius: var(--radius-full);
     margin-top: var(--space-1); border: 1px solid var(--border-subtle);
   }
   .gl-maps-link:active { opacity: 0.8; }
-  .gl-meta { color: var(--nav-text); display: block; margin-top: 2px; }
+  .gl-meta { color: var(--nav-text); display: block; margin-top: var(--space-1); }
   .gl-delete { font-size: var(--text-md); cursor: pointer; opacity: 0.7; }
   .gl-delete:active { opacity: 1; }
   .gl-leeg { text-align: center; color: var(--nav-text); margin: var(--space-8) 0; }
   .gl-form-actions { display: flex; gap: var(--space-2); }
   .gl-submit { flex: 1; font-weight: var(--weight-semibold); display: flex; align-items: center; justify-content: center; gap: var(--space-1-5); }
-  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: var(--space-12); }
-  .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--font-size-lg); font-weight: var(--ui-weight-semibold); }
+  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: var(--weight-bold); width: var(--space-12); }
+  .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--text-lg); font-weight: var(--ui-weight-semibold); }
 
   @media (min-width: 1100px) {
     .gl-title.desktop-hidden {

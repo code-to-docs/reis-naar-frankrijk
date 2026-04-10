@@ -205,7 +205,7 @@
       <div class="wl-filter-rij">
         <div class="wl-pills">
           <button class="wl-pill" class:active={filterRegio === "alle"} onclick={() => filterRegio = "alle"}>Alle</button>
-          {#each regioEntries as [key, val]}
+          {#each regioEntries as [key, val] (key)}
             <button class="wl-pill" class:active={filterRegio === key} onclick={() => filterRegio = key}>{val.emoji} {val.label}</button>
           {/each}
         </div>
@@ -213,7 +213,7 @@
       <div class="wl-filter-rij">
         <div class="wl-pills">
           <button class="wl-pill" class:active={filterCategorie === "alle"} onclick={() => filterCategorie = "alle"}>Alle</button>
-          {#each categorieEntries as [key, val]}
+          {#each categorieEntries as [key, val] (key)}
             <button class="wl-pill" class:active={filterCategorie === key} onclick={() => filterCategorie = key}>{val.emoji} {val.label}</button>
           {/each}
         </div>
@@ -287,7 +287,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-1-5);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
     line-height: 1;
     align-self: stretch;
@@ -305,7 +305,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     padding: 0 var(--space-1-5);
   }
   .wl-filters-card {
@@ -330,7 +330,7 @@
     padding: 0 var(--space-3);
     display: inline-flex;
     align-items: center;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     line-height: 1;
   }
@@ -346,11 +346,11 @@
     border-radius: var(--radius-md);
     background: var(--color-error-light);
     color: var(--text-error);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
   }
   .wl-resultaten {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     padding: 0 2px;
   }
@@ -385,14 +385,14 @@
     }
     .wl-zoek {
       min-height: var(--space-12);
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
       padding-inline: 14px;
     }
     .wl-filter-toggle {
       min-height: var(--space-12);
       min-width: 108px;
       padding-inline: var(--space-4);
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .wl-filters-card {
       padding: var(--ui-space-4);
@@ -403,10 +403,10 @@
     .wl-pill {
       min-height: 42px;
       padding-inline: 14px;
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .wl-resultaten {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .wl-lijst {
       gap: var(--space-3);
@@ -422,6 +422,7 @@
   :global(html.dark) .wl-leeg { background: var(--card-bg); color: var(--text-tertiary); }
   :global(html.dark) .wl-resultaten { color: var(--text-tertiary); }
 </style>
+
 
 
 

@@ -58,7 +58,7 @@
     <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
 
     <div class="ov-weekdays">
-      {#each weekdagen as wd}
+      {#each weekdagen as wd (wd)}
         <div>{wd}</div>
       {/each}
     </div>
@@ -87,7 +87,7 @@
             <div class="ov-day-number">{cel.dagNummer}</div>
             {#if cel.entries.length > 0}
               <div class="ov-day-events">
-                {#each cel.entries.slice(0, 2) as ent}
+                {#each cel.entries.slice(0, 2) as ent (`${ent.id}-${ent.startDatum || ""}`)}
                   <button
                     type="button"
                     class="ov-chip ov-chip-btn"
@@ -115,7 +115,7 @@
 
     {#if locatieLegenda.length > 0}
       <div class="ov-legend">
-        {#each locatieLegenda as l}
+        {#each locatieLegenda as l (l.key)}
           <div class="ov-legend-item">
             <span class="ov-legend-dot" style={`background:${l.kleur}`}></span>
             <span>{l.naam}</span>
@@ -141,7 +141,7 @@
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
@@ -161,12 +161,12 @@
   }
   .ov-calendar-teaser h3 {
     margin: 0;
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
   }
   .ov-calendar-teaser p {
     margin: var(--space-1) 0 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     max-width: 66ch;
   }
   .ov-calendar-head {
@@ -176,13 +176,13 @@
     margin-bottom: var(--space-2-5);
   }
   .ov-calendar-head strong {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     text-transform: capitalize;
     color: var(--heading);
   }
   .ov-calendar-hint {
     margin: -2px 0 var(--space-2-5);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--nav-text);
     font-weight: var(--weight-medium);
   }
@@ -190,7 +190,7 @@
     width: auto;
     min-height: var(--btn-height-compact);
     padding: 0 var(--space-2-5);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     border: 1px solid var(--input-border);
     background: var(--hover-bg);
@@ -210,7 +210,7 @@
   }
   .ov-weekdays div {
     text-align: center;
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     font-weight: var(--weight-bold);
     color: var(--nav-text);
   }
@@ -269,7 +269,7 @@
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blauw) 35%, transparent);
   }
   .ov-day-number {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-heavy);
     color: var(--heading);
   }
@@ -321,7 +321,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-1-5);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--tekst);
     font-weight: var(--weight-semibold);
   }
@@ -395,5 +395,6 @@
     border-color: var(--border-accent);
   }
 </style>
+
 
 

@@ -48,7 +48,7 @@
 
   <div class="poi-priority" aria-label={`Prioriteit: ${scoreInfo.label}`}>
     <div class="poi-priority-dots">
-      {#each scoreDots as dot}
+      {#each scoreDots as dot (dot)}
         <span class="poi-priority-dot" class:active={dot <= poi.score}></span>
       {/each}
     </div>
@@ -100,7 +100,7 @@
 
   .poi-name {
     margin: 0;
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
     font-weight: var(--ui-weight-heavy);
     line-height: var(--ui-line-tight);
     color: var(--heading);
@@ -108,7 +108,7 @@
 
   .poi-desc {
     margin: 0;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
     color: var(--tekst);
     line-height: var(--ui-line-body);
@@ -123,7 +123,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-3);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--nav-text);
     font-weight: var(--ui-weight-medium);
   }
@@ -159,7 +159,7 @@
   }
 
   .poi-priority-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     font-weight: var(--ui-weight-bold);
     color: color-mix(in srgb, var(--heading) 78%, var(--poi-accent));
     letter-spacing: 0.03em;
@@ -263,6 +263,7 @@
     color: var(--text-accent);
   }
 </style>
+
 
 
 

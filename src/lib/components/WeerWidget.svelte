@@ -136,7 +136,7 @@
     border-radius: var(--radius-lg);
     padding: var(--ui-space-4);
     margin-bottom: var(--space-3);
-    box-shadow: 0 var(--space-1) 14px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border-subtle);
   }
   .weer-titel-rij {
@@ -149,7 +149,7 @@
   }
   .weer-titel {
     font-weight: var(--ui-weight-heavy);
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
     color: var(--heading);
     letter-spacing: -0.02em;
     line-height: 1;

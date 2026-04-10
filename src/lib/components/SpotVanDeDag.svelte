@@ -40,6 +40,10 @@
       if (!nieuwste) {
         laatsteSpotting = null;
         dierInfo = null;
+        foto = "";
+        laatstFotoDierId = "";
+        imgError = false;
+        wikiController?.abort();
         return;
       }
       if (nieuwste) {
@@ -49,6 +53,8 @@
         if (currentDier) {
           if (laatstFotoDierId === currentDier.id && foto) return;
 
+          foto = "";
+          laatstFotoDierId = "";
           imgError = false;
           try {
             const cachedV3 = localStorage.getItem('wildlife_fotos_v3');
@@ -131,7 +137,7 @@
         {#if laatsteSpotting.locatie}
           <span class="spot-regio-tag ui-chip ui-chip--muted">{laatsteSpotting.locatie}</span>
         {/if}
-        {#each dierInfo.regios as regio}
+        {#each dierInfo.regios as regio (regio)}
           <span class="spot-regio-tag ui-chip ui-chip--muted">{getRegioMeta(regio).label}</span>
         {/each}
       </div>
@@ -148,23 +154,23 @@
     text-decoration: none;
     color: inherit;
     margin-bottom: var(--space-3);
-    box-shadow: 0 var(--space-1) 14px rgba(15, 23, 42, 0.08);
-    border: 1px solid rgba(22, 163, 74, 0.18);
+    box-shadow: var(--shadow-md);
+    border: 1px solid color-mix(in srgb, var(--color-success-base) 24%, var(--border-default));
   }
-  .spot-content { display: flex; gap: 14px; align-items: flex-start; }
+  .spot-content { display: flex; gap: var(--space-3); align-items: flex-start; }
   .spot-foto {
     width: 104px;
     height: 104px;
     border-radius: var(--radius-lg);
     object-fit: cover;
     flex-shrink: 0;
-    box-shadow: 0 2px var(--space-2) rgba(0,0,0,0.16);
+    box-shadow: var(--shadow-sm);
   }
   .spot-foto-placeholder {
     width: 104px;
     height: 104px;
     border-radius: var(--radius-lg);
-    background: rgba(255,255,255,0.6);
+    background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;

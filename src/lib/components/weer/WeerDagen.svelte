@@ -22,7 +22,7 @@
   <div class="weer-fout">{fout}</div>
 {:else if weer.length > 0}
   <div class="weer-dagen">
-    {#each weergegevenDagen as dag, i}
+    {#each weergegevenDagen as dag, i (dag.datum)}
       <div class="weer-dag" class:vandaag={i === 0}>
         <div class="weer-dag-naam">{i === 0 ? "Vandaag" : dag.dagNaam.charAt(0).toUpperCase() + dag.dagNaam.slice(1)}</div>
         <div class="weer-dag-datum">{dag.datumKort}</div>
@@ -59,7 +59,7 @@
     justify-content: center;
     padding: var(--space-5);
     color: var(--text-accent);
-    font-size: 0.92rem;
+    font-size: var(--ui-text-sm);
   }
   .weer-spinner {
     width: var(--space-5);
@@ -74,7 +74,7 @@
   .weer-fout {
     text-align: center;
     color: var(--text-error);
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     padding: 14px;
   }
 
@@ -94,11 +94,11 @@
   .weer-dag.vandaag {
     background: var(--bg-accent-subtle);
     border-color: var(--border-accent);
-    box-shadow: 0 2px var(--space-2) rgba(43, 121, 194, 0.16);
+    box-shadow: var(--shadow-sm);
   }
   .weer-dag-naam {
     font-weight: var(--weight-bold);
-    font-size: 0.82rem;
+    font-size: var(--ui-text-xs);
     color: var(--text-primary);
     margin-bottom: 1px;
     white-space: nowrap;
@@ -106,18 +106,18 @@
     text-overflow: ellipsis;
   }
   .weer-dag-datum {
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     margin-bottom: 7px;
     font-weight: var(--weight-medium);
   }
   .weer-emoji {
-    font-size: 2.2rem;
+    font-size: var(--text-3xl);
     line-height: 1;
     margin-bottom: var(--space-1-5);
   }
   .weer-beschrijving {
-    font-size: 0.88rem;
+    font-size: var(--text-sm);
     color: var(--text-primary);
     margin-bottom: var(--space-2);
     min-height: var(--ui-touch-compact);
@@ -135,12 +135,12 @@
   }
   .temp-max {
     font-weight: var(--ui-weight-heavy);
-    font-size: 2.05rem;
+    font-size: var(--text-3xl);
     color: var(--text-warning);
     line-height: 1;
   }
   .temp-min {
-    font-size: 1.22rem;
+    font-size: var(--text-lg);
     color: var(--text-secondary);
     font-weight: var(--weight-bold);
     align-self: flex-end;
@@ -152,7 +152,7 @@
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    font-size: 0.9rem;
+    font-size: var(--ui-text-sm);
     color: var(--text-primary);
     font-weight: var(--weight-medium);
   }
@@ -165,7 +165,7 @@
     flex-direction: column;
     gap: 3px;
     margin-top: var(--space-2);
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }

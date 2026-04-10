@@ -425,7 +425,7 @@
       <div class="gr-filter-block">
         <div class="gr-filter-title">Dieet</div>
         <div class="gr-pills">
-          {#each Object.entries(gerechtenDieetLabels) as [key, val]}
+          {#each Object.entries(gerechtenDieetLabels) as [key, val] (key)}
             <button class="gr-pill" class:active={filterDieet === key} onclick={() => (filterDieet = key)}>
               {val.label}
             </button>
@@ -436,7 +436,7 @@
       <div class="gr-filter-block">
         <div class="gr-filter-title">Smaak</div>
         <div class="gr-pills">
-          {#each Object.entries(gerechtenSmaakLabels) as [key, val]}
+          {#each Object.entries(gerechtenSmaakLabels) as [key, val] (key)}
             <button class="gr-pill" class:active={filterSmaak === key} onclick={() => (filterSmaak = key)}>
               {val.label}
             </button>
@@ -447,7 +447,7 @@
       <div class="gr-filter-block">
         <div class="gr-filter-title">Soort</div>
         <div class="gr-pills">
-          {#each Object.entries(gerechtenSoortLabels) as [key, val]}
+          {#each Object.entries(gerechtenSoortLabels) as [key, val] (key)}
             <button class="gr-pill" class:active={filterSoort === key} onclick={() => (filterSoort = key)}>
               {val.label}
             </button>
@@ -458,7 +458,7 @@
       <div class="gr-filter-block">
         <div class="gr-filter-title">Streek</div>
         <div class="gr-pills">
-          {#each Object.entries(gerechtenStreekLabels) as [key, val]}
+          {#each Object.entries(gerechtenStreekLabels) as [key, val] (key)}
             <button class="gr-pill" class:active={filterStreek === key} onclick={() => (filterStreek = key)}>
               {val.label}
             </button>
@@ -534,7 +534,7 @@
   }
 
   .gr-tip-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-accent);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -548,7 +548,7 @@
     border: 1px solid var(--border-accent);
     background: rgba(255, 255, 255, 0.7);
     color: var(--text-accent);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 var(--space-3);
   }
@@ -559,14 +559,14 @@
 
   .gr-tip-name {
     margin-top: var(--space-1-5);
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     font-weight: var(--ui-weight-heavy);
     color: var(--text-primary);
   }
 
   .gr-tip-sub {
     margin-top: 2px;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: var(--ui-line-compact);
   }
@@ -591,7 +591,7 @@
     background: rgba(255, 255, 255, 0.66);
     color: var(--text-accent);
     border: 1px dashed var(--border-accent);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     line-height: var(--leading-snug);
   }
 
@@ -620,7 +620,7 @@
     background: var(--card-bg);
     color: var(--tekst);
     position: relative;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
     line-height: 1;
     display: inline-flex;
@@ -644,7 +644,7 @@
     border-radius: var(--radius-full);
     background: var(--color-error-base);
     color: var(--text-inverse);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -663,7 +663,7 @@
   }
 
   .gr-filter-title {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -686,7 +686,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     line-height: 1;
     font-weight: var(--ui-weight-semibold);
   }
@@ -704,12 +704,12 @@
     border-radius: var(--radius-md);
     background: var(--color-error-light);
     color: var(--text-error);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
   }
 
   .gr-resultaten {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     padding: 0 2px;
   }
@@ -738,26 +738,26 @@
       padding: var(--ui-space-4);
     }
     .gr-tip-name {
-      font-size: var(--font-size-xl);
+      font-size: var(--text-xl);
     }
     .gr-tip-sub,
     .gr-resultaten {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .gr-zoek {
       min-height: var(--space-12);
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
       padding-inline: 14px;
     }
     .gr-filter-toggle {
       min-height: var(--space-12);
       min-width: 108px;
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .gr-pill {
       min-height: 42px;
       padding-inline: 14px;
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
   }
 
@@ -830,5 +830,6 @@
     color: var(--text-inverse);
   }
 </style>
+
 
 

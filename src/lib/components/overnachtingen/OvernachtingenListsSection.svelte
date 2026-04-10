@@ -45,7 +45,7 @@
             </div>
             <div class="ov-item-head-actions">
               <button class="ov-open-btn" onclick={() => onOpenItemEditor(o)}>Bewerk</button>
-              <button class="ov-delete" onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
+              <button class="ov-delete" aria-label={`Verwijder ${o.naam} uit shortlist`} onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
             </div>
           </div>
           <div class="ov-meta">
@@ -112,7 +112,7 @@
             </div>
             <div class="ov-item-head-actions">
               <button class="ov-open-btn" onclick={() => onOpenItemEditor(o)}>Bewerk</button>
-              <button class="ov-delete" onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
+              <button class="ov-delete" aria-label={`Verwijder ${o.naam}`} onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
             </div>
           </div>
           <div class="ov-item-body">
@@ -160,7 +160,7 @@
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
@@ -206,14 +206,14 @@
     gap: var(--space-1-5);
   }
   .ov-item-head strong {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     color: var(--heading);
     line-height: var(--leading-tight);
   }
   .ov-item-subline {
     margin: 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
   }
   .ov-item-body {
@@ -228,7 +228,7 @@
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
   }
   .ov-delete {
@@ -254,7 +254,7 @@
     gap: var(--space-1-5) var(--space-2-5);
   }
   .ov-meta span {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--tekst);
     background: var(--hover-bg);
     border: 1px solid var(--border-subtle);
@@ -262,12 +262,12 @@
     padding: 3px var(--space-2);
   }
   .ov-coords {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--blauw);
     font-weight: var(--weight-semibold);
   }
   .ov-address {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--tekst);
     font-weight: var(--weight-medium);
   }
@@ -277,14 +277,14 @@
     gap: var(--space-2);
   }
   .ov-links a {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--blauw);
     text-decoration: none;
     font-weight: var(--weight-bold);
   }
   .ov-note {
     margin: 0;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--tekst);
   }
   .ov-shortlist-actions {
@@ -363,6 +363,7 @@
     background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, var(--bg-surface-raised) 72%);
   }
 </style>
+
 
 
 

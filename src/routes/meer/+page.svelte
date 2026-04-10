@@ -34,14 +34,23 @@
   function handleToggleDark() {
     appState.toggleDarkMode();
   }
+
+  function handleUitloggen() {
+    try {
+      localStorage.removeItem("naam");
+    } catch {
+      // Ignore storage issues and continue with reload.
+    }
+    location.reload();
+  }
 </script>
 
 <div class="page-transition page-shell meer-menu">
-  {#each meerGroepen as groep}
+  {#each meerGroepen as groep (groep.label)}
     <div class="meer-groep">
       <div class="meer-groep-label">{groep.label}</div>
       <div class="meer-groep-items">
-        {#each groep.items as o}
+        {#each groep.items as o (o.id)}
           <a class="meer-item" href={"/meer/" + o.id}>
             <span class="meer-emoji">{o.emoji}</span>
             <span class="meer-label">{o.label}</span>
@@ -69,7 +78,7 @@
     </div>
   </div>
 
-  <button class="meer-uitloggen" onclick={() => { localStorage.removeItem("naam"); location.reload(); }}>
+  <button class="meer-uitloggen" onclick={handleUitloggen}>
     {E.DEUR} Uitloggen
   </button>
 
@@ -86,7 +95,7 @@
   .meer-menu { padding-top: var(--space-3); }
   .meer-groep { margin-bottom: var(--ui-space-4); }
   .meer-groep-label {
-    font-size: var(--font-size-xs); font-weight: var(--ui-weight-bold); color: var(--nav-text);
+    font-size: var(--text-xs); font-weight: var(--ui-weight-bold); color: var(--nav-text);
     text-transform: uppercase; letter-spacing: 0.04em; padding: 0 var(--space-1) var(--space-1-5) var(--space-1);
   }
   .meer-groep-items {
@@ -103,7 +112,7 @@
   .meer-item:last-child { border-bottom: none; }
   .meer-item:active { background: var(--hover-bg); }
   .meer-emoji { font-size: 1.4rem; flex-shrink: 0; }
-  .meer-label { flex: 1; font-size: var(--font-size-md); font-weight: var(--ui-weight-medium); color: var(--tekst); }
+  .meer-label { flex: 1; font-size: var(--text-base); font-weight: var(--ui-weight-medium); color: var(--tekst); }
   .meer-arrow { flex-shrink: 0; }
 
   .meer-uitloggen {
@@ -112,7 +121,7 @@
     border: 1px solid color-mix(in srgb, var(--rood) 30%, var(--input-border));
     border-radius: var(--radius-md);
     color: var(--rood);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-semibold);
     cursor: pointer;
     margin-top: var(--space-2);

@@ -199,7 +199,7 @@
             <div>{E.KALENDER} {formatFullDate(mijnCheck.datum)} - {formatTime(mijnCheck.datum)}</div>
           {/if}
           <div class="gr-stars">
-            {#each sterren as s}
+            {#each sterren as s (s)}
               <button
                 type="button"
                 class="gr-star"
@@ -215,7 +215,7 @@
       {/if}
 
       <div class="gr-streken">
-        {#each gerecht.streken as streek}
+        {#each gerecht.streken as streek (streek)}
           <span class="gr-streek-chip ui-chip ui-chip--info">{streek}</span>
         {/each}
       </div>
@@ -287,21 +287,21 @@
   }
 
   .gr-name {
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-bold);
     color: var(--text-primary);
     line-height: var(--ui-line-compact);
   }
 
   .gr-rating {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-warning);
     font-weight: var(--ui-weight-bold);
     flex-shrink: 0;
   }
 
   .gr-kort {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     margin-top: 2px;
     font-style: italic;
@@ -372,7 +372,7 @@
     right: var(--space-2-5);
     bottom: var(--space-2-5);
     margin: 0;
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-inverse);
     background: rgba(15, 23, 42, 0.7);
     padding: var(--space-1) var(--space-2);
@@ -397,14 +397,14 @@
   }
 
   .gr-beeld-ph-text {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
 
   .gr-omschrijving {
     margin: 0;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     line-height: var(--ui-line-body);
     color: var(--text-secondary);
   }
@@ -424,7 +424,7 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
@@ -439,7 +439,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1-5);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
   }
 
@@ -482,7 +482,7 @@
     border-radius: var(--radius-lg);
     border: none;
     padding: 0 var(--space-3);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-bold);
     background: var(--color-success-base);
     color: var(--text-inverse);
@@ -519,7 +519,7 @@
     padding: var(--space-2) var(--space-3);
     background: rgba(255, 255, 255, 0.14);
     color: var(--text-inverse);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
   }
@@ -535,10 +535,10 @@
       font-size: 1.9rem;
     }
     .gr-name {
-      font-size: var(--font-size-lg);
+      font-size: var(--text-lg);
     }
     .gr-kort {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .gr-detail {
       padding: 14px;
@@ -549,15 +549,15 @@
     }
     .gr-omschrijving,
     .gr-mijn-meta {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .gr-user-pill {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
       min-height: 42px;
     }
     .gr-check-btn {
       min-height: var(--space-12);
-      font-size: var(--font-size-lg);
+      font-size: var(--text-lg);
     }
   }
 
@@ -637,5 +637,6 @@
     color: var(--text-secondary);
   }
 </style>
+
 
 

@@ -835,13 +835,13 @@
   }
   .ov-top h2 {
     margin: 0;
-    font-size: var(--font-size-2xl);
+    font-size: var(--text-2xl);
     letter-spacing: -0.02em;
   }
   .ov-top p {
     margin: 2px 0 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--weight-medium);
   }
   .ov-add {
@@ -861,7 +861,7 @@
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
@@ -886,7 +886,7 @@
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
     color: var(--text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     transition: all 0.15s ease;
   }
@@ -903,7 +903,7 @@
   .ov-stat span {
     display: block;
     color: var(--nav-text);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
   }
   .ov-stat strong {
     font-size: clamp(1.3rem, 3vw, 1.55rem);
@@ -970,5 +970,6 @@
     color: var(--text-inverse);
   }
 </style>
+
 
 

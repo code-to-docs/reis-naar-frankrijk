@@ -68,7 +68,7 @@
     color: var(--blauw);
     border: 1px solid color-mix(in srgb, var(--input-border) 82%, var(--border-default));
     border-radius: var(--btn-radius);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     cursor: pointer;
     text-decoration: none;

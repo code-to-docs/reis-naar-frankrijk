@@ -176,7 +176,7 @@
           <span class="wl-ster" style="color:{getZeldzaamheidMeta(dier.zeldzaamheid).kleur}">{getZeldzaamheidMeta(dier.zeldzaamheid).emoji}</span>
       </div>
       <div class="wl-tags">
-        {#each dier.regios as regio}
+        {#each dier.regios as regio (regio)}
           <span class="wl-tag ui-chip ui-chip--muted">
             <span aria-hidden="true">{getRegioMeta(regio).emoji}</span>
             <span>{getRegioMeta(regio).label}</span>
@@ -363,11 +363,11 @@
   .wl-info { flex: 1; min-width: 0; }
   .wl-naam-rij { display: flex; align-items: center; gap: var(--space-1-5); }
   .wl-naam {
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-bold);
     color: var(--text-primary);
   }
-  .wl-ster { font-size: var(--font-size-xs); letter-spacing: -1px; }
+  .wl-ster { font-size: var(--text-xs); letter-spacing: -1px; }
   .wl-tags { display: flex; flex-wrap: wrap; gap: var(--space-1-5); margin-top: var(--space-1-5); }
   .wl-tag { min-height: 26px; }
   .wl-chevron { flex-shrink: 0; transition: transform var(--duration-normal) ease; }
@@ -406,7 +406,7 @@
     right: var(--space-2-5);
     bottom: var(--space-2-5);
     margin: 0;
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-inverse);
     background: rgba(15, 23, 42, 0.7);
     padding: var(--space-1) var(--space-2);
@@ -445,7 +445,7 @@
     padding: var(--space-2) var(--space-3);
     background: rgba(255, 255, 255, 0.14);
     color: var(--text-inverse);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
   }
@@ -459,7 +459,7 @@
     border-radius: var(--radius-md);
   }
   .wl-name-row {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     display: flex;
     line-height: var(--ui-line-compact);
@@ -467,7 +467,7 @@
   .wl-name-row strong { width: var(--space-10); color: var(--text-primary); }
   .wl-section { display: flex; flex-direction: column; gap: var(--space-1-5); }
   .wl-section strong {
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     color: var(--text-primary);
   }
   .wl-insights {
@@ -483,7 +483,7 @@
     background: linear-gradient(135deg, rgba(219, 234, 254, 0.45), rgba(255, 255, 255, 0.92));
   }
   .wl-fact-card strong {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--heading);
   }
   .wl-metrics-grid {
@@ -503,20 +503,20 @@
     grid-column: 1 / -1;
   }
   .wl-metric-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--nav-text);
     font-weight: var(--ui-weight-bold);
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
   .wl-metric-value {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-primary);
     font-weight: var(--ui-weight-semibold);
     line-height: var(--ui-line-compact);
   }
   .wl-beschrijving {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     line-height: var(--ui-line-body);
     color: var(--text-secondary);
     margin: 0;
@@ -524,12 +524,12 @@
   .wl-spotting { background: var(--color-success-light); padding: var(--space-3); border-radius: var(--radius-md); margin-bottom: var(--space-3); }
   .wl-spotting-head {
     font-weight: var(--ui-weight-semibold);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     margin-bottom: var(--space-1);
     color: var(--text-success);
   }
   .wl-spotting-row {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     padding: 2px 0;
     line-height: var(--ui-line-compact);
@@ -540,7 +540,7 @@
     padding: var(--space-2-5) var(--space-3);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     outline: none;
     transition: border-color var(--duration-normal);
     box-sizing: border-box;
@@ -571,7 +571,7 @@
     gap: var(--space-2);
     border: none;
     border-radius: var(--radius-lg);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
   }
@@ -582,7 +582,7 @@
     background: none;
     border: 1px solid var(--border-default);
     border-radius: var(--btn-radius);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     cursor: pointer;
     margin-bottom: var(--space-3);
@@ -596,7 +596,7 @@
     padding: 0 14px;
     border-radius: var(--radius-full);
     border: 1px solid var(--input-border);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     text-decoration: none;
     font-weight: var(--ui-weight-semibold);
     display: inline-flex;
@@ -621,10 +621,10 @@
       border-radius: var(--radius-lg);
     }
     .wl-naam {
-      font-size: var(--font-size-lg);
+      font-size: var(--text-lg);
     }
     .wl-ster {
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
     }
     .wl-detail {
       padding: 0 var(--space-4) var(--space-4) var(--space-4);
@@ -659,13 +659,13 @@
       height: 360px;
     }
     .wl-beschrijving {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .wl-metric-value {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .wl-spotting-row {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
   }
   
@@ -694,6 +694,7 @@
   :global(html.dark) .wl-link.maps-google { background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface)); color: var(--color-success-light); }
   :global(html.dark) .wl-link.maps-osm { background: var(--bg-surface-raised); color: var(--text-secondary); }
 </style>
+
 
 
 

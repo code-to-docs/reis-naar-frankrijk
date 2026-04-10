@@ -47,9 +47,9 @@
   </div>
 
   <div class="nav-links">
-    {#each paginas as p}
+    {#each paginas as p (p.id)}
       {@const active = isActive(p.id)}
-      <a href={p.id} class="nav-item" class:active>
+      <a href={p.id} class="nav-item" class:active aria-current={active ? "page" : undefined}>
         <span class="nav-emoji">{p.emoji}</span>
         <span class="nav-label">{p.label}</span>
         {#if active}
@@ -84,12 +84,12 @@
     justify-content: center;
     gap: var(--space-2);
     padding: 7px var(--space-4);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     font-weight: var(--weight-medium);
     z-index: 99;
     max-width: var(--app-max-width);
     margin: 0 auto;
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp var(--duration-slow) ease-out;
   }
   .offline-dot {
     width: var(--space-2); height: var(--space-2);
@@ -147,7 +147,7 @@
   .nav-item.active .nav-emoji { transform: scale(1.08); }
 
   .nav-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     font-weight: var(--weight-semibold);
     color: var(--nav-text);
     transition: color var(--duration-normal) ease;
@@ -219,7 +219,7 @@
       justify-content: center;
       display: flex;
       text-transform: uppercase;
-      border: 2px solid rgba(255, 255, 255, 0.65);
+      border: 2px solid color-mix(in srgb, var(--bg-surface) 65%, transparent);
     }
 
     .profile-meta {
@@ -239,7 +239,7 @@
     }
 
     .profile-meta span {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
       color: var(--nav-text);
       font-weight: var(--weight-medium);
     }
@@ -273,7 +273,7 @@
     }
 
     .nav-label {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
       line-height: 1.1;
     }
 
@@ -291,5 +291,6 @@
     }
   }
 </style>
+
 
 

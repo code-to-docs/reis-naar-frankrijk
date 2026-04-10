@@ -56,7 +56,7 @@
   }
   .header p {
     color: rgba(255, 255, 255, 0.85);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-medium);
     margin: 0;
   }
@@ -69,7 +69,7 @@
       padding: 18px var(--space-4) var(--space-4);
     }
     .header h1 { font-size: clamp(1.95rem, 8vw, 2.2rem); }
-    .header p { font-size: var(--font-size-md); }
+    .header p { font-size: var(--text-base); }
   }
 
   @media (min-width: 1100px) {
@@ -92,7 +92,7 @@
     }
 
     .header p {
-      font-size: var(--font-size-lg);
+      font-size: var(--text-lg);
       color: rgba(255, 255, 255, 0.9);
     }
   }
@@ -103,3 +103,4 @@
     box-shadow: 0 var(--space-1) var(--space-3) rgba(0,0,0,0.35);
   }
 </style>
+

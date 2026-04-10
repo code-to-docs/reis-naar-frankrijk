@@ -44,7 +44,7 @@
         </div>
         <div class="entry-right">
           <strong class="entry-bedrag">{formatEuro(u.bedrag)}</strong>
-          <button class="entry-delete" onclick={() => onDelete(u.id)}>{E.PRULLENBAK}</button>
+          <button class="entry-delete" aria-label={`Verwijder ${u.omschrijving}`} onclick={() => onDelete(u.id)}>{E.PRULLENBAK}</button>
         </div>
       </div>
     {/each}
@@ -83,7 +83,7 @@
   }
   .dag-label {
     font-weight: var(--weight-bold);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-accent);
   }
   .dag-subtotaal {
@@ -96,12 +96,12 @@
     margin-top: var(--space-1);
     padding: var(--space-2-5) calc(var(--space-3) + var(--entry-actions-offset)) 2px var(--space-3);
     color: var(--text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
   }
   .dag-subtotaal strong {
     color: var(--heading);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-bold);
   }
   .entry-item {
@@ -125,7 +125,7 @@
   }
   .entry-info strong {
     display: block;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
@@ -133,7 +133,7 @@
   }
   .entry-info small {
     color: var(--text-secondary);
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
   }
   .entry-right {
     display: inline-flex;
@@ -142,7 +142,7 @@
     justify-self: end;
   }
   .entry-bedrag {
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     color: var(--text-primary);
     white-space: nowrap;
     flex-shrink: 0;
@@ -172,7 +172,7 @@
   }
   .empty-state p {
     margin-top: var(--space-2);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
   }
 
   @media (max-width: 760px) {

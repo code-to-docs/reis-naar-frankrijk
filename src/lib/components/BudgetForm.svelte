@@ -96,7 +96,7 @@
       <label class="field-group">
         <span class="field-label">Categorie</span>
         <select class="field-select" bind:value={categorie}>
-          {#each cats as c}
+          {#each cats as c (c.id)}
             <option value={c.id}>{c.emoji} {c.label}</option>
           {/each}
         </select>
@@ -157,7 +157,7 @@
   .fab-label {
     display: none;
     line-height: 1;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--weight-bold);
   }
 
@@ -203,7 +203,7 @@
     gap: 3px;
   }
   .form-header h3 {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     font-weight: var(--ui-weight-heavy);
     line-height: 1.1;
     letter-spacing: -0.01em;
@@ -211,7 +211,7 @@
     margin: 0;
   }
   .form-header p {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--nav-text);
     font-weight: var(--weight-medium);
     margin: 0;
@@ -221,7 +221,7 @@
     gap: var(--space-1-5);
   }
   .field-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     font-weight: var(--ui-weight-bold);
@@ -234,7 +234,7 @@
     border: 1.5px solid var(--input-border);
     min-height: 46px;
     padding: var(--space-2-5) var(--space-3);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     line-height: var(--ui-line-compact);
     font-weight: var(--weight-medium);
     color: var(--tekst);
@@ -296,15 +296,15 @@
       font-size: var(--text-lg);
     }
     .form-header p {
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
     }
     .field-label {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
     }
     .field-input,
     .field-select {
       min-height: var(--space-12);
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
   }
 
@@ -320,5 +320,6 @@
   :global(html.dark) .field-input::placeholder { color: var(--text-secondary); }
   :global(html.dark) .action-cancel { background: var(--color-error-base); }
 </style>
+
 
 

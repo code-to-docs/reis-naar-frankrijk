@@ -121,7 +121,7 @@
     max-width: 100%;
   }
   .quick-btn small {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--nav-text);
     line-height: var(--ui-line-compact);
     font-weight: var(--ui-weight-medium);
@@ -133,10 +133,10 @@
       padding: var(--ui-space-3);
     }
     .quick-btn span {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .quick-btn small {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
     }
   }
 
@@ -153,10 +153,10 @@
       padding: var(--ui-space-4);
     }
     .quick-btn span {
-      font-size: var(--font-size-lg);
+      font-size: var(--text-lg);
     }
     .quick-btn small {
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
     }
   }
 

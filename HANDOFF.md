@@ -508,6 +508,27 @@ Stap 5:
 
 ## 13) Onderhoudslog
 
+### 2026-04-10 19:12:55 +02:00
+
+- Volledige audit- en stabilisatieronde uitgevoerd over `src/` met focus op regressierisico, tokenconsistentie en toegankelijkheid.
+- Doorgevoerde code quality fixes:
+  - alle resterende unkeyed `{#each}`-blokken keyed gemaakt (o.a. `routes/poi`, `routes/meer`, `BudgetForm`, `GerechtenChecklist`, `WildlifeChecklist`, `OvernachtingenFormPanel`, `PoiFormModal`, `PoiCard`);
+  - extra runtime-guards toegevoegd voor storage-fouten (`routes/meer/+page.svelte` uitloggen, `routes/+layout.svelte` en `stores.svelte.js` al eerder afgevangen);
+  - extra foutafhandeling toegevoegd in `src/lib/components/poi/PoiFormModal.svelte` (`handleSubmit` catch + snackbar fallback);
+  - a11y verbeterd met extra `aria-label`s (o.a. delete/close-acties in budget en overnachtingen) en `Snackbar` verbeterd met `aria-live`.
+- Tokenmigratie verder aangescherpt:
+  - resterende `var(--font-size-*)` referenties in `src/app.css` en `.svelte` componenten vervangen door `var(--text-*)`.
+- Validatie na deze ronde:
+  - `npm run check` OK (0 errors / 0 warnings)
+  - `npm run test` OK (12 tests)
+  - `npm run build` OK
+- Audit-snapshot na fixronde:
+  - `src/` bevat 34 `.svelte` componentbestanden;
+  - 12 componenten >300 regels (blijvend onderhoudsrisico);
+  - resterende hardcoded kleurregels (`hex`/`rgba`) in scope (`*.svelte` + `app.css`): 61;
+  - resterende hardcoded `px/rem` regels in scope (`*.svelte` + `app.css`): 438;
+  - resterende unkeyed `{#each}`: 0.
+
 ### 2026-04-10 15:06:19 +02:00
 
 - Complete tokenmigratie uitgevoerd over alle `.svelte` style-blokken in `src/` op basis van het actuele UI tokenprofiel:
@@ -628,6 +649,11 @@ Stap 5:
 ---
 
 ## 14) Auditbevindingen (2026-04-10)
+
+Update 19:12:55:
+- De eerder gemelde unkeyed `{#each}` issues zijn in deze ronde opgelost (nu 0 resterend).
+- A11y-hygiëne op icon-only acties is verbeterd met extra `aria-label`s.
+- Grootste openstaande risico's blijven componentgrootte en resterende hardcoded px/rgba-regels.
 
 ### Kritiek / Hoog
 

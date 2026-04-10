@@ -39,19 +39,19 @@
     line-height: var(--ui-line-tight);
   }
   .wl-stats-van {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     color: var(--text-tertiary);
     font-weight: var(--ui-weight-medium);
   }
   .wl-stats-rechts { text-align: right; }
   .wl-stats-perc {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     font-weight: var(--ui-weight-bold);
     color: var(--color-success-base);
     line-height: var(--ui-line-tight);
   }
   .wl-stats-label {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -71,10 +71,11 @@
       font-size: clamp(2.45rem, 4.3vw, 3.2rem);
     }
     .wl-stats-perc {
-      font-size: var(--font-size-xl);
+      font-size: var(--text-xl);
     }
   }
   
   :global(html.dark) .wl-stats-card { background: var(--card-bg); }
   :global(html.dark) .wl-stats-groot { color: var(--text-primary); }
 </style>
+

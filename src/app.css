@@ -97,9 +97,9 @@ h1, h2, h3 {
   letter-spacing: -0.02em;
   line-height: var(--leading-tight);
 }
-h1 { font-size: var(--font-size-2xl); }
-h2 { font-size: var(--font-size-xl); }
-h3 { font-size: var(--font-size-lg); }
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
 
 .card {
   background: var(--card-bg);
@@ -186,7 +186,7 @@ button:active { transform: scale(0.95); }
   min-height: var(--btn-height-compact);
   border-radius: 999px;
   padding-inline: 14px;
-  font-size: var(--font-size-sm);
+  font-size: var(--text-sm);
 }
 .btn-save:disabled {
   opacity: 0.6;
@@ -200,7 +200,7 @@ textarea {
   width: 100%; padding: 12px;
   border: 1.5px solid var(--input-border);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-md);
+  font-size: var(--text-base);
   margin-bottom: 8px;
   background: var(--input-bg);
   color: var(--tekst);
@@ -611,7 +611,7 @@ html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 
 }
 .dark-toggle-item:last-child { border-bottom: none; }
 .dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
-.dark-toggle-label { flex: 1; font-size: var(--font-size-md); font-weight: var(--ui-weight-medium); color: var(--tekst); }
+.dark-toggle-label { flex: 1; font-size: var(--text-base); font-weight: var(--ui-weight-medium); color: var(--tekst); }
 
 .toggle-track {
   width: 48px; height: 28px;
@@ -640,5 +640,6 @@ html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 
 }
 
 /* ========== EINDE DARK MODE ========== */
+
 
 

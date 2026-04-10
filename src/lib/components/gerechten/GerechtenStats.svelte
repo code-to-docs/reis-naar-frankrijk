@@ -55,19 +55,19 @@
     margin-bottom: var(--space-2-5);
   }
   .gr-title {
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
     font-weight: var(--ui-weight-heavy);
     color: var(--bg-accent-hover);
     line-height: var(--ui-line-tight);
   }
   .gr-sub {
     margin-top: 2px;
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: var(--ui-line-compact);
   }
   .gr-mijn-perc {
-    font-size: var(--font-size-xl);
+    font-size: var(--text-xl);
     font-weight: var(--ui-weight-heavy);
     color: var(--color-success-base);
     line-height: var(--ui-line-tight);
@@ -84,12 +84,12 @@
     gap: var(--space-2);
   }
   .gr-name {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
   .gr-val {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
@@ -117,7 +117,7 @@
       font-size: clamp(1.55rem, 2.2vw, 1.85rem);
     }
     .gr-sub {
-      font-size: var(--font-size-md);
+      font-size: var(--text-base);
     }
     .gr-mijn-perc {
       font-size: clamp(1.6rem, 2.2vw, var(--space-8));
@@ -130,6 +130,7 @@
   :global(html.dark) .gr-name { color: var(--text-secondary); }
   :global(html.dark) .gr-bar { background: var(--bg-interactive-active); }
 </style>
+
 
 
 

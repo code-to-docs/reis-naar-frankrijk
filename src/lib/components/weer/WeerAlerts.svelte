@@ -24,15 +24,10 @@
     return "ui-chip--success";
   }
 
-  function actieveOfficieleAlerts(): Alert[] {
-    return (alerts?.officialAlerts ?? []).filter((alert) => alert.active);
-  }
-
-  function rustigeRegios(): string[] {
-    return (alerts?.officialAlerts ?? [])
-      .filter((alert) => !alert.active)
-      .map((alert) => alert.regionName);
-  }
+  let actieveAlerts = $derived.by(() => (alerts?.officialAlerts ?? []).filter((alert) => alert.active));
+  let rustigeRegioNamen = $derived.by(() =>
+    (alerts?.officialAlerts ?? []).filter((alert) => !alert.active).map((alert) => alert.regionName)
+  );
 
   function formatAlertMoment(isoDate: string | null | undefined) {
     if (!isoDate) return "";
@@ -59,8 +54,8 @@
 {:else if alerts}
   <div class="alerts-panel">
     <div class="alerts-grid">
-      {#if actieveOfficieleAlerts().length > 0}
-        {#each actieveOfficieleAlerts() as alert}
+      {#if actieveAlerts.length > 0}
+        {#each actieveAlerts as alert (alert.url)}
           <a class="alert-card tone-{alertTone(alert.level)}" href={alert.url} target="_blank" rel="noreferrer">
             <div class="alert-card-top">
               <span class="alert-source">{alert.sourceLabel}</span>
@@ -88,8 +83,8 @@
       {/if}
     </div>
 
-    {#if actieveOfficieleAlerts().length > 0 && rustigeRegios().length > 0}
-      <div class="alerts-footnote">Rustig volgens M&#233;t&#233;o-France: {rustigeRegios().join(", ")}.</div>
+    {#if actieveAlerts.length > 0 && rustigeRegioNamen.length > 0}
+      <div class="alerts-footnote">Rustig volgens M&#233;t&#233;o-France: {rustigeRegioNamen.join(", ")}.</div>
     {/if}
   </div>
 {:else if alertsFout}
@@ -110,10 +105,10 @@
     text-decoration: none;
     color: inherit;
     border-radius: var(--radius-xl);
-    padding: var(--space-3) var(--space-3) 11px;
+    padding: var(--space-3);
     border: 1px solid var(--border-default);
     background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-sunken) 100%);
-    box-shadow: 0 var(--space-1-5) 18px rgba(15, 23, 42, 0.06);
+    box-shadow: var(--shadow-md);
   }
   .alert-card-top {
     display: flex;
@@ -123,7 +118,7 @@
     margin-bottom: var(--space-2);
   }
   .alert-source {
-    font-size: 0.74rem;
+    font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
@@ -133,21 +128,21 @@
     min-height: 28px;
   }
   .alert-region {
-    font-size: 1.02rem;
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-heavy);
     color: var(--text-primary);
     margin-bottom: var(--space-1);
     letter-spacing: -0.01em;
   }
   .alert-summary {
-    font-size: 0.9rem;
+    font-size: var(--ui-text-sm);
     line-height: var(--leading-snug);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }
   .alert-meta {
     margin-top: 7px;
-    font-size: 0.77rem;
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     line-height: var(--leading-snug);
   }
@@ -169,7 +164,7 @@
   }
   .alerts-footnote {
     margin-top: var(--space-2);
-    font-size: 0.79rem;
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }

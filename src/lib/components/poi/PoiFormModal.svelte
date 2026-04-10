@@ -73,6 +73,9 @@
         door: poi?.door || currentUser,
         bezocht
       });
+    } catch (saveError) {
+      console.error(saveError);
+      toonSnackbar("Opslaan mislukt", "error", E.KRUIS);
     } finally {
       saving = false;
     }
@@ -100,7 +103,7 @@
       <label class="poi-field">
         <span>Categorie</span>
         <select bind:value={categorie}>
-          {#each poiCategorieen as optie}
+          {#each poiCategorieen as optie (optie.id)}
             <option value={optie.id}>{optie.emoji} {optie.label}</option>
           {/each}
         </select>
@@ -124,7 +127,7 @@
       <fieldset class="poi-score-group poi-field--wide">
         <legend>Prioriteit</legend>
         <div class="poi-score-options">
-          {#each scoreOpties as value}
+          {#each scoreOpties as value (value)}
             <button
               type="button"
               class="poi-score-option"
@@ -132,7 +135,7 @@
               onclick={() => (score = value)}
             >
               <div class="poi-score-dots" aria-hidden="true">
-                {#each scoreOpties as dot}
+                {#each scoreOpties as dot (dot)}
                   <span class:active={dot <= value}></span>
                 {/each}
               </div>
@@ -190,7 +193,7 @@
   }
 
   .poi-modal-kicker {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--nav-text);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -199,7 +202,7 @@
 
   .poi-modal-title {
     margin: var(--space-1) 0 0;
-    font-size: var(--font-size-2xl);
+    font-size: var(--text-2xl);
     color: var(--heading);
     letter-spacing: -0.02em;
   }
@@ -207,7 +210,7 @@
   .poi-modal-sub {
     margin: var(--space-1) 0 0;
     color: var(--nav-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     font-weight: var(--ui-weight-medium);
   }
 
@@ -227,7 +230,7 @@
 
   .poi-field span,
   .poi-score-group legend {
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     color: var(--nav-text);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
@@ -273,12 +276,12 @@
   }
 
   .poi-score-option strong {
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     color: var(--heading);
   }
 
   .poi-score-option small {
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--nav-text);
     line-height: var(--ui-line-compact);
   }
@@ -309,7 +312,7 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
     background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-surface-sunken));
-    font-size: var(--font-size-sm);
+    font-size: var(--text-sm);
     color: var(--tekst);
     font-weight: var(--ui-weight-medium);
   }
@@ -379,3 +382,4 @@
     color: var(--text-primary);
   }
 </style>
+

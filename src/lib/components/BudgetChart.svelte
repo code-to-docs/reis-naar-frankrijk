@@ -100,7 +100,7 @@
 
 {#if legendaItems.length > 0}
   <div class="chart-legenda">
-    {#each legendaItems as item}
+    {#each legendaItems as item (item.label)}
       <div class="legenda-item">
         <span class="legenda-kleur" style="background:{item.kleur}"></span>
         <span class="legenda-label">{item.label}</span>
@@ -143,7 +143,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
   }
   .legenda-kleur {
     width: 7px;

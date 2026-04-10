@@ -190,7 +190,14 @@
             class="budget-edit-input"
           />
           <button type="submit" class="btn-success budget-edit-save">OK</button>
-          <button type="button" class="btn-danger btn-icon budget-edit-cancel" onclick={() => toonBudgetEdit = false}>X</button>
+          <button
+            type="button"
+            class="btn-danger btn-icon budget-edit-cancel"
+            aria-label="Annuleer budget bewerken"
+            onclick={() => toonBudgetEdit = false}
+          >
+            X
+          </button>
         </div>
       </form>
     </div>
@@ -213,7 +220,7 @@
       {#if actieveCats.length > 1}
         <div class="filter-pills cat-pills">
           <button class="pill cat-pill" class:active={filterCat === "alle"} onclick={() => filterCat = "alle"}>Alle</button>
-          {#each actieveCats as ac}
+          {#each actieveCats as ac (ac.id)}
             <button class="pill cat-pill" class:active={filterCat === ac.id} onclick={() => filterCat = ac.id} title={ac.label}>{ac.emoji}</button>
           {/each}
         </div>
@@ -293,7 +300,7 @@
   .edit-budget-btn {
     background: color-mix(in srgb, var(--card-bg) 82%, var(--bg-accent-subtle));
     border: 1px solid color-mix(in srgb, var(--input-border) 80%, var(--border-default));
-    font-size: var(--font-size-xs);
+    font-size: var(--text-xs);
     cursor: pointer;
     min-height: var(--btn-height-compact);
     min-width: var(--btn-height-compact);
@@ -441,5 +448,6 @@
   }
 
 </style>
+
 
 

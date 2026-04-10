@@ -37,8 +37,8 @@
 </script>
 
 {#if zichtbaar && snack}
-  <button class="snackbar-overlay" onclick={dismiss}>
-    <div class="snackbar snackbar-{snack.type || 'success'}" class:verdwijnt>
+  <button class="snackbar-overlay" onclick={dismiss} aria-label="Sluit melding">
+    <div class="snackbar snackbar-{snack.type || 'success'}" class:verdwijnt role="status" aria-live="polite">
       {#if snack.emoji}
         <span class="snackbar-emoji">{snack.emoji}</span>
       {/if}

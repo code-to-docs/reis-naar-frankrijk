@@ -12,14 +12,22 @@
   const E_VLAG = "\u{1F1EB}\u{1F1F7}";
 
   if (typeof localStorage !== "undefined") {
-    const opgeslagen = localStorage.getItem("naam") || "";
-    naam = opgeslagen;
+    try {
+      const opgeslagen = localStorage.getItem("naam") || "";
+      naam = opgeslagen;
+    } catch {
+      naam = "";
+    }
   }
 
   /** @param {string} n */
   function kiesNaam(n) {
     naam = n;
-    localStorage.setItem("naam", n);
+    try {
+      localStorage.setItem("naam", n);
+    } catch {
+      // Ignore storage errors and continue with in-memory state.
+    }
     appState.init(n);
   }
 
@@ -81,7 +89,7 @@
 
   .kies-scherm p {
     color: var(--nav-text);
-    font-size: var(--font-size-md);
+    font-size: var(--text-base);
     font-weight: var(--ui-weight-semibold);
   }
 
@@ -92,7 +100,7 @@
   }
 
   .kies-knop {
-    font-size: var(--font-size-lg);
+    font-size: var(--text-lg);
     min-width: 136px;
   }
 
