@@ -508,6 +508,20 @@ Stap 5:
 
 ## 13) Onderhoudslog
 
+### 2026-04-10 14:39:42 +02:00
+
+- Nieuwe UI-token leidraad geactiveerd:
+  - `src/app.css` importeert nu expliciet eerst `src/lib/styles/ui-tokens.css` en daarna `ui-norm-profile.css`.
+  - Globale basis in `app.css` aangepast naar token-driven defaults (`--font-sans`, `--bg-app`, `--text-primary`, `--leading-normal`) met compatibiliteitsaliasen voor legacy variabelen.
+  - Handmatige dark-mode class (`html.dark`) nu afgestemd op semantische tokenwaarden.
+- Eerste componentmigratie uitgevoerd (stapsgewijs, conform UX-uniformiteit):
+  - `src/lib/components/Budget.svelte` hardcoded kleuren/spacings/radii vervangen door token-variabelen (`--bg-surface`, `--space-*`, `--radius-*`, `--text-*`, `--shadow-*`).
+- Tijdelijke token-validatie toegevoegd:
+  - DEV-only testkaart in `src/routes/meer/+page.svelte` (`import.meta.env.DEV`) om tokenrendering visueel te controleren zonder productie-UI te vervuilen.
+- Validatie:
+  - `npm run check` OK (0 errors/warnings)
+  - `npm run test` OK (12 tests)
+
 ### 2026-04-10 14:22:26 +02:00
 
 - Nieuw, gefaseerd implementatieplan toegevoegd voor:

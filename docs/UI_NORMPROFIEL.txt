@@ -1,78 +1,1349 @@
-UI NORMPROFIEL - Reis naar Frankrijk
-Versie: 2026-04-09
+UI NORMPROFIEL — Reis naar Frankrijk
+Versie: 2025-01-09
 
-Doel
-- Een consistente, rustige en goed leesbare UI op mobiel en desktop.
-- Dashboard-stijl als visuele basis voor alle pagina's.
-- Lage cognitieve belasting: minder visuele ruis, duidelijke hierarchie, voorspelbare interactie.
+1. Visie & Principes
+Waarom dit document?
+Dit normprofiel definieert hoe onze reisplanner eruitziet, aanvoelt en zich gedraagt. Het is de bron van waarheid voor elke designbeslissing — van een enkele knop tot een complete pagina.
 
-Bronnen (grote lijn)
-- NL Design System: ontwerp met design tokens, toegankelijkheid als baseline, support voor gebruikersvoorkeuren.
-- Apple HIG / UI Design Dos and Don'ts: heldere layout, minimale touch-targets, voldoende contrast, goede spacing en uitlijning.
-- UX best-practices: eenvoud, focus op kerntaken, voorkom overvolle schermen en overmatige keuzes.
-- WCAG 2.2 AA als ondergrens voor contrast, focus, target size en leesbaarheid.
+Ontwerpvisie
+Een reisplanner die aanvoelt als een betrouwbare metgezel: helder wanneer je informatie zoekt, stil wanneer je droomt, en behulpzaam wanneer je plant.
 
-Niet-onderhandelbare basisregels
-1. Toegankelijkheid
-- Text contrast: minimaal 4.5:1 (normale tekst), 3:1 (grote tekst).
-- Non-text contrast: minimaal 3:1 voor interactieve randen/states.
-- Target size: minimaal 24x24 (AA), streven 44x44 (mobiel).
-- Focus zichtbaar en niet verborgen.
-- Reflow: geen 2D-scroll voor normale content op mobiel.
+Vijf ontwerpprincipes
+Principe	Betekenis	In de praktijk
+1. Lucht	Genereuze ruimte laat content ademen. Witruimte is geen leegte maar rust.	Minimaal 16px padding rond content. Nooit elementen tegen elkaar "plakken".
+2. Helderheid	Elk element communiceert direct zijn functie. Geen decoratie zonder doel.	Eén primaire actie per scherm. Labels zijn concreet ("Opslaan", niet "OK").
+3. Zachtheid	Afgeronde vormen en vloeiende overgangen creëren warmte.	Consistente border-radius. Geen harde cuts, maar eased transitions.
+4. Vertrouwen	Voorspelbare patronen. De app gedraagt zich zoals verwacht.	Dezelfde interactie werkt overal hetzelfde. Geen verrassingen.
+5. Vreugde	Subtiele details die ontdekt worden, niet opgedrongen.	Micro-animaties bij succesacties. Thoughtful empty states.
+2. Visuele Identiteit
+Sfeer & emotie
+Avontuurlijk maar betrouwbaar — de opwinding van reizen, de zekerheid van goede voorbereiding
+Modern maar warm — clean interfaces met menselijke touches
+Licht en uitnodigend — geen zware, donkere esthetiek tenzij in dark mode
+Referentie-apps (voor gevoel, niet kopiëren)
+Apple Maps — ruimtelijke hiërarchie, kaartintegratie
+Flighty — data-dense maar leesbaar, mooie typografie
+Airbnb — content-forward, uitnodigende imagery
+Apple Journal — zachte kleuren, persoonlijke sfeer
+Fotografie & imagery (indien gebruikt)
+Natuurlijk licht, niet overbewerkt
+Mensen mogen voorkomen maar zijn niet centraal
+Franse landschappen, architectuur, food als sfeerbeeld
+Nooit stockfoto-achtig of generiek
+3. Kleurensysteem
+Ontwerpfilosofie kleur
+Kleur ondersteunt betekenis, niet decoratie
+Primaire kleur spaarzaam: voor hoofdacties en navigatieaccenten
+Semantische kleuren voor feedback (succes, waarschuwing, fout)
+Neutrale tinten doen het zware werk
+Kleurenpalet
+Primair (Accent)
+Een warm, diep blauw dat vertrouwen en reizen evoceert, met voldoende contrast.
 
-2. Typografie
-- Max 1 primaire UI-fontfamilie in de app.
-- Gewichten beperken tot: 400, 500, 600, 700, 800.
-- Italic alleen functioneel (bijv. wetenschappelijke namen), niet voor lange teksten.
-- UPPERCASE alleen voor korte labels/chips.
-- Gebruik uitsluitend tokens voor font-size in nieuwe code.
+css
+--color-primary-50: #EEF4FF;
+--color-primary-100: #DAE6FF;
+--color-primary-200: #B3CDFF;
+--color-primary-300: #85AEFF;
+--color-primary-400: #5A8AF5;
+--color-primary-500: #3B6CE4;   /* Hoofdkleur */
+--color-primary-600: #2952C4;
+--color-primary-700: #1E3D94;
+--color-primary-800: #162D6B;
+--color-primary-900: #0F1F47;
+Warm accent (secundair)
+Voor highlights, tags, of om warmte toe te voegen.
 
-3. Rust en hierarchie
-- Actieknoppen in duidelijke "action rows" met vaste tussenruimte.
-- Formulieren met vaste label/input-rhythm (zelfde spacing, hoogte, radius).
-- Maximaliseer consistentie in card-opbouw: titel, meta, content, acties.
-- Vermijd dubbele of concurrerende CTA's in dezelfde viewport-zone.
+css
+--color-warm-50: #FFF7ED;
+--color-warm-100: #FFEDD5;
+--color-warm-200: #FED7AA;
+--color-warm-300: #FDBA74;
+--color-warm-400: #FB923C;
+--color-warm-500: #F97316;   /* Hoofdkleur */
+--color-warm-600: #EA580C;
+--color-warm-700: #C2410C;
+--color-warm-800: #9A3412;
+--color-warm-900: #7C2D12;
+Neutraal
+Basis voor tekst, achtergronden, randen.
 
-4. Kleur en theming
-- Semantische kleuren via tokens, geen losse hex in nieuwe componenten.
-- Donkere modus via tokens, niet component-specifiek hardcoded waar mogelijk.
+css
+--color-neutral-0: #FFFFFF;
+--color-neutral-50: #F9FAFB;
+--color-neutral-100: #F3F4F6;
+--color-neutral-150: #ECEEF1;
+--color-neutral-200: #E5E7EB;
+--color-neutral-300: #D1D5DB;
+--color-neutral-400: #9CA3AF;
+--color-neutral-500: #6B7280;
+--color-neutral-600: #4B5563;
+--color-neutral-700: #374151;
+--color-neutral-800: #1F2937;
+--color-neutral-900: #111827;
+--color-neutral-950: #030712;
+Semantisch
+css
+/* Succes */
+--color-success-light: #DCFCE7;
+--color-success-base: #22C55E;
+--color-success-dark: #15803D;
 
-Implementatie in code
-- Centraal tokenbestand: src/lib/styles/ui-norm-profile.css
-- Globale mapping en basiscomponenten: src/app.css
-- Eerste harmonisatie toegepast op:
-  - src/lib/components/Budget.svelte
-  - src/lib/components/BudgetForm.svelte
-  - src/lib/components/OvernachtingenPlanner.svelte
-  - src/lib/components/Navigation.svelte
-  - src/routes/meer/+page.svelte
+/* Waarschuwing */
+--color-warning-light: #FEF3C7;
+--color-warning-base: #F59E0B;
+--color-warning-dark: #B45309;
 
-Actieve tokens (wijzig hier voor globale impact)
-- Typography:
-  --ui-text-2xs, --ui-text-xs, --ui-text-sm, --ui-text-md, --ui-text-lg, --ui-text-xl, --ui-text-2xl
-- Weights:
-  --ui-weight-regular, --ui-weight-medium, --ui-weight-semibold, --ui-weight-bold, --ui-weight-heavy
-- Rhythm:
-  --ui-line-tight, --ui-line-heading, --ui-line-compact, --ui-line-body
-- Interaction:
-  --ui-touch-min, --ui-touch-compact, --ui-form-gap, --ui-actions-gap
-- Readability:
-  --ui-measure-reading
+/* Fout */
+--color-error-light: #FEE2E2;
+--color-error-base: #EF4444;
+--color-error-dark: #B91C1C;
 
-Review-checklist voor iedere nieuwe UI-wijziging
-1. Is elke tekststijl een bestaand token?
-2. Zijn CTA's visueel en inhoudelijk geprioriteerd (1 primair, rest secundair)?
-3. Is elke klikbare control op mobiel minimaal 40px hoog (liefst 44px)?
-4. Is er voldoende contrast in light en dark mode?
-5. Is de spacing gelijkmatig (geen "drukkende" clusters)?
-6. Blijft de lay-out leesbaar op 360px breedte en op desktop?
-7. Is forced-colors en reduced-motion gedrag niet gebroken?
+/* Info */
+--color-info-light: #DBEAFE;
+--color-info-base: #3B82F6;
+--color-info-dark: #1D4ED8;
+Thematokens (Light mode)
+css
+/* Achtergronden */
+--bg-app: var(--color-neutral-50);
+--bg-surface: var(--color-neutral-0);
+--bg-surface-raised: var(--color-neutral-0);
+--bg-surface-sunken: var(--color-neutral-100);
+--bg-interactive: var(--color-neutral-100);
+--bg-interactive-hover: var(--color-neutral-150);
+--bg-interactive-active: var(--color-neutral-200);
+--bg-accent: var(--color-primary-500);
+--bg-accent-hover: var(--color-primary-600);
+--bg-accent-subtle: var(--color-primary-50);
 
-Volgende verbeterstap (aanbevolen)
-- Hardcoded kleuren reduceren naar tokens in:
-  - GerechtenChecklist
-  - GerechtCard
-  - WildlifeCard
-  - WeerAlerts / WeerDagen
-- Font-size normalisatie naar tokens in alle componenten met 0.68-0.79rem waarden.
-- !important-overrides terugdringen door component-API en duidelijke stijlgrenzen.
+/* Tekst */
+--text-primary: var(--color-neutral-900);
+--text-secondary: var(--color-neutral-600);
+--text-tertiary: var(--color-neutral-400);
+--text-inverse: var(--color-neutral-0);
+--text-accent: var(--color-primary-600);
+--text-success: var(--color-success-dark);
+--text-warning: var(--color-warning-dark);
+--text-error: var(--color-error-dark);
+
+/* Randen */
+--border-default: var(--color-neutral-200);
+--border-subtle: var(--color-neutral-100);
+--border-strong: var(--color-neutral-300);
+--border-accent: var(--color-primary-500);
+--border-focus: var(--color-primary-400);
+Thematokens (Dark mode)
+css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: var(--color-neutral-950);
+    --bg-surface: var(--color-neutral-900);
+    --bg-surface-raised: var(--color-neutral-800);
+    --bg-surface-sunken: var(--color-neutral-950);
+    --bg-interactive: var(--color-neutral-800);
+    --bg-interactive-hover: var(--color-neutral-700);
+    --bg-interactive-active: var(--color-neutral-600);
+    --bg-accent: var(--color-primary-500);
+    --bg-accent-hover: var(--color-primary-400);
+    --bg-accent-subtle: var(--color-primary-900);
+    
+    --text-primary: var(--color-neutral-50);
+    --text-secondary: var(--color-neutral-400);
+    --text-tertiary: var(--color-neutral-500);
+    --text-inverse: var(--color-neutral-900);
+    --text-accent: var(--color-primary-300);
+    
+    --border-default: var(--color-neutral-700);
+    --border-subtle: var(--color-neutral-800);
+    --border-strong: var(--color-neutral-600);
+  }
+}
+4. Typografie
+Ontwerpfilosofie typografie
+Eén fontfamilie voor consistentie en snelheid
+Hiërarchie via grootte en gewicht, niet via kleur of decoratie
+Leesbare line-heights: ruimer voor bodytekst, strakker voor koppen
+Voldoende contrast met achtergrond in alle modi
+Fontfamilie
+css
+--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+--font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+Waarom Inter? — Uitstekende leesbaarheid op scherm, variabele font support, gratis, en visueel verwant aan SF Pro.
+
+Typografische schaal
+Gebaseerd op een 1.2 ratio (minor third) met 16px als basis.
+
+css
+--text-xs: 0.694rem;    /* 11px — labels, captions */
+--text-sm: 0.833rem;    /* 13px — secundaire tekst */
+--text-base: 1rem;      /* 16px — body */
+--text-md: 1.125rem;    /* 18px — lead text */
+--text-lg: 1.25rem;     /* 20px — section headers */
+--text-xl: 1.5rem;      /* 24px — page subtitles */
+--text-2xl: 1.875rem;   /* 30px — page titles */
+--text-3xl: 2.25rem;    /* 36px — large titles */
+--text-4xl: 3rem;       /* 48px — hero/display */
+Font weights
+css
+--weight-regular: 400;
+--weight-medium: 500;
+--weight-semibold: 600;
+--weight-bold: 700;
+Line heights
+css
+--leading-none: 1;
+--leading-tight: 1.2;      /* Koppen */
+--leading-snug: 1.35;      /* Subkoppen */
+--leading-normal: 1.5;     /* Body tekst */
+--leading-relaxed: 1.625;  /* Lange leestekst */
+--leading-loose: 1.75;     /* Extra ruimte */
+Letter spacing
+css
+--tracking-tighter: -0.02em;  /* Grote koppen */
+--tracking-tight: -0.01em;    /* Middelgrote koppen */
+--tracking-normal: 0;         /* Body */
+--tracking-wide: 0.025em;     /* Kleine labels */
+--tracking-wider: 0.05em;     /* UPPERCASE labels */
+Voorgedefinieerde tekststijlen
+css
+/* Display — Hero's, grote statements */
+.text-display {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
+}
+
+/* Title — Paginatitels */
+.text-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Heading — Sectiekoppen */
+.text-heading {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+/* Subheading — Subsecties, card titles */
+.text-subheading {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+
+/* Body — Standaard tekst */
+.text-body {
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+}
+
+/* Caption — Onderschriften, meta */
+.text-caption {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+/* Label — Form labels, chips */
+.text-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+/* Micro — Timestamps, badges */
+.text-micro {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
+}
+Typografieregels
+Regel	Toelichting
+Geen italic voor lange tekst	Alleen voor wetenschappelijke namen, boektitels, of korte nadruk
+UPPERCASE spaarzaam	Alleen voor korte labels, badges, of navigatie-items. Nooit voor zinnen.
+Max leeslengte 65–75 karakters	Gebruik max-width: 65ch voor leestekst
+Geen underline tenzij link	Underline = klikbaar. Gebruik anders font-weight of kleur.
+5. Spacing & Layout
+Ontwerpfilosofie spacing
+4px basisunit voor fijnmazige controle
+8px grid voor de meeste componenten
+Consistente spacing creëert ritme
+Grotere ruimte = grotere scheiding in hiërarchie
+Spacing schaal
+css
+--space-0: 0;
+--space-px: 1px;
+--space-0.5: 0.125rem;   /* 2px */
+--space-1: 0.25rem;      /* 4px */
+--space-1.5: 0.375rem;   /* 6px */
+--space-2: 0.5rem;       /* 8px */
+--space-2.5: 0.625rem;   /* 10px */
+--space-3: 0.75rem;      /* 12px */
+--space-4: 1rem;         /* 16px */
+--space-5: 1.25rem;      /* 20px */
+--space-6: 1.5rem;       /* 24px */
+--space-8: 2rem;         /* 32px */
+--space-10: 2.5rem;      /* 40px */
+--space-12: 3rem;        /* 48px */
+--space-16: 4rem;        /* 64px */
+--space-20: 5rem;        /* 80px */
+--space-24: 6rem;        /* 96px */
+Spacing toepassingen
+css
+/* Component interne padding */
+--padding-card: var(--space-4);
+--padding-card-compact: var(--space-3);
+--padding-button: var(--space-2) var(--space-4);
+--padding-button-sm: var(--space-1.5) var(--space-3);
+--padding-input: var(--space-2.5) var(--space-3);
+
+/* Gaps tussen elementen */
+--gap-xs: var(--space-1);     /* 4px — Inline icons */
+--gap-sm: var(--space-2);     /* 8px — Related items */
+--gap-md: var(--space-4);     /* 16px — Default stack gap */
+--gap-lg: var(--space-6);     /* 24px — Section separation */
+--gap-xl: var(--space-8);     /* 32px — Major sections */
+--gap-2xl: var(--space-12);   /* 48px — Page sections */
+
+/* Page layout */
+--page-padding-x: var(--space-4);
+--page-padding-x-desktop: var(--space-6);
+--page-max-width: 1200px;
+--content-max-width: 680px;
+Layout patronen
+Page container
+css
+.page {
+  padding-inline: var(--page-padding-x);
+  padding-block: var(--space-6);
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-inline: var(--page-padding-x-desktop);
+    padding-block: var(--space-8);
+  }
+}
+Content stack
+css
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.stack-sm { gap: var(--gap-sm); }
+.stack-lg { gap: var(--gap-lg); }
+Cluster (horizontale groep)
+css
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  align-items: center;
+}
+6. Border Radius
+Ontwerpfilosofie radius
+Zachte hoeken creëren warmte en moderniteit
+Consistente radius per component-type
+Grotere elementen = grotere radius
+Volledig rond voor iconen/avatars
+Radius schaal
+css
+--radius-none: 0;
+--radius-sm: 4px;       /* Kleine elementen, badges */
+--radius-md: 8px;       /* Buttons, inputs, chips */
+--radius-lg: 12px;      /* Cards, modals */
+--radius-xl: 16px;      /* Grote cards, sheets */
+--radius-2xl: 24px;     /* Prominent surfaces */
+--radius-full: 9999px;  /* Pills, avatars */
+Radius toepassingen
+css
+--radius-button: var(--radius-md);
+--radius-button-pill: var(--radius-full);
+--radius-input: var(--radius-md);
+--radius-card: var(--radius-lg);
+--radius-card-large: var(--radius-xl);
+--radius-modal: var(--radius-xl);
+--radius-sheet: var(--radius-2xl) var(--radius-2xl) 0 0;
+--radius-avatar: var(--radius-full);
+--radius-badge: var(--radius-sm);
+--radius-chip: var(--radius-full);
+7. Schaduwen & Elevation
+Ontwerpfilosofie elevation
+Schaduwen suggereren hoogte en interactiviteit
+Subtiele, diffuse schaduwen (Apple-stijl)
+Hogere elevation = meer interactief/important
+Dark mode: subtielere schaduwen + lichtere surface
+Schaduw schaal
+css
+/* Light mode */
+--shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 
+             0 1px 2px rgba(0, 0, 0, 0.04);
+--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 
+             0 2px 4px -2px rgba(0, 0, 0, 0.04);
+--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 
+             0 4px 6px -4px rgba(0, 0, 0, 0.05);
+--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 
+             0 8px 10px -6px rgba(0, 0, 0, 0.05);
+--shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+/* Focus ring */
+--shadow-focus: 0 0 0 3px rgba(59, 108, 228, 0.3);
+--shadow-focus-error: 0 0 0 3px rgba(239, 68, 68, 0.3);
+Schaduw toepassingen
+css
+--shadow-card: var(--shadow-sm);
+--shadow-card-hover: var(--shadow-md);
+--shadow-dropdown: var(--shadow-lg);
+--shadow-modal: var(--shadow-xl);
+--shadow-sheet: var(--shadow-2xl);
+--shadow-button: var(--shadow-xs);
+--shadow-button-hover: var(--shadow-sm);
+Dark mode aanpassingen
+css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 
+                 0 1px 2px rgba(0, 0, 0, 0.2);
+    /* etc. — Sterker door donkere achtergrond */
+    
+    --shadow-focus: 0 0 0 3px rgba(133, 174, 255, 0.4);
+  }
+}
+8. Motion & Animatie
+Ontwerpfilosofie motion
+Animatie ondersteunt begrip, niet decoratie
+Snelle feedback voor directe interacties
+Langzamere, soepelere transities voor grote veranderingen
+Respecteer prefers-reduced-motion
+Durations
+css
+--duration-instant: 0ms;
+--duration-fast: 100ms;      /* Hover, focus states */
+--duration-normal: 200ms;    /* Default transitions */
+--duration-slow: 300ms;      /* Modals, page transitions */
+--duration-slower: 500ms;    /* Complex animations */
+Easing curves
+css
+/* Standaard — voor de meeste UI-transities */
+--ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+/* In — elementen die binnenkomen */
+--ease-in: cubic-bezier(0.42, 0, 1, 1);
+
+/* Out — elementen die verdwijnen */
+--ease-out: cubic-bezier(0, 0, 0.58, 1);
+
+/* In-Out — positieveranderingen */
+--ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+
+/* Expressive — voor "spring-like" feel */
+--ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+/* Smooth — natuurlijke vertraging */
+--ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+Transition presets
+css
+--transition-colors: color, background-color, border-color, fill, stroke;
+--transition-transform: transform;
+--transition-opacity: opacity;
+--transition-shadow: box-shadow;
+--transition-all: all;
+
+/* Combinaties */
+.transition-default {
+  transition-property: var(--transition-colors), var(--transition-shadow);
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-default);
+}
+
+.transition-transform {
+  transition-property: var(--transition-transform);
+  transition-duration: var(--duration-normal);
+  transition-timing-function: var(--ease-spring);
+}
+Reduced motion
+css
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+Animatie patronen
+css
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Slide up (modals, sheets) */
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale in (dropdowns, popovers) */
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse (loading, attention) */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+9. Iconografie
+Ontwerpfilosofie iconen
+Iconen ondersteunen tekst, vervangen deze zelden volledig
+Consistente stijl: outline OF filled, niet gemixed
+Voldoende grootte voor herkenbaarheid
+Kleur volgt tekstkleur tenzij semantisch
+Icoonspecificaties
+Property	Waarde
+Stijl	Rounded outline (stroke-based)
+Stroke width	1.5px - 2px
+Corners	Rounded
+Minimum grootte	16x16px
+Touch-icoon grootte	24x24px in 44x44px touch target
+Standaard grootte	20x20px of 24x24px
+Icoon sizes
+css
+--icon-xs: 12px;
+--icon-sm: 16px;
+--icon-md: 20px;
+--icon-base: 24px;
+--icon-lg: 28px;
+--icon-xl: 32px;
+--icon-2xl: 40px;
+Aanbevolen icon libraries
+Lucide (primair) — Clean, consistent, open source
+Heroicons — Alternatief, iets "voller"
+SF Symbols stijl — Als je maximaal Apple-gevoel wilt
+Icoonregels
+Regel	Toelichting
+Altijd met label	Standalone iconen alleen voor universele acties (close, menu, search)
+Consistente set	Mix geen icon libraries in dezelfde view
+Optische uitlijning	Sommige iconen (bijv. play) hebben visuele correctie nodig
+Touch area	Icon mag klein zijn, touch target niet
+10. Componenten
+10.1 Buttons
+Varianten
+Type	Gebruik	Styling
+Primary	Hoofdactie per scherm	Filled, accent kleur
+Secondary	Ondersteunende acties	Outlined of subtle fill
+Tertiary	Tertiaire acties, links	Text-only, geen background
+Destructive	Verwijderen, annuleren	Filled of outlined, error kleur
+Specificaties
+css
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-xs);
+  
+  padding: var(--padding-button);
+  min-height: 44px; /* Touch target */
+  
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  
+  border-radius: var(--radius-button);
+  
+  transition: 
+    background-color var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.button-primary {
+  background: var(--bg-accent);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-button);
+}
+
+.button-primary:hover {
+  background: var(--bg-accent-hover);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.button-primary:active {
+  transform: scale(0.98);
+}
+
+.button-secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.button-tertiary {
+  background: transparent;
+  color: var(--text-accent);
+}
+Sizes
+css
+.button-sm {
+  padding: var(--padding-button-sm);
+  min-height: 36px;
+  font-size: var(--text-sm);
+}
+
+.button-lg {
+  padding: var(--space-3) var(--space-6);
+  min-height: 52px;
+  font-size: var(--text-md);
+}
+10.2 Cards
+Anatomie
+text
+┌─────────────────────────────────────┐
+│  [Media/Image — optioneel]          │
+├─────────────────────────────────────┤
+│  Eyebrow label         [Badge]      │  ← Meta
+│  Card Title                         │  ← Heading
+│  Supporting text that describes     │  ← Body
+│  the content of this card.          │
+│                                     │
+│  [Secondary]        [Primary →]     │  ← Actions
+└─────────────────────────────────────┘
+Specificaties
+css
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  
+  transition: box-shadow var(--duration-normal) var(--ease-default);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-body {
+  padding: var(--padding-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.card-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+}
+
+.card-description {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--gap-sm);
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}
+10.3 Form Inputs
+Specificaties
+css
+.input {
+  width: 100%;
+  padding: var(--padding-input);
+  min-height: 44px;
+  
+  font-size: var(--text-base);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-input);
+  
+  transition: 
+    border-color var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.input:hover {
+  border-color: var(--border-strong);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input:disabled {
+  background: var(--bg-surface-sunken);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.input-error {
+  border-color: var(--color-error-base);
+}
+
+.input-error:focus {
+  box-shadow: var(--shadow-focus-error);
+}
+Labels & Help text
+css
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.form-help {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.form-error {
+  font-size: var(--text-sm);
+  color: var(--text-error);
+}
+10.4 Navigation
+Bottom navigation (mobiel)
+css
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  
+  display: flex;
+  justify-content: space-around;
+  
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  padding-bottom: env(safe-area-inset-bottom);
+  
+  /* Optioneel: blur effect */
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  
+  padding: var(--space-2) var(--space-4);
+  min-height: 50px;
+  
+  color: var(--text-secondary);
+  
+  transition: color var(--duration-fast) var(--ease-default);
+}
+
+.nav-item.active {
+  color: var(--text-accent);
+}
+
+.nav-item-label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+10.5 Modals & Sheets
+Modal (centered)
+css
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.modal {
+  background: var(--bg-surface);
+  border-radius: var(--radius-modal);
+  box-shadow: var(--shadow-modal);
+  
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  
+  animation: scaleIn var(--duration-slow) var(--ease-spring);
+}
+
+.modal-header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-body {
+  padding: var(--space-4);
+}
+
+.modal-footer {
+  padding: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  
+  display: flex;
+  gap: var(--gap-sm);
+  justify-content: flex-end;
+}
+Bottom sheet (mobiel)
+css
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  
+  background: var(--bg-surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-sheet);
+  
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  animation: slideUp var(--duration-slow) var(--ease-spring);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 5px;
+  background: var(--color-neutral-300);
+  border-radius: var(--radius-full);
+  margin: var(--space-2) auto;
+}
+10.6 Lists & List Items
+css
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  
+  padding: var(--space-3) var(--space-4);
+  min-height: 56px;
+  
+  border-bottom: 1px solid var(--border-subtle);
+  
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item:hover {
+  background: var(--bg-interactive-hover);
+}
+
+.list-item:active {
+  background: var(--bg-interactive-active);
+}
+
+.list-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-item-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.list-item-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.list-item-accessory {
+  color: var(--text-tertiary);
+}
+10.7 Badges & Chips
+css
+/* Badge — status indicator, kleine labels */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  
+  padding: var(--space-0.5) var(--space-2);
+  
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  
+  border-radius: var(--radius-badge);
+}
+
+.badge-neutral {
+  background: var(--color-neutral-100);
+  color: var(--text-secondary);
+}
+
+.badge-primary {
+  background: var(--bg-accent-subtle);
+  color: var(--text-accent);
+}
+
+.badge-success {
+  background: var(--color-success-light);
+  color: var(--text-success);
+}
+
+/* Chip — interactive, vaak met remove optie */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  
+  padding: var(--space-1.5) var(--space-3);
+  
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  
+  background: var(--bg-interactive);
+  border-radius: var(--radius-chip);
+  
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.chip:hover {
+  background: var(--bg-interactive-hover);
+}
+
+.chip-selected {
+  background: var(--bg-accent);
+  color: var(--text-inverse);
+}
+10.8 Empty States
+css
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-4);
+}
+
+.empty-state-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state-description {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  max-width: 280px;
+  margin-bottom: var(--space-6);
+}
+10.9 Loading States
+css
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-neutral-100) 25%,
+    var(--color-neutral-200) 50%,
+    var(--color-neutral-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-text:last-child {
+  width: 60%;
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-default);
+  border-top-color: var(--color-primary-500);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+11. Toegankelijkheid
+Geïntegreerde aanpak
+Toegankelijkheid is geen aparte laag maar ingebouwd in alle voorgaande secties. Deze sectie vat de eisen samen en voegt specifieke guidance toe.
+
+Contrast
+Element	Minimum ratio
+Normale tekst (<18px)	4.5:1
+Grote tekst (≥18px bold, ≥24px regular)	3:1
+UI componenten & graphics	3:1
+Focus indicators	3:1 met achtergrond
+Touch targets
+css
+/* Minimum: 24x24px (WCAG 2.2 AA) */
+/* Aanbevolen: 44x44px (Apple HIG) */
+/* Gekozen baseline: 44x44px voor primaire interactie */
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Voor dense UI, minimaal */
+.touch-target-compact {
+  min-width: 36px;
+  min-height: 36px;
+}
+Focus management
+css
+/* Zichtbare focus voor keyboard navigatie */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Geen focus ring voor muis/touch */
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+Screen readers
+css
+/* Visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip for decorative elements */
+[aria-hidden="true"] {
+  /* Iconen naast tekst labels */
+}
+Motion preferences
+css
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+Color niet als enige indicator
+✅ Icoon + kleur voor status
+✅ Tekst + kleur voor fouten
+✅ Patroon + kleur voor grafieken
+❌ Alleen kleur verschil
+Checklist per component
+ Heeft interactief element een accessible name?
+ Is role correct (button = button, niet div)?
+ Zijn states (disabled, expanded, selected) announced?
+ Is focus order logisch?
+ Werkt het met keyboard only?
+12. Responsive Design
+Breakpoints
+css
+--breakpoint-sm: 640px;   /* Kleine tablets */
+--breakpoint-md: 768px;   /* Tablets */
+--breakpoint-lg: 1024px;  /* Laptops */
+--breakpoint-xl: 1280px;  /* Desktops */
+--breakpoint-2xl: 1536px; /* Grote schermen */
+Mobile-first approach
+css
+/* Base styles = mobile */
+.component { 
+  /* mobile layout */ 
+}
+
+/* Tablet en groter */
+@media (min-width: 768px) {
+  .component { 
+    /* tablet adjustments */ 
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .component { 
+    /* desktop adjustments */ 
+  }
+}
+Layout shifts
+Scherm	Navigatie	Content layout	Spacing
+Mobile (<768px)	Bottom nav	Single column	16px padding
+Tablet (768-1023px)	Side nav collapsed	2 kolommen	24px padding
+Desktop (≥1024px)	Side nav expanded	2-3 kolommen	32px padding
+Geen horizontal scroll
+css
+/* Content moet reflow binnen viewport */
+html {
+  overflow-x: hidden;
+}
+
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+Container queries (waar ondersteund)
+css
+.card-container {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card {
+    /* Horizontal layout wanneer container breed genoeg */
+    flex-direction: row;
+  }
+}
+13. Implementatie
+Bestandsstructuur
+text
+src/
+├── lib/
+│   └── styles/
+│       ├── tokens/
+│       │   ├── colors.css        # Kleurenpalet + thema
+│       │   ├── typography.css    # Font stacks + schaal
+│       │   ├── spacing.css       # Spacing schaal
+│       │   ├── radius.css        # Border radius
+│       │   ├── shadows.css       # Elevation
+│       │   └── motion.css        # Durations + easing
+│       ├── base/
+│       │   ├── reset.css         # CSS reset
+│       │   ├── global.css        # Base element styles
+│       │   └── utilities.css     # Utility classes
+│       └── ui-tokens.css         # Main import file
+├── app.css                       # App-level imports
+└── routes/
+    └── ...
+Hoofdbestand: ui-tokens.css
+css
+/* ===================================
+   UI Tokens — Reis naar Frankrijk
+   Version: 2025-01-09
+   =================================== */
+
+/* Import order matters */
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/radius.css';
+@import './tokens/shadows.css';
+@import './tokens/motion.css';
+@import './base/reset.css';
+@import './base/global.css';
+@import './base/utilities.css';
+Naming conventions
+Type	Prefix	Voorbeeld
+Kleur primitives	--color-	--color-primary-500
+Semantische kleuren	--bg-, --text-, --border-	--bg-surface
+Typography	--text-, --weight-, --leading-	--text-lg
+Spacing	--space-	--space-4
+Radius	--radius-	--radius-lg
+Shadow	--shadow-	--shadow-md
+Motion	--duration-, --ease-	--duration-normal
+Component styling rules
+Gebruik altijd tokens — Geen hardcoded waarden in componenten
+Geen !important — Fix specificity, niet symptoms
+Scoped styles — Component styles blijven in component
+Composition over inheritance — Utility classes + component classes
+Migratiestrategie (voor bestaande code)
+text
+Fase 1: Token-bestand implementeren
+Fase 2: Globale stijlen migreren (app.css)
+Fase 3: Component voor component:
+  1. Budget.svelte ✅
+  2. BudgetForm.svelte ✅
+  3. Navigation.svelte ✅
+  4. OvernachtingenPlanner.svelte ✅
+  5. GerechtenChecklist
+  6. GerechtCard
+  7. WildlifeCard
+  8. WeerAlerts / WeerDagen
+  9. ... overige componenten
+Fase 4: Audit & cleanup (!important, hardcoded values)
+Fase 5: Dark mode verificatie
+14. Review Checklist
+Voor elke UI-wijziging
+Tokens & Consistentie
+ Gebruikt alle tekst bestaande typografie tokens?
+ Zijn kleuren semantische tokens (geen hex/rgb direct)?
+ Is spacing uit het spacing systeem?
+ Zijn border-radius waarden van het radius systeem?
+Hierarchie & Duidelijkheid
+ Is er maximaal één primaire CTA per viewport?
+ Is de visuele hierarchie duidelijk (titel → content → actie)?
+ Zijn labels concreet en actiegericht?
+Interactie
+ Zijn touch targets minimaal 44×44px (36px voor compact)?
+ Hebben alle interactieve elementen hover/focus/active states?
+ Is focus zichtbaar en logisch geordend?
+Toegankelijkheid
+ Is contrast minimaal 4.5:1 (tekst) / 3:1 (UI)?
+ Werkt de component met keyboard only?
+ Zijn decoratieve elementen aria-hidden?
+ Heeft elk interactief element een accessible name?
+Responsive
+ Werkt het op 320px breedte (kleine mobiel)?
+ Geen horizontale scroll op normale content?
+ Schalen touch targets mee (niet te klein op desktop)?
+Motion
+ Zijn animaties subtiel en purposeful?
+ Respecteert prefers-reduced-motion?
+Dark Mode
+ Zijn alle kleuren via tokens (automatische dark mode)?
+ Is contrast ook in dark mode voldoende?
+ Geen "flashing" bij mode switch?
+15. Bijlagen
+A. Quick reference card
+text
+╔════════════════════════════════════════════════════════╗
+║  SNELREFERENTIE                                        ║
+╠════════════════════════════════════════════════════════╣
+║  SPACING:  4 · 8 · 12 · 16 · 24 · 32 · 48             ║
+║  RADIUS:   4 · 8 · 12 · 16 · 24 · full                ║
+║  WEIGHTS:  400 · 500 · 600 · 700                      ║
+║  SIZES:    11 · 13 · 16 · 18 · 20 · 24 · 30 · 36 · 48 ║
+║                                                        ║
+║  Touch: 44px min  ·  Contrast: 4.5:1  ·  Grid: 8px   ║
+╚════════════════════════════════════════════════════════╝
+B. Beslissingsdiagram: Button type
+text
+                    Is dit de hoofdactie?
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+             Ja                        Nee
+              │                         │
+         PRIMARY                 Is het destructief?
+                                        │
+                           ┌────────────┴────────────┐
+                           │                         │
+                          Ja                        Nee
+                           │                         │
+                     DESTRUCTIVE              Is het inline/text?
+                                                     │
+                                        ┌────────────┴────────────┐
+                                        │                         │
+                                       Ja                        Nee
+                                        │                         │
+                                   TERTIARY                  SECONDARY
+C. Component status
+Component	Token-compliant	Dark mode	A11y audit
+Budget	✅	✅	✅
+BudgetForm	✅	✅	⏳
+Navigation	✅	✅	✅
+OvernachtingenPlanner	✅	⏳	⏳
+GerechtenChecklist	❌	❌	❌
+GerechtCard	❌	❌	❌
+WildlifeCard	❌	❌	❌
+WeerAlerts	❌	❌	❌
+WeerDagen	❌	❌	❌
+Changelog
+Versie	Datum	Wijzigingen
+2.0.0	2025-01-09	Volledige herschrijving met uitgebreide tokens, componenten, en Apple-geïnspireerde principes
+1.0.0	2026-04-09	Initiële versie (technische baseline)

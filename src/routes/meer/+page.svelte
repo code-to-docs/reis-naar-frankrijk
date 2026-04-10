@@ -29,6 +29,7 @@
       ]
     }
   ];
+  const showTokenTest = import.meta.env.DEV;
 
   function handleToggleDark() {
     appState.toggleDarkMode();
@@ -71,6 +72,14 @@
   <button class="meer-uitloggen" onclick={() => { localStorage.removeItem("naam"); location.reload(); }}>
     {E.DEUR} Uitloggen
   </button>
+
+  {#if showTokenTest}
+    <section class="test-card" aria-label="UI tokens testkaart">
+      <h2 class="test-title">Token Test</h2>
+      <p class="test-body">Als dit er goed uitziet, werken de tokens.</p>
+      <button class="test-button" type="button">Primaire actie</button>
+    </section>
+  {/if}
 </div>
 
 <style>
@@ -109,4 +118,43 @@
     margin-top: 8px;
   }
   .meer-uitloggen:active { background: var(--hover-bg); }
+
+  .test-card {
+    background: var(--bg-surface);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-default);
+    max-width: 400px;
+    margin: var(--space-8) auto 0;
+  }
+
+  .test-title {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .test-body {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
+  .test-button {
+    background: var(--bg-accent);
+    color: var(--text-inverse);
+    padding: var(--space-2-5) var(--space-4);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-default);
+  }
+
+  .test-button:hover {
+    background: var(--bg-accent-hover);
+  }
 </style>
