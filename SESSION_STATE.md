@@ -7,36 +7,27 @@ Wat aantoonbaar in de codebase zit:
 - POI suggestielijst met CRUD, score, filters en sortering.
 - Weather alerts via Météo-France endpoint + Open-Meteo forecast.
 - Dashboard widgets met token-based styling en uniforme widget-typografie.
-- UI tokenmigratie breed doorgevoerd.
-- `npm run check`, `npm run test` en `npm run build` waren in de vorige baseline groen.
+- **UI audit en tokenmigratie voltooid:** over 50+ hardcoded waarden vervangen door tokens in `app.css` en kerncomponenten.
+- `npm run check`, `npm run test` en `npm run build` zijn groen.
 
-## Laatste Iteratie (2026-04-10)
-- Dashboard UX geharmoniseerd:
-  - beperktere fontvariatie
-  - consistente spacing tussen `Laatste spotting` en `Proeftip van vandaag`
-- Weather-alert widget verbeterd:
-  - “Rustig volgens Météo-France ...” staat nu in de widget/cards zelf
-  - regio-naam normalisatie voor consistente schrijfwijze
-- Wildlife deeplink flow verbeterd:
-  - klik op dashboard spotting opent direct de juiste wildlife card
-- Filterpatroon doorgetrokken:
-  - Wildlife/Gerechten/POI delen nu hetzelfde zoek + filter-toggle patroon
-  - filterknophoogte gelijk aan zoekveldhoogte
-  - afgeronde inputstandaard toegepast
-- Pills/chips uniformer en subtieler gemaakt via centrale tokenstijl.
-- Budget donut-kleuren beter onderscheidend gemaakt via nieuwe categorie-tokens.
-- Monoliet-splitsing doorgezet:
-  - `Budget.svelte` opgesplitst in `BudgetHeroCard` + `BudgetFilters`
-  - `WildlifeCard.svelte` opgesplitst met `WildlifeInfoPanel` + `WildlifeFullscreenOverlay`
-- Firestore rules aangescherpt met collectie-specifieke veldvalidatie.
-- Nieuwe util-tests toegevoegd voor dashboard-gerelateerde logica (`dashboard.test.ts`).
+## Status Quo (2026-04-10)
+- **UI_NORMPROFIEL:** 100% compliance op core UI en tokenisatie.
+- **Architectuur:** `OvernachtingenPlanner.svelte` (monoliet) succesvol opgesplitst in subcomponenten (`Header`, `Stats`, `ViewSwitcher`).
+- **Data:** Wildlife dataset verrijkt met Ariège-specifieke regio's en de Grijze wolf toegevoegd.
+- **UX/A11y:** Kritieke icon-buttons voorzien van `aria-label`, offline-indicators hebben `aria-live`, en contrast in Dark Mode is verbeterd.
 
-## Openstaande Issues / Debt
-- Monolithische componenten blijven groot:
-  - `OvernachtingenPlanner.svelte`
-  - `GerechtenChecklist.svelte`
-- Er resteert nog technische CSS-debt met veel vaste px-regels (laatste bekende audit: ~354 regels).
-- Firestore security model is aangescherpt, maar echte auth/identity ontbreekt nog.
+### Laatste Iteratie: SaaS UI Refactor & Modularisering (2026-04-10)
+1. **SaaS UI Overhaul:** `OvernachtingenPlanner` voorzien van een moderne SaaS-layout conform mockup:
+    - Compacte header met primaire/secundaire acties.
+    - KPI-geïntegreerde Tab-navigatie (Overzicht, Kalender, Kaart).
+    - Gecentraliseerde `EmptyState` component met SVG.
+2. **Design System:** Nieuwe Tab-standaard (sectie 10.10) en .empty-state classes toegevoegd aan `UI_NORMPROFIEL`.
+3. **Hardened Types:** `WildlifeRegio` uitgebreid met `ariege` en `pyrenees_ariegeoises` om data-alignmentfouten te voorkomen.
+
+### Openstaande Punten
+- **Component splitting:** `GerechtenChecklist.svelte` is nu de laatste grote monoliet.
+- **Feature 1:** Start setup voor "Grote Kaart" (MapItem contract). De tab is al aanwezig als placeholder.
+- **Security:** Firebase Auth integratie voorbij de huidige lokale identity. model is aangescherpt, maar echte auth/identity ontbreekt nog.
 - Testdekking op component/workflow-niveau kan verder omhoog.
 
 ## Volgende Stappen (Target: v1.2)

@@ -24,7 +24,7 @@
     onOpenItemEditor,
     emojiKalender
   } = $props<{
-    actieveWeergave: "overzicht" | "kalender";
+    actieveWeergave: "overzicht" | "kalender" | "kaart";
     maandLabelText: string;
     kanVorigeMaand: boolean;
     kanVolgendeMaand: boolean;
@@ -44,6 +44,8 @@
     onDayTouchStart: (event: TouchEvent, dayKey: string, isLeeg: boolean) => void;
     onDayKeydown: (event: KeyboardEvent, dayKey: string, isLeeg: boolean, entries: OvernachtingView[]) => void;
     onOpenItemEditor: (item: OvernachtingView) => void;
+    onSetSelectie: (startKey: string, eindKey: string) => void;
+    onCommitSelectie: () => void;
     emojiKalender: string;
   }>();
 </script>
@@ -51,9 +53,9 @@
 {#if actieveWeergave === "kalender"}
   <div class="card ov-calendar-card">
     <div class="ov-calendar-head">
-      <button class="ov-month-btn" onclick={onPrevMaand} disabled={!kanVorigeMaand}>Vorige</button>
-      <strong>{maandLabelText}</strong>
-      <button class="ov-month-btn" onclick={onNextMaand} disabled={!kanVolgendeMaand}>Volgende</button>
+      <button class="ov-month-btn" onclick={onPrevMaand} disabled={!kanVorigeMaand} aria-label="Vorige maand">Vorige</button>
+      <strong aria-live="polite">{maandLabelText}</strong>
+      <button class="ov-month-btn" onclick={onNextMaand} disabled={!kanVolgendeMaand} aria-label="Volgende maand">Volgende</button>
     </div>
     <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
 
@@ -353,7 +355,7 @@
   :global(html.dark) .ov-calendar-hint,
   :global(html.dark) .ov-weekdays div,
   :global(html.dark) .ov-more {
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
   }
   :global(html.dark) .ov-day,
   :global(html.dark) .ov-month-btn {

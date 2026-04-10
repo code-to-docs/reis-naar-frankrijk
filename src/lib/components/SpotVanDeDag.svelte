@@ -151,19 +151,24 @@
 <style>
   .spot-card {
     display: grid;
-    background: linear-gradient(135deg, var(--color-success-light), color-mix(in srgb, var(--color-success-base) 22%, var(--bg-surface)));
+    background: linear-gradient(135deg, var(--bg-surface-raised), var(--bg-accent-subtle));
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: inherit;
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
     box-shadow: var(--shadow-md);
-    border: 1px solid color-mix(in srgb, var(--color-success-base) 24%, var(--border-default));
+    border: 1px solid var(--border-subtle);
+    transition: transform var(--duration-normal) var(--ease-default), box-shadow var(--duration-normal) var(--ease-default);
+  }
+  .spot-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
   .spot-content { display: flex; gap: var(--space-3); align-items: flex-start; }
   .spot-foto {
     width: 104px;
     height: 104px;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     object-fit: cover;
     flex-shrink: 0;
     box-shadow: var(--shadow-sm);
@@ -171,8 +176,8 @@
   .spot-foto-placeholder {
     width: 104px;
     height: 104px;
-    border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -226,12 +231,12 @@
     }
     .spot-foto,
     .spot-foto-placeholder {
-      width: 118px;
-      height: 118px;
-      border-radius: var(--radius-xl);
+      width: 120px;
+      height: 120px;
+      border-radius: var(--radius-lg);
     }
     .spot-regio-tag {
-      min-height: 28px;
+      min-height: var(--ui-touch-compact);
     }
   }
 </style>

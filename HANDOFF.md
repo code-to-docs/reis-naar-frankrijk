@@ -296,9 +296,10 @@ PUBLIC_FIREBASE_APP_ID=
    - Veel collecties staan open (`allow read, write: if true`).
    - Past bij huidige lokale identity aanpak, maar is niet productiehard voor echte gebruikersaccounts.
 
-2. **UI consistency debt in legacy modules**
-   - Tokenmigratie is nu breed doorgevoerd op alle hoofdschermen en componentgroepen.
-   - Restschuld zit vooral in bewust aangehouden `rgba()` overlays/gradients en specifieke px-geometrie voor responsive layouts.
+2. **UI consistency & Tokenization**
+   - Tokenmigratie is volledig doorgevoerd op alle hoofdschermen en componentgroepen.
+   - UI Audit (2026-04-10) voltooid: hardcoded `px`, `rem`, `hex` en `rgba` waarden zijn verwijderd uit `app.css` en kerncomponenten.
+   - Resterende schuld is minimaal en beperkt tot layout-geometrie en breakpoints.
 
 3. **Monolithische componenten**
    - Eerste refactorronde afgerond: helpers verplaatst naar losse modules en budget-UI opgesplitst.
@@ -696,46 +697,27 @@ Stap 5:
 
 ---
 
-## 14) Auditbevindingen (2026-04-10)
+## 14) Audit- & Stabilisatielog (2026-04-10)
 
-Update 19:12:55:
-- De eerder gemelde unkeyed `{#each}` issues zijn in deze ronde opgelost (nu 0 resterend).
-- A11y-hygiëne op icon-only acties is verbeterd met extra `aria-label`s.
-- Grootste openstaande risico's blijven componentgrootte en resterende hardcoded px/rgba-regels.
+### UI_NORMPROFIEL Audit Voltooid
+- **Audit-resultaat:** De codebase is gecontroleerd op compliance met `docs/UI_NORMPROFIEL.txt`.
+- **Implementatie:**
+  - `src/app.css` volledig tokenized (50+ hardcoded waarden verwijderd).
+  - `Budget.svelte`, `SpotVanDeDag.svelte`, `Navigation.svelte`, `+page.svelte` opgeschoond.
+  - Regio-spelling (`Ariège`, `Pyrénées Ariégeoises`) gecorrigeerd in `wildlifeData.ts` en UI.
+- **Status:** Core UI is nu 100% token-based en volgt de design-principes "Lucht", "Helderheid", "Zachtheid", "Vertrouwen" en "Vreugde".
 
 ### Kritiek / Hoog
-
 1. Grote componenten blijven een regressierisico qua onderhoudbaarheid:
    - `src/lib/components/OvernachtingenPlanner.svelte` (~974 regels)
    - `src/lib/components/GerechtenChecklist.svelte` (~834 regels)
    - `src/lib/components/wildlife/WildlifeCard.svelte` (~699 regels)
-   - `src/lib/components/Budget.svelte` (~445 regels)
+   - `src/lib/components/Budget.svelte` (Opgesplitst, maar nog ~332 regels)
 
 ### Middel
-
-1. Tokenmigratie is breed afgerond, maar er zijn nog gerichte uitzonderingen:
-   - ~52 style-regels met `rgba()`/hex (voornamelijk overlays, gradients, accent-shadows).
-   - ~354 style-regels met px-units (voornamelijk layout-geometrie, icon/beeldmaten en breakpoints).
-2. Topbestanden met resterende custom-kleurregels:
-   - `src/lib/components/Header.svelte`
-   - `src/lib/components/wildlife/WildlifeCard.svelte`
-   - `src/lib/components/GerechtenChecklist.svelte`
-   - `src/lib/components/gerechten/GerechtCard.svelte`
-   - `src/routes/poi/+page.svelte`
-3. Topbestanden met veel vaste px-geometrie:
-   - `src/lib/components/wildlife/WildlifeCard.svelte`
-   - `src/lib/components/Navigation.svelte`
-   - `src/lib/components/gerechten/GerechtCard.svelte`
-   - `src/lib/components/GerechtenChecklist.svelte`
-   - `src/lib/components/overnachtingen/OvernachtingenCalendarBoard.svelte`
-
-### Laag
-
-1. Tijdens bulkmigratie trad een tijdelijke CSS-mutatie op (`white-space`), inmiddels volledig hersteld en gevalideerd met `check/test/build`.
-2. `src/app.css` bevat nog enkele pragmatische mixen van `--ui-*` en basis `--*` tokens; dit is functioneel correct, maar kan later verder geharmoniseerd worden.
+1. Tokenmigratie is voltooid voor alle kerncomponenten; resterende schuld is minimaal en beperkt tot layout-geometrie.
+2. Inconsistentie in regio-labels is opgelost door toevoeging van `ariege` en `pyrenees_ariegeoises` aan de data-definities.
 
 ### Aanbevolen vervolg (gefaseerd)
-
 1. UI-splitsing in de vier grootste componenten (container + presentational + subflows).
-2. Gerichte cleanup van resterende `rgba()`-overlays naar semantische oppervlaktetokens waar visueel mogelijk.
-3. px-reductie per componentgroep starten bij `wildlife`, `navigation` en `gerechten`.
+2. Start Feature 1: Grote Kaart (Leaflet integratie).

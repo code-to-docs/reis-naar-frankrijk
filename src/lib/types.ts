@@ -141,7 +141,7 @@ export interface WeatherAlertsPayload {
 }
 
 export type WildlifeCategorie = "roofvogel" | "zoogdier" | "reptiel_amfibie" | "insect";
-export type WildlifeRegio = "lozere" | "cantal" | "pyrenees";
+export type WildlifeRegio = "lozere" | "cantal" | "pyrenees" | "ariege" | "pyrenees_ariegeoises";
 export type WildlifeZeldzaamheid = 1 | 2 | 3;
 
 export interface WildlifeProfile {

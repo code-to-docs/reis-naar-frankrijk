@@ -1,33 +1,37 @@
 <script lang="ts">
+  import { E } from "$lib/emojis.js";
+  import { TYPE_OPTIES } from "$lib/config.js";
   import type { OvernachtingView } from "./types.js";
 
   type TypeOptie = { id: string; label: string; emoji: string };
 
-  let {
-    shortlistOvernachtingen,
-    ingeplandeOvernachtingen,
-    overnachtingenZonderDatumCount,
-    typeOpties,
-    emojiPin,
-    emojiPrullenbak,
-    emojiWarn,
-    onOpenItemEditor,
-    onDeleteItem,
-    onPlanShortlistItem,
-    onPlanShortlistVanafVandaag
-  } = $props<{
-    shortlistOvernachtingen: OvernachtingView[];
+  interface Props {
+    actieveWeergave: "overzicht" | "kalender" | "kaart";
     ingeplandeOvernachtingen: OvernachtingView[];
-    overnachtingenZonderDatumCount: number;
-    typeOpties: ReadonlyArray<TypeOptie>;
-    emojiPin: string;
-    emojiPrullenbak: string;
-    emojiWarn: string;
-    onOpenItemEditor: (item: OvernachtingView) => void;
-    onDeleteItem: (id: string, naam: string) => void;
+    overnachtingenMetDatum: OvernachtingView[];
+    overnachtingenZonderDatum: OvernachtingView[];
+    shortlistOvernachtingen: OvernachtingView[];
+    totaalNachten: number;
     onPlanShortlistItem: (item: OvernachtingView) => void;
     onPlanShortlistVanafVandaag: (item: OvernachtingView) => void;
-  }>();
+    onVerplaatsNaarPlanning: (id: string, naam: string, startDatum: string, nachten: string) => Promise<void>;
+    onOpenEditor: (item: OvernachtingView) => void;
+    onDelete: (id: string, naam: string) => void;
+  }
+
+  let {
+    actieveWeergave,
+    ingeplandeOvernachtingen,
+    overnachtingenMetDatum,
+    overnachtingenZonderDatum,
+    shortlistOvernachtingen,
+    totaalNachten,
+    onPlanShortlistItem,
+    onPlanShortlistVanafVandaag,
+    onVerplaatsNaarPlanning,
+    onOpenEditor,
+    onDelete
+  }: Props = $props();
 </script>
 
 <div class="card ov-list-card">
@@ -44,12 +48,12 @@
               <p class="ov-item-subline">Nog niet ingepland</p>
             </div>
             <div class="ov-item-head-actions">
-              <button class="ov-open-btn" onclick={() => onOpenItemEditor(o)}>Bewerk</button>
-              <button class="ov-delete" aria-label={`Verwijder ${o.naam} uit shortlist`} onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
+              <button class="ov-open-btn" onclick={() => onOpenEditor(o)}>Bewerk</button>
+              <button class="ov-delete" aria-label={`Verwijder ${o.naam} uit shortlist`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
             </div>
           </div>
           <div class="ov-meta">
-            <span>Type: {typeOpties.find((x: TypeOptie) => x.id === o.typeSafe)?.label || "Camping"}</span>
+            <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
             <span>Status: Shortlist</span>
             {#if o.latSafe !== null && o.lonSafe !== null}
               <span>GPS klaar</span>
@@ -67,7 +71,7 @@
 
           <div class="ov-links">
             {#if o.googleMapsUrl}
-              <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{emojiPin} Google Maps</a>
+              <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
             {/if}
             {#if o.websiteUrl}
               <a href={o.websiteUrl} target="_blank" rel="noopener noreferrer">Website</a>
@@ -91,65 +95,64 @@
   {/if}
 </div>
 
-<div class="card ov-list-card">
-  <h3>Alle overnachtingen</h3>
-  {#if ingeplandeOvernachtingen.length === 0}
-    <p class="ov-empty">Nog geen overnachtingen toegevoegd.</p>
-  {:else}
-    <div class="ov-list">
-      {#each ingeplandeOvernachtingen as o (o.id)}
-        <article class="ov-item" style={`--loc-kleur:${o.kleur}`}>
-          <div class="ov-item-top">
-            <div class="ov-item-head">
-              <strong>{o.naam}</strong>
-              {#if o.startDateObj}
-                <p class="ov-item-subline">
-                  {o.startDateObj.toLocaleDateString("nl-NL")} t/m {(o.lastNightObj as Date).toLocaleDateString("nl-NL")} - {o.nachtenSafe} nacht{o.nachtenSafe > 1 ? "en" : ""}
-                </p>
-              {:else}
-                <p class="ov-item-subline">Nog geen aankomstdatum gekozen</p>
-              {/if}
-            </div>
-            <div class="ov-item-head-actions">
-              <button class="ov-open-btn" onclick={() => onOpenItemEditor(o)}>Bewerk</button>
-              <button class="ov-delete" aria-label={`Verwijder ${o.naam}`} onclick={() => onDeleteItem(o.id, o.naam)}>{emojiPrullenbak}</button>
-            </div>
-          </div>
-          <div class="ov-item-body">
-            <div class="ov-meta">
-              <span>Type: {typeOpties.find((x: TypeOptie) => x.id === o.typeSafe)?.label || "Camping"}</span>
-              <span>Door: {o.door || "-"}</span>
-            </div>
-            {#if o.adres}
-              <div class="ov-address">{o.adres}</div>
-            {/if}
-            {#if o.latSafe !== null && o.lonSafe !== null}
-              <div class="ov-coords">
-                GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
+{#if actieveWeergave === "overzicht"}
+  <div class="card ov-list-card">
+    <h3>Alle overnachtingen</h3>
+    {#if ingeplandeOvernachtingen.length === 0}
+      <p class="ov-empty">Nog geen overnachtingen toegevoegd.</p>
+    {:else}
+      <div class="ov-list">
+        {#each ingeplandeOvernachtingen as o (o.id)}
+          <article class="ov-item" style={`--loc-kleur:${o.kleur}`}>
+            <div class="ov-item-top">
+              <div class="ov-item-head">
+                <strong>{o.naam}</strong>
+                {#if o.startDateObj}
+                  <p class="ov-item-subline">
+                    {o.startDateObj.toLocaleDateString("nl-NL")} t/m {(o.lastNightObj as Date).toLocaleDateString("nl-NL")} - {o.nachtenSafe} nacht{o.nachtenSafe > 1 ? "en" : ""}
+                  </p>
+                {:else}
+                  <p class="ov-item-subline">Nog geen aankomstdatum gekozen</p>
+                {/if}
               </div>
-            {/if}
-            <div class="ov-links">
-              {#if o.googleMapsUrl}
-                <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{emojiPin} Google Maps</a>
+              <div class="ov-item-head-actions">
+                <button class="ov-open-btn" onclick={() => onOpenEditor(o)}>Bewerk</button>
+                <button class="ov-delete" aria-label={`Verwijder ${o.naam}`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              </div>
+            </div>
+            <div class="ov-item-body">
+              <div class="ov-meta">
+                <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
+                <span>Door: {o.door || "-"}</span>
+              </div>
+              {#if o.adres}
+                <div class="ov-address">{o.adres}</div>
               {/if}
-              {#if o.openStreetMapLink}
-                <a href={o.openStreetMapLink} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+              {#if o.latSafe !== null && o.lonSafe !== null}
+                <div class="ov-coords">
+                  GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
+                </div>
+              {/if}
+              <div class="ov-links">
+                {#if o.googleMapsUrl}
+                  <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
+                {/if}
+              </div>
+              {#if o.notities}
+                <p class="ov-note">{o.notities}</p>
               {/if}
             </div>
-            {#if o.notities}
-              <p class="ov-note">{o.notities}</p>
-            {/if}
-          </div>
-        </article>
-      {/each}
-    </div>
-  {/if}
-</div>
+          </article>
+        {/each}
+      </div>
+    {/if}
+  </div>
+{/if}
 
-{#if overnachtingenZonderDatumCount > 0}
+{#if overnachtingenZonderDatum.length > 0}
   <div class="card ov-warning">
-    <strong>{emojiWarn} Nog zonder kalenderdatum</strong>
-    <p>{overnachtingenZonderDatumCount} ingeplande item(s) missen een aankomstdatum en staan daarom nog niet in de kalender.</p>
+    <strong>{E.WARN} Nog zonder kalenderdatum</strong>
+    <p>{overnachtingenZonderDatum.length} ingeplande item(s) missen een aankomstdatum en staan daarom nog niet in de kalender.</p>
   </div>
 {/if}
 
@@ -363,7 +366,3 @@
     background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, var(--bg-surface-raised) 72%);
   }
 </style>
-
-
-
-

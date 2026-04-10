@@ -55,12 +55,37 @@ src/
     types.ts
 ```
 
+### Status
+- **UI:** 100% compliant met `UI_NORMPROFIEL`.
+- **Typing:** Alle componenten hebben `svelte-check` validatie zonder kritieke errors.
+- **Regions:** Ariège (en subregio's) zijn canoniek geintegreerd in het wildlife systeem.
+- **A11y:** Screenreader-ready door aria-labels en live regions.
+
+### Overdracht voor volgende sessie
+- De focus kan nu verschuiven naar de "Grote Kaart" feature.
+- `GerechtenChecklist.svelte` is nog een relatief grote component die opsplitsing kan gebruiken.
+- Overgang van LocalStorage naar Firebase Auth voor identity.
+
 ## Feature-to-File Mapping
 - App shell en globale flows zitten in `src/routes/+layout.svelte` + `src/routes/+layout.js`.
 - Dashboard/home zit in `src/routes/+page.svelte` met widgets:
   - `WeerWidget.svelte`
   - `SpotVanDeDag.svelte`
   - `GerechtTipWidget.svelte`
+
+## UI & Componenten
+De UI is gebouwd met een **strict design token systeem** (`src/lib/styles/ui-tokens.css`). Alle styling gebruikt CSS-variabelen voor spacing, kleuren en afronding.
+
+### Overnachtingen Systeem
+Dit systeem is onlangs gerefactored van een monoliet naar een modulaire opzet:
+- `OvernachtingenPlanner.svelte`: Container component met alle business logic (Rune state).
+- `OvernachtingenHeader.svelte`: Presentatie van titel en hoofdacties.
+- `OvernachtingenStats.svelte`: Dynamische weergave van nachten en locatietellers.
+- `OvernachtingenViewSwitcher.svelte`: Toggle voor de actieve weergave modus.
+- `OvernachtingenListsSection.svelte`: De gedetailleerde lijst-weergaven.
+- `OvernachtingenCalendarBoard.svelte`: De interactieve kalender.
+- `OvernachtingenFormPanel.svelte`: De edit/create modal forms.
+
 - Budget feature:
   - route: `src/routes/budget/+page.svelte`
   - component: `src/lib/components/Budget.svelte`

@@ -10,7 +10,7 @@ html, body {
   --app-max-width: 860px;
   --content-max-width: 760px;
   --page-gutter: var(--space-3);
-  --nav-height: 80px;
+  --nav-height: 80px; /* Layout geometry allowed */
   --blauw: var(--color-primary-700);
   --wit: var(--bg-surface);
   --grijs-licht: var(--bg-app);
@@ -105,8 +105,8 @@ h3 { font-size: var(--text-lg); }
   background: var(--card-bg);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  margin: 12px 0;
-  box-shadow: 0 8px 24px var(--card-shadow);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-subtle);
 }
 
@@ -129,12 +129,12 @@ button {
   line-height: var(--ui-line-compact);
   text-align: center;
   transition:
-    transform 0.15s ease,
-    opacity 0.15s ease,
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease;
+    transform var(--duration-normal) var(--ease-default),
+    opacity var(--duration-normal) var(--ease-default),
+    background-color var(--duration-normal) var(--ease-default),
+    border-color var(--duration-normal) var(--ease-default),
+    color var(--duration-normal) var(--ease-default),
+    box-shadow var(--duration-normal) var(--ease-default);
 }
 button:active { transform: scale(0.95); }
 .btn-primary {
@@ -197,11 +197,11 @@ button:active { transform: scale(0.95); }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
 select,
 textarea {
-  width: 100%; padding: 12px;
+  width: 100%; padding: var(--space-3);
   border: 1.5px solid var(--input-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--text-base);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
   background: var(--input-bg);
   color: var(--tekst);
   font-family: inherit;
@@ -222,8 +222,8 @@ input::placeholder, textarea::placeholder {
 }
 
 .checklist-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px; border-bottom: 1px solid var(--grijs);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3); border-bottom: 1px solid var(--grijs);
 }
 .checklist-item.gedaan span {
   text-decoration: line-through; opacity: 0.5;
@@ -240,7 +240,7 @@ input::placeholder, textarea::placeholder {
   height: 100%; border-radius: var(--radius-lg);
   display: flex; align-items: center; justify-content: center;
   color: var(--text-inverse); font-size: 12px; font-weight: bold;
-  transition: width 0.5s ease;
+  transition: width var(--duration-slower) var(--ease-default);
 }
 
 .add-form { display: flex; gap: 8px; padding: 12px 16px; }
@@ -295,13 +295,12 @@ button,
 }
 
 .page-transition {
-  animation: fadeSlideIn 0.25s ease-out;
+  animation: fadeSlideIn var(--duration-slow) var(--ease-out);
 }
 
-.page-shell {
   width: min(100%, var(--content-max-width));
   margin: 0 auto;
-  padding: 10px var(--page-gutter) calc(var(--nav-height) + 18px + env(safe-area-inset-bottom, 8px));
+  padding: var(--space-2-5) var(--page-gutter) calc(var(--nav-height) + var(--space-4-5) + env(safe-area-inset-bottom, var(--space-2)));
 }
 
 .ui-widget-card {
@@ -358,10 +357,9 @@ button,
   line-height: var(--ui-line-body);
 }
 
-.ui-widget-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: var(--space-2) var(--space-3);
   font-size: var(--ui-widget-meta-size);
   font-weight: var(--ui-weight-medium);
   color: var(--tekst);
@@ -370,13 +368,13 @@ button,
 .ui-widget-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .ui-widget-metric {
   display: grid;
-  gap: 2px;
-  padding: 9px 10px;
+  gap: var(--space-0-5);
+  padding: var(--space-2-5);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-surface-sunken));
@@ -401,7 +399,7 @@ button,
 .ui-widget-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .ui-widget-card:focus-visible {
@@ -484,8 +482,8 @@ html.dark .meer-groep-items {
     --page-gutter: 18px;
   }
   .page-shell {
-    padding-top: 16px;
-    padding-bottom: calc(var(--nav-height) + 28px);
+    padding-top: var(--space-4);
+    padding-bottom: calc(var(--nav-height) + var(--space-7));
   }
 }
 
@@ -503,7 +501,7 @@ html.dark .meer-groep-items {
 
   .page-shell {
     width: min(100%, var(--content-max-width));
-    padding: 14px var(--page-gutter) 24px;
+    padding: var(--space-3-5) var(--page-gutter) var(--space-6);
   }
 }
 
@@ -610,23 +608,23 @@ html.dark .undo-bar { background: var(--bg-interactive-active); }
 html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 42%, var(--bg-surface)); color: var(--color-error-light); }
 
 /* ========== DARK MODE TOGGLE ========== */
-.dark-toggle-item {
-  width: 100%; display: flex; align-items: center; gap: 14px;
+  width: 100%; display: flex; align-items: center; gap: var(--space-3-5);
   min-height: 58px;
-  padding: 0 16px; background: none; border: none;
+  padding: 0 var(--space-4); background: none; border: none;
   border-bottom: 1px solid var(--border-subtle); cursor: pointer;
   text-align: left;
 }
 .dark-toggle-item:last-child { border-bottom: none; }
 .dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
-.dark-toggle-label { flex: 1; font-size: var(--text-base); font-weight: var(--ui-weight-medium); color: var(--tekst); }
+  color: var(--tekst);
+}
 
 .toggle-track {
-  width: 48px; height: 28px;
+  width: var(--space-12); height: 28px;
   background: var(--bg-interactive-active);
-  border-radius: 14px;
+  border-radius: var(--radius-full);
   position: relative;
-  transition: background 0.25s ease;
+  transition: background var(--duration-slow) var(--ease-default);
   flex-shrink: 0;
 }
 .toggle-track.active {
@@ -637,11 +635,11 @@ html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 
   top: 3px; left: 3px;
   width: 22px; height: 22px;
   background: var(--bg-surface);
-  border-radius: 50%;
-  transition: transform 0.25s ease;
+  border-radius: var(--radius-full);
+  transition: transform var(--duration-slow) var(--ease-default);
   display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  font-size: var(--text-xs);
+  box-shadow: var(--shadow-sm);
 }
 .toggle-track.active .toggle-thumb {
   transform: translateX(20px);

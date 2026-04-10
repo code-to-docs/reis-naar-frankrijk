@@ -178,7 +178,7 @@
             inputmode="decimal"
             bind:value={nieuwBudget}
             placeholder="Nieuw budget"
-            class="budget-edit-input"
+            class="input budget-edit-input"
           />
           <button type="submit" class="btn-success budget-edit-save">OK</button>
           <button
@@ -260,7 +260,7 @@
   }
   .budget-edit-input {
     flex: 1;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--padding-input);
     border-radius: var(--radius-md);
     font-size: var(--text-base);
   }
@@ -272,24 +272,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--color-neutral-800);
-    color: var(--text-inverse);
+    background: var(--bg-surface-raised);
+    color: var(--text-primary);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-3);
     font-size: var(--text-sm);
-    animation: slideUp 0.25s ease-out;
+    border: 1px solid var(--border-accent);
+    animation: fadeSlideIn var(--duration-normal) var(--ease-out);
   }
   .undo-btn {
     min-height: var(--btn-height-compact);
-    background: color-mix(in srgb, var(--bg-surface) 16%, transparent);
-    color: var(--color-primary-100);
-    border: 1px solid color-mix(in srgb, var(--bg-surface) 20%, transparent);
+    background: var(--bg-accent-subtle);
+    color: var(--text-accent);
+    border: 1px solid var(--border-accent);
     padding: 0 var(--space-3);
-    border-radius: var(--btn-radius);
+    border-radius: var(--radius-full);
     font-size: var(--text-sm);
-    font-weight: var(--ui-weight-semibold);
+    font-weight: var(--weight-semibold);
     cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease-default);
   }
   .undo-btn:active { opacity: 0.7; }
   @keyframes slideUp {

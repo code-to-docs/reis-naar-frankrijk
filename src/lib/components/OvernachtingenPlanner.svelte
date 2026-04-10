@@ -8,6 +8,9 @@
   import OvernachtingenFormPanel from "./overnachtingen/OvernachtingenFormPanel.svelte";
   import OvernachtingenCalendarBoard from "./overnachtingen/OvernachtingenCalendarBoard.svelte";
   import OvernachtingenListsSection from "./overnachtingen/OvernachtingenListsSection.svelte";
+  import OvernachtingenHeader from "./overnachtingen/OvernachtingenHeader.svelte";
+  import OvernachtingenTabs from "./overnachtingen/OvernachtingenTabs.svelte";
+  import OvernachtingenEmptyState from "./overnachtingen/OvernachtingenEmptyState.svelte";
   import type { KalenderCel, OvernachtingView } from "./overnachtingen/types.js";
   import {
     WEEKDAGEN,
@@ -32,7 +35,7 @@
   let toonShortlistForm = $state(false);
   let bewerkItemId = $state<string | null>(null);
   let gpsBezig = $state(false);
-  let actieveWeergave = $state<"overzicht" | "kalender">("overzicht");
+  let actieveWeergave = $state<"overzicht" | "kalender" | "kaart">("overzicht");
   let selectieActief = $state(false);
   let selectieStartKey = $state<string | null>(null);
   let selectieEindKey = $state<string | null>(null);
@@ -678,66 +681,47 @@
       window.removeEventListener("touchmove", handleGlobalTouchMove);
       window.removeEventListener("touchend", finishTouchSelection);
       window.removeEventListener("touchcancel", finishTouchSelection);
+      window.addEventListener("touchend", finishTouchSelection);
+      window.addEventListener("touchcancel", finishTouchSelection);
       unsubscribe?.();
     };
   });
 </script>
 
 <section class="ov-page">
-  <div class="ov-top card">
-    <div>
-      <h2>{E.CAMPING} Overnachtingen planner</h2>
-      <p>Plan verblijven op de kalender en bewaar kansrijke plekken in je shortlist.</p>
-    </div>
-    <div class="ov-top-actions">
-      <button class="btn-primary ov-add" onclick={() => { if (toonForm) { sluitFormulieren(); } else { void openNieuwOvernachtingForm(); } }}>
-        {toonForm ? "Sluit planning" : "+ Plan overnachting"}
-      </button>
-      <button class="ov-secondary-btn" onclick={() => { if (toonShortlistForm) { sluitFormulieren(); } else { void openNieuweShortlistForm(); } }}>
-        {toonShortlistForm ? "Sluit shortlist" : "+ Shortlist locatie"}
-      </button>
-    </div>
-  </div>
+  <OvernachtingenHeader 
+    onPlanOvernachting={openNieuwOvernachtingForm}
+    onVoegShortlistToe={openNieuweShortlistForm}
+  />
 
-  <div class="ov-stats">
-    <div class="ov-stat card">
-      <span>Totaal verblijven</span>
-      <strong>{ingeplandeOvernachtingen.length}</strong>
-    </div>
-    <div class="ov-stat card">
-      <span>Totaal nachten</span>
-      <strong>{totaalNachten}</strong>
-    </div>
-    <div class="ov-stat card">
-      <span>Shortlist locaties</span>
-      <strong>{shortlistOvernachtingen.length}</strong>
-    </div>
-  </div>
-
-  <div class="ov-view-switch">
-    <button
-      type="button"
-      class="ov-view-btn"
-      class:active={actieveWeergave === "overzicht"}
-      onclick={() => {
-        actieveWeergave = "overzicht";
+  {#if ruweOvernachtingen.length === 0}
+    <OvernachtingenEmptyState 
+      onPlanOvernachting={openNieuwOvernachtingForm}
+      onVoegShortlistToe={openNieuweShortlistForm}
+    />
+  {:else}
+    <OvernachtingenTabs 
+      {actieveWeergave}
+      ingeplandeCount={ingeplandeOvernachtingen.length}
+      shortlistCount={shortlistOvernachtingen.length}
+      onChange={(val) => {
+        actieveWeergave = val as any;
         resetSelectie();
       }}
-    >
-      Overzicht
-    </button>
-    <button
-      type="button"
-      class="ov-view-btn"
-      class:active={actieveWeergave === "kalender"}
-      onclick={() => {
-        actieveWeergave = "kalender";
-        resetSelectie();
-      }}
-    >
-      Kalender
-    </button>
-  </div>
+    />
+
+    {#if actieveWeergave === "kaart"}
+      <div class="card ov-map-placeholder">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+          </div>
+          <h3 class="text-heading">Kaartweergave komt eraan</h3>
+          <p class="text-caption">In de volgende fase (Sprint 3) integreren we een interactieve kaart om locaties visueel te plannen.</p>
+        </div>
+      </div>
+    {/if}
+  {/if}
 
   <OvernachtingenFormPanel
     showPlanningForm={toonForm}
@@ -798,178 +782,42 @@
     onOpenItemEditor={(item) => {
       void openItemEditor(item);
     }}
+    onSetSelectie={zetSelectie}
+    onCommitSelectie={() => void commitSelectie()}
     emojiKalender={E.KALENDER}
   />
 
   <OvernachtingenListsSection
-    shortlistOvernachtingen={shortlistOvernachtingen}
+    actieveWeergave={actieveWeergave}
     ingeplandeOvernachtingen={ingeplandeOvernachtingen}
-    overnachtingenZonderDatumCount={overnachtingenZonderDatum.length}
-    typeOpties={TYPE_OPTIES}
-    emojiPin={E.PIN}
-    emojiPrullenbak={E.PRULLENBAK}
-    emojiWarn={E.WARN}
-    onOpenItemEditor={(item) => {
+    overnachtingenMetDatum={overnachtingenMetDatum}
+    overnachtingenZonderDatum={overnachtingenZonderDatum}
+    shortlistOvernachtingen={shortlistOvernachtingen}
+    totaalNachten={totaalNachten}
+    onPlanShortlistItem={(item: OvernachtingView) => void planShortlistItem(item)}
+    onPlanShortlistVanafVandaag={(item: OvernachtingView) => planShortlistVanafVandaag(item)}
+    onVerplaatsNaarPlanning={verplaatsNaarPlanning}
+    onOpenEditor={(item: OvernachtingView) => {
       void openItemEditor(item);
     }}
-    onDeleteItem={verwijderOvernachting}
-    onPlanShortlistItem={(item) => {
-      void planShortlistItem(item);
-    }}
-    onPlanShortlistVanafVandaag={planShortlistVanafVandaag}
+    onDelete={verwijderOvernachting}
   />
 </section>
 
 <style>
   .ov-page {
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .ov-top {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2-5);
-    margin: 0;
-  }
-  .ov-top h2 {
-    margin: 0;
-    font-size: var(--text-2xl);
-    letter-spacing: -0.02em;
-  }
-  .ov-top p {
-    margin: 2px 0 0;
-    color: var(--nav-text);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-  }
-  .ov-add {
-    min-height: var(--ui-touch-min);
-    white-space: nowrap;
-    font-weight: var(--weight-bold);
-  }
-  .ov-top-actions {
-    display: flex;
-    gap: var(--space-2);
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .ov-secondary-btn {
-    width: auto;
-    min-height: var(--btn-height);
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
-    color: var(--blauw);
-    font-size: var(--text-sm);
-    font-weight: var(--ui-weight-semibold);
-    padding: 0 var(--space-3);
-    border-radius: var(--btn-radius);
+    flex-direction: column;
+    gap: var(--space-4);
   }
 
-  .ov-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-2-5);
-  }
-  .ov-view-switch {
-    margin: 0;
-    display: flex;
-    gap: var(--space-1-5);
-    flex-wrap: wrap;
-  }
-  .ov-view-btn {
-    width: auto;
-    min-height: var(--btn-height-compact);
-    padding: 0 14px;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--border-default);
-    background: var(--bg-surface);
-    color: var(--text-secondary);
-    font-size: var(--text-sm);
-    font-weight: var(--ui-weight-semibold);
-    transition: all 0.15s ease;
-  }
-  .ov-view-btn.active {
-    background: var(--bg-accent-hover);
-    color: var(--text-inverse);
-    border-color: var(--border-accent);
-  }
-  .ov-stat {
-    margin: 0;
-    padding: var(--space-3);
-    border: 1px solid var(--border-subtle);
-  }
-  .ov-stat span {
-    display: block;
-    color: var(--nav-text);
-    font-size: var(--text-xs);
-  }
-  .ov-stat strong {
-    font-size: clamp(1.3rem, 3vw, 1.55rem);
-    line-height: 1.05;
-    color: var(--heading);
+  .ov-map-placeholder {
+    padding: var(--space-8);
   }
 
-  @media (max-width: 760px) {
-    .ov-stats {
-      grid-template-columns: 1fr;
+  @media (max-width: 640px) {
+    .ov-page {
+      gap: var(--space-2);
     }
-    .ov-top {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .ov-top-actions {
-      width: 100%;
-      justify-content: flex-start;
-    }
-    .ov-add {
-      width: 100%;
-    }
-    .ov-secondary-btn {
-      width: 100%;
-      text-align: center;
-    }
-    .ov-view-switch {
-      width: 100%;
-      justify-content: flex-start;
-    }
-    .ov-view-btn {
-      flex: 0 0 auto;
-    }
-  }
-
-  :global(html.dark) .ov-top p {
-    color: var(--text-tertiary);
-  }
-  :global(html.dark) .ov-stat,
-  :global(html.dark) .ov-view-btn {
-    background: var(--bg-surface-raised);
-    border-color: var(--border-strong);
-  }
-  :global(html.dark) .ov-stat strong {
-    color: var(--text-primary);
-  }
-  :global(html.dark) .ov-stat span {
-    color: var(--text-secondary);
-  }
-  :global(html.dark) .ov-secondary-btn,
-  :global(html.dark) .ov-view-btn.active {
-    background: var(--bg-accent-subtle);
-    color: var(--text-accent);
-    border-color: var(--border-accent);
-  }
-  :global(html.dark) .ov-view-btn {
-    background: var(--bg-surface-raised);
-    border-color: var(--border-strong);
-    color: var(--text-tertiary);
-  }
-  :global(html.dark) .ov-view-btn.active {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
   }
 </style>
-
-
-

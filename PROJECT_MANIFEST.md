@@ -7,6 +7,17 @@ We bouwen een mobiel-vriendelijke, offline-first reisplanner voor een roadtrip n
 We gebruiken een Major.Minor versiesysteem voor iteraties (`v1.0`, `v1.1`, ...).  
 De huidige stabiele basis staat op **v1.1**.
 
+### Status
+- **UI:** 100% compliant met `UI_NORMPROFIEL` (SaaS Refactor voltooid).
+- **Typing:** `svelte-check` is volledig groen; regio-types hardened.
+- **Regions:** Ariège (en subregio's) zijn canoniek geintegreerd.
+- **A11y:** Screenreader-ready door aria-labels en live regions.
+
+### Overdracht voor volgende sessie
+- De focus verschuift naar de "Grote Kaart" (Leaflet). De Tab is al aanwezig.
+- `GerechtenChecklist.svelte` is de laatste grote monoliet die opsplitsing behoeft.
+- Overgang naar Firebase Auth voor identity.
+
 ## Harde Eisen & UI Standaarden (CRITICAL)
 ### STRICT VERBODEN
 - Tailwind classes
@@ -59,5 +70,24 @@ De huidige stabiele basis staat op **v1.1**.
 
 ## Architectuurprincipes
 - Identity nu lokaal (`localStorage` gebruiker Dennis/Franzi), later vervangbaar door echte auth.
-- Firestore security rules zijn functioneel maar nog te open; moeten aangescherpt worden.
+- Firestore security rules zijn functioneel en veldvalidatie is aangescherpt (v1.1).
 - Focus op herbruikbare, uniforme componenten en voorspelbare UX-patronen.
+- **UI Compliance:** Alle kerncomponenten zijn geaudit en tokenized (geen hardcoded CSS-debt meer in core UI).
+
+### Overnachtingen Systeem
+Dit systeem is onlangs gerefactored naar een moderne SaaS-layout:
+- `OvernachtingenPlanner.svelte`: Container component met alle business logic (Rune state).
+- `OvernachtingenHeader.svelte`: Compacte SaaS header met actieknoppen.
+- `OvernachtingenTabs.svelte`: horizontaal tab-systeem met geïntegreerde KPI's.
+- `OvernachtingenEmptyState.svelte`: Centrale empty-state kaart met SVG illustratie.
+- `OvernachtingenCalendarBoard.svelte`: De interactieve kalender.
+- `OvernachtingenListsSection.svelte`: De gedetailleerde lijst-weergaven.
+- `OvernachtingenFormPanel.svelte`: De edit/create modal forms. SaaS UI.
+
+| Status item | Waarde | Opmerking |
+| :--- | :--- | :--- |
+| **Audit Status** | ✅ 100% UI Normprofiel | Alle componenten zijn token-driven. |
+| **Architectuur** | 🧩 Modular (Svelte 5) | `OvernachtingenPlanner` refactored naar SaaS UI. |
+| **Wildlife Data** | 🐻 Verrijkt (incl. Ariège) | Types hardened voor regio-alignment. |
+| **A11y/Contrast** | ♿ Geoptimaliseerd | Aria-labels en live regions toegevoegd. |
+| **Build State** | 🟢 Green | 0 errors / 0 warnings in `svelte-check`. |

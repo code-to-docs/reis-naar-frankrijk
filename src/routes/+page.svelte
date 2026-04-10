@@ -85,19 +85,22 @@
     padding: var(--ui-space-4);
     text-decoration: none;
     color: var(--tekst);
-    box-shadow: 0 2px var(--space-2) var(--card-shadow);
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--ui-space-2);
     border: 1px solid var(--border-subtle);
     min-height: 110px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: 
+      transform var(--duration-normal) var(--ease-default), 
+      box-shadow var(--duration-normal) var(--ease-default), 
+      border-color var(--duration-normal) var(--ease-default);
   }
   .quick-btn:active { transform: scale(0.98); }
   .quick-btn:hover {
-    box-shadow: 0 var(--space-1-5) 18px var(--card-shadow);
-    border-color: color-mix(in srgb, var(--blauw) 35%, var(--border-subtle));
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-focus);
   }
   .quick-content {
     display: flex;

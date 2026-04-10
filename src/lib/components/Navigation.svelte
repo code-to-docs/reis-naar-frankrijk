@@ -31,7 +31,7 @@
 </script>
 
 {#if !online}
-  <div class="offline-bar">
+  <div class="offline-bar" aria-live="assertive" role="status">
     <span class="offline-dot"></span>
     <span>Geen internet - data wordt lokaal bewaard</span>
   </div>
@@ -49,7 +49,7 @@
   <div class="nav-links">
     {#each paginas as p (p.id)}
       {@const active = isActive(p.id)}
-      <a href={p.id} class="nav-item" class:active aria-current={active ? "page" : undefined}>
+      <a href={p.id} class="nav-item" class:active aria-current={active ? "page" : undefined} aria-label={p.label}>
         <span class="nav-emoji">{p.emoji}</span>
         <span class="nav-label">{p.label}</span>
         {#if active}
@@ -75,7 +75,7 @@
 
   .offline-bar {
     position: fixed;
-    bottom: 78px;
+    bottom: calc(var(--nav-height) + var(--space-2));
     left: 0; right: 0;
     background: var(--color-error-light);
     color: var(--text-error);
@@ -83,13 +83,13 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
-    padding: 7px var(--space-4);
+    padding: var(--space-2) var(--space-4);
     font-size: var(--text-xs);
     font-weight: var(--weight-medium);
     z-index: 99;
     max-width: var(--app-max-width);
     margin: 0 auto;
-    animation: slideUp var(--duration-slow) ease-out;
+    animation: slideUp var(--duration-slow) var(--ease-out);
   }
   .offline-dot {
     width: var(--space-2); height: var(--space-2);
@@ -128,12 +128,12 @@
     border: none;
     text-decoration: none;
     justify-content: center;
-    min-height: 64px;
+    min-height: var(--space-16);
     min-width: 62px;
-    padding: 5px var(--space-2-5);
+    padding: var(--space-1-5) var(--space-2-5);
     cursor: pointer;
     position: relative;
-    transition: transform 0.15s ease;
+    transition: transform var(--duration-fast) var(--ease-default);
     -webkit-tap-highlight-color: transparent;
   }
   .nav-item:active { transform: scale(0.92); }
@@ -142,7 +142,7 @@
     font-size: var(--text-xl);
     line-height: 1;
     margin-bottom: var(--space-1);
-    transition: transform var(--duration-normal) ease;
+    transition: transform var(--duration-normal) var(--ease-default);
   }
   .nav-item.active .nav-emoji { transform: scale(1.08); }
 
@@ -291,6 +291,3 @@
     }
   }
 </style>
-
-
-
