@@ -130,8 +130,8 @@
 <style>
   .fab {
     position: fixed;
-    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 12px);
-    right: 20px;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-3));
+    right: var(--space-5);
     width: 56px;
     height: 56px;
     min-height: 56px;
@@ -141,7 +141,7 @@
     font-size: 1.4rem;
     font-weight: var(--ui-weight-bold);
     border: none;
-    box-shadow: 0 8px 24px var(--card-shadow);
+    box-shadow: 0 var(--space-2) var(--space-6) var(--card-shadow);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -158,7 +158,7 @@
     display: none;
     line-height: 1;
     font-size: var(--font-size-sm);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
 
   .fab-overlay {
@@ -169,17 +169,17 @@
   }
   .fab-form {
     position: fixed;
-    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 10px);
-    left: 16px;
-    right: 16px;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-2-5));
+    left: var(--space-4);
+    right: var(--space-4);
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: var(--ui-space-5);
-    box-shadow: 0 12px 32px var(--card-shadow);
+    box-shadow: 0 var(--space-3) var(--space-8) var(--card-shadow);
     border: 1px solid var(--border-subtle);
     max-height: min(76dvh, 540px);
     overflow: auto;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 8px));
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, var(--space-2)));
     z-index: 140;
     animation: slideUp 0.2s ease-out;
   }
@@ -187,7 +187,7 @@
   @keyframes fabIn {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(var(--space-2));
     }
     to {
       opacity: 1;
@@ -213,12 +213,12 @@
   .form-header p {
     font-size: var(--font-size-sm);
     color: var(--nav-text);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     margin: 0;
   }
   .field-group {
     display: grid;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
   .field-label {
     font-size: var(--font-size-xs);
@@ -230,23 +230,23 @@
   .field-input,
   .field-select {
     margin-bottom: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1.5px solid var(--input-border);
     min-height: 46px;
-    padding: 10px 12px;
+    padding: var(--space-2-5) var(--space-3);
     font-size: var(--font-size-md);
     line-height: var(--ui-line-compact);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     color: var(--tekst);
     background: var(--input-bg);
     width: 100%;
   }
   .field-input::placeholder {
     color: var(--input-placeholder);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .field-select {
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .form-actions {
     display: flex;
@@ -260,23 +260,23 @@
   .action-cancel {
     width: 50px;
     min-width: 50px;
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     padding: 0;
     line-height: 1;
   }
 
   @media (min-width: 1100px) {
     .fab {
-      bottom: 24px;
-      right: max(24px, calc((100vw - var(--app-max-width)) / 2 + 24px));
+      bottom: var(--space-6);
+      right: max(var(--space-6), calc((100vw - var(--app-max-width)) / 2 + var(--space-6)));
       width: auto;
       min-width: 176px;
       height: 54px;
       border-radius: var(--radius-md);
-      padding: 0 16px;
-      gap: 8px;
-      font-size: 1rem;
-      font-weight: 700;
+      padding: 0 var(--space-4);
+      gap: var(--space-2);
+      font-size: var(--text-base);
+      font-weight: var(--weight-bold);
     }
     .fab-label {
       display: inline;
@@ -285,7 +285,7 @@
       bottom: 18px;
       max-width: 520px;
       left: auto;
-      right: max(24px, calc((100vw - var(--app-max-width)) / 2 + 24px));
+      right: max(var(--space-6), calc((100vw - var(--app-max-width)) / 2 + var(--space-6)));
       max-height: min(82dvh, 620px);
       padding: 22px;
     }
@@ -293,7 +293,7 @@
       gap: 13px;
     }
     .form-header h3 {
-      font-size: 1.25rem;
+      font-size: var(--text-lg);
     }
     .form-header p {
       font-size: var(--font-size-sm);
@@ -303,7 +303,7 @@
     }
     .field-input,
     .field-select {
-      min-height: 48px;
+      min-height: var(--space-12);
       font-size: var(--font-size-md);
     }
   }

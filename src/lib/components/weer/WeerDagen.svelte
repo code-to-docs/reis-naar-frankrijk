@@ -55,18 +55,18 @@
   .weer-laden {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-5);
     color: var(--text-accent);
     font-size: 0.92rem;
   }
   .weer-spinner {
-    width: 20px;
-    height: 20px;
+    width: var(--space-5);
+    height: var(--space-5);
     border: 3px solid var(--bg-accent-subtle);
     border-top-color: var(--text-accent);
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -81,23 +81,23 @@
   .weer-dagen {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: var(--space-2-5);
   }
   .weer-dag {
     background: var(--bg-surface-sunken);
-    border-radius: 16px;
-    padding: 12px 10px 10px;
+    border-radius: var(--radius-xl);
+    padding: var(--space-3) var(--space-2-5) var(--space-2-5);
     text-align: center;
     border: 1px solid var(--border-default);
-    transition: border-color 0.2s, background-color 0.2s;
+    transition: border-color var(--duration-normal), background-color var(--duration-normal);
   }
   .weer-dag.vandaag {
     background: var(--bg-accent-subtle);
     border-color: var(--border-accent);
-    box-shadow: 0 2px 8px rgba(43, 121, 194, 0.16);
+    box-shadow: 0 2px var(--space-2) rgba(43, 121, 194, 0.16);
   }
   .weer-dag-naam {
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     font-size: 0.82rem;
     color: var(--text-primary);
     margin-bottom: 1px;
@@ -109,17 +109,17 @@
     font-size: 0.78rem;
     color: var(--text-secondary);
     margin-bottom: 7px;
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .weer-emoji {
     font-size: 2.2rem;
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: var(--space-1-5);
   }
   .weer-beschrijving {
     font-size: 0.88rem;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
     min-height: var(--ui-touch-compact);
     display: flex;
     align-items: center;
@@ -130,11 +130,11 @@
     display: flex;
     justify-content: center;
     align-items: baseline;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1-5);
   }
   .temp-max {
-    font-weight: 800;
+    font-weight: var(--ui-weight-heavy);
     font-size: 2.05rem;
     color: var(--text-warning);
     line-height: 1;
@@ -142,7 +142,7 @@
   .temp-min {
     font-size: 1.22rem;
     color: var(--text-secondary);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     align-self: flex-end;
     line-height: 1;
     margin-bottom: 1px;
@@ -154,7 +154,7 @@
     gap: 3px;
     font-size: 0.9rem;
     color: var(--text-primary);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .weer-desktop-meta {
     display: none;
@@ -164,7 +164,7 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-    margin-top: 8px;
+    margin-top: var(--space-2);
     font-size: 0.78rem;
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);

@@ -75,7 +75,7 @@
   }
 
   .kies-scherm h2 {
-    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-size: var(--ui-text-2xl);
     letter-spacing: -0.03em;
   }
 
@@ -88,7 +88,7 @@
   .kies-acties {
     display: flex;
     gap: var(--ui-space-3);
-    margin-top: 6px;
+    margin-top: var(--space-1-5);
   }
 
   .kies-knop {
@@ -110,7 +110,7 @@
       display: grid;
       grid-template-columns: 220px minmax(0, 1fr);
       align-items: start;
-      gap: 16px;
+      gap: var(--space-4);
       padding: 14px 14px 0;
     }
   }

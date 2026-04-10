@@ -241,7 +241,7 @@
     background: var(--card-bg);
     border-radius: var(--radius-md);
     border: 2px solid transparent;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px var(--space-1-5) rgba(0, 0, 0, 0.06);
     overflow: hidden;
   }
 
@@ -256,8 +256,8 @@
     background: none;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
+    gap: var(--space-3);
+    padding: var(--space-3);
     text-align: left;
     cursor: pointer;
   }
@@ -282,7 +282,7 @@
   .gr-title-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     justify-content: space-between;
   }
 
@@ -309,7 +309,7 @@
   }
 
   .gr-tags {
-    margin-top: 6px;
+    margin-top: var(--space-1-5);
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
@@ -321,7 +321,7 @@
 
   .gr-chevron {
     flex-shrink: 0;
-    transition: transform 0.2s ease;
+    transition: transform var(--duration-normal) ease;
   }
 
   .gr-chevron.open {
@@ -330,7 +330,7 @@
 
   .gr-detail {
     border-top: 1px solid var(--border-default);
-    padding: 12px;
+    padding: var(--space-3);
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -351,7 +351,7 @@
     position: relative;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 var(--space-2) var(--space-5) -var(--space-1-5) rgba(0, 0, 0, 0.2);
     background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
@@ -369,14 +369,14 @@
 
   .gr-foto-hint {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    right: var(--space-2-5);
+    bottom: var(--space-2-5);
     margin: 0;
     font-size: var(--font-size-xs);
     color: var(--text-inverse);
     background: rgba(15, 23, 42, 0.7);
-    padding: 4px 8px;
-    border-radius: 999px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
   }
 
   .gr-beeld-ph {
@@ -386,13 +386,13 @@
     min-height: 220px;
     display: grid;
     place-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     padding: var(--space-6);
     text-align: center;
   }
 
   .gr-beeld-ph-emoji {
-    font-size: 2.5rem;
+    font-size: var(--text-3xl);
     line-height: 1;
   }
 
@@ -412,16 +412,16 @@
   .gr-user-status {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .gr-user-pill {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 7px 10px;
-    border-radius: 10px;
+    gap: var(--space-2);
+    padding: 7px var(--space-2-5);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
     font-size: var(--font-size-sm);
@@ -438,14 +438,14 @@
   .gr-mijn-meta {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-1-5);
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
   }
 
   .gr-stars {
     display: flex;
-    gap: 4px;
+    gap: var(--space-1);
   }
 
   .gr-star {
@@ -456,7 +456,7 @@
     width: 34px;
     height: 30px;
     line-height: 1;
-    font-size: 1rem;
+    font-size: var(--text-base);
     padding: 0;
   }
 
@@ -469,7 +469,7 @@
   .gr-streken {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
 
   .gr-streek-chip {
@@ -481,7 +481,7 @@
     min-height: var(--ui-touch-min);
     border-radius: var(--radius-lg);
     border: none;
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-bold);
     background: var(--color-success-base);
@@ -500,7 +500,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 56px 12px 16px;
+    padding: 56px var(--space-3) var(--space-4);
   }
 
   .gr-fs-img {
@@ -512,11 +512,11 @@
 
   .gr-fs-back {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: var(--space-2-5);
+    left: var(--space-2-5);
     border: none;
-    border-radius: 999px;
-    padding: 8px 12px;
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-3);
     background: rgba(255, 255, 255, 0.14);
     color: var(--text-inverse);
     font-size: var(--font-size-sm);
@@ -542,7 +542,7 @@
     }
     .gr-detail {
       padding: 14px;
-      gap: 16px;
+      gap: var(--space-4);
     }
     .gr-beeld {
       height: 320px;
@@ -556,7 +556,7 @@
       min-height: 42px;
     }
     .gr-check-btn {
-      min-height: 48px;
+      min-height: var(--space-12);
       font-size: var(--font-size-lg);
     }
   }

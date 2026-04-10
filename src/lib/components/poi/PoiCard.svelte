@@ -82,7 +82,7 @@
 
   .poi-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 28px var(--card-shadow);
+    box-shadow: 0 var(--space-2-5) 28px var(--card-shadow);
   }
 
   .poi-head {
@@ -95,7 +95,7 @@
 
   .poi-main {
     display: grid;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
 
   .poi-name {
@@ -122,7 +122,7 @@
   .poi-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 12px;
+    gap: var(--space-2) var(--space-3);
     font-size: var(--font-size-sm);
     color: var(--nav-text);
     font-weight: var(--ui-weight-medium);
@@ -131,11 +131,11 @@
   .poi-priority {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     min-height: 34px;
     width: fit-content;
-    padding: 6px 10px;
-    border-radius: 999px;
+    padding: var(--space-1-5) var(--space-2-5);
+    border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--poi-accent) 24%, var(--input-border));
     background: color-mix(in srgb, var(--card-bg) 88%, var(--poi-accent));
   }
@@ -146,9 +146,9 @@
   }
 
   .poi-priority-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
+    width: var(--space-2-5);
+    height: var(--space-2-5);
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--poi-accent) 16%, var(--bg-surface-sunken));
     border: 1px solid color-mix(in srgb, var(--poi-accent) 22%, var(--border-strong));
   }
@@ -169,7 +169,7 @@
   .poi-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-2);
     margin-top: auto;
   }
 

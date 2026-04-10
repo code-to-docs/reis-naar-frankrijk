@@ -168,14 +168,14 @@
 
   .poi-modal {
     position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px) + 10px);
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-2-5));
     z-index: 160;
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-subtle);
     background: var(--card-bg);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.24);
+    box-shadow: 0 18px var(--space-10) rgba(15, 23, 42, 0.24);
     padding: var(--ui-space-5);
     max-height: min(82dvh, 760px);
     overflow: auto;
@@ -198,14 +198,14 @@
   }
 
   .poi-modal-title {
-    margin: 4px 0 0;
+    margin: var(--space-1) 0 0;
     font-size: var(--font-size-2xl);
     color: var(--heading);
     letter-spacing: -0.02em;
   }
 
   .poi-modal-sub {
-    margin: 4px 0 0;
+    margin: var(--space-1) 0 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-medium);
@@ -222,7 +222,7 @@
 
   .poi-field {
     display: grid;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
 
   .poi-field span,
@@ -245,20 +245,20 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .poi-score-options {
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .poi-score-option {
     min-height: 0;
     display: grid;
     justify-items: start;
-    gap: 6px;
-    padding: 12px 14px;
+    gap: var(--space-1-5);
+    padding: var(--space-3) 14px;
     border-radius: var(--radius-md);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-accent-subtle));
@@ -289,9 +289,9 @@
   }
 
   .poi-score-dots span {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
+    width: var(--space-2-5);
+    height: var(--space-2-5);
+    border-radius: var(--radius-full);
     background: var(--bg-surface-sunken);
     border: 1px solid var(--border-strong);
   }
@@ -304,8 +304,8 @@
   .poi-visited {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
+    gap: var(--space-2-5);
+    padding: var(--space-3) 14px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
     background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-surface-sunken));
@@ -323,7 +323,7 @@
   .poi-form-actions {
     display: flex;
     gap: var(--ui-space-3);
-    margin-top: 4px;
+    margin-top: var(--space-1);
   }
 
   .poi-save {
@@ -336,7 +336,7 @@
       right: auto;
       top: 50%;
       bottom: auto;
-      width: min(760px, calc(100vw - 48px));
+      width: min(760px, calc(100vw - var(--space-12)));
       transform: translate(-50%, -50%);
       max-height: min(88dvh, 800px);
     }

@@ -121,7 +121,7 @@
 
 <style>
   .datum-header {
-    margin-bottom: 10px;
+    margin-bottom: var(--space-2-5);
     padding: 2px 2px 0;
   }
   .datum-dag {
@@ -135,17 +135,17 @@
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: var(--ui-space-4);
-    margin-bottom: 12px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    margin-bottom: var(--space-3);
+    box-shadow: 0 var(--space-1) 14px rgba(15, 23, 42, 0.08);
     border: 1px solid var(--border-subtle);
   }
   .weer-titel-rij {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .weer-titel {
     font-weight: var(--ui-weight-heavy);
@@ -157,7 +157,7 @@
   .weer-meta-rij {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     flex-wrap: wrap;
     justify-content: flex-end;
   }

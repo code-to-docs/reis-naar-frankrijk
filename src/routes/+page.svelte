@@ -85,7 +85,7 @@
     padding: var(--ui-space-4);
     text-decoration: none;
     color: var(--tekst);
-    box-shadow: 0 2px 8px var(--card-shadow);
+    box-shadow: 0 2px var(--space-2) var(--card-shadow);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -96,7 +96,7 @@
   }
   .quick-btn:active { transform: scale(0.98); }
   .quick-btn:hover {
-    box-shadow: 0 6px 18px var(--card-shadow);
+    box-shadow: 0 var(--space-1-5) 18px var(--card-shadow);
     border-color: color-mix(in srgb, var(--blauw) 35%, var(--border-subtle));
   }
   .quick-content {
@@ -106,13 +106,13 @@
     min-width: 0;
   }
   .quick-btn .icon {
-    font-size: clamp(1.8rem, 4vw, 2rem);
+    font-size: clamp(1.8rem, 4vw, var(--text-2xl));
     line-height: 1;
     flex-shrink: 0;
     filter: saturate(1.04);
   }
   .quick-btn span {
-    font-size: clamp(1rem, 2.8vw, 1.25rem);
+    font-size: clamp(var(--text-base), 2.8vw, var(--text-lg));
     font-weight: var(--ui-weight-heavy);
     color: var(--heading);
     letter-spacing: -0.01em;

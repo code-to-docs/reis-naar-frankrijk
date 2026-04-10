@@ -249,7 +249,7 @@ export interface GerechtCheck {
    - component gedrag
    - service-laag
    - kritische flows (POI CRUD, budget mutaties, filters)
-2. Hardcoded kleuren reduceren naar tokens in oudere modules.
+2. Resterende uitzonderingen op tokengebruik reduceren (met name geavanceerde gradients/overlays en micro-afmetingen).
 3. `PROJECT_EXPORT_SHEET.txt` actualiseren of vervangen door deze handoff als bron.
 4. Legacy pad opschonen:
    - oude `pois` collectie usage/documentatie verduidelijken
@@ -297,8 +297,8 @@ PUBLIC_FIREBASE_APP_ID=
    - Past bij huidige lokale identity aanpak, maar is niet productiehard voor echte gebruikersaccounts.
 
 2. **UI consistency debt in legacy modules**
-   - Nieuwe widgets en POI volgen tokens beter.
-   - Oudere onderdelen bevatten nog hardcoded sizing/kleuren en grotere stijlvariatie.
+   - Tokenmigratie is nu breed doorgevoerd op alle hoofdschermen en componentgroepen.
+   - Restschuld zit vooral in bewust aangehouden `rgba()` overlays/gradients en specifieke px-geometrie voor responsive layouts.
 
 3. **Monolithische componenten**
    - Eerste refactorronde afgerond: helpers verplaatst naar losse modules en budget-UI opgesplitst.
@@ -508,6 +508,36 @@ Stap 5:
 
 ## 13) Onderhoudslog
 
+### 2026-04-10 15:06:19 +02:00
+
+- Complete tokenmigratie uitgevoerd over alle `.svelte` style-blokken in `src/` op basis van het actuele UI tokenprofiel:
+  - kleurmapping (`--bg-*`, `--text-*`, `--border-*`, semantische success/warning/error);
+  - spacing- en typography-mapping;
+  - radius- en transition-mapping;
+  - semantische correcties op `font-size`, `font-weight`, `line-height` en `border-radius`.
+- Scope van de wijziging:
+  - 31 component-/routebestanden bijgewerkt;
+  - routes en componentgroepen gedekt: dashboard, budget, campings/overnachtingen, POI, meer, wildlife, gerechten, weer, shell-componenten.
+- Incident en herstel:
+  - tijdens bulkvervanging werd `white-space` tijdelijk foutief gemuteerd;
+  - direct hersteld in alle getroffen bestanden (`BudgetEntriesList`, `Navigation`, `OvernachtingenPlanner`, `OvernachtingenCalendarBoard`, `WeerDagen`);
+  - daarna volledige validatierun opnieuw uitgevoerd.
+- Validatie:
+  - `npm run check` OK (0 errors / 0 warnings)
+  - `npm run test` OK (12 tests)
+  - `npm run build` OK
+- Audit-snapshot na migratie (style-audit):
+  - 32 Svelte-bestanden met style-blocks geanalyseerd;
+  - resterend: 52 style-regels met `rgba()`/hex (voornamelijk overlays, gradients, accent-shadows);
+  - resterend: 354 style-regels met px-eenheden (voornamelijk layout-geometrie, specifieke componentafmetingen en breakpoints).
+- Onderhoudbaarheid (open risico):
+  - grootste bestanden blijven:
+    - `src/lib/components/OvernachtingenPlanner.svelte` (~974 regels),
+    - `src/lib/components/GerechtenChecklist.svelte` (~834 regels),
+    - `src/lib/components/wildlife/WildlifeCard.svelte` (~699 regels),
+    - `src/lib/components/Budget.svelte` (~445 regels).
+  - Advies: volgende refactorstap gericht op UI-splitsing per subflow (filter/header/list/detail/modal), met behoud van bestaande token- en UX-standaard.
+
 ### 2026-04-10 14:57:18 +02:00
 
 - UI normprofiel nu repo-breed doorgevoerd op alle hoofdschermen en onderliggende componenten:
@@ -594,3 +624,44 @@ Stap 5:
   - `npm run test` OK (12 tests)
   - `npm run check` OK (0 errors/warnings)
   - `npm run build` OK
+
+---
+
+## 14) Auditbevindingen (2026-04-10)
+
+### Kritiek / Hoog
+
+1. Grote componenten blijven een regressierisico qua onderhoudbaarheid:
+   - `src/lib/components/OvernachtingenPlanner.svelte` (~974 regels)
+   - `src/lib/components/GerechtenChecklist.svelte` (~834 regels)
+   - `src/lib/components/wildlife/WildlifeCard.svelte` (~699 regels)
+   - `src/lib/components/Budget.svelte` (~445 regels)
+
+### Middel
+
+1. Tokenmigratie is breed afgerond, maar er zijn nog gerichte uitzonderingen:
+   - ~52 style-regels met `rgba()`/hex (voornamelijk overlays, gradients, accent-shadows).
+   - ~354 style-regels met px-units (voornamelijk layout-geometrie, icon/beeldmaten en breakpoints).
+2. Topbestanden met resterende custom-kleurregels:
+   - `src/lib/components/Header.svelte`
+   - `src/lib/components/wildlife/WildlifeCard.svelte`
+   - `src/lib/components/GerechtenChecklist.svelte`
+   - `src/lib/components/gerechten/GerechtCard.svelte`
+   - `src/routes/poi/+page.svelte`
+3. Topbestanden met veel vaste px-geometrie:
+   - `src/lib/components/wildlife/WildlifeCard.svelte`
+   - `src/lib/components/Navigation.svelte`
+   - `src/lib/components/gerechten/GerechtCard.svelte`
+   - `src/lib/components/GerechtenChecklist.svelte`
+   - `src/lib/components/overnachtingen/OvernachtingenCalendarBoard.svelte`
+
+### Laag
+
+1. Tijdens bulkmigratie trad een tijdelijke CSS-mutatie op (`white-space`), inmiddels volledig hersteld en gevalideerd met `check/test/build`.
+2. `src/app.css` bevat nog enkele pragmatische mixen van `--ui-*` en basis `--*` tokens; dit is functioneel correct, maar kan later verder geharmoniseerd worden.
+
+### Aanbevolen vervolg (gefaseerd)
+
+1. UI-splitsing in de vier grootste componenten (container + presentational + subflows).
+2. Gerichte cleanup van resterende `rgba()`-overlays naar semantische oppervlaktetokens waar visueel mogelijk.
+3. px-reductie per componentgroep starten bij `wildlife`, `navigation` en `gerechten`.

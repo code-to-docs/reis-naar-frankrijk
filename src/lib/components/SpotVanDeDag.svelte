@@ -147,35 +147,35 @@
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: inherit;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    margin-bottom: var(--space-3);
+    box-shadow: 0 var(--space-1) 14px rgba(15, 23, 42, 0.08);
     border: 1px solid rgba(22, 163, 74, 0.18);
   }
   .spot-content { display: flex; gap: 14px; align-items: flex-start; }
   .spot-foto {
     width: 104px;
     height: 104px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     object-fit: cover;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.16);
+    box-shadow: 0 2px var(--space-2) rgba(0,0,0,0.16);
   }
   .spot-foto-placeholder {
     width: 104px;
     height: 104px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: rgba(255,255,255,0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: var(--text-2xl);
     flex-shrink: 0;
   }
   .spot-info { flex: 1; min-width: 0; }
   .spot-naam {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
   .spot-zeldzaamheid { font-size: 0.65rem; letter-spacing: -1px; }
   .spot-frans { color: var(--text-success); }
@@ -187,7 +187,7 @@
 
   @media (max-width: 560px) {
     .spot-content {
-      gap: 12px;
+      gap: var(--space-3);
     }
     .spot-foto, .spot-foto-placeholder {
       width: 88px;
@@ -200,13 +200,13 @@
       border-radius: var(--radius-xl);
     }
     .spot-content {
-      gap: 16px;
+      gap: var(--space-4);
     }
     .spot-foto,
     .spot-foto-placeholder {
       width: 118px;
       height: 118px;
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
     }
     .spot-regio-tag {
       min-height: 28px;

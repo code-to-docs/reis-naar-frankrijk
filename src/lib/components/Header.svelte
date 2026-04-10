@@ -37,14 +37,14 @@
   .header {
     background: linear-gradient(135deg, var(--header-bg) 0%, var(--bg-accent-hover) 100%);
     color: var(--text-inverse);
-    padding: 20px 18px 18px;
+    padding: var(--space-5) 18px 18px;
     text-align: left;
     position: relative;
     z-index: 99;
     border-bottom: 2px solid rgba(255,255,255,0.1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 var(--space-1) var(--space-3) rgba(0,0,0,0.1);
     width: min(100%, var(--content-max-width));
-    margin: 10px auto 0;
+    margin: var(--space-2-5) auto 0;
     border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-sm);
   }
   .header h1 {
@@ -63,10 +63,10 @@
 
   @media (max-width: 640px) {
     .header {
-      margin-inline: 10px;
+      margin-inline: var(--space-2-5);
       width: auto;
       border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-sm);
-      padding: 18px 16px 16px;
+      padding: 18px var(--space-4) var(--space-4);
     }
     .header h1 { font-size: clamp(1.95rem, 8vw, 2.2rem); }
     .header p { font-size: var(--font-size-md); }
@@ -76,7 +76,7 @@
     .header {
       text-align: center;
       margin: 0 auto;
-      padding: 36px 24px 34px;
+      padding: 36px var(--space-6) 34px;
       border-radius: var(--radius-lg);
       border-bottom-width: 1px;
       background:
@@ -87,7 +87,7 @@
 
     .header h1 {
       font-size: clamp(2.3rem, 3.5vw, 3.15rem);
-      margin-bottom: 6px;
+      margin-bottom: var(--space-1-5);
       letter-spacing: -0.03em;
     }
 
@@ -100,6 +100,6 @@
   :global(html.dark) .header {
     background: linear-gradient(135deg, var(--color-primary-900) 0%, var(--color-primary-800) 100%);
     border-bottom-color: rgba(59, 130, 246, 0.2);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    box-shadow: 0 var(--space-1) var(--space-3) rgba(0,0,0,0.35);
   }
 </style>

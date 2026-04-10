@@ -83,19 +83,19 @@
 </div>
 
 <style>
-  .meer-menu { padding-top: 12px; }
+  .meer-menu { padding-top: var(--space-3); }
   .meer-groep { margin-bottom: var(--ui-space-4); }
   .meer-groep-label {
     font-size: var(--font-size-xs); font-weight: var(--ui-weight-bold); color: var(--nav-text);
-    text-transform: uppercase; letter-spacing: 0.04em; padding: 0 4px 6px 4px;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 0 var(--space-1) var(--space-1-5) var(--space-1);
   }
   .meer-groep-items {
     background: var(--card-bg); border-radius: var(--radius-md); overflow: hidden;
-    box-shadow: 0 1px 4px var(--card-shadow);
+    box-shadow: 0 1px var(--space-1) var(--card-shadow);
   }
   .meer-item {
     width: 100%; display: flex; align-items: center; gap: 14px;
-    min-height: 58px; padding: 0 16px; background: none; border: none;
+    min-height: 58px; padding: 0 var(--space-4); background: none; border: none;
     border-bottom: 1px solid var(--border-subtle); cursor: pointer;
     text-align: left; transition: background 0.15s ease;
     color: var(--nav-text); text-decoration: none;
@@ -115,7 +115,7 @@
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-semibold);
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
   .meer-uitloggen:active { background: var(--hover-bg); }
 

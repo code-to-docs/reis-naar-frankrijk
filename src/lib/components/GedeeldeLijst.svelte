@@ -207,31 +207,31 @@
 <style>
   .gl-container { padding: 0; }
   .gl-title {
-    margin: 0 0 12px;
+    margin: 0 0 var(--space-3);
     color: var(--heading);
-    font-size: clamp(1.55rem, 4.2vw, 2rem);
+    font-size: clamp(1.55rem, 4.2vw, var(--space-8));
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
-  .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: var(--font-size-sm); }
+  .gl-voortgang { color: var(--nav-text); margin-bottom: var(--space-1); font-size: var(--font-size-sm); }
   .progress-fill { background: var(--groen); }
   .gl-item-content { flex: 1; min-width: 0; }
   .gl-notitie { color: var(--nav-text); font-size: var(--font-size-sm); margin: 2px 0; }
   .gl-maps-link {
-    display: inline-flex; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: var(--space-1-5);
     color: var(--blauw); font-size: var(--font-size-xs); text-decoration: none;
-    background: var(--hover-bg); padding: 4px 10px; border-radius: 999px;
-    margin-top: 4px; border: 1px solid var(--border-subtle);
+    background: var(--hover-bg); padding: var(--space-1) var(--space-2-5); border-radius: var(--radius-full);
+    margin-top: var(--space-1); border: 1px solid var(--border-subtle);
   }
   .gl-maps-link:active { opacity: 0.8; }
   .gl-meta { color: var(--nav-text); display: block; margin-top: 2px; }
-  .gl-delete { font-size: 18px; cursor: pointer; opacity: 0.7; }
+  .gl-delete { font-size: var(--text-md); cursor: pointer; opacity: 0.7; }
   .gl-delete:active { opacity: 1; }
-  .gl-leeg { text-align: center; color: var(--nav-text); margin: 32px 0; }
-  .gl-form-actions { display: flex; gap: 8px; }
-  .gl-submit { flex: 1; font-weight: var(--weight-semibold); display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
-  .gl-add-btn { width: 100%; margin-top: 12px; font-size: var(--font-size-lg); font-weight: var(--ui-weight-semibold); }
+  .gl-leeg { text-align: center; color: var(--nav-text); margin: var(--space-8) 0; }
+  .gl-form-actions { display: flex; gap: var(--space-2); }
+  .gl-submit { flex: 1; font-weight: var(--weight-semibold); display: flex; align-items: center; justify-content: center; gap: var(--space-1-5); }
+  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: var(--space-12); }
+  .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--font-size-lg); font-weight: var(--ui-weight-semibold); }
 
   @media (min-width: 1100px) {
     .gl-title.desktop-hidden {

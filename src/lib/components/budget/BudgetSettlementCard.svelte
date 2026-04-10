@@ -46,7 +46,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
+    padding: var(--space-1) 0;
   }
   .verrekening-card {
     margin-top: 0;
@@ -55,14 +55,14 @@
   .verrekening-lijn {
     border: none;
     border-top: 1px solid var(--border-default);
-    margin: 8px 0;
+    margin: var(--space-2) 0;
   }
   .verrekening-resultaat {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
-    font-size: 1rem;
+    padding: var(--space-1) 0;
+    font-size: var(--text-base);
   }
   .verrekening-resultaat.quitte {
     justify-content: center;

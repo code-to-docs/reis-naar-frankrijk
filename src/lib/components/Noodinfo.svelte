@@ -42,7 +42,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   .noodinfo-page h2 {
@@ -53,15 +53,15 @@
 
   .noodinfo-card {
     background: var(--card-bg);
-    border-radius: 14px;
-    padding: 14px 16px;
-    box-shadow: 0 2px 10px var(--card-shadow);
+    border-radius: var(--radius-lg);
+    padding: 14px var(--space-4);
+    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
     border: 1px solid var(--border-subtle);
   }
 
   .noodinfo-card h3 {
-    font-size: 1rem;
-    margin-bottom: 8px;
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
     color: var(--heading);
   }
 
@@ -83,7 +83,7 @@
   }
 
   .alarm-card {
-    border-left: 4px solid var(--rood);
+    border-left: var(--space-1) solid var(--rood);
   }
 
   .tips-list {
@@ -92,14 +92,14 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
 
   .tips-list li {
     font-size: 0.9rem;
-    line-height: 1.5;
+    line-height: var(--leading-normal);
     color: var(--tekst);
-    padding: 6px 0;
+    padding: var(--space-1-5) 0;
     border-bottom: 1px solid var(--border-subtle);
   }
 

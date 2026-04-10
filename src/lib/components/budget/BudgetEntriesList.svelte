@@ -78,23 +78,23 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 4px 4px 8px;
+    padding: var(--space-1) var(--space-1) var(--space-2);
     margin-bottom: 2px;
   }
   .dag-label {
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     font-size: var(--font-size-sm);
     color: var(--text-accent);
   }
   .dag-subtotaal {
-    --entry-actions-offset: calc(var(--ui-touch-compact) + 10px);
+    --entry-actions-offset: calc(var(--ui-touch-compact) + var(--space-2-5));
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     border-top: 1px solid var(--border-default);
-    margin-top: 4px;
-    padding: 10px calc(12px + var(--entry-actions-offset)) 2px 12px;
+    margin-top: var(--space-1);
+    padding: var(--space-2-5) calc(var(--space-3) + var(--entry-actions-offset)) 2px var(--space-3);
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-medium);
@@ -108,11 +108,11 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     background: var(--bg-surface);
     border-radius: var(--radius-lg);
-    padding: 11px 12px;
-    margin-bottom: 6px;
+    padding: 11px var(--space-3);
+    margin-bottom: var(--space-1-5);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .entry-emoji {
@@ -138,7 +138,7 @@
   .entry-right {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     justify-self: end;
   }
   .entry-bedrag {
@@ -168,7 +168,7 @@
     color: var(--text-tertiary);
   }
   .empty-icon {
-    font-size: 2.5rem;
+    font-size: var(--text-3xl);
   }
   .empty-state p {
     margin-top: var(--space-2);
@@ -179,7 +179,7 @@
     .entry-item {
       grid-template-columns: auto minmax(0, 1fr);
       grid-template-rows: auto auto;
-      row-gap: 4px;
+      row-gap: var(--space-1);
     }
     .entry-emoji {
       grid-row: 1 / span 2;
@@ -188,10 +188,10 @@
     .entry-right {
       grid-column: 2;
       justify-self: end;
-      gap: 8px;
+      gap: var(--space-2);
     }
     .dag-subtotaal {
-      padding-top: 8px;
+      padding-top: var(--space-2);
     }
   }
 </style>

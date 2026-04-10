@@ -44,15 +44,15 @@
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: var(--ui-space-4);
-    box-shadow: 0 2px 10px var(--card-shadow);
+    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
     border: 1px solid var(--border-subtle);
   }
   .gr-stats-top {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 10px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2-5);
   }
   .gr-title {
     font-size: var(--font-size-xl);
@@ -75,13 +75,13 @@
   .gr-bars {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .gr-bar-row {
     display: grid;
     grid-template-columns: 60px 1fr auto;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .gr-name {
     font-size: var(--font-size-sm);
@@ -94,14 +94,14 @@
     font-weight: var(--ui-weight-semibold);
   }
   .gr-bar {
-    height: 8px;
+    height: var(--space-2);
     background: var(--bg-surface-sunken);
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     overflow: hidden;
   }
   .gr-fill {
     height: 100%;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
   }
   .gr-fill.dennis { background: linear-gradient(90deg, var(--border-accent), var(--color-primary-600)); }
   .gr-fill.franzi { background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-600)); }
@@ -111,7 +111,7 @@
       padding: var(--ui-space-5);
     }
     .gr-stats-top {
-      margin-bottom: 12px;
+      margin-bottom: var(--space-3);
     }
     .gr-title {
       font-size: clamp(1.55rem, 2.2vw, 1.85rem);
@@ -120,7 +120,7 @@
       font-size: var(--font-size-md);
     }
     .gr-mijn-perc {
-      font-size: clamp(1.6rem, 2.2vw, 2rem);
+      font-size: clamp(1.6rem, 2.2vw, var(--space-8));
     }
   }
 

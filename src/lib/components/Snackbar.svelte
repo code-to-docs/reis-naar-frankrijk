@@ -58,20 +58,20 @@
     z-index: 9999;
     background: none;
     border: none;
-    padding: 0 16px;
+    padding: 0 var(--space-4);
     cursor: pointer;
   }
 
   .snackbar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     padding: 14px 22px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     border: 2px solid;
     font-size: 0.92rem;
     font-weight: var(--weight-semibold);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    box-shadow: 0 var(--space-1-5) var(--space-6) rgba(0,0,0,0.18);
     animation: snackIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     max-width: 92%;
   }

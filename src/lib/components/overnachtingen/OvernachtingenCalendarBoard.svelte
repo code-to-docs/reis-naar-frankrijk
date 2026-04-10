@@ -143,7 +143,7 @@
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
   }
 
@@ -156,7 +156,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2-5);
     border: 1px solid var(--border-subtle);
   }
   .ov-calendar-teaser h3 {
@@ -164,7 +164,7 @@
     font-size: var(--font-size-lg);
   }
   .ov-calendar-teaser p {
-    margin: 4px 0 0;
+    margin: var(--space-1) 0 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
     max-width: 66ch;
@@ -173,7 +173,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-2-5);
   }
   .ov-calendar-head strong {
     font-size: var(--font-size-lg);
@@ -181,15 +181,15 @@
     color: var(--heading);
   }
   .ov-calendar-hint {
-    margin: -2px 0 10px;
+    margin: -2px 0 var(--space-2-5);
     font-size: var(--font-size-sm);
     color: var(--nav-text);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .ov-month-btn {
     width: auto;
     min-height: var(--btn-height-compact);
-    padding: 0 10px;
+    padding: 0 var(--space-2-5);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
     border: 1px solid var(--input-border);
@@ -205,20 +205,20 @@
   .ov-weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 6px;
-    margin-bottom: 6px;
+    gap: var(--space-1-5);
+    margin-bottom: var(--space-1-5);
   }
   .ov-weekdays div {
     text-align: center;
     font-size: var(--font-size-xs);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     color: var(--nav-text);
   }
 
   .ov-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 6px;
+    gap: var(--space-1-5);
   }
   .ov-grid.selecting {
     user-select: none;
@@ -228,12 +228,12 @@
     width: 100%;
     min-height: 88px;
     border: 1px solid var(--input-border);
-    border-radius: 10px;
-    padding: 6px;
+    border-radius: var(--radius-md);
+    padding: var(--space-1-5);
     background: var(--card-bg);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
     cursor: pointer;
     transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
     touch-action: none;
@@ -270,18 +270,18 @@
   }
   .ov-day-number {
     font-size: var(--font-size-sm);
-    font-weight: 800;
+    font-weight: var(--ui-weight-heavy);
     color: var(--heading);
   }
   .ov-day-events {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
   }
   .ov-chip {
     --loc-kleur: var(--color-primary-600);
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     border-radius: var(--radius-md);
     padding: 3px 5px;
     background: color-mix(in srgb, var(--loc-kleur) 16%, var(--bg-surface));
@@ -307,28 +307,28 @@
   .ov-more {
     font-size: 0.72rem;
     color: var(--nav-text);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     padding-left: 2px;
   }
 
   .ov-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px 12px;
-    margin-top: 12px;
+    gap: 7px var(--space-3);
+    margin-top: var(--space-3);
   }
   .ov-legend-item {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-1-5);
     font-size: var(--font-size-xs);
     color: var(--tekst);
     font-weight: var(--weight-semibold);
   }
   .ov-legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
+    width: var(--space-2-5);
+    height: var(--space-2-5);
+    border-radius: var(--radius-full);
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
   }
@@ -336,7 +336,7 @@
   @media (max-width: 760px) {
     .ov-calendar-teaser {
       display: grid;
-      gap: 10px;
+      gap: var(--space-2-5);
     }
     .ov-calendar-teaser .ov-secondary-btn {
       width: 100%;
@@ -346,7 +346,7 @@
     }
     .ov-chip {
       font-size: 0.64rem;
-      padding: 2px 4px;
+      padding: 2px var(--space-1);
     }
   }
 

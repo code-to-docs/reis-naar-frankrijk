@@ -263,7 +263,7 @@
   .wl-zoek-rij {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 8px;
+    gap: var(--space-2);
     align-items: stretch;
   }
   .wl-zoek {
@@ -272,7 +272,7 @@
     border: 1.5px solid var(--input-border);
     border-radius: var(--radius-lg);
     background: var(--input-bg);
-    padding-inline: 12px;
+    padding-inline: var(--space-3);
     align-self: stretch;
   }
   .wl-filter-toggle {
@@ -286,7 +286,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--space-1-5);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
     line-height: 1;
@@ -298,36 +298,36 @@
     color: var(--text-inverse);
   }
   .wl-filter-badge {
-    min-width: 20px;
-    height: 20px;
-    border-radius: 999px;
+    min-width: var(--space-5);
+    height: var(--space-5);
+    border-radius: var(--radius-full);
     background: rgba(255, 255, 255, 0.2);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-xs);
-    padding: 0 6px;
+    padding: 0 var(--space-1-5);
   }
   .wl-filters-card {
     background: var(--card-bg);
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 2px 10px var(--card-shadow);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
     border: 1px solid var(--border-subtle);
   }
-  .wl-filter-rij + .wl-filter-rij { margin-top: 10px; }
+  .wl-filter-rij + .wl-filter-rij { margin-top: var(--space-2-5); }
   .wl-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .wl-pill {
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
     color: var(--text-secondary);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     min-height: var(--ui-touch-compact);
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     display: inline-flex;
     align-items: center;
     font-size: var(--font-size-sm);
@@ -340,10 +340,10 @@
     color: var(--text-inverse);
   }
   .wl-reset {
-    margin-top: 12px;
+    margin-top: var(--space-3);
     width: 100%;
     min-height: var(--ui-touch-min);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--color-error-light);
     color: var(--text-error);
     font-size: var(--font-size-sm);
@@ -357,17 +357,17 @@
   .wl-lijst {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-2-5);
   }
   .wl-leeg {
     background: var(--card-bg);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 18px;
     text-align: center;
     color: var(--text-secondary);
-    box-shadow: 0 2px 10px var(--card-shadow);
+    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
   }
-  .wl-leeg p { margin-bottom: 10px; }
+  .wl-leeg p { margin-bottom: var(--space-2-5); }
 
   @media (min-width: 768px) {
     .wl-page {
@@ -384,21 +384,21 @@
       gap: var(--ui-space-3);
     }
     .wl-zoek {
-      min-height: 48px;
+      min-height: var(--space-12);
       font-size: var(--font-size-md);
       padding-inline: 14px;
     }
     .wl-filter-toggle {
-      min-height: 48px;
+      min-height: var(--space-12);
       min-width: 108px;
-      padding-inline: 16px;
+      padding-inline: var(--space-4);
       font-size: var(--font-size-md);
     }
     .wl-filters-card {
       padding: var(--ui-space-4);
     }
     .wl-filter-rij + .wl-filter-rij {
-      margin-top: 12px;
+      margin-top: var(--space-3);
     }
     .wl-pill {
       min-height: 42px;
@@ -409,7 +409,7 @@
       font-size: var(--font-size-md);
     }
     .wl-lijst {
-      gap: 12px;
+      gap: var(--space-3);
     }
   }
 

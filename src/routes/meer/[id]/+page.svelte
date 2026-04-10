@@ -56,12 +56,12 @@
 
 <style>
   .terug-wrap {
-    padding: 0 0 10px 0;
+    padding: 0 0 var(--space-2-5) 0;
   }
   .terug-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-1-5);
     min-height: var(--btn-height-compact);
     padding: 0 14px;
     background: color-mix(in srgb, var(--card-bg) 86%, var(--bg-accent-subtle));

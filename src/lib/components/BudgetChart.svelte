@@ -128,31 +128,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    font-weight: 800;
+    font-size: var(--text-xl);
+    font-weight: var(--ui-weight-heavy);
     color: var(--heading);
     pointer-events: none;
   }
   .chart-legenda {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 12px;
-    margin-top: 12px;
+    gap: var(--space-1) var(--space-3);
+    margin-top: var(--space-3);
   }
   .legenda-item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
     font-size: 0.72rem;
   }
   .legenda-kleur {
     width: 7px;
     height: 7px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
   }
-  .legenda-label { color: var(--nav-text); transition: color 0.2s; }
-  .legenda-bedrag { color: var(--heading); font-weight: var(--weight-semibold); transition: color 0.2s; }
+  .legenda-label { color: var(--nav-text); transition: color var(--duration-normal); }
+  .legenda-bedrag { color: var(--heading); font-weight: var(--weight-semibold); transition: color var(--duration-normal); }
 
   :global(html.dark) .donut-center { color: var(--text-primary); }
   :global(html.dark) .legenda-label { color: var(--text-tertiary); }

@@ -98,50 +98,50 @@
 
 <style>
   .alerts-panel {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
   .alerts-grid {
     display: grid;
-    gap: 10px;
+    gap: var(--space-2-5);
     grid-template-columns: 1fr;
   }
   .alert-card {
     display: block;
     text-decoration: none;
     color: inherit;
-    border-radius: 16px;
-    padding: 12px 12px 11px;
+    border-radius: var(--radius-xl);
+    padding: var(--space-3) var(--space-3) 11px;
     border: 1px solid var(--border-default);
     background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-sunken) 100%);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 var(--space-1-5) 18px rgba(15, 23, 42, 0.06);
   }
   .alert-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
   }
   .alert-source {
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
   .alert-badge {
     min-height: 28px;
   }
   .alert-region {
     font-size: 1.02rem;
-    font-weight: 800;
+    font-weight: var(--ui-weight-heavy);
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
     letter-spacing: -0.01em;
   }
   .alert-summary {
     font-size: 0.9rem;
-    line-height: 1.35;
+    line-height: var(--leading-snug);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }
@@ -149,7 +149,7 @@
     margin-top: 7px;
     font-size: 0.77rem;
     color: var(--text-secondary);
-    line-height: 1.35;
+    line-height: var(--leading-snug);
   }
   .tone-calm {
     background: linear-gradient(135deg, var(--color-success-light) 0%, var(--bg-surface) 100%);
@@ -168,22 +168,22 @@
     border-color: color-mix(in srgb, var(--color-error-base) 38%, var(--border-default));
   }
   .alerts-footnote {
-    margin-top: 8px;
+    margin-top: var(--space-2);
     font-size: 0.79rem;
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }
   .alerts-footnote-error {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
   }
   .alerts-loading {
     display: grid;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: var(--space-2-5);
+    margin-bottom: var(--space-3);
   }
   .alert-skeleton {
     height: 86px;
-    border-radius: 16px;
+    border-radius: var(--radius-xl);
     background: linear-gradient(90deg, var(--bg-surface-sunken) 25%, var(--bg-surface) 50%, var(--bg-surface-sunken) 75%);
     background-size: 200% 100%;
     animation: alertShimmer 1.3s infinite linear;

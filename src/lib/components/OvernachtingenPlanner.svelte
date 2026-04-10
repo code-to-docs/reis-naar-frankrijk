@@ -823,14 +823,14 @@
 <style>
   .ov-page {
     display: grid;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   .ov-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2-5);
     margin: 0;
   }
   .ov-top h2 {
@@ -842,16 +842,16 @@
     margin: 2px 0 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .ov-add {
     min-height: var(--ui-touch-min);
     white-space: nowrap;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
   }
   .ov-top-actions {
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
     flex-wrap: wrap;
     justify-content: flex-end;
   }
@@ -863,26 +863,26 @@
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
   }
 
   .ov-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--space-2-5);
   }
   .ov-view-switch {
     margin: 0;
     display: flex;
-    gap: 6px;
+    gap: var(--space-1-5);
     flex-wrap: wrap;
   }
   .ov-view-btn {
     width: auto;
     min-height: var(--btn-height-compact);
     padding: 0 14px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
     color: var(--text-secondary);
@@ -897,7 +897,7 @@
   }
   .ov-stat {
     margin: 0;
-    padding: 12px;
+    padding: var(--space-3);
     border: 1px solid var(--border-subtle);
   }
   .ov-stat span {

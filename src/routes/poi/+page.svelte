@@ -312,7 +312,7 @@
 
   .poi-hero-copy {
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .poi-kicker {
@@ -348,7 +348,7 @@
   .poi-summary-card {
     margin: 0;
     display: grid;
-    gap: 4px;
+    gap: var(--space-1);
     min-height: 118px;
     align-content: start;
   }
@@ -394,7 +394,7 @@
   .poi-search {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     min-height: var(--ui-touch-min);
     padding: 0 14px;
     border-radius: var(--radius-md);
@@ -420,13 +420,13 @@
   }
 
   .poi-search-icon {
-    font-size: 1rem;
+    font-size: var(--text-base);
     line-height: 1;
   }
 
   .poi-sort {
     display: grid;
-    gap: 6px;
+    gap: var(--space-1-5);
   }
 
   .poi-sort select {
@@ -435,22 +435,22 @@
 
   .poi-filter-group {
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .poi-pill-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .poi-pill {
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-accent-subtle));
     color: var(--tekst);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     min-height: var(--btn-height-compact);
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
   }
@@ -472,7 +472,7 @@
   .poi-filter-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2-5);
     margin: 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
@@ -483,8 +483,8 @@
     display: inline-flex;
     align-items: center;
     min-height: 26px;
-    padding: 4px 9px;
-    border-radius: 999px;
+    padding: var(--space-1) 9px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--card-bg) 85%, var(--bg-accent-subtle));
     border: 1px solid color-mix(in srgb, var(--input-border) 78%, var(--border-accent));
     color: var(--blauw);
@@ -501,7 +501,7 @@
   .poi-empty {
     margin: 0;
     display: grid;
-    gap: 10px;
+    gap: var(--space-2-5);
     justify-items: start;
     text-align: left;
   }
@@ -521,20 +521,20 @@
   .poi-skeleton {
     margin: 0;
     display: grid;
-    gap: 10px;
+    gap: var(--space-2-5);
     min-height: 280px;
   }
 
   .poi-skeleton-line,
   .poi-skeleton-pill {
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, rgba(148, 163, 184, 0.16), rgba(148, 163, 184, 0.32), rgba(148, 163, 184, 0.16));
     background-size: 200% 100%;
     animation: poiSkeleton 1.4s ease-in-out infinite;
   }
 
   .poi-skeleton-line {
-    height: 12px;
+    height: var(--space-3);
   }
 
   .poi-skeleton-line--short {
@@ -543,17 +543,17 @@
 
   .poi-skeleton-line--title {
     width: 70%;
-    height: 20px;
+    height: var(--space-5);
   }
 
   .poi-skeleton-footer {
     display: flex;
-    gap: 10px;
+    gap: var(--space-2-5);
     margin-top: auto;
   }
 
   .poi-skeleton-pill {
-    height: 40px;
+    height: var(--space-10);
     width: 136px;
   }
 

@@ -311,8 +311,8 @@
   }
   .ov-form-head {
     display: grid;
-    gap: 4px;
-    margin-bottom: 10px;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2-5);
   }
   .ov-form-card h3 {
     margin: 0;
@@ -322,7 +322,7 @@
     margin: 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
   }
   .ov-form {
     display: grid;
@@ -335,7 +335,7 @@
   .ov-form label span {
     font-size: var(--font-size-xs);
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     letter-spacing: 0.03em;
     color: var(--nav-text);
   }
@@ -361,7 +361,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: var(--space-2);
     flex-wrap: wrap;
     color: var(--blauw);
     font-weight: var(--weight-semibold);
@@ -375,7 +375,7 @@
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     border-radius: var(--btn-radius);
   }
   .ov-actions {
@@ -388,7 +388,7 @@
   }
   .ov-actions .btn-danger {
     width: 52px;
-    font-weight: 700;
+    font-weight: var(--weight-bold);
     padding: 0;
   }
 
