@@ -205,13 +205,13 @@
   --bg-overlay-dark: var(--black-a10);
 
   /* Budget chart palette - sterk onderscheid tussen categorieen */
-  --budget-cat-dining: #d97706;
-  --budget-cat-boodschappen: #0f766e;
-  --budget-cat-overnachting: #2563eb;
-  --budget-cat-benzine: #ca8a04;
-  --budget-cat-tol: #7c3aed;
-  --budget-cat-uitjes: #db2777;
-  --budget-cat-overig: #6b7280;
+  --budget-cat-dining: #7dd3fc;
+  --budget-cat-boodschappen: #86efac;
+  --budget-cat-overnachting: #93c5fd;
+  --budget-cat-benzine: #6ee7b7;
+  --budget-cat-tol: #a5f3fc;
+  --budget-cat-uitjes: #5eead4;
+  --budget-cat-overig: #cbd5e1;
 
   /* Marker Colors (Domain Specific) */
   --marker-1: #1d4ed8;
