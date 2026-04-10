@@ -9,7 +9,7 @@
 - SvelteKit 2 + Svelte 5 (Runes)
 - Vite 8
 - Firebase Firestore (client-side realtime)
-- Vitest (unit tests)
+- Vitest 3 + JSDOM (@testing-library/svelte)
 - CSS tokens + UI normprofiel in eigen stylesheets (geen Tailwind/shadcn)
 - Vercel deployment
 
@@ -226,7 +226,7 @@ export interface GerechtCheck {
 
 ### Gevalideerd in huidige state
 
-- `npm run test` OK (12 tests)
+- `npm run test` OK (21 tests, incl. UI Audit & Component tests)
 - `npm run check` OK (0 errors/warnings)
 - `npm run build` OK
 
@@ -373,7 +373,10 @@ Doel:
 - Routeplanning: automatische afstand en reistijd tussen overnachtingen.
 
 Niet-onderhandelbare randvoorwaarden:
-- UI-conformiteit met `docs/UI_NORMPROFIEL.txt` en tokens in `src/lib/styles/ui-norm-profile.css`.
+- `src/app.css`: Centrale mapping van UI tokens naar globale styles.
+- `vitest.config.ts`: Dedicated Vitest configuratie voor Svelte 5 component testing.
+- `docs/UI_NORMPROFIEL.txt`: Het visuele manifest van het project.
+- `docs/KNOWN_ISSUES.md`: Centraal overzicht van technische schuld en UI afwijkingen.
 - Consistente UX-patronen: card-opbouw, action-rows, touch-targets en chip-stijl.
 - Mobile-first performance: geen extra server-latentie introduceren (SSR blijft uit voor app-shell).
 - Progressieve uitrol: elke fase levert zelfstandig waarde en heeft rollback-optie.

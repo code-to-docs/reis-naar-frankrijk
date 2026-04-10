@@ -86,8 +86,8 @@ Dit systeem is onlangs gerefactored naar een moderne SaaS-layout:
 
 | Status item | Waarde | Opmerking |
 | :--- | :--- | :--- |
-| **Audit Status** | ✅ 100% UI Normprofiel | Alle componenten zijn token-driven. |
-| **Architectuur** | 🧩 Modular (Svelte 5) | `OvernachtingenPlanner` refactored naar SaaS UI. |
+| **Audit Status** | ✅ UI Norm Audit Active | Automatische checks op tokens actief. |
+| **Architectuur** | 🧩 Modular (Svelte 5) | OvernachtingenPlanner refactored naar SaaS UI. |
 | **Wildlife Data** | 🐻 Verrijkt (incl. Ariège) | Types hardened voor regio-alignment. |
-| **A11y/Contrast** | ♿ Geoptimaliseerd | Aria-labels en live regions toegevoegd. |
+| **Known Issues** | 📑 [Documentatie](c:/Users/Admin/Documents/reis-naar-frankrijk/docs/KNOWN_ISSUES.md) | Gecentraliseerde lijst van debt/bugs. |
 | **Build State** | 🟢 Green | 0 errors / 0 warnings in `svelte-check`. |

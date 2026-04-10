@@ -17,20 +17,15 @@ Wat aantoonbaar in de codebase zit:
 - **Regions:** Ariège (en subregio's) zijn canoniek geintegreerd.
 - **UX/A11y:** Kritieke icon-buttons voorzien van `aria-label`, offline-indicators hebben `aria-live`, en contrast in Dark Mode is verbeterd.
 
-### Laatste Iteratie: SaaS UI Refactor & Modularisering (2026-04-10)
-1. **SaaS UI Overhaul:** `OvernachtingenPlanner` voorzien van een moderne SaaS-layout conform mockup:
-    - Compacte header met primaire/secundaire acties.
-    - KPI-geïntegreerde Tab-navigatie (Overzicht, Kalender, Kaart).
-    - Gecentraliseerde `EmptyState` component met SVG.
-2. **Design System:** Nieuwe Tab-standaard (sectie 10.10) en `.empty-state` classes toegevoegd aan `UI_NORMPROFIEL`.
-3. **Build Fixes:** `WildlifeRegio` types hardened en CSS-syntax hersteld in `app.css` om Vercel stabiliteit te garanderen.
-4. **Validatie:** `npm run build` en `npm run check` succesvol afgerond (0 errors).
+### Laatste Iteratie: Test-Infrastructuur & UI Audit (2026-04-10)
+1. **Testing Setup:** `@testing-library/svelte` en `jsdom` geconfigureerd. Component testing voor Svelte 5 (Runes) nu mogelijk.
+2. **UI Norm Audit:** Geautomatiseerde test (`ui-norm-audit.test.ts`) die de codebase scant op hardcoded CSS-waarden.
+3. **Issue Tracking:** `docs/KNOWN_ISSUES.md` geïntroduceerd voor het scheiden van defecten/debt van de roadmap.
 
-### Openstaande Punten
-- **Component splitting:** `GerechtenChecklist.svelte` is nu de laatste grote monoliet.
+### Openstaande Punten (Roadmap)
 - **Feature 1:** Start setup voor "Grote Kaart" (MapItem contract). De tab is al aanwezig als placeholder.
-- **Security:** Firebase Auth integratie voorbij de huidige lokale identity. model is aangescherpt, maar echte auth/identity ontbreekt nog.
-- Testdekking op component/workflow-niveau kan verder omhoog.
+- **Security:** Firebase Auth integratie voorbij de huidige lokale identity.
+- **Test-coverage**: Uitbreiden van component-tests naar Budget en POI widgets.
 
 ## Volgende Stappen (Target: v1.2)
 1. Grote Kaart - Fase 1:
