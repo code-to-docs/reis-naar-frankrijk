@@ -6,29 +6,10 @@
   import { OvernachtingenService } from "$lib/services/overnachtingenService.js";
   import { parseLocalizedNumber } from "$lib/utils/formatters.js";
   import type { Overnachting, OvernachtingType } from "$lib/types.js";
-
-  type OvernachtingView = Overnachting & {
-    id: string;
-    shortlistSafe: boolean;
-    typeSafe: OvernachtingType;
-    nachtenSafe: number;
-    startDateObj: Date | null;
-    lastNightObj: Date | null;
-    latSafe: number | null;
-    lonSafe: number | null;
-    locatieKey: string;
-    kleur: string;
-    googleMapsUrl: string | null;
-    openStreetMapLink: string | null;
-  };
-
-  type KalenderCel = {
-    key: string;
-    dagNummer: number | null;
-    entries: OvernachtingView[];
-    isVandaag: boolean;
-    isLeeg: boolean;
-  };
+  import OvernachtingenFormPanel from "./overnachtingen/OvernachtingenFormPanel.svelte";
+  import OvernachtingenCalendarBoard from "./overnachtingen/OvernachtingenCalendarBoard.svelte";
+  import OvernachtingenListsSection from "./overnachtingen/OvernachtingenListsSection.svelte";
+  import type { KalenderCel, OvernachtingView } from "./overnachtingen/types.js";
 
   const WEEKDAGEN = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
   const LOCATIE_KLEUREN = [
@@ -518,6 +499,60 @@
     bookingUrlInput = "";
   }
 
+  type FormField =
+    | "naam"
+    | "type"
+    | "startDatum"
+    | "nachten"
+    | "latitude"
+    | "longitude"
+    | "adres"
+    | "websiteUrl"
+    | "bookingUrl"
+    | "notities";
+
+  function setFormField(field: FormField, value: string) {
+    if (field === "naam") {
+      naamInput = value;
+      return;
+    }
+    if (field === "type") {
+      if (value === "hotel" || value === "bnb" || value === "camping") {
+        typeInput = value;
+      }
+      return;
+    }
+    if (field === "startDatum") {
+      startDatumInput = value;
+      return;
+    }
+    if (field === "nachten") {
+      nachtenInput = value;
+      return;
+    }
+    if (field === "latitude") {
+      latitudeInput = value;
+      return;
+    }
+    if (field === "longitude") {
+      longitudeInput = value;
+      return;
+    }
+    if (field === "adres") {
+      adresInput = value;
+      return;
+    }
+    if (field === "websiteUrl") {
+      websiteUrlInput = value;
+      return;
+    }
+    if (field === "bookingUrl") {
+      bookingUrlInput = value;
+      return;
+    }
+    notitiesInput = value;
+  }
+
   function normalizeUrl(input: string) {
     const trimmed = input.trim();
     if (!trimmed) return "";
@@ -825,358 +860,85 @@
     </button>
   </div>
 
-  {#if toonForm}
-    <div class="card ov-form-card" bind:this={overnachtingFormEl}>
-      <div class="ov-form-head">
-        <h3>{bewerkItemId ? "Overnachting bewerken" : "Nieuwe overnachting"}</h3>
-        <p>{bewerkItemId ? "Pas de details aan en sla opnieuw op." : "Plan een verblijf direct op de kalender."}</p>
-      </div>
-      <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegOvernachtingToe(); }}>
-        <label>
-          <span>Naam</span>
-          <input bind:value={naamInput} required placeholder="Bijv. Camping Le Lac" />
-        </label>
+  <OvernachtingenFormPanel
+    showPlanningForm={toonForm}
+    showShortlistForm={toonShortlistForm}
+    editItemId={bewerkItemId}
+    typeOpties={TYPE_OPTIES}
+    formValues={{
+      naam: naamInput,
+      type: typeInput,
+      startDatum: startDatumInput,
+      nachten: nachtenInput,
+      latitude: latitudeInput,
+      longitude: longitudeInput,
+      adres: adresInput,
+      websiteUrl: websiteUrlInput,
+      bookingUrl: bookingUrlInput,
+      notities: notitiesInput
+    }}
+    vertrekPreview={vertrekPreview}
+    gpsBezig={gpsBezig}
+    emojiKalender={E.KALENDER}
+    emojiPin={E.PIN}
+    onFieldChange={setFormField}
+    onSubmitPlanning={() => void voegOvernachtingToe()}
+    onSubmitShortlist={() => void voegShortlistToe()}
+    onGebruikGps={() => void gebruikHuidigeGps()}
+    onCloseForms={sluitFormulieren}
+    setPlanningFormEl={(el) => {
+      overnachtingFormEl = el;
+    }}
+    setShortlistFormEl={(el) => {
+      shortlistFormEl = el;
+    }}
+  />
 
-        <label>
-          <span>Type</span>
-          <select bind:value={typeInput} required>
-            {#each TYPE_OPTIES as optie}
-              <option value={optie.id}>{optie.label}</option>
-            {/each}
-          </select>
-        </label>
+  <OvernachtingenCalendarBoard
+    actieveWeergave={actieveWeergave}
+    maandLabelText={maandLabel(geselecteerdeMaand)}
+    kanVorigeMaand={kanVorigeMaand}
+    kanVolgendeMaand={kanVolgendeMaand}
+    weekdagen={WEEKDAGEN}
+    kalenderCels={kalenderCels}
+    selectieActief={selectieActief}
+    locatieLegenda={locatieLegenda}
+    isDagInSelectie={dagInSelectie}
+    isDagSelectieStart={dagIsSelectieStart}
+    isDagSelectieEinde={dagIsSelectieEinde}
+    onOpenKalender={() => {
+      actieveWeergave = "kalender";
+    }}
+    onPrevMaand={() => stapMaand(-1)}
+    onNextMaand={() => stapMaand(1)}
+    onDayMouseDown={handleDayMouseDown}
+    onDayMouseEnter={handleDayMouseEnter}
+    onDayClick={handleDayClick}
+    onDayTouchStart={handleDayTouchStart}
+    onDayKeydown={handleDayKeydown}
+    onOpenItemEditor={(item) => {
+      void openItemEditor(item);
+    }}
+    emojiKalender={E.KALENDER}
+  />
 
-        <label>
-          <span>Aankomst datum</span>
-          <input type="date" bind:value={startDatumInput} required />
-        </label>
-
-        <label>
-          <span>Aantal nachten</span>
-          <input type="number" min="1" max="60" step="1" bind:value={nachtenInput} required />
-        </label>
-
-        <label>
-          <span>Latitude</span>
-          <input bind:value={latitudeInput} placeholder="44.51234" inputmode="decimal" />
-        </label>
-
-        <label>
-          <span>Longitude</span>
-          <input bind:value={longitudeInput} placeholder="3.12345" inputmode="decimal" />
-        </label>
-
-        <label>
-          <span>Adres (optioneel)</span>
-          <input bind:value={adresInput} placeholder="Bijv. Route de Florac 12, Meyrueis" />
-        </label>
-
-        <label>
-          <span>Website</span>
-          <input bind:value={websiteUrlInput} placeholder="site.fr/locatie" />
-        </label>
-
-        <label>
-          <span>Boekingslink</span>
-          <input bind:value={bookingUrlInput} placeholder="booking.com/..." />
-        </label>
-
-        <label class="ov-notes">
-          <span>Notities (optioneel)</span>
-          <textarea rows="2" bind:value={notitiesInput} placeholder="Bijv. late check-in mogelijk"></textarea>
-        </label>
-
-        <div class="ov-preview">
-          {#if vertrekPreview}
-            <span>{E.KALENDER} Uitcheck: {vertrekPreview}</span>
-          {/if}
-          <button type="button" class="ov-gps-btn" onclick={gebruikHuidigeGps} disabled={gpsBezig}>
-            {gpsBezig ? "GPS ophalen..." : `${E.PIN} Gebruik huidige GPS`}
-          </button>
-        </div>
-
-        <div class="ov-actions">
-          <button class="btn-save" type="submit">{bewerkItemId ? "Wijzigingen opslaan" : "Opslaan"}</button>
-          <button class="btn-danger" type="button" onclick={sluitFormulieren}>{E.X}</button>
-        </div>
-      </form>
-    </div>
-  {/if}
-
-  {#if toonShortlistForm}
-    <div class="card ov-form-card" bind:this={shortlistFormEl}>
-      <div class="ov-form-head">
-        <h3>{bewerkItemId ? "Shortlist-locatie bewerken" : "Nieuwe shortlist-locatie"}</h3>
-        <p>{bewerkItemId ? "Werk de shortlist bij zonder de plek al in te plannen." : "Bewaar kansrijke locaties om later makkelijk te boeken."}</p>
-      </div>
-      <form class="ov-form" onsubmit={(e) => { e.preventDefault(); voegShortlistToe(); }}>
-        <label>
-          <span>Naam</span>
-          <input bind:value={naamInput} required placeholder="Bijv. Eco BNB vallee du Tarn" />
-        </label>
-
-        <label>
-          <span>Type</span>
-          <select bind:value={typeInput} required>
-            {#each TYPE_OPTIES as optie}
-              <option value={optie.id}>{optie.label}</option>
-            {/each}
-          </select>
-        </label>
-
-        <label class="ov-notes">
-          <span>Adres</span>
-          <input bind:value={adresInput} required placeholder="Straat + plaats (bijv. Avenue Jean Jaures 8, Mende)" />
-        </label>
-
-        <label>
-          <span>Latitude</span>
-          <input bind:value={latitudeInput} placeholder="44.51234" inputmode="decimal" />
-        </label>
-
-        <label>
-          <span>Longitude</span>
-          <input bind:value={longitudeInput} placeholder="3.12345" inputmode="decimal" />
-        </label>
-
-        <label>
-          <span>Website</span>
-          <input bind:value={websiteUrlInput} placeholder="site.fr/locatie" />
-        </label>
-
-        <label>
-          <span>Boekingslink</span>
-          <input bind:value={bookingUrlInput} placeholder="booking.com/..." />
-        </label>
-
-        <label class="ov-notes">
-          <span>Waarom geschikt / notities</span>
-          <textarea rows="2" bind:value={notitiesInput} placeholder="Bijv. rustig, aan rivier, honden welkom"></textarea>
-        </label>
-
-        <div class="ov-preview">
-          <span>{E.PIN} Tip: voeg GPS toe voor snelle route in Google Maps.</span>
-          <button type="button" class="ov-gps-btn" onclick={gebruikHuidigeGps} disabled={gpsBezig}>
-            {gpsBezig ? "GPS ophalen..." : `${E.PIN} Gebruik huidige GPS`}
-          </button>
-        </div>
-
-        <div class="ov-actions">
-          <button class="btn-save" type="submit">{bewerkItemId ? "Wijzigingen opslaan" : "Naar shortlist"}</button>
-          <button class="btn-danger" type="button" onclick={sluitFormulieren}>{E.X}</button>
-        </div>
-      </form>
-    </div>
-  {/if}
-
-  {#if actieveWeergave === "kalender"}
-    <div class="card ov-calendar-card">
-      <div class="ov-calendar-head">
-        <button class="ov-month-btn" onclick={() => stapMaand(-1)} disabled={!kanVorigeMaand}>Vorige</button>
-        <strong>{maandLabel(geselecteerdeMaand)}</strong>
-        <button class="ov-month-btn" onclick={() => stapMaand(1)} disabled={!kanVolgendeMaand}>Volgende</button>
-      </div>
-      <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
-
-      <div class="ov-weekdays">
-        {#each WEEKDAGEN as wd}
-          <div>{wd}</div>
-        {/each}
-      </div>
-
-      <div class="ov-grid" class:selecting={selectieActief}>
-        {#each kalenderCels as cel (cel.key)}
-          <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-          <div
-            class="ov-day"
-            class:leeg={cel.isLeeg}
-            class:vandaag={cel.isVandaag}
-            class:geselecteerd={dagInSelectie(cel.key, cel.isLeeg)}
-            class:selectiestart={dagIsSelectieStart(cel.key, cel.isLeeg)}
-            class:selectieeinde={dagIsSelectieEinde(cel.key, cel.isLeeg)}
-            data-daykey={cel.isLeeg ? undefined : cel.key}
-            role={cel.isLeeg ? undefined : "button"}
-            tabindex={cel.isLeeg ? undefined : 0}
-            aria-label={cel.isLeeg ? undefined : `Kies datum ${cel.key}`}
-            onmousedown={(event) => handleDayMouseDown(event, cel.key, cel.isLeeg)}
-            onmouseenter={() => handleDayMouseEnter(cel.key, cel.isLeeg)}
-            onclick={() => handleDayClick(cel.key, cel.isLeeg, cel.entries)}
-            ontouchstart={(event) => handleDayTouchStart(event, cel.key, cel.isLeeg)}
-            onkeydown={(event) => handleDayKeydown(event, cel.key, cel.isLeeg, cel.entries)}
-          >
-            {#if cel.dagNummer !== null}
-              <div class="ov-day-number">{cel.dagNummer}</div>
-              {#if cel.entries.length > 0}
-                <div class="ov-day-events">
-                  {#each cel.entries.slice(0, 2) as ent}
-                    <button
-                      type="button"
-                      class="ov-chip ov-chip-btn"
-                      style={`--loc-kleur:${ent.kleur}`}
-                      title={`${ent.naam} (${ent.nachtenSafe} nacht${ent.nachtenSafe > 1 ? "en" : ""})`}
-                      onmousedown={(event) => event.stopPropagation()}
-                      ontouchstart={(event) => event.stopPropagation()}
-                      onclick={(event) => {
-                        event.stopPropagation();
-                        void openItemEditor(ent);
-                      }}
-                    >
-                      <span>{ent.naam}</span>
-                    </button>
-                  {/each}
-                  {#if cel.entries.length > 2}
-                    <div class="ov-more">+{cel.entries.length - 2}</div>
-                  {/if}
-                </div>
-              {/if}
-            {/if}
-          </div>
-        {/each}
-      </div>
-
-      {#if locatieLegenda.length > 0}
-        <div class="ov-legend">
-          {#each locatieLegenda as l}
-            <div class="ov-legend-item">
-              <span class="ov-legend-dot" style={`background:${l.kleur}`}></span>
-              <span>{l.naam}</span>
-            </div>
-          {/each}
-        </div>
-      {/if}
-    </div>
-  {:else}
-    <div class="card ov-calendar-teaser">
-      <div>
-        <h3>{E.KALENDER} Kalenderplanning</h3>
-        <p>Gebruik de kalender wanneer je data wilt plannen of aanpassen. In overzicht zie je direct je verblijven en shortlist.</p>
-      </div>
-      <button class="ov-secondary-btn" onclick={() => (actieveWeergave = "kalender")}>Open kalender</button>
-    </div>
-  {/if}
-
-  <div class="card ov-list-card">
-    <h3>Shortlist geschikte locaties</h3>
-    {#if shortlistOvernachtingen.length === 0}
-      <p class="ov-empty">Nog geen shortlist-locaties. Voeg plekken toe die je later wilt boeken.</p>
-    {:else}
-      <div class="ov-list">
-        {#each shortlistOvernachtingen as o (o.id)}
-          <article class="ov-item ov-shortlist-item" style={`--loc-kleur:${o.kleur}`}>
-            <div class="ov-item-top">
-              <div class="ov-item-head">
-                <strong>{o.naam}</strong>
-                <p class="ov-item-subline">Nog niet ingepland</p>
-              </div>
-              <div class="ov-item-head-actions">
-                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Bewerk</button>
-                <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
-              </div>
-            </div>
-            <div class="ov-meta">
-              <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
-              <span>Status: Shortlist</span>
-              {#if o.latSafe !== null && o.lonSafe !== null}
-                <span>GPS klaar</span>
-              {/if}
-            </div>
-
-            {#if o.latSafe !== null && o.lonSafe !== null}
-              <div class="ov-coords">
-                GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
-              </div>
-            {/if}
-            {#if o.adres}
-              <div class="ov-address">{o.adres}</div>
-            {/if}
-
-            <div class="ov-links">
-              {#if o.googleMapsUrl}
-                <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
-              {/if}
-              {#if o.websiteUrl}
-                <a href={o.websiteUrl} target="_blank" rel="noopener noreferrer">Website</a>
-              {/if}
-              {#if o.bookingUrl}
-                <a href={o.bookingUrl} target="_blank" rel="noopener noreferrer">Boeken</a>
-              {/if}
-            </div>
-
-            {#if o.notities}
-              <p class="ov-note">{o.notities}</p>
-            {/if}
-
-            <div class="ov-shortlist-actions">
-              <button class="ov-secondary-btn" onclick={() => planShortlistItem(o)}>Plan met formulier</button>
-              <button class="btn-primary" onclick={() => planShortlistVanafVandaag(o)}>Plan vanaf vandaag</button>
-            </div>
-          </article>
-        {/each}
-      </div>
-    {/if}
-  </div>
-
-  <div class="card ov-list-card">
-    <h3>Alle overnachtingen</h3>
-    {#if ingeplandeOvernachtingen.length === 0}
-      <p class="ov-empty">Nog geen overnachtingen toegevoegd.</p>
-    {:else}
-      <div class="ov-list">
-        {#each ingeplandeOvernachtingen as o (o.id)}
-          <article class="ov-item" style={`--loc-kleur:${o.kleur}`}>
-            <div class="ov-item-top">
-              <div class="ov-item-head">
-                <strong>{o.naam}</strong>
-                {#if o.startDateObj}
-                  <p class="ov-item-subline">
-                    {o.startDateObj.toLocaleDateString("nl-NL")} t/m {(o.lastNightObj as Date).toLocaleDateString("nl-NL")} - {o.nachtenSafe} nacht{o.nachtenSafe > 1 ? "en" : ""}
-                  </p>
-                {:else}
-                  <p class="ov-item-subline">Nog geen aankomstdatum gekozen</p>
-                {/if}
-              </div>
-              <div class="ov-item-head-actions">
-                <button class="ov-open-btn" onclick={() => void openItemEditor(o)}>Bewerk</button>
-                <button class="ov-delete" onclick={() => verwijderOvernachting(o.id, o.naam)}>{E.PRULLENBAK}</button>
-              </div>
-            </div>
-            <div class="ov-item-body">
-              <div class="ov-meta">
-                <span>Type: {TYPE_OPTIES.find((x) => x.id === o.typeSafe)?.label || "Camping"}</span>
-                <span>Door: {o.door || "-"}</span>
-              </div>
-              {#if o.adres}
-                <div class="ov-address">{o.adres}</div>
-              {/if}
-              {#if o.latSafe !== null && o.lonSafe !== null}
-                <div class="ov-coords">
-                  GPS: {o.latSafe.toFixed(5)}, {o.lonSafe.toFixed(5)}
-                </div>
-              {/if}
-              <div class="ov-links">
-                {#if o.googleMapsUrl}
-                  <a href={o.googleMapsUrl} target="_blank" rel="noopener noreferrer">{E.PIN} Google Maps</a>
-                {/if}
-                {#if o.openStreetMapLink}
-                  <a href={o.openStreetMapLink} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
-                {/if}
-              </div>
-              {#if o.notities}
-                <p class="ov-note">{o.notities}</p>
-              {/if}
-            </div>
-          </article>
-        {/each}
-      </div>
-    {/if}
-  </div>
-
-  {#if overnachtingenZonderDatum.length > 0}
-    <div class="card ov-warning">
-      <strong>{E.WARN} Nog zonder kalenderdatum</strong>
-      <p>{overnachtingenZonderDatum.length} ingeplande item(s) missen een aankomstdatum en staan daarom nog niet in de kalender.</p>
-    </div>
-  {/if}
+  <OvernachtingenListsSection
+    shortlistOvernachtingen={shortlistOvernachtingen}
+    ingeplandeOvernachtingen={ingeplandeOvernachtingen}
+    overnachtingenZonderDatumCount={overnachtingenZonderDatum.length}
+    typeOpties={TYPE_OPTIES}
+    emojiPin={E.PIN}
+    emojiPrullenbak={E.PRULLENBAK}
+    emojiWarn={E.WARN}
+    onOpenItemEditor={(item) => {
+      void openItemEditor(item);
+    }}
+    onDeleteItem={verwijderOvernachting}
+    onPlanShortlistItem={(item) => {
+      void planShortlistItem(item);
+    }}
+    onPlanShortlistVanafVandaag={planShortlistVanafVandaag}
+  />
 </section>
 
 <style>
@@ -1270,429 +1032,6 @@
     color: var(--heading);
   }
 
-  .ov-form-card {
-    margin: 0;
-  }
-  .ov-form-head {
-    display: grid;
-    gap: 4px;
-    margin-bottom: 10px;
-  }
-  .ov-form-card h3 {
-    margin: 0;
-    font-size: var(--font-size-xl);
-  }
-  .ov-form-head p {
-    margin: 0;
-    color: var(--nav-text);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-  }
-  .ov-form {
-    display: grid;
-    gap: var(--ui-form-gap);
-  }
-  .ov-form label {
-    display: grid;
-    gap: 5px;
-  }
-  .ov-form label span {
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: var(--nav-text);
-  }
-  .ov-form input,
-  .ov-form select,
-  .ov-form textarea {
-    margin: 0;
-    font-size: var(--font-size-md);
-    font-family: inherit;
-  }
-  .ov-form input,
-  .ov-form select {
-    min-height: var(--ui-touch-min);
-    height: var(--ui-touch-min);
-    padding-top: 0;
-    padding-bottom: 0;
-    line-height: var(--ui-line-compact);
-  }
-  .ov-notes {
-    grid-column: 1 / -1;
-  }
-  .ov-preview {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-    color: var(--blauw);
-    font-weight: 600;
-    font-size: var(--font-size-sm);
-  }
-  .ov-gps-btn {
-    width: auto;
-    min-height: var(--btn-height);
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
-    color: var(--blauw);
-    font-size: var(--font-size-sm);
-    font-weight: var(--ui-weight-semibold);
-    padding: 0 12px;
-    border-radius: var(--btn-radius);
-  }
-  .ov-actions {
-    display: flex;
-    gap: var(--ui-actions-gap);
-  }
-  .ov-actions .btn-save {
-    flex: 1;
-    width: auto;
-  }
-  .ov-actions .btn-danger {
-    width: 52px;
-    font-weight: 700;
-    padding: 0;
-  }
-
-  .ov-calendar-card {
-    margin: 0;
-    padding: 14px;
-  }
-  .ov-calendar-teaser {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    border: 1px solid var(--border-subtle);
-  }
-  .ov-calendar-teaser h3 {
-    margin: 0;
-    font-size: var(--font-size-lg);
-  }
-  .ov-calendar-teaser p {
-    margin: 4px 0 0;
-    color: var(--nav-text);
-    font-size: var(--font-size-sm);
-    max-width: 66ch;
-  }
-  .ov-calendar-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .ov-calendar-head strong {
-    font-size: var(--font-size-lg);
-    text-transform: capitalize;
-    color: var(--heading);
-  }
-  .ov-calendar-hint {
-    margin: -2px 0 10px;
-    font-size: var(--font-size-sm);
-    color: var(--nav-text);
-    font-weight: 500;
-  }
-  .ov-month-btn {
-    width: auto;
-    min-height: var(--btn-height-compact);
-    padding: 0 10px;
-    font-size: var(--font-size-sm);
-    font-weight: var(--ui-weight-semibold);
-    border: 1px solid var(--input-border);
-    background: var(--hover-bg);
-    color: var(--heading);
-    border-radius: var(--btn-radius);
-  }
-  .ov-month-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-
-  .ov-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-  .ov-weekdays div {
-    text-align: center;
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    color: var(--nav-text);
-  }
-
-  .ov-grid {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 6px;
-  }
-  .ov-grid.selecting {
-    user-select: none;
-  }
-  .ov-day {
-    appearance: none;
-    width: 100%;
-    min-height: 88px;
-    border: 1px solid var(--input-border);
-    border-radius: 10px;
-    padding: 6px;
-    background: var(--card-bg);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    cursor: pointer;
-    transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
-    touch-action: none;
-    text-align: left;
-    font: inherit;
-  }
-  .ov-day.leeg {
-    background: var(--hover-bg);
-    border-style: dashed;
-    opacity: 0.55;
-    cursor: default;
-    touch-action: auto;
-  }
-  .ov-day.vandaag {
-    background: color-mix(in srgb, var(--card-bg) 84%, #fff5dd);
-    border-color: color-mix(in srgb, #f59e0b 44%, #fcd34d);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, #f59e0b 38%, transparent);
-  }
-  .ov-day.geselecteerd {
-    background: color-mix(in srgb, var(--card-bg) 80%, #dbeafe);
-    border-color: color-mix(in srgb, var(--blauw) 40%, #cbd5e1);
-  }
-  .ov-day.vandaag.geselecteerd {
-    background: color-mix(in srgb, var(--card-bg) 72%, #dbeafe);
-    border-color: var(--blauw);
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, var(--blauw) 32%, transparent),
-      inset 0 0 0 3px color-mix(in srgb, #f59e0b 30%, transparent);
-  }
-  .ov-day.selectiestart,
-  .ov-day.selectieeinde {
-    border-color: var(--blauw);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blauw) 35%, transparent);
-  }
-  .ov-day-number {
-    font-size: var(--font-size-sm);
-    font-weight: 800;
-    color: var(--heading);
-  }
-  .ov-day-events {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .ov-chip {
-    --loc-kleur: #2563eb;
-    font-size: 0.72rem;
-    font-weight: 700;
-    border-radius: 8px;
-    padding: 3px 5px;
-    background: color-mix(in srgb, var(--loc-kleur) 16%, white);
-    border: 1px solid color-mix(in srgb, var(--loc-kleur) 35%, white);
-    color: #0f172a;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .ov-chip span {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .ov-chip-btn {
-    appearance: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    font: inherit;
-  }
-  .ov-more {
-    font-size: 0.72rem;
-    color: var(--nav-text);
-    font-weight: 700;
-    padding-left: 2px;
-  }
-
-  .ov-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px 12px;
-    margin-top: 12px;
-  }
-  .ov-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: var(--font-size-xs);
-    color: var(--tekst);
-    font-weight: 600;
-  }
-  .ov-legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
-  }
-
-  .ov-list-card {
-    margin: 0;
-  }
-  .ov-list-card h3 {
-    margin-bottom: 10px;
-  }
-  .ov-list {
-    display: grid;
-    gap: 10px;
-  }
-  .ov-item {
-    --loc-kleur: #2563eb;
-    border: 1px solid var(--border-subtle);
-    border-left: 6px solid var(--loc-kleur);
-    border-radius: 12px;
-    padding: 11px 12px;
-    background: var(--card-bg);
-    display: grid;
-    gap: 8px;
-  }
-  .ov-shortlist-item {
-    border-left-color: color-mix(in srgb, var(--loc-kleur) 70%, #10b981);
-    background: linear-gradient(180deg, rgba(239, 246, 255, 0.52) 0%, #fff 72%);
-  }
-  .ov-item-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .ov-item-head {
-    display: grid;
-    gap: 2px;
-  }
-  .ov-item-head-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .ov-item-head strong {
-    font-size: var(--font-size-lg);
-    color: var(--heading);
-    line-height: 1.2;
-  }
-  .ov-item-subline {
-    margin: 0;
-    color: var(--nav-text);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-  }
-  .ov-item-body {
-    display: grid;
-    gap: 6px;
-  }
-  .ov-open-btn {
-    width: auto;
-    min-height: var(--btn-height-compact);
-    padding: 0 12px;
-    border-radius: var(--btn-radius);
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
-    color: var(--blauw);
-    font-size: var(--font-size-sm);
-    font-weight: var(--ui-weight-semibold);
-  }
-  .ov-delete {
-    width: auto;
-    min-height: var(--btn-height-compact);
-    min-width: var(--btn-height-compact);
-    padding: 0;
-    font-size: 0.95rem;
-    border-radius: var(--btn-radius);
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
-    color: color-mix(in srgb, var(--tekst) 70%, #475569);
-    opacity: 1;
-  }
-  .ov-delete:hover {
-    border-color: color-mix(in srgb, var(--rood) 30%, var(--input-border));
-    color: var(--rood);
-    background: color-mix(in srgb, var(--card-bg) 78%, #fee2e2);
-  }
-  .ov-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 10px;
-  }
-  .ov-meta span {
-    font-size: var(--font-size-sm);
-    color: var(--tekst);
-    background: var(--hover-bg);
-    border: 1px solid var(--border-subtle);
-    border-radius: 999px;
-    padding: 3px 8px;
-  }
-  .ov-coords {
-    font-size: var(--font-size-sm);
-    color: var(--blauw);
-    font-weight: 600;
-  }
-  .ov-address {
-    font-size: var(--font-size-sm);
-    color: var(--tekst);
-    font-weight: 500;
-  }
-  .ov-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .ov-links a {
-    font-size: var(--font-size-sm);
-    color: var(--blauw);
-    text-decoration: none;
-    font-weight: 700;
-  }
-  .ov-note {
-    margin: 0;
-    font-size: var(--font-size-sm);
-    color: var(--tekst);
-  }
-  .ov-shortlist-actions {
-    margin-top: 8px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .ov-shortlist-actions .btn-primary {
-    width: auto;
-    min-height: var(--ui-touch-min);
-    padding: 0 12px;
-  }
-  .ov-empty {
-    color: var(--nav-text);
-    margin: 0;
-  }
-
-  .ov-warning {
-    margin: 0;
-    border: 1px solid #f7d5aa;
-    background: color-mix(in srgb, var(--card-bg) 84%, #fff7ed);
-  }
-  .ov-warning strong {
-    color: #9a3412;
-  }
-  .ov-warning p {
-    margin-top: 4px;
-    color: #9a3412;
-    font-size: 0.9rem;
-  }
-
   @media (max-width: 760px) {
     .ov-stats {
       grid-template-columns: 1fr;
@@ -1719,95 +1058,22 @@
     .ov-view-btn {
       flex: 0 0 auto;
     }
-    .ov-calendar-teaser {
-      display: grid;
-      gap: 10px;
-    }
-    .ov-calendar-teaser .ov-secondary-btn {
-      width: 100%;
-    }
-    .ov-item-top {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .ov-item-head-actions {
-      justify-content: space-between;
-    }
-    .ov-day {
-      min-height: 76px;
-    }
-    .ov-chip {
-      font-size: 0.64rem;
-      padding: 2px 4px;
-    }
   }
 
-  @media (min-width: 840px) {
-    .ov-form {
-      grid-template-columns: 1fr 1fr;
-    }
-    .ov-preview,
-    .ov-actions {
-      grid-column: 1 / -1;
-    }
-  }
-
-  :global(html.dark) .ov-top p,
-  :global(html.dark) .ov-weekdays div,
-  :global(html.dark) .ov-more,
-  :global(html.dark) .ov-empty,
-  :global(html.dark) .ov-calendar-hint {
+  :global(html.dark) .ov-top p {
     color: #94a3b8;
   }
   :global(html.dark) .ov-stat,
-  :global(html.dark) .ov-day,
-  :global(html.dark) .ov-item,
-  :global(html.dark) .ov-month-btn,
-  :global(html.dark) .ov-meta span {
+  :global(html.dark) .ov-view-btn {
     background: #111827;
     border-color: #334155;
   }
-  :global(html.dark) .ov-day.leeg {
-    background: #0f172a;
-  }
-  :global(html.dark) .ov-day.geselecteerd {
-    background: #10233f;
-    border-color: #3b82f6;
-  }
-  :global(html.dark) .ov-day.vandaag {
-    background: #3b2f13;
-    border-color: #f59e0b;
-    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
-  }
-  :global(html.dark) .ov-day.vandaag.geselecteerd {
-    background: #1a2e4b;
-    border-color: #60a5fa;
-    box-shadow:
-      inset 0 0 0 1px rgba(96, 165, 250, 0.45),
-      inset 0 0 0 3px rgba(245, 158, 11, 0.28);
-  }
-  :global(html.dark) .ov-day-number,
-  :global(html.dark) .ov-calendar-head strong,
-  :global(html.dark) .ov-item-head strong,
   :global(html.dark) .ov-stat strong {
     color: #e2e8f0;
   }
-  :global(html.dark) .ov-stat span,
-  :global(html.dark) .ov-meta span,
-  :global(html.dark) .ov-note,
-  :global(html.dark) .ov-address,
-  :global(html.dark) .ov-legend-item {
+  :global(html.dark) .ov-stat span {
     color: #cbd5e1;
   }
-  :global(html.dark) .ov-chip {
-    color: #e2e8f0;
-  }
-  :global(html.dark) .ov-gps-btn {
-    background: #1e3a8a;
-    color: #dbeafe;
-    border-color: #2563eb;
-  }
-  :global(html.dark) .ov-open-btn,
   :global(html.dark) .ov-secondary-btn,
   :global(html.dark) .ov-view-btn.active {
     background: #1e3a8a;
@@ -1823,18 +1089,5 @@
     background: #1a5276;
     border-color: #1a5276;
     color: #ffffff;
-  }
-  :global(html.dark) .ov-delete {
-    background: #0f172a;
-    border-color: #334155;
-    color: #cbd5e1;
-  }
-  :global(html.dark) .ov-delete:hover {
-    border-color: #dc2626;
-    color: #fecaca;
-    background: rgba(127, 29, 29, 0.35);
-  }
-  :global(html.dark) .ov-shortlist-item {
-    background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, #111827 72%);
   }
 </style>
