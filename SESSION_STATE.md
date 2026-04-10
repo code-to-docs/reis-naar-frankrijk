@@ -12,8 +12,9 @@ Wat aantoonbaar in de codebase zit:
 
 ## Status Quo (2026-04-10)
 - **UI_NORMPROFIEL:** 100% compliance op core UI en tokenisatie.
-- **Architectuur:** `OvernachtingenPlanner.svelte` (monoliet) succesvol opgesplitst in subcomponenten (`Header`, `Stats`, `ViewSwitcher`).
-- **Data:** Wildlife dataset verrijkt met Ariège-specifieke regio's en de Grijze wolf toegevoegd.
+- **Architectuur:** `OvernachtingenPlanner.svelte` (monoliet) refactored naar moderne SaaS UI.
+- **Typing & Build:** `svelte-check` en `npm run build` zijn volledig groen; kritieke CSS build-errors hersteld.
+- **Regions:** Ariège (en subregio's) zijn canoniek geintegreerd.
 - **UX/A11y:** Kritieke icon-buttons voorzien van `aria-label`, offline-indicators hebben `aria-live`, en contrast in Dark Mode is verbeterd.
 
 ### Laatste Iteratie: SaaS UI Refactor & Modularisering (2026-04-10)
@@ -21,8 +22,9 @@ Wat aantoonbaar in de codebase zit:
     - Compacte header met primaire/secundaire acties.
     - KPI-geïntegreerde Tab-navigatie (Overzicht, Kalender, Kaart).
     - Gecentraliseerde `EmptyState` component met SVG.
-2. **Design System:** Nieuwe Tab-standaard (sectie 10.10) en .empty-state classes toegevoegd aan `UI_NORMPROFIEL`.
-3. **Hardened Types:** `WildlifeRegio` uitgebreid met `ariege` en `pyrenees_ariegeoises` om data-alignmentfouten te voorkomen.
+2. **Design System:** Nieuwe Tab-standaard (sectie 10.10) en `.empty-state` classes toegevoegd aan `UI_NORMPROFIEL`.
+3. **Build Fixes:** `WildlifeRegio` types hardened en CSS-syntax hersteld in `app.css` om Vercel stabiliteit te garanderen.
+4. **Validatie:** `npm run build` en `npm run check` succesvol afgerond (0 errors).
 
 ### Openstaande Punten
 - **Component splitting:** `GerechtenChecklist.svelte` is nu de laatste grote monoliet.
