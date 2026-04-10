@@ -29,6 +29,9 @@ src/
       poi/
       wildlife/
       gerechten/
+      overnachtingen/
+      budget/
+      weer/
     services/
     styles/
     utils/
@@ -223,9 +226,9 @@ export interface GerechtCheck {
 
 ### Gevalideerd in huidige state
 
-- `npm run test` ✅ (10 tests)
-- `npm run check` ✅ (0 errors/warnings)
-- `npm run build` ✅
+- `npm run test` OK (12 tests)
+- `npm run check` OK (0 errors/warnings)
+- `npm run build` OK
 
 ---
 
@@ -233,13 +236,12 @@ export interface GerechtCheck {
 
 ### Korte termijn (stabiliteit / basis)
 
-1. Firestore rules alignen met huidige collecties (met name `poi_suggesties`).
-2. Security model aanscherpen (nu grotendeels `allow read, write: if true`).
-3. UI norm handhaving verder automatiseren (lint/checklist per component change).
-4. Grote componenten opdelen voor onderhoudbaarheid:
-   - `OvernachtingenPlanner.svelte`
-   - `WildlifeChecklist.svelte`
-   - `Budget.svelte`
+1. Security model aanscherpen (nu grotendeels `allow read, write: if true`).
+2. UI norm handhaving verder automatiseren (lint/checklist per component change).
+3. Verdere opsplitsing van resterende grote componenten:
+   - `OvernachtingenPlanner.svelte` (nu opgeschoond via `overnachtingen/plannerUtils.ts`, verdere UI-splitsing nog mogelijk)
+   - `GerechtenChecklist.svelte` (nu opgeschoond via `gerechten/regionUtils.ts`, foto/check-flow kan nog verder modulair)
+   - `wildlife/WildlifeCard.svelte` (nu opgeschoond via `wildlife/locationUtils.ts`, detail-UI nog omvangrijk)
 
 ### Middellange termijn (kwaliteit)
 
@@ -279,32 +281,28 @@ PUBLIC_FIREBASE_APP_ID=
 
 ### Belangrijke runtime-eigenschap
 
-- `src/lib/firebase.ts` gebruikt **strict env-only** initialisatie.
-- Ontbrekende `PUBLIC_FIREBASE_*` variabelen veroorzaken directe init-fout.
+- `src/lib/firebase.ts` gebruikt env vars met een fallback-config.
+- Bij ontbrekende `PUBLIC_FIREBASE_*` variabelen logt de app een waarschuwing en gebruikt de fallback-config.
 - Geen secrets/tokens hardcoden in code.
 
 ---
 
 ## 7) Active Context / Pain Points
 
-1. **Firestore Rules mismatch-risico**
-   - `poiService` schrijft naar `poi_suggesties`
-   - `firestore.rules` bevat wel `pois` maar geen expliciete `poi_suggesties` match
-   - kan leiden tot permission errors zodra rules strikt worden toegepast.
-
-2. **Security debt**
+1. **Security debt**
    - Veel collecties staan open (`allow read, write: if true`).
    - Past bij huidige lokale identity aanpak, maar is niet productiehard voor echte gebruikersaccounts.
 
-3. **UI consistency debt in legacy modules**
+2. **UI consistency debt in legacy modules**
    - Nieuwe widgets en POI volgen tokens beter.
    - Oudere onderdelen bevatten nog hardcoded sizing/kleuren en grotere stijlvariatie.
 
-4. **Monolithische componenten**
-   - Enkele Svelte-bestanden zijn groot, met veel gecombineerde concerns (state, data, view, interaction).
+3. **Monolithische componenten**
+   - Eerste refactorronde afgerond: helpers verplaatst naar losse modules en budget-UI opgesplitst.
+   - Er blijven nog grote Svelte-bestanden over met gecombineerde concerns (state, data, view, interaction).
    - Vertraagt onboarding en verhoogt regressierisico bij wijzigingen.
 
-5. **Test focus nog smal**
+4. **Test focus nog smal**
    - Nu vooral utils; weinig regressiebescherming op UI/workflowniveau.
 
 ---
@@ -349,7 +347,7 @@ Button norm (huidige standaard):
    - `npm run test`
    - `npm run check`
    - `npm run build`
-5. Eerste technische check: Firestore rules vs actieve collecties synchroniseren.
+5. Eerste technische check: security-rules aanscherpen voor productiegebruik.
 
 ---
 
@@ -358,3 +356,26 @@ Button norm (huidige standaard):
 De codebase is functioneel, build-stabiel en heeft een duidelijke UI-normalisatiebasis.  
 Grootste winst voor de volgende iteratie zit in: security/rules hardening, opsplitsen van grote componenten, en verbreden van testdekking.  
 Voor featuregroei is het raadzaam om als volgende architectuurstap `tripId` en echte auth in te voeren.
+
+---
+
+## 12) Onderhoudslog
+
+### 2026-04-10 14:11:52 +02:00
+
+- Firestore-rules aligned met actieve POI-collectie: `poi_suggesties` toegevoegd naast legacy `pois`.
+- Documentatie geactualiseerd op fallback Firebase-config gedrag (`README.md` + relevante delen in deze handoff).
+- Onderhoudbaarheid-refactor uitgevoerd op grote componenten:
+  - `OvernachtingenPlanner.svelte`: pure plannerhelpers verplaatst naar `src/lib/components/overnachtingen/plannerUtils.ts`.
+  - `GerechtenChecklist.svelte`: regio/GPS/afstandshelpers verplaatst naar `src/lib/components/gerechten/regionUtils.ts`.
+  - `wildlife/WildlifeCard.svelte`: locatie/geocode-links verplaatst naar `src/lib/components/wildlife/locationUtils.ts`.
+  - `Budget.svelte`: UI opgesplitst in `src/lib/components/budget/BudgetEntriesList.svelte` en `src/lib/components/budget/BudgetSettlementCard.svelte`.
+- Indicatie componentgrootte na refactor:
+  - `OvernachtingenPlanner.svelte`: 901 regels (was ~1002)
+  - `GerechtenChecklist.svelte`: 724 regels (was ~812)
+  - `wildlife/WildlifeCard.svelte`: 666 regels (was ~708)
+  - `Budget.svelte`: 401 regels (was ~549)
+- Validatie na refactor:
+  - `npm run test` OK (12 tests)
+  - `npm run check` OK (0 errors/warnings)
+  - `npm run build` OK

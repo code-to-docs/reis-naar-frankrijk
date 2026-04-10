@@ -27,13 +27,20 @@ npm run dev
 - `npm run test` - unit tests (Vitest)
 - `npm run test:watch` - unit tests in watch mode
 
+## Environment Variables
+
+- `PUBLIC_FIREBASE_API_KEY`
+- `PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `PUBLIC_FIREBASE_PROJECT_ID`
+- `PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
 - `PUBLIC_FIREBASE_APP_ID`
 
 ## Production Readiness
 
 Before deploying to Vercel, ensure the following are configured:
 
-1. **Environment Variables**: All `PUBLIC_FIREBASE_*` variables must be set in the Vercel project settings. The app will fail to initialize if these are missing.
+1. **Environment Variables**: Set all `PUBLIC_FIREBASE_*` variables in Vercel for predictable production behavior. The app currently has a fallback Firebase config in `src/lib/firebase.ts`, but that fallback should not be relied on for production deployments.
 2. **Firestore Rules**: Deploy the rules in `firestore.rules` to your Firebase project to ensure data integrity and security.
 3. **PWA**: Ensure the `static/manifest.json` and `src/service-worker.js` are correctly configured for your production domain.
 

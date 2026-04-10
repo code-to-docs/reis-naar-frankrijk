@@ -16,9 +16,19 @@
   import GerechtCard from "./gerechten/GerechtCard.svelte";
   import { laadEnkeleFotoVoorGerecht } from "$lib/api/wikiApi.js";
   import { cacheManager } from "$lib/utils/cacheManager.js";
+  import {
+    CHECKS_QUERY_CHUNK_SIZE,
+    TIP_MAX_AFSTAND_KM,
+    bepaalHuidigeRegio,
+    chunkArray,
+    dichtstbijzijndeLocatie,
+    gerechtBinnen20Km,
+    gerechtVoorFranziToegestaan,
+    getCurrentCoordsWithMessage,
+    type Coords,
+    type StreekLocatie
+  } from "./gerechten/regionUtils.js";
 
-  type Coords = { lat: number; lon: number };
-  type StreekLocatie = { naam: string; lat: number; lon: number };
   type GerechtChecksPerUser = Partial<Record<string, GerechtCheck>>;
   type FotoStatus = "loading" | "ready" | "missing";
   type FotoCache = {
@@ -26,10 +36,6 @@
     full: Record<string, string>;
     missing: string[];
   };
-
-  const TIP_MAX_AFSTAND_KM = 20;
-  const REGIO_DETECTIE_MAX_KM = 70;
-  const CHECKS_QUERY_CHUNK_SIZE = 10;
 
   let checksByDish: Record<string, GerechtChecksPerUser> = $state({});
   let fotos: Record<string, string> = $state({});
@@ -56,117 +62,9 @@
   let userKey = $derived((appState.gebruiker || "").toLowerCase());
   let isFranzi = $derived(userKey === "franzi");
 
-  function chunkArray<T>(items: T[], size: number): T[][] {
-    if (size <= 0) return [items];
-    const chunks: T[][] = [];
-    for (let i = 0; i < items.length; i += size) {
-      chunks.push(items.slice(i, i + size));
-    }
-    return chunks;
-  }
-
-  function afstandKm(van: Coords, naar: Coords): number {
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const dLat = toRad(naar.lat - van.lat);
-    const dLon = toRad(naar.lon - van.lon);
-    const lat1 = toRad(van.lat);
-    const lat2 = toRad(naar.lat);
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return 6371 * c;
-  }
-
-  function dichtstbijzijndeLocatie(
-    coords: Coords,
-    locaties: StreekLocatie[]
-  ): { locatie: StreekLocatie; afstand: number } | null {
-    let best: { locatie: StreekLocatie; afstand: number } | null = null;
-    for (const locatie of locaties) {
-      const afstand = afstandKm(coords, { lat: locatie.lat, lon: locatie.lon });
-      if (!best || afstand < best.afstand) {
-        best = { locatie, afstand };
-      }
-    }
-    return best;
-  }
-
-  function bepaalHuidigeRegio(coords: Coords): string | null {
-    let bestRegio: string | null = null;
-    let bestAfstand = Number.POSITIVE_INFINITY;
-
-    for (const [regio, locaties] of Object.entries(
-      gerechtenStreekLocaties as Record<string, StreekLocatie[]>
-    )) {
-      if (!Array.isArray(locaties) || locaties.length === 0) continue;
-      const dichtbij = dichtstbijzijndeLocatie(coords, locaties);
-      if (!dichtbij) continue;
-      if (dichtbij.afstand < bestAfstand) {
-        bestAfstand = dichtbij.afstand;
-        bestRegio = regio;
-      }
-    }
-
-    if (!bestRegio || bestAfstand > REGIO_DETECTIE_MAX_KM) return null;
-    return bestRegio;
-  }
-
-  function gerechtVoorFranziToegestaan(gerecht: Gerecht): boolean {
-    if (!isFranzi) return true;
-    return Boolean(gerecht.vegetarisch || gerecht.vis);
-  }
-
-  function gerechtBinnen20Km(gerecht: Gerecht, coords: Coords, regio: string): boolean {
-    if (!Array.isArray(gerecht.streken) || !gerecht.streken.includes(regio)) return false;
-
-    const regioLocaties =
-      (gerechtenStreekLocaties as Record<string, StreekLocatie[]>)[regio] || [];
-
-    if (!regioLocaties.length) return false;
-    return regioLocaties.some((locatie) =>
-      afstandKm(coords, { lat: locatie.lat, lon: locatie.lon }) <= TIP_MAX_AFSTAND_KM
-    );
-  }
-
   function isAlAfgevinkt(gerechtId: string): boolean {
     const checks = checksByDish[gerechtId];
     return Boolean(checks && Object.keys(checks).length > 0);
-  }
-
-  function getCurrentCoords(): Promise<Coords | null> {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      gpsFout = "GPS wordt niet ondersteund op dit apparaat.";
-      return Promise.resolve(null);
-    }
-
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude
-          });
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            gpsFout = "GPS-toegang geweigerd. Zet locatie aan voor regionale dagtips.";
-          } else if (error.code === error.TIMEOUT) {
-            gpsFout = "GPS-timeout. Probeer opnieuw op een plek met beter bereik.";
-          } else {
-            gpsFout = "Kon je GPS-locatie niet ophalen.";
-          }
-          resolve(null);
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 12000,
-          maximumAge: 60000
-        }
-      );
-    });
   }
 
   async function refreshGpsTip() {
@@ -174,11 +72,9 @@
     gpsBezig = true;
     gpsGeprobeerd = true;
     gpsFout = "";
-
-    const coords = await getCurrentCoords();
-    if (coords) {
-      huidigeCoords = coords;
-    }
+    const { coords, error } = await getCurrentCoordsWithMessage();
+    if (error) gpsFout = error;
+    if (coords) huidigeCoords = coords;
 
     gpsBezig = false;
   }
@@ -411,7 +307,7 @@
 
   let huidigeRegio = $derived.by(() => {
     if (!huidigeCoords) return null;
-    return bepaalHuidigeRegio(huidigeCoords);
+    return bepaalHuidigeRegio(huidigeCoords, gerechtenStreekLocaties as Record<string, StreekLocatie[]>);
   });
 
   let regioAfstand = $derived.by(() => {
@@ -429,8 +325,8 @@
 
     return gefilterd.filter((gerecht) => {
       if (isAlAfgevinkt(gerecht.id)) return false;
-      if (!gerechtVoorFranziToegestaan(gerecht)) return false;
-      if (!gerechtBinnen20Km(gerecht, coords, regio)) return false;
+      if (!gerechtVoorFranziToegestaan(gerecht, isFranzi)) return false;
+      if (!gerechtBinnen20Km(gerecht, coords, regio, gerechtenStreekLocaties as Record<string, StreekLocatie[]>)) return false;
       return true;
     });
   });

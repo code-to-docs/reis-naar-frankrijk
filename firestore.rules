@@ -20,7 +20,12 @@ service cloud.firestore {
     match /campings/{document=**} {
       allow read, write: if true;
     }
+    // Legacy POI collection (kept for backward compatibility)
     match /pois/{document=**} {
+      allow read, write: if true;
+    }
+    // Active POI collection used by PoiService
+    match /poi_suggesties/{document=**} {
       allow read, write: if true;
     }
     match /activiteiten/{document=**} {
