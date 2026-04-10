@@ -508,6 +508,54 @@ Stap 5:
 
 ## 13) Onderhoudslog
 
+### 2026-04-10 20:12:00 +02:00
+
+- v1.1 sprint afgerond (stabiliteit + onderhoudbaarheid + security + tests).
+- Monoliet-splitsing doorgezet:
+  - `Budget.svelte` opgesplitst met nieuwe subcomponenten:
+    - `src/lib/components/budget/BudgetHeroCard.svelte`
+    - `src/lib/components/budget/BudgetFilters.svelte`
+  - `wildlife/WildlifeCard.svelte` opgesplitst met:
+    - `src/lib/components/wildlife/WildlifeInfoPanel.svelte`
+    - `src/lib/components/wildlife/WildlifeFullscreenOverlay.svelte`
+- Dashboard/UX utils gecentraliseerd:
+  - nieuw: `src/lib/utils/dashboard.ts`
+  - gebruikt voor budget-tone, regio-normalisatie en wildlife deeplinks
+  - tests toegevoegd: `src/lib/utils/dashboard.test.ts`
+- Security hardening in `firestore.rules`:
+  - `allow write: if true` vervangen door collectie-specifieke veldvalidaties en typechecks
+  - regels toegevoegd voor budget, wildlife, gerechten_checks, campings, poi_suggesties en gedeelde lijsten
+  - legacy collectie `pois` op write dichtgezet (`allow read, write: if false`)
+- Documentatie en versiebeheer geactualiseerd:
+  - nieuwe markdown leidraad: `docs/UI_NORMPROFIEL.md`
+  - 3-bronnen systeem bijgewerkt (`PROJECT_MANIFEST.md`, `ARCHITECTURE.md`, `SESSION_STATE.md`)
+  - versie verhoogd naar **v1.1** (package: `1.1.0`)
+- Validatie na sprint:
+  - `npm run check` OK
+  - `npm run test` OK (15 tests)
+  - `npm run build` OK
+
+### 2026-04-10 22:18:00 +02:00
+
+- Documentatiestructuur geactualiseerd naar 3-bestanden systeem in root:
+  - `PROJECT_MANIFEST.md`
+  - `ARCHITECTURE.md`
+  - `SESSION_STATE.md`
+- Dashboard UI consistentie aangescherpt:
+  - minder typografische variatie op home widgets/quick actions;
+  - spacing in `Laatste spotting` en `Proeftip van vandaag` gelijkgetrokken;
+  - klik op `Laatste spotting` deep-linkt nu naar de juiste wildlife kaart (`/meer/wildlife?open=<id>`).
+- Weer-widget verduidelijkt:
+  - tekst "Rustig volgens Météo-France: ..." staat nu binnen de alert cards, niet als losse regel onder de widget.
+- Filterstandaard doorgetrokken:
+  - wildlife-patroon (zoekveld + filtertoggle) nu uniform toegepast op POI en geharmoniseerd in gerechten/wildlife;
+  - filterknop en tekstveld delen dezelfde control-hoogte en afgeronde hoeken.
+- Pills/chips geüniformeerd en subtieler gemaakt met token-based styling.
+- Spellingconsistentie in gebruikerszichtbare data verbeterd:
+  - o.a. `Lozère`, `Ariège`, `Pyrénées Ariégeoises` in gerechten/weer labels.
+- Budget donut-kleuren geüpdatet naar sterk onderscheidende categorie-tokens:
+  - `--budget-cat-*` in `ui-tokens.css`, gebruikt in `budgetCategories.ts`.
+
 ### 2026-04-10 19:12:55 +02:00
 
 - Volledige audit- en stabilisatieronde uitgevoerd over `src/` met focus op regressierisico, tokenconsistentie en toegankelijkheid.

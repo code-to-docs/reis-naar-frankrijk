@@ -74,9 +74,11 @@
   </div>
 
   {#if dagTip}
-    <div class="ui-widget-name">{dagTip.emoji || E.ETEN} {dagTip.naam}</div>
-    <div class="ui-widget-subtitle">{dagTip.frans}</div>
-    <p class="ui-widget-copy food-tip-desc">{dagTip.omschrijving}</p>
+    <div class="food-tip-main">
+      <div class="ui-widget-name">{dagTip.emoji || E.ETEN} {dagTip.naam}</div>
+      <div class="ui-widget-subtitle">{dagTip.frans}</div>
+      <p class="ui-widget-copy food-tip-desc">{dagTip.omschrijving}</p>
+    </div>
     <div class="ui-widget-chips">
       <span class="food-chip ui-chip ui-chip--muted">{getStreekLabel(getHoofdStreek(dagTip))}</span>
       <span class="food-chip ui-chip ui-chip--muted">{getSoortLabel(dagTip.soort)}</span>
@@ -93,11 +95,15 @@
       radial-gradient(100% 65% at 12% 0%, color-mix(in srgb, var(--color-primary-500) 12%, var(--card-bg)) 0%, transparent 66%),
       var(--card-bg);
   }
+  .food-tip-main {
+    display: grid;
+    gap: var(--space-2);
+  }
   .food-tip-desc {
     margin: 0;
   }
   .food-chip {
-    min-height: 28px;
+    min-height: var(--ui-touch-compact);
   }
 
   :global(html.dark) .food-tip-card {

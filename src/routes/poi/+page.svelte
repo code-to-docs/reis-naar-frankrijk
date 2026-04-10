@@ -18,6 +18,7 @@
   let categorie = $state<PoiCategorieId | "alle">("alle");
   let score = $state<PoiScore | 0>(0);
   let sortering = $state<PoiSortering>("prioriteit");
+  let toonFilters = $state(false);
   let modalOpen = $state(false);
   let editingPoi = $state<Poi | null>(null);
 
@@ -172,8 +173,8 @@
   </section>
 
   <section class="poi-filter-card card">
-    <div class="poi-toolbar">
-      <label class="poi-search">
+    <div class="poi-zoek-rij">
+      <label class="poi-search ui-filter-input">
         <span class="poi-search-icon" aria-hidden="true">{E.ZOEK}</span>
         <input
           bind:value={zoekterm}
@@ -182,62 +183,78 @@
           aria-label="Zoek suggesties"
         />
       </label>
-
-      <label class="poi-sort">
-        <span class="poi-filter-label">Sorteer</span>
-        <select bind:value={sortering} aria-label="Sorteer suggesties">
-          {#each sorteerOpties as optie (optie.value)}
-            <option value={optie.value}>{optie.label}</option>
-          {/each}
-        </select>
-      </label>
-    </div>
-
-    <div class="poi-filter-group">
-      <span class="poi-filter-label">Categorie</span>
-      <div class="poi-pill-row">
-        <button type="button" class="poi-pill" class:active={categorie === "alle"} onclick={() => (categorie = "alle")}>
-          Alles
-        </button>
-        {#each poiCategorieen as item (item.id)}
-          <button
-            type="button"
-            class="poi-pill"
-            class:active={categorie === item.id}
-            onclick={() => (categorie = item.id)}
-          >
-            {item.emoji} {item.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-
-    <div class="poi-filter-group">
-      <span class="poi-filter-label">Prioriteit</span>
-      <div class="poi-pill-row">
-        <button type="button" class="poi-pill" class:active={score === 0} onclick={() => (score = 0)}>
-          Alles
-        </button>
-        {#each scoreOpties as value (value)}
-          <button type="button" class="poi-pill" class:active={score === value} onclick={() => (score = value)}>
-            {poiScoreMeta[value].korteLabel}
-          </button>
-        {/each}
-      </div>
-    </div>
-
-    <div class="poi-filter-footer">
-      <p class="poi-filter-info">
-        {gefilterdePois.length} {gefilterdePois.length === 1 ? "suggestie" : "suggesties"} zichtbaar
+      <button
+        type="button"
+        class="poi-filter-toggle ui-filter-toggle"
+        class:actief={toonFilters || actieveFilters > 0}
+        onclick={() => (toonFilters = !toonFilters)}
+        aria-label="Toon POI filters"
+      >
+        Filters
         {#if actieveFilters > 0}
-          <span class="poi-filter-badge">{actieveFilters} filter{actieveFilters === 1 ? "" : "s"}</span>
+          <span class="poi-filter-badge ui-filter-badge">{actieveFilters}</span>
         {/if}
-      </p>
-
-      {#if actieveFilters > 0}
-        <button type="button" class="btn-secondary btn-pill" onclick={resetFilters}>Reset filters</button>
-      {/if}
+      </button>
     </div>
+
+    {#if toonFilters}
+      <div class="poi-filters-panel">
+        <label class="poi-sort">
+          <span class="poi-filter-label">Sorteer</span>
+          <select bind:value={sortering} aria-label="Sorteer suggesties">
+            {#each sorteerOpties as optie (optie.value)}
+              <option value={optie.value}>{optie.label}</option>
+            {/each}
+          </select>
+        </label>
+
+        <div class="poi-filter-group">
+          <span class="poi-filter-label">Categorie</span>
+          <div class="poi-pill-row">
+            <button type="button" class="poi-pill" class:active={categorie === "alle"} onclick={() => (categorie = "alle")}>
+              Alles
+            </button>
+            {#each poiCategorieen as item (item.id)}
+              <button
+                type="button"
+                class="poi-pill"
+                class:active={categorie === item.id}
+                onclick={() => (categorie = item.id)}
+              >
+                {item.emoji} {item.label}
+              </button>
+            {/each}
+          </div>
+        </div>
+
+        <div class="poi-filter-group">
+          <span class="poi-filter-label">Prioriteit</span>
+          <div class="poi-pill-row">
+            <button type="button" class="poi-pill" class:active={score === 0} onclick={() => (score = 0)}>
+              Alles
+            </button>
+            {#each scoreOpties as value (value)}
+              <button type="button" class="poi-pill" class:active={score === value} onclick={() => (score = value)}>
+                {poiScoreMeta[value].korteLabel}
+              </button>
+            {/each}
+          </div>
+        </div>
+
+        <div class="poi-filter-footer">
+          <p class="poi-filter-info">
+            {gefilterdePois.length} {gefilterdePois.length === 1 ? "suggestie" : "suggesties"} zichtbaar
+            {#if actieveFilters > 0}
+              <span class="poi-filter-count">{actieveFilters} filter{actieveFilters === 1 ? "" : "s"}</span>
+            {/if}
+          </p>
+
+          {#if actieveFilters > 0}
+            <button type="button" class="btn-secondary btn-pill" onclick={resetFilters}>Reset filters</button>
+          {/if}
+        </div>
+      </div>
+    {/if}
   </section>
 
   {#if loading}
@@ -383,23 +400,33 @@
   .poi-filter-card {
     margin: 0;
     display: grid;
-    gap: var(--ui-space-4);
+    gap: var(--ui-space-3);
   }
 
-  .poi-toolbar {
+  .poi-zoek-rij {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+
+  .poi-filters-panel {
     display: grid;
     gap: var(--ui-space-3);
+    padding-top: var(--space-2);
   }
 
   .poi-search {
     display: flex;
     align-items: center;
     gap: var(--space-2-5);
-    min-height: var(--ui-touch-min);
-    padding: 0 14px;
-    border-radius: var(--radius-md);
-    border: 1.5px solid var(--input-border);
-    background: var(--input-bg);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .poi-filter-toggle {
+    min-width: 92px;
+    align-self: stretch;
   }
 
   .poi-search input {
@@ -445,20 +472,14 @@
   }
 
   .poi-pill {
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-accent-subtle));
-    color: var(--tekst);
-    border-radius: var(--radius-full);
     min-height: var(--btn-height-compact);
     padding: 0 var(--space-3);
     font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
   }
 
-  .poi-pill.active {
-    background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
+  .poi-filter-badge {
+    background: color-mix(in srgb, var(--bg-surface) 20%, transparent);
   }
 
   .poi-filter-footer {
@@ -479,7 +500,7 @@
     font-weight: var(--ui-weight-medium);
   }
 
-  .poi-filter-badge {
+  .poi-filter-count {
     display: inline-flex;
     align-items: center;
     min-height: 26px;
@@ -591,9 +612,8 @@
       min-width: 190px;
     }
 
-    .poi-toolbar {
-      grid-template-columns: minmax(0, 1fr) 220px;
-      align-items: end;
+    .poi-sort {
+      max-width: 220px;
     }
   }
 
@@ -605,6 +625,20 @@
     .poi-hero,
     .poi-filter-card {
       padding: var(--ui-space-5);
+    }
+
+    .poi-zoek-rij {
+      gap: var(--ui-space-3);
+    }
+
+    .poi-search {
+      min-height: var(--space-12);
+    }
+
+    .poi-filter-toggle {
+      min-height: var(--space-12);
+      min-width: 108px;
+      font-size: var(--text-base);
     }
 
     .poi-grid {
@@ -634,19 +668,7 @@
     border-color: var(--border-strong);
   }
 
-  :global(html.dark) .poi-pill {
-    background: var(--bg-surface-raised);
-    border-color: var(--border-strong);
-    color: var(--text-secondary);
-  }
-
-  :global(html.dark) .poi-pill.active {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
-  }
-
-  :global(html.dark) .poi-filter-badge {
+  :global(html.dark) .poi-filter-count {
     background: rgba(30, 64, 175, 0.28);
     border-color: rgba(96, 165, 250, 0.32);
     color: var(--text-accent);

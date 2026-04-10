@@ -2,49 +2,203 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Shared trip collections: allow read/write for any client (no auth implemented yet)
-    match /uitgaven/{document=**} {
-      allow read, write: if true;
+    function isValidDoor(value) {
+      return value is string && value in ["Dennis", "Franzi", "Reisgenoot"];
     }
-    match /instellingen/{document=**} {
-      allow read, write: if true;
+
+    function isOptionalString(data, key, maxLen) {
+      return !(key in data) || data[key] == null || (data[key] is string && data[key].size() <= maxLen);
     }
-    match /wildlife/{document=**} {
-      allow read, write: if true;
+
+    function isOptionalNumber(data, key, min, max) {
+      return !(key in data) || data[key] == null || (data[key] is number && data[key] >= min && data[key] <= max);
     }
-    match /gerechten_checks/{document=**} {
-      allow read, write: if true;
+
+    function isOptionalBool(data, key) {
+      return !(key in data) || data[key] is bool;
     }
-    
-    // Generic list collections
-    match /campings/{document=**} {
-      allow read, write: if true;
+
+    function isOptionalTimestamp(data, key) {
+      return !(key in data) || data[key] == null || data[key] is timestamp;
     }
+
+    function isHttpUrl(value) {
+      return value is string && value.size() <= 500 && value.matches('^https?://.*$');
+    }
+
+    function isOptionalHttpUrl(data, key) {
+      return !(key in data) || data[key] == null || isHttpUrl(data[key]);
+    }
+
+    function isBudgetData(data) {
+      return data.keys().hasOnly(["bedrag", "categorie", "omschrijving", "door", "datum"]) &&
+        data.bedrag is number && data.bedrag > 0 && data.bedrag <= 10000 &&
+        data.categorie is string && data.categorie.size() > 0 && data.categorie.size() <= 40 &&
+        data.omschrijving is string && data.omschrijving.size() > 0 && data.omschrijving.size() <= 140 &&
+        isValidDoor(data.door) &&
+        data.datum is timestamp;
+    }
+
+    function isInstellingenBudget(data) {
+      return data.keys().hasOnly(["bedrag"]) &&
+        data.bedrag is number &&
+        data.bedrag > 0 &&
+        data.bedrag <= 20000;
+    }
+
+    function isWildlifeData(data) {
+      return data.keys().hasOnly([
+          "gespot", "door", "datum", "notitie", "locatie",
+          "latitude", "longitude", "googleMapsUrl", "openStreetMapUrl"
+        ]) &&
+        data.gespot is bool &&
+        isValidDoor(data.door) &&
+        data.datum is timestamp &&
+        isOptionalString(data, "notitie", 180) &&
+        isOptionalString(data, "locatie", 120) &&
+        isOptionalNumber(data, "latitude", -90, 90) &&
+        isOptionalNumber(data, "longitude", -180, 180) &&
+        isOptionalHttpUrl(data, "googleMapsUrl") &&
+        isOptionalHttpUrl(data, "openStreetMapUrl");
+    }
+
+    function isGerechtCheckData(data) {
+      return data.keys().hasOnly(["gerechtId", "door", "geproefd", "datum", "rating"]) &&
+        data.gerechtId is string && data.gerechtId.size() > 0 && data.gerechtId.size() <= 80 &&
+        isValidDoor(data.door) &&
+        isOptionalBool(data, "geproefd") &&
+        isOptionalTimestamp(data, "datum") &&
+        isOptionalNumber(data, "rating", 1, 5);
+    }
+
+    function isPoiData(data) {
+      return data.keys().hasOnly([
+          "naam", "categorie", "score", "omschrijving", "locatieNaam",
+          "mapsLink", "websiteUrl", "door", "toegevoegdOp", "bijgewerktOp",
+          "bezocht", "bezochtOp"
+        ]) &&
+        data.naam is string && data.naam.size() > 0 && data.naam.size() <= 80 &&
+        data.categorie is string && data.categorie in ["cultuur", "natuur", "activiteit", "eten_drinken", "winkelen", "overig"] &&
+        data.score is int && data.score >= 1 && data.score <= 3 &&
+        isOptionalString(data, "omschrijving", 300) &&
+        isOptionalString(data, "locatieNaam", 120) &&
+        isOptionalHttpUrl(data, "mapsLink") &&
+        isOptionalHttpUrl(data, "websiteUrl") &&
+        isValidDoor(data.door) &&
+        isOptionalTimestamp(data, "toegevoegdOp") &&
+        isOptionalTimestamp(data, "bijgewerktOp") &&
+        isOptionalBool(data, "bezocht") &&
+        isOptionalTimestamp(data, "bezochtOp");
+    }
+
+    function isCampingData(data) {
+      return data.keys().hasOnly([
+          "naam", "door", "shortlist", "type", "adres", "startDatum", "nachten",
+          "latitude", "longitude", "notities", "websiteUrl", "bookingUrl",
+          "mapsLink", "openStreetMapUrl", "datum"
+        ]) &&
+        data.naam is string && data.naam.size() > 0 && data.naam.size() <= 120 &&
+        isValidDoor(data.door) &&
+        isOptionalBool(data, "shortlist") &&
+        isOptionalString(data, "type", 20) &&
+        isOptionalString(data, "adres", 200) &&
+        isOptionalString(data, "startDatum", 20) &&
+        isOptionalNumber(data, "nachten", 1, 60) &&
+        isOptionalNumber(data, "latitude", -90, 90) &&
+        isOptionalNumber(data, "longitude", -180, 180) &&
+        isOptionalString(data, "notities", 500) &&
+        isOptionalHttpUrl(data, "websiteUrl") &&
+        isOptionalHttpUrl(data, "bookingUrl") &&
+        isOptionalHttpUrl(data, "mapsLink") &&
+        isOptionalHttpUrl(data, "openStreetMapUrl") &&
+        isOptionalTimestamp(data, "datum");
+    }
+
+    function isSharedListData(data) {
+      return data.keys().hasOnly(["naam", "door", "datum", "gedaan", "afgevinktDoor", "notities", "mapsLink"]) &&
+        data.naam is string && data.naam.size() > 0 && data.naam.size() <= 120 &&
+        isValidDoor(data.door) &&
+        data.datum is timestamp &&
+        isOptionalBool(data, "gedaan") &&
+        (!( "afgevinktDoor" in data) || isValidDoor(data.afgevinktDoor)) &&
+        isOptionalString(data, "notities", 300) &&
+        isOptionalHttpUrl(data, "mapsLink");
+    }
+
+    // Budget
+    match /uitgaven/{document} {
+      allow read: if true;
+      allow create, update: if isBudgetData(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /instellingen/budget {
+      allow read: if true;
+      allow create, update: if isInstellingenBudget(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Wildlife and gerechten
+    match /wildlife/{document} {
+      allow read: if true;
+      allow create, update: if isWildlifeData(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /gerechten_checks/{document} {
+      allow read: if true;
+      allow create, update: if isGerechtCheckData(request.resource.data);
+      allow delete: if true;
+    }
+
+    // Campings and POI
+    match /campings/{document} {
+      allow read: if true;
+      allow create, update: if isCampingData(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /poi_suggesties/{document} {
+      allow read: if true;
+      allow create, update: if isPoiData(request.resource.data);
+      allow delete: if true;
+    }
+
     // Legacy POI collection (kept for backward compatibility)
-    match /pois/{document=**} {
-      allow read, write: if true;
+    match /pois/{document} {
+      allow read, write: if false;
     }
-    // Active POI collection used by PoiService
-    match /poi_suggesties/{document=**} {
-      allow read, write: if true;
+
+    // Generic list collections
+    match /activiteiten/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
-    match /activiteiten/{document=**} {
-      allow read, write: if true;
+    match /paklijst_dennis/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
-    match /paklijst_dennis/{document=**} {
-      allow read, write: if true;
+    match /paklijst_franzi/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
-    match /paklijst_franzi/{document=**} {
-      allow read, write: if true;
+    match /boodschappen/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
-    match /boodschappen/{document=**} {
-      allow read, write: if true;
+    match /zwemplekken/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
-    match /zwemplekken/{document=**} {
-      allow read, write: if true;
-    }
-    match /dagboek/{document=**} {
-      allow read, write: if true;
+    match /dagboek/{document} {
+      allow read: if true;
+      allow create, update: if isSharedListData(request.resource.data);
+      allow delete: if true;
     }
 
     // Default: deny everything else

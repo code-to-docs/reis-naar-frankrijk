@@ -106,13 +106,13 @@
     min-width: 0;
   }
   .quick-btn .icon {
-    font-size: clamp(1.8rem, 4vw, var(--text-2xl));
+    font-size: var(--text-2xl);
     line-height: 1;
     flex-shrink: 0;
     filter: saturate(1.04);
   }
   .quick-btn span {
-    font-size: clamp(var(--text-base), 2.8vw, var(--text-lg));
+    font-size: var(--text-md);
     font-weight: var(--ui-weight-heavy);
     color: var(--heading);
     letter-spacing: -0.01em;
@@ -153,7 +153,7 @@
       padding: var(--ui-space-4);
     }
     .quick-btn span {
-      font-size: var(--text-lg);
+      font-size: var(--text-md);
     }
     .quick-btn small {
       font-size: var(--text-sm);

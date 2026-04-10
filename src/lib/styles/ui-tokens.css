@@ -180,6 +180,15 @@
   --touch-target-compact: 36px;
   --content-max-width: 680px;
   --page-max-width: 1200px;
+
+  /* Budget chart palette - sterk onderscheid tussen categorieen */
+  --budget-cat-dining: #d97706;
+  --budget-cat-boodschappen: #0f766e;
+  --budget-cat-overnachting: #2563eb;
+  --budget-cat-benzine: #ca8a04;
+  --budget-cat-tol: #7c3aed;
+  --budget-cat-uitjes: #db2777;
+  --budget-cat-overig: #6b7280;
 }
 
 /* =====================================================

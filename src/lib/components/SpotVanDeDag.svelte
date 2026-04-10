@@ -6,6 +6,7 @@
   import { wildlifeData, categorieLabels, regioLabels, zeldzaamheidLabels } from '$lib/wildlifeData.js';
   import { fetchWikipediaSummaryImage } from '$lib/api/wikiApi.js';
   import { formatFullDate } from '$lib/utils/formatters.js';
+  import { buildWildlifeDeepLink } from "$lib/utils/dashboard.js";
   import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from '$lib/types.js';
 
   let laatsteSpotting = $state<Spotting | null>(null);
@@ -15,6 +16,7 @@
   let laatstFotoDierId = "";
   let actiefFetchId = 0;
   let wikiController: AbortController | null = null;
+  let spottingHref = $derived.by(() => buildWildlifeDeepLink(dierInfo?.id || ""));
 
   function getCategorieEmoji(dier: Wildlife) {
     return categorieLabels[dier.categorie]?.emoji || E.POOT;
@@ -105,11 +107,11 @@
 </script>
 
 {#if laatsteSpotting && dierInfo}
-<a href="/meer/wildlife" class="spot-card ui-widget-card">
+<a href={spottingHref} class="spot-card ui-widget-card">
   <div class="ui-widget-head">
     <div>
       <div class="ui-widget-title">{E.VOGEL} Laatste spotting</div>
-      <div class="ui-widget-kicker">Open wildlife en voeg meteen een nieuwe spotting toe of bekijk alle soorten.</div>
+      <div class="ui-widget-kicker">Open wildlife en spring direct naar deze soort.</div>
     </div>
   </div>
   <div class="spot-content">
@@ -121,7 +123,7 @@
     <div class="spot-info">
       <div class="ui-widget-name spot-naam">
         {dierInfo.naam}
-        <span class="spot-zeldzaamheid" style="color: {getZeldzaamheidMeta(dierInfo.zeldzaamheid).kleur}">
+        <span class={`spot-zeldzaamheid spot-zeldzaamheid-${dierInfo.zeldzaamheid}`}>
           {getZeldzaamheidMeta(dierInfo.zeldzaamheid).emoji}
         </span>
       </div>
@@ -177,13 +179,27 @@
     font-size: var(--text-2xl);
     flex-shrink: 0;
   }
-  .spot-info { flex: 1; min-width: 0; }
+  .spot-info {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
   .spot-naam {
     display: flex;
     align-items: center;
     gap: var(--space-1-5);
   }
-  .spot-zeldzaamheid { font-size: 0.65rem; letter-spacing: -1px; }
+  .spot-zeldzaamheid { font-size: var(--text-xs); letter-spacing: -0.06em; }
+  .spot-zeldzaamheid-1 {
+    color: var(--text-success);
+  }
+  .spot-zeldzaamheid-2 {
+    color: var(--text-warning);
+  }
+  .spot-zeldzaamheid-3 {
+    color: var(--text-error);
+  }
   .spot-frans { color: var(--text-success); }
   .spot-note { margin: 0; }
   .spot-regios { margin-top: 0; }

@@ -103,86 +103,154 @@
 
 /* Reusable metadata chips */
 .ui-chip {
-  --chip-bg: color-mix(in srgb, var(--card-bg) 84%, #e9f1fb);
-  --chip-border: var(--input-border);
-  --chip-text: var(--heading);
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 84%, var(--bg-accent-subtle));
+  --chip-border: color-mix(in srgb, var(--border-default) 82%, var(--border-accent));
+  --chip-text: var(--text-primary);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 28px;
-  padding: 4px 10px;
-  border-radius: 999px;
+  gap: var(--space-1-5);
+  min-height: var(--ui-touch-compact);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
   color: var(--chip-text);
   font-size: var(--ui-text-xs);
   font-weight: var(--ui-weight-semibold);
-  line-height: 1;
+  line-height: var(--ui-line-tight);
   white-space: nowrap;
 }
 
 .ui-chip--muted {
-  --chip-bg: color-mix(in srgb, var(--card-bg) 86%, #eef3fb);
-  --chip-border: color-mix(in srgb, var(--input-border) 85%, #dce6f2);
-  --chip-text: color-mix(in srgb, var(--heading) 72%, #475569);
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 88%, var(--bg-interactive));
+  --chip-border: var(--border-default);
+  --chip-text: var(--text-secondary);
 }
 
 .ui-chip--info {
-  --chip-bg: color-mix(in srgb, #bfdbfe 22%, var(--card-bg));
-  --chip-border: color-mix(in srgb, #93c5fd 52%, var(--input-border));
-  --chip-text: color-mix(in srgb, var(--blauw) 88%, #0f172a);
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 76%, var(--bg-accent-subtle));
+  --chip-border: color-mix(in srgb, var(--border-accent) 56%, var(--border-default));
+  --chip-text: var(--text-accent);
 }
 
 .ui-chip--success {
-  --chip-bg: color-mix(in srgb, #22c55e 16%, var(--card-bg));
-  --chip-border: color-mix(in srgb, #22c55e 36%, var(--input-border));
-  --chip-text: #166534;
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 76%, var(--color-success-light));
+  --chip-border: color-mix(in srgb, var(--color-success-base) 45%, var(--border-default));
+  --chip-text: var(--text-success);
 }
 
 .ui-chip--warning {
-  --chip-bg: color-mix(in srgb, #f59e0b 17%, var(--card-bg));
-  --chip-border: color-mix(in srgb, #f59e0b 40%, var(--input-border));
-  --chip-text: #92400e;
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 78%, var(--color-warning-light));
+  --chip-border: color-mix(in srgb, var(--color-warning-base) 45%, var(--border-default));
+  --chip-text: var(--text-warning);
 }
 
 .ui-chip--danger {
-  --chip-bg: color-mix(in srgb, #ef4444 14%, var(--card-bg));
-  --chip-border: color-mix(in srgb, #ef4444 35%, var(--input-border));
-  --chip-text: #991b1b;
+  --chip-bg: color-mix(in srgb, var(--bg-surface) 78%, var(--color-error-light));
+  --chip-border: color-mix(in srgb, var(--color-error-base) 44%, var(--border-default));
+  --chip-text: var(--text-error);
 }
 
-html.dark .ui-chip {
-  --chip-bg: #111827;
-  --chip-border: #334155;
-  --chip-text: #dbeafe;
+/* Filter UX standard (wildlife pattern) */
+.ui-filter-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2);
+  align-items: stretch;
 }
 
-html.dark .ui-chip--muted {
-  --chip-bg: #0f172a;
-  --chip-border: #334155;
-  --chip-text: #cbd5e1;
+.ui-filter-input {
+  min-height: var(--ui-touch-min);
+  margin: 0;
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-lg);
+  background: var(--input-bg);
+  padding-inline: var(--space-3);
 }
 
-html.dark .ui-chip--info {
-  --chip-bg: #1e3a8a;
-  --chip-border: #2563eb;
-  --chip-text: #dbeafe;
+.ui-filter-toggle {
+  min-height: var(--ui-touch-min);
+  min-width: 92px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--input-border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--ui-weight-bold);
+  line-height: 1;
 }
 
-html.dark .ui-chip--success {
-  --chip-bg: rgba(22, 101, 52, 0.35);
-  --chip-border: rgba(34, 197, 94, 0.45);
-  --chip-text: #bbf7d0;
+.ui-filter-toggle.actief {
+  background: var(--bg-accent-hover);
+  border-color: var(--border-accent);
+  color: var(--text-inverse);
 }
 
-html.dark .ui-chip--warning {
-  --chip-bg: rgba(146, 64, 14, 0.35);
-  --chip-border: rgba(245, 158, 11, 0.45);
-  --chip-text: #fde68a;
+.ui-filter-badge {
+  min-width: var(--space-5);
+  height: var(--space-5);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg-surface) 22%, transparent);
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: var(--ui-weight-bold);
+  padding: 0 var(--space-1-5);
 }
 
-html.dark .ui-chip--danger {
-  --chip-bg: rgba(127, 29, 29, 0.35);
-  --chip-border: rgba(239, 68, 68, 0.45);
-  --chip-text: #fecaca;
+/* Filter pills: uniforme, subtiele stijl app-wide */
+.ui-pill {
+  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--bg-surface) 88%, var(--bg-accent-subtle));
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  min-height: var(--ui-touch-compact);
+  padding: 0 var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: var(--ui-weight-semibold);
+  line-height: 1;
+}
+
+.ui-pill.active {
+  background: color-mix(in srgb, var(--bg-accent-subtle) 62%, var(--bg-surface));
+  border-color: var(--border-accent);
+  color: var(--text-accent);
+}
+
+html.dark .ui-filter-input,
+html.dark .ui-filter-toggle {
+  border-color: var(--border-strong);
+}
+
+html.dark .ui-filter-toggle {
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+html.dark .ui-filter-toggle.actief {
+  background: var(--bg-accent-hover);
+  border-color: var(--border-accent);
+  color: var(--text-inverse);
+}
+
+html.dark .ui-pill {
+  background: var(--card-bg);
+  border-color: var(--border-strong);
+  color: var(--text-tertiary);
+}
+
+html.dark .ui-pill.active {
+  background: color-mix(in srgb, var(--bg-accent-subtle) 68%, var(--bg-surface-raised));
+  border-color: var(--border-accent);
+  color: var(--text-accent);
 }

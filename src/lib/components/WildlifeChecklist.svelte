@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { page } from "$app/stores";
   import { collection, onSnapshot, doc, setDoc, deleteDoc } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
   import { appState } from "$lib/stores.svelte.js";
@@ -144,6 +145,7 @@
     laadBatch();
   }
   let toonFilters = $state(false);
+  let openFromQuery = $derived.by(() => $page.url.searchParams.get("open")?.trim() || "");
 
   let gefilterd = $derived.by(() => {
     const zoekLower = zoek.trim().toLowerCase();
@@ -178,17 +180,32 @@
     filterRegio = "alle";
     filterCategorie = "alle";
   }
+
+  function openFromDashboardQuery(id: string) {
+    if (!id) return;
+    if (!wildlifeData.some((dier) => dier.id === id)) return;
+    expandedDier = id;
+    requestAnimationFrame(() => {
+      const target = document.getElementById(`wildlife-card-${id}`);
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
+  $effect(() => {
+    if (!openFromQuery) return;
+    openFromDashboardQuery(openFromQuery);
+  });
 </script>
 
 <section class="wl-page">
   <WildlifeStats {aantalGespot} {totaal} {gespotPerc} />
 
   <div class="wl-zoek-rij">
-    <input type="text" class="wl-zoek" placeholder="{E.ZOEK} Zoek op naam, Frans, info..." bind:value={zoek} />
-    <button class="wl-filter-toggle" class:actief={toonFilters || aantalActieveFilters > 0} onclick={() => toonFilters = !toonFilters}>
+    <input type="text" class="wl-zoek ui-filter-input" placeholder="{E.ZOEK} Zoek op naam, Frans, info..." bind:value={zoek} />
+    <button class="wl-filter-toggle ui-filter-toggle" class:actief={toonFilters || aantalActieveFilters > 0} onclick={() => toonFilters = !toonFilters}>
       Filters
       {#if aantalActieveFilters > 0}
-        <span class="wl-filter-badge">{aantalActieveFilters}</span>
+        <span class="wl-filter-badge ui-filter-badge">{aantalActieveFilters}</span>
       {/if}
     </button>
   </div>
@@ -267,46 +284,13 @@
     align-items: stretch;
   }
   .wl-zoek {
-    min-height: var(--ui-touch-min);
-    margin: 0;
-    border: 1.5px solid var(--input-border);
-    border-radius: var(--radius-lg);
-    background: var(--input-bg);
-    padding-inline: var(--space-3);
     align-self: stretch;
   }
   .wl-filter-toggle {
-    min-height: var(--ui-touch-min);
-    min-width: 92px;
-    padding: 0 14px;
-    border-radius: var(--radius-lg);
-    border: 1.5px solid var(--input-border);
-    background: var(--card-bg);
-    color: var(--tekst);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1-5);
-    font-size: var(--text-sm);
-    font-weight: var(--ui-weight-bold);
-    line-height: 1;
     align-self: stretch;
   }
-  .wl-filter-toggle.actief {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
-  }
   .wl-filter-badge {
-    min-width: var(--space-5);
-    height: var(--space-5);
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.2);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-xs);
-    padding: 0 var(--space-1-5);
+    background: color-mix(in srgb, var(--bg-surface) 22%, transparent);
   }
   .wl-filters-card {
     background: var(--card-bg);
@@ -322,10 +306,6 @@
     gap: var(--space-2);
   }
   .wl-pill {
-    border: 1px solid var(--border-default);
-    background: var(--bg-surface);
-    color: var(--text-secondary);
-    border-radius: var(--radius-full);
     min-height: var(--ui-touch-compact);
     padding: 0 var(--space-3);
     display: inline-flex;
@@ -333,11 +313,6 @@
     font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     line-height: 1;
-  }
-  .wl-pill.active {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
   }
   .wl-reset {
     margin-top: var(--space-3);
@@ -380,9 +355,6 @@
     .wl-page {
       gap: var(--ui-space-5);
     }
-    .wl-zoek-rij {
-      gap: var(--ui-space-3);
-    }
     .wl-zoek {
       min-height: var(--space-12);
       font-size: var(--text-base);
@@ -414,11 +386,6 @@
   }
 
   :global(html.dark) .wl-filters-card { background: var(--card-bg); border-color: var(--border-strong); }
-  :global(html.dark) .wl-zoek { border-color: var(--border-strong); }
-  :global(html.dark) .wl-filter-toggle { background: var(--card-bg); border-color: var(--border-strong); color: var(--text-primary); }
-  :global(html.dark) .wl-filter-toggle.actief { background: var(--bg-accent-hover); border-color: var(--border-accent); }
-  :global(html.dark) .wl-pill { background: var(--card-bg); border-color: var(--border-strong); color: var(--text-tertiary); }
-  :global(html.dark) .wl-pill.active { background: var(--bg-accent-hover); border-color: var(--border-accent); color: var(--text-inverse); }
   :global(html.dark) .wl-leeg { background: var(--card-bg); color: var(--text-tertiary); }
   :global(html.dark) .wl-resultaten { color: var(--text-tertiary); }
 </style>

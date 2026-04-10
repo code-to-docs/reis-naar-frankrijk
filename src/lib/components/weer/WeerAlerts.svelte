@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { E } from "$lib/emojis.js";
   import type { Alert, WeatherAlertsPayload } from "$lib/types.js";
+  import { normalizeFrenchRegionName } from "$lib/utils/dashboard.js";
 
   interface Props {
     alerts: WeatherAlertsPayload | null;
@@ -24,11 +24,6 @@
     return "ui-chip--success";
   }
 
-  let actieveAlerts = $derived.by(() => (alerts?.officialAlerts ?? []).filter((alert) => alert.active));
-  let rustigeRegioNamen = $derived.by(() =>
-    (alerts?.officialAlerts ?? []).filter((alert) => !alert.active).map((alert) => alert.regionName)
-  );
-
   function formatAlertMoment(isoDate: string | null | undefined) {
     if (!isoDate) return "";
     const d = new Date(isoDate);
@@ -44,6 +39,14 @@
     if (!alert.activePhenomena.length) return "Officieel weeralarm actief";
     return alert.activePhenomena.map((item) => item.label).join(" - ");
   }
+
+  let actieveAlerts = $derived.by(() => (alerts?.officialAlerts ?? []).filter((alert) => alert.active));
+  let rustigeRegioNamen = $derived.by(() =>
+    (alerts?.officialAlerts ?? []).filter((alert) => !alert.active).map((alert) => normalizeFrenchRegionName(alert.regionName))
+  );
+  let rustigeRegioTekst = $derived.by(() =>
+    rustigeRegioNamen.length ? `Rustig volgens M\u00E9t\u00E9o-France: ${rustigeRegioNamen.join(", ")}.` : ""
+  );
 </script>
 
 {#if alertsLaden}
@@ -61,34 +64,41 @@
               <span class="alert-source">{alert.sourceLabel}</span>
               <span class={`alert-badge ui-chip ${alertChipClass(alert.level)}`}>{alert.levelLabel}</span>
             </div>
-            <div class="alert-region">{alert.regionName}</div>
+            <div class="alert-region">{normalizeFrenchRegionName(alert.regionName)}</div>
             <div class="alert-summary">{formatPhenomena(alert)}</div>
             {#if alert.validUntil}
               <div class="alert-meta">Geldig tot {formatAlertMoment(alert.validUntil)}</div>
             {/if}
           </a>
         {/each}
+
+        {#if rustigeRegioTekst}
+          <a class="alert-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
+            <div class="alert-card-top">
+              <span class="alert-source">M&eacute;t&eacute;o-France Vigilance</span>
+              <span class="alert-badge ui-chip ui-chip--success">Groen</span>
+            </div>
+            <div class="alert-region">Rustige regio&apos;s</div>
+            <div class="alert-summary">{rustigeRegioTekst}</div>
+          </a>
+        {/if}
       {:else}
         <a class="alert-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
           <div class="alert-card-top">
-            <span class="alert-source">M&#233;t&#233;o-France Vigilance</span>
+            <span class="alert-source">M&eacute;t&eacute;o-France Vigilance</span>
             <span class="alert-badge ui-chip ui-chip--success">Groen</span>
           </div>
           <div class="alert-region">Geen weeralarm van kracht</div>
-          <div class="alert-summary">Loz&#232;re, Cantal en Ari&#232;ge staan nu op groen.</div>
+          <div class="alert-summary">Rustig volgens M&eacute;t&eacute;o-France: Loz&egrave;re, Cantal, Ari&egrave;ge.</div>
           {#if alerts.officialAlerts[0]?.updatedAt}
             <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
           {/if}
         </a>
       {/if}
     </div>
-
-    {#if actieveAlerts.length > 0 && rustigeRegioNamen.length > 0}
-      <div class="alerts-footnote">Rustig volgens M&#233;t&#233;o-France: {rustigeRegioNamen.join(", ")}.</div>
-    {/if}
   </div>
 {:else if alertsFout}
-  <div class="alerts-footnote alerts-footnote-error">{alertsFout}</div>
+  <div class="alerts-error">{alertsFout}</div>
 {/if}
 
 <style>
@@ -125,7 +135,7 @@
     font-weight: var(--weight-bold);
   }
   .alert-badge {
-    min-height: 28px;
+    min-height: var(--ui-touch-compact);
   }
   .alert-region {
     font-size: var(--text-base);
@@ -141,7 +151,7 @@
     font-weight: var(--weight-semibold);
   }
   .alert-meta {
-    margin-top: 7px;
+    margin-top: var(--space-1-5);
     font-size: var(--text-xs);
     color: var(--text-secondary);
     line-height: var(--leading-snug);
@@ -162,14 +172,11 @@
     background: linear-gradient(135deg, var(--color-error-light) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-error-base) 38%, var(--border-default));
   }
-  .alerts-footnote {
-    margin-top: var(--space-2);
+  .alerts-error {
+    margin-bottom: var(--space-3);
     font-size: var(--text-xs);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
-  }
-  .alerts-footnote-error {
-    margin-bottom: var(--space-3);
   }
   .alerts-loading {
     display: grid;
@@ -192,5 +199,3 @@
     }
   }
 </style>
-
-

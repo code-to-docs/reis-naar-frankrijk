@@ -1,4 +1,4 @@
-// Gerechten specifiek voor Lozere, Cantal en de Pyrenees Ariegeoises
+// Gerechten specifiek voor Lozère, Cantal en de Pyrénées Ariégeoises
 // plus direct gerelateerde streekkeukens (Aubrac, Auvergne, Occitanie).
 
 import type { Gerecht } from "./types.js";
@@ -8,7 +8,7 @@ export const gerechtenData: Gerecht[] = [
     id: "aligot-aubrac",
     naam: "Aligot",
     frans: "Aligot de l'Aubrac",
-    omschrijving: "Romige aardappelpuree met tomme-fraiche, vooral populair in Aubrac, Lozere en Cantal.",
+    omschrijving: "Romige aardappelpuree met tomme-fraiche, vooral populair in Aubrac, Lozère en Cantal.",
     emoji: "\u{1F9C0}",
     vegetarisch: true,
     smaak: "hartig",
@@ -161,8 +161,8 @@ export const gerechtenData: Gerecht[] = [
   {
     id: "retortillat-lozere",
     naam: "Retortillat",
-    frans: "Retortillat de Lozere",
-    omschrijving: "Aardappel- en ei-gerecht uit de bergen van Lozere, vergelijkbaar met een stevige tortilla.",
+    frans: "Retortillat de Lozère",
+    omschrijving: "Aardappel- en ei-gerecht uit de bergen van Lozère, vergelijkbaar met een stevige tortilla.",
     emoji: "\u{1F373}",
     vegetarisch: true,
     smaak: "hartig",
@@ -205,8 +205,8 @@ export const gerechtenData: Gerecht[] = [
   {
     id: "azinat-ariegeois",
     naam: "Azinat ariegeois",
-    frans: "Azinat d'Ariege",
-    omschrijving: "Stevige wintersoep met kool, aardappel en confit uit de valleien van Ariege.",
+    frans: "Azinat d'Ariège",
+    omschrijving: "Stevige wintersoep met kool, aardappel en confit uit de valleien van Ariège.",
     emoji: "\u{1F963}",
     vegetarisch: false,
     smaak: "hartig",
@@ -228,7 +228,7 @@ export const gerechtenData: Gerecht[] = [
     id: "mounjetado-ariegeoise",
     naam: "Mounjetado",
     frans: "Mounjetado ariegeoise",
-    omschrijving: "Bonenstoof met eend of worst, verwant aan cassoulet in de Ariege.",
+    omschrijving: "Bonenstoof met eend of worst, verwant aan cassoulet in de Ariège.",
     emoji: "\u{1F35B}",
     vegetarisch: false,
     smaak: "hartig",
@@ -239,7 +239,7 @@ export const gerechtenData: Gerecht[] = [
     id: "porc-noir-bigorre",
     naam: "Porc Noir de Bigorre",
     frans: "Charcuterie de Porc Noir de Bigorre",
-    omschrijving: "Donkere, aromatische charcuterie van het zwarte varken dat vaak op menus in de Ariege verschijnt.",
+    omschrijving: "Donkere, aromatische charcuterie van het zwarte varken dat vaak op menus in de Ariège verschijnt.",
     emoji: "\u{1F356}",
     vegetarisch: false,
     smaak: "hartig",
@@ -328,7 +328,7 @@ export const gerechtenData: Gerecht[] = [
     id: "coupetade-lozere",
     naam: "Coupetade",
     frans: "Coupetade lozerienne",
-    omschrijving: "Zoete broodpudding met rozijnen uit Lozere, vaak warm met een krokant korstje.",
+    omschrijving: "Zoete broodpudding met rozijnen uit Lozère, vaak warm met een krokant korstje.",
     emoji: "\u{1F36E}",
     vegetarisch: true,
     smaak: "zoet",
@@ -337,8 +337,8 @@ export const gerechtenData: Gerecht[] = [
   },
   {
     id: "flocons-ariege",
-    naam: "Flocons d'Ariege",
-    frans: "Flocons d'Ariege",
+    naam: "Flocons d'Ariège",
+    frans: "Flocons d'Ariège",
     omschrijving: "Kleine lekkernijen met knapperige meringue en een hart van romige hazelnootpraline.",
     emoji: "\u{1F36C}",
     vegetarisch: true,
@@ -360,8 +360,8 @@ export const gerechtenData: Gerecht[] = [
   {
     id: "croustade-pommes-ariege",
     naam: "Croustade aux pommes",
-    frans: "Croustade aux pommes d'Ariege",
-    omschrijving: "Flinterdunne laagjestaart met appel en boter, geliefd in Ariege.",
+    frans: "Croustade aux pommes d'Ariège",
+    omschrijving: "Flinterdunne laagjestaart met appel en boter, geliefd in Ariège.",
     emoji: "\u{1F34E}",
     vegetarisch: true,
     smaak: "zoet",
@@ -503,7 +503,7 @@ export const gerechtenData: Gerecht[] = [
   {
     id: "genepi-pyrenees",
     naam: "Genepi",
-    frans: "Genepi des Pyrenees",
+    frans: "Génépi des Pyrénées",
     omschrijving: "Kruidige berglikeur op alpenkruiden, traditioneel als digestief.",
     emoji: "\u{1F943}",
     vegetarisch: true,
@@ -514,7 +514,7 @@ export const gerechtenData: Gerecht[] = [
   {
     id: "hypocras-ariege",
     naam: "Hypocras",
-    frans: "Hypocras d'Ariege",
+    frans: "Hypocras d'Ariège",
     omschrijving: "Gezoete, kruidige wijn met kaneel, gember en kardemom, nog steeds geliefd rond Tarascon.",
     emoji: "\u{1F377}",
     vegetarisch: true,
@@ -524,9 +524,9 @@ export const gerechtenData: Gerecht[] = [
   },
   {
     id: "biere-ariegeoise",
-    naam: "Biere artisanale d'Ariege",
-    frans: "Biere artisanale ariegeoise",
-    omschrijving: "Lokale craftbieren uit Ariege, vaak met bergwater en regionale mout.",
+    naam: "Bière artisanale d'Ariège",
+    frans: "Bière artisanale ariégeoise",
+    omschrijving: "Lokale craftbieren uit Ariège, vaak met bergwater en regionale mout.",
     emoji: "\u{1F37A}",
     vegetarisch: true,
     smaak: "hartig",
@@ -572,7 +572,7 @@ export const gerechtenStreekLocaties = {
   ],
   pyrenees_ariegeoises: [
     { naam: "Foix", lat: 42.965, lon: 1.607 },
-    { naam: "Tarascon-sur-Ariege", lat: 42.845, lon: 1.606 },
+    { naam: "Tarascon-sur-Ariège", lat: 42.845, lon: 1.606 },
     { naam: "Ax-les-Thermes", lat: 42.72, lon: 1.84 },
     { naam: "Saint-Girons", lat: 42.985, lon: 1.145 }
   ],
@@ -618,9 +618,9 @@ export const gerechtenSoortLabels = {
 
 export const gerechtenStreekLabels = {
   alle: { label: "Alle", emoji: "\u{1F5FA}\uFE0F" },
-  lozere: { label: "Lozere", emoji: "\u{1F3DE}\uFE0F" },
+  lozere: { label: "Lozère", emoji: "\u{1F3DE}\uFE0F" },
   cantal: { label: "Cantal", emoji: "\u{1F30B}" },
-  pyrenees_ariegeoises: { label: "Pyrenees Ariegeoises", emoji: "\u{26F0}\uFE0F" },
+  pyrenees_ariegeoises: { label: "Pyrénées Ariégeoises", emoji: "\u{26F0}\uFE0F" },
   aubrac: { label: "Aubrac", emoji: "\u{1F332}" },
   auvergne: { label: "Auvergne", emoji: "\u{1F3DE}\uFE0F" },
   occitanie: { label: "Occitanie", emoji: "\u{1F31E}" }

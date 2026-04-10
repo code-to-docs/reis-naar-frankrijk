@@ -403,19 +403,19 @@
   <div class="gr-zoek-rij">
     <input
       type="text"
-      class="gr-zoek"
+      class="gr-zoek ui-filter-input"
       placeholder="Zoek op naam, Frans of omschrijving..."
       bind:value={zoek}
     />
     <button
-      class="gr-filter-toggle"
+      class="gr-filter-toggle ui-filter-toggle"
       class:actief={toonFilters || actieveFilters > 0}
       onclick={() => (toonFilters = !toonFilters)}
       aria-label="Toon filters"
     >
       Filters
       {#if actieveFilters > 0}
-        <span class="gr-filter-badge">{actieveFilters}</span>
+        <span class="gr-filter-badge ui-filter-badge">{actieveFilters}</span>
       {/if}
     </button>
   </div>
@@ -604,35 +604,14 @@
 
   .gr-zoek {
     margin: 0;
-    min-height: var(--ui-touch-min);
-    border-radius: var(--radius-lg);
-    border: 1.5px solid var(--input-border);
     padding-inline: var(--space-3);
     align-self: stretch;
   }
 
   .gr-filter-toggle {
     min-width: 92px;
-    min-height: var(--ui-touch-min);
-    padding: 0 14px;
-    border-radius: var(--radius-lg);
-    border: 1.5px solid var(--input-border);
-    background: var(--card-bg);
-    color: var(--tekst);
     position: relative;
-    font-size: var(--text-sm);
-    font-weight: var(--ui-weight-bold);
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     align-self: stretch;
-  }
-
-  .gr-filter-toggle.actief {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
   }
 
   .gr-filter-badge {
@@ -642,7 +621,7 @@
     min-width: 18px;
     height: 18px;
     border-radius: var(--radius-full);
-    background: var(--color-error-base);
+    background: color-mix(in srgb, var(--bg-accent) 60%, var(--color-error-base));
     color: var(--text-inverse);
     font-size: var(--text-xs);
     display: inline-flex;
@@ -677,10 +656,6 @@
   }
 
   .gr-pill {
-    border: 1px solid var(--border-default);
-    background: var(--bg-surface);
-    color: var(--text-secondary);
-    border-radius: var(--radius-full);
     min-height: var(--ui-touch-compact);
     padding: 0 var(--space-3);
     display: inline-flex;
@@ -689,12 +664,6 @@
     font-size: var(--text-sm);
     line-height: 1;
     font-weight: var(--ui-weight-semibold);
-  }
-
-  .gr-pill.active {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
   }
 
   .gr-reset {
@@ -796,20 +765,8 @@
     color: var(--text-accent);
   }
 
-  :global(html.dark) .gr-zoek,
-  :global(html.dark) .gr-filter-toggle,
   :global(html.dark) .gr-filters-card {
     border-color: var(--border-strong);
-  }
-
-  :global(html.dark) .gr-filter-toggle {
-    background: var(--card-bg);
-    color: var(--text-primary);
-  }
-
-  :global(html.dark) .gr-filter-toggle.actief {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
   }
 
   :global(html.dark) .gr-filter-title,
@@ -818,17 +775,6 @@
     color: var(--text-tertiary);
   }
 
-  :global(html.dark) .gr-pill {
-    background: var(--card-bg);
-    border-color: var(--border-strong);
-    color: var(--text-tertiary);
-  }
-
-  :global(html.dark) .gr-pill.active {
-    background: var(--bg-accent-hover);
-    border-color: var(--border-accent);
-    color: var(--text-inverse);
-  }
 </style>
 
 

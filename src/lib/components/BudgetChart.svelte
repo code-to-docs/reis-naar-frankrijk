@@ -146,9 +146,10 @@
     font-size: var(--text-xs);
   }
   .legenda-kleur {
-    width: 7px;
-    height: 7px;
+    width: 9px;
+    height: 9px;
     border-radius: var(--radius-sm);
+    border: 1px solid color-mix(in srgb, var(--border-default) 86%, var(--text-primary));
     flex-shrink: 0;
   }
   .legenda-label { color: var(--nav-text); transition: color var(--duration-normal); }

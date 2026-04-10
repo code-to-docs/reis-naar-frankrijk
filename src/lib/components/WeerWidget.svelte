@@ -125,11 +125,11 @@
     padding: 2px 2px 0;
   }
   .datum-dag {
-    font-size: clamp(1.85rem, 5.4vw, 2.2rem);
+    font-size: var(--text-2xl);
     font-weight: var(--ui-weight-heavy);
     color: var(--heading);
     letter-spacing: -0.02em;
-    line-height: 1.05;
+    line-height: var(--ui-line-tight);
   }
   .weer-card {
     background: var(--card-bg);
@@ -162,6 +162,12 @@
     justify-content: flex-end;
   }
   .weer-chip {
-    min-height: 28px;
+    min-height: var(--ui-touch-compact);
+  }
+
+  @media (min-width: 1100px) {
+    .datum-dag {
+      font-size: var(--text-3xl);
+    }
   }
 </style>
