@@ -50,11 +50,11 @@
   }
   .verrekening-card {
     margin-top: 0;
-    border-top: 3px solid #e2e8f0;
+    border-top: 3px solid var(--border-default);
   }
   .verrekening-lijn {
     border: none;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-default);
     margin: 8px 0;
   }
   .verrekening-resultaat {
@@ -69,3 +69,4 @@
     color: var(--groen);
   }
 </style>
+

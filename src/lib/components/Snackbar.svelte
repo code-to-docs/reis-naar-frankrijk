@@ -70,7 +70,7 @@
     border-radius: 14px;
     border: 2px solid;
     font-size: 0.92rem;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     box-shadow: 0 6px 24px rgba(0,0,0,0.18);
     animation: snackIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     max-width: 92%;
@@ -81,24 +81,24 @@
   }
 
   .snackbar-success {
-    background: #E8F5E9;
-    border-color: #4CAF50;
-    color: #1B5E20;
+    background: var(--color-success-light);
+    border-color: var(--color-success-base);
+    color: var(--text-success);
   }
   .snackbar-error {
-    background: #FFEBEE;
-    border-color: #F44336;
-    color: #B71C1C;
+    background: var(--color-error-light);
+    border-color: var(--color-error-base);
+    color: var(--text-error);
   }
   .snackbar-info {
-    background: #E3F2FD;
-    border-color: #2196F3;
-    color: #0D47A1;
+    background: var(--bg-accent-subtle);
+    border-color: var(--text-accent);
+    color: var(--text-accent);
   }
   .snackbar-warning {
-    background: #FFF8E1;
-    border-color: #FF9800;
-    color: #E65100;
+    background: var(--color-warning-light);
+    border-color: var(--color-warning-base);
+    color: var(--text-warning);
   }
 
   .snackbar-emoji {

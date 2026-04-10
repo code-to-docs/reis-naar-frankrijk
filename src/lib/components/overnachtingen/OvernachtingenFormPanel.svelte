@@ -364,14 +364,14 @@
     gap: 8px;
     flex-wrap: wrap;
     color: var(--blauw);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     font-size: var(--font-size-sm);
   }
   .ov-gps-btn {
     width: auto;
     min-height: var(--btn-height);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
@@ -403,11 +403,13 @@
   }
 
   :global(html.dark) .ov-form-head p {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
   :global(html.dark) .ov-gps-btn {
-    background: #1e3a8a;
-    color: #dbeafe;
-    border-color: #2563eb;
+    background: var(--bg-accent-subtle);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
   }
 </style>
+
+

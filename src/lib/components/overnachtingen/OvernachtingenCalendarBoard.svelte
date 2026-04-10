@@ -139,7 +139,7 @@
     width: auto;
     min-height: var(--btn-height);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
@@ -248,20 +248,20 @@
     touch-action: auto;
   }
   .ov-day.vandaag {
-    background: color-mix(in srgb, var(--card-bg) 84%, #fff5dd);
-    border-color: color-mix(in srgb, #f59e0b 44%, #fcd34d);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, #f59e0b 38%, transparent);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--color-warning-light));
+    border-color: color-mix(in srgb, var(--color-warning-base) 44%, var(--color-warning-light));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-warning-base) 38%, transparent);
   }
   .ov-day.geselecteerd {
-    background: color-mix(in srgb, var(--card-bg) 80%, #dbeafe);
-    border-color: color-mix(in srgb, var(--blauw) 40%, #cbd5e1);
+    background: color-mix(in srgb, var(--card-bg) 80%, var(--bg-accent-subtle));
+    border-color: color-mix(in srgb, var(--blauw) 40%, var(--border-strong));
   }
   .ov-day.vandaag.geselecteerd {
-    background: color-mix(in srgb, var(--card-bg) 72%, #dbeafe);
+    background: color-mix(in srgb, var(--card-bg) 72%, var(--bg-accent-subtle));
     border-color: var(--blauw);
     box-shadow:
       inset 0 0 0 1px color-mix(in srgb, var(--blauw) 32%, transparent),
-      inset 0 0 0 3px color-mix(in srgb, #f59e0b 30%, transparent);
+      inset 0 0 0 3px color-mix(in srgb, var(--color-warning-base) 30%, transparent);
   }
   .ov-day.selectiestart,
   .ov-day.selectieeinde {
@@ -279,14 +279,14 @@
     gap: 4px;
   }
   .ov-chip {
-    --loc-kleur: #2563eb;
+    --loc-kleur: var(--color-primary-600);
     font-size: 0.72rem;
     font-weight: 700;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 3px 5px;
-    background: color-mix(in srgb, var(--loc-kleur) 16%, white);
-    border: 1px solid color-mix(in srgb, var(--loc-kleur) 35%, white);
-    color: #0f172a;
+    background: color-mix(in srgb, var(--loc-kleur) 16%, var(--bg-surface));
+    border: 1px solid color-mix(in srgb, var(--loc-kleur) 35%, var(--bg-surface));
+    color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -323,7 +323,7 @@
     gap: 6px;
     font-size: var(--font-size-xs);
     color: var(--tekst);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .ov-legend-dot {
     width: 10px;
@@ -353,45 +353,47 @@
   :global(html.dark) .ov-calendar-hint,
   :global(html.dark) .ov-weekdays div,
   :global(html.dark) .ov-more {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
   :global(html.dark) .ov-day,
   :global(html.dark) .ov-month-btn {
-    background: #111827;
-    border-color: #334155;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
   :global(html.dark) .ov-day.leeg {
-    background: #0f172a;
+    background: var(--bg-surface);
   }
-  :global(html.dark) .ov-day.geselecteerd {
-    background: #10233f;
-    border-color: #3b82f6;
+   :global(html.dark) .ov-day.geselecteerd {
+    background: color-mix(in srgb, var(--color-primary-900) 42%, var(--bg-surface));
+    border-color: var(--border-accent);
   }
   :global(html.dark) .ov-day.vandaag {
-    background: #3b2f13;
-    border-color: #f59e0b;
+    background: color-mix(in srgb, var(--color-warning-dark) 35%, var(--bg-surface));
+    border-color: var(--color-warning-base);
     box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
   }
   :global(html.dark) .ov-day.vandaag.geselecteerd {
-    background: #1a2e4b;
-    border-color: #60a5fa;
+    background: color-mix(in srgb, var(--color-primary-800) 42%, var(--bg-surface));
+    border-color: var(--border-accent);
     box-shadow:
-      inset 0 0 0 1px rgba(96, 165, 250, 0.45),
-      inset 0 0 0 3px rgba(245, 158, 11, 0.28);
+      inset 0 0 0 1px color-mix(in srgb, var(--border-accent) 45%, transparent),
+      inset 0 0 0 3px color-mix(in srgb, var(--color-warning-base) 28%, transparent);
   }
   :global(html.dark) .ov-day-number,
   :global(html.dark) .ov-calendar-head strong {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
   :global(html.dark) .ov-legend-item {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
   :global(html.dark) .ov-chip {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
   :global(html.dark) .ov-secondary-btn {
-    background: #1e3a8a;
-    color: #dbeafe;
-    border-color: #2563eb;
+    background: var(--bg-accent-subtle);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
   }
 </style>
+
+

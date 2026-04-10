@@ -859,7 +859,7 @@
     width: auto;
     min-height: var(--btn-height);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
@@ -883,17 +883,17 @@
     min-height: var(--btn-height-compact);
     padding: 0 14px;
     border-radius: 999px;
-    border: 1.5px solid #e2e8f0;
-    background: #ffffff;
-    color: #475569;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
     transition: all 0.15s ease;
   }
   .ov-view-btn.active {
-    background: #1a5276;
-    color: #ffffff;
-    border-color: #1a5276;
+    background: var(--bg-accent-hover);
+    color: var(--text-inverse);
+    border-color: var(--border-accent);
   }
   .ov-stat {
     margin: 0;
@@ -940,33 +940,35 @@
   }
 
   :global(html.dark) .ov-top p {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
   :global(html.dark) .ov-stat,
   :global(html.dark) .ov-view-btn {
-    background: #111827;
-    border-color: #334155;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
   :global(html.dark) .ov-stat strong {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
   :global(html.dark) .ov-stat span {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
   :global(html.dark) .ov-secondary-btn,
   :global(html.dark) .ov-view-btn.active {
-    background: #1e3a8a;
-    color: #dbeafe;
-    border-color: #2563eb;
+    background: var(--bg-accent-subtle);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
   }
   :global(html.dark) .ov-view-btn {
-    background: #111827;
-    border-color: #334155;
-    color: #94a3b8;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-tertiary);
   }
   :global(html.dark) .ov-view-btn.active {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: #ffffff;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 </style>
+
+

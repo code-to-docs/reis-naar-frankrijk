@@ -158,7 +158,7 @@
     width: auto;
     min-height: var(--btn-height);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
@@ -177,18 +177,18 @@
     gap: 10px;
   }
   .ov-item {
-    --loc-kleur: #2563eb;
+    --loc-kleur: var(--color-primary-600);
     border: 1px solid var(--border-subtle);
     border-left: 6px solid var(--loc-kleur);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     padding: 11px 12px;
     background: var(--card-bg);
     display: grid;
     gap: 8px;
   }
   .ov-shortlist-item {
-    border-left-color: color-mix(in srgb, var(--loc-kleur) 70%, #10b981);
-    background: linear-gradient(180deg, rgba(239, 246, 255, 0.52) 0%, #fff 72%);
+    border-left-color: color-mix(in srgb, var(--loc-kleur) 70%, var(--color-success-base));
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.52) 0%, var(--bg-surface) 72%);
   }
   .ov-item-top {
     display: flex;
@@ -214,7 +214,7 @@
     margin: 0;
     color: var(--nav-text);
     font-size: var(--font-size-sm);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .ov-item-body {
     display: grid;
@@ -226,7 +226,7 @@
     padding: 0 12px;
     border-radius: var(--btn-radius);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--bg-accent-subtle));
     color: var(--blauw);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
@@ -239,14 +239,14 @@
     font-size: 0.95rem;
     border-radius: var(--btn-radius);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
-    color: color-mix(in srgb, var(--tekst) 70%, #475569);
+    background: color-mix(in srgb, var(--card-bg) 92%, var(--bg-surface-sunken));
+    color: color-mix(in srgb, var(--tekst) 70%, var(--text-secondary));
     opacity: 1;
   }
   .ov-delete:hover {
     border-color: color-mix(in srgb, var(--rood) 30%, var(--input-border));
     color: var(--rood);
-    background: color-mix(in srgb, var(--card-bg) 78%, #fee2e2);
+    background: color-mix(in srgb, var(--card-bg) 78%, var(--color-error-light));
   }
   .ov-meta {
     display: flex;
@@ -264,7 +264,7 @@
   .ov-coords {
     font-size: var(--font-size-sm);
     color: var(--blauw);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .ov-address {
     font-size: var(--font-size-sm);
@@ -305,15 +305,15 @@
 
   .ov-warning {
     margin: 0;
-    border: 1px solid #f7d5aa;
-    background: color-mix(in srgb, var(--card-bg) 84%, #fff7ed);
+    border: 1px solid color-mix(in srgb, var(--color-warning-base) 35%, var(--border-default));
+    background: color-mix(in srgb, var(--card-bg) 84%, var(--color-warning-light));
   }
   .ov-warning strong {
-    color: #9a3412;
+    color: var(--text-warning);
   }
   .ov-warning p {
     margin-top: 4px;
-    color: #9a3412;
+    color: var(--text-warning);
     font-size: 0.9rem;
   }
 
@@ -328,38 +328,41 @@
   }
 
   :global(html.dark) .ov-empty {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
   :global(html.dark) .ov-item,
   :global(html.dark) .ov-meta span {
-    background: #111827;
-    border-color: #334155;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
   :global(html.dark) .ov-item-head strong {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
   :global(html.dark) .ov-meta span,
   :global(html.dark) .ov-note,
   :global(html.dark) .ov-address {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
   :global(html.dark) .ov-open-btn,
   :global(html.dark) .ov-secondary-btn {
-    background: #1e3a8a;
-    color: #dbeafe;
-    border-color: #2563eb;
+    background: var(--bg-accent-subtle);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
   }
   :global(html.dark) .ov-delete {
-    background: #0f172a;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-surface);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
   :global(html.dark) .ov-delete:hover {
-    border-color: #dc2626;
-    color: #fecaca;
+    border-color: var(--color-error-base);
+    color: var(--color-error-light);
     background: rgba(127, 29, 29, 0.35);
   }
   :global(html.dark) .ov-shortlist-item {
-    background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, #111827 72%);
+    background: linear-gradient(180deg, rgba(30, 58, 138, 0.35) 0%, var(--bg-surface-raised) 72%);
   }
 </style>
+
+
+

@@ -160,6 +160,7 @@
     }
   }
 
-  :global(html.dark) .quick-btn span { color: #e2e8f0; }
-  :global(html.dark) .quick-btn small { color: #94a3b8; }
+  :global(html.dark) .quick-btn span { color: var(--text-primary); }
+  :global(html.dark) .quick-btn small { color: var(--text-tertiary); }
 </style>
+

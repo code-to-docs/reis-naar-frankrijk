@@ -185,7 +185,7 @@
       </div>
     </div>
     <svg class="wl-chevron" class:open={isExpanded} width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M6 8L10 12L14 8" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
 
@@ -327,7 +327,7 @@
     border: 2px solid transparent;
     transition: border-color 0.2s;
   }
-  .wl-card.gespot { border-color: #10b981; background: #f0fdf4; }
+  .wl-card.gespot { border-color: var(--color-success-base); background: var(--color-success-light); }
   .wl-hoofd {
     display: flex;
     width: 100%;
@@ -343,14 +343,14 @@
   .wl-foto {
     width: 62px;
     height: 62px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     object-fit: cover;
   }
   .wl-foto-ph {
     width: 62px;
     height: 62px;
-    border-radius: 12px;
-    background: #f1f5f9;
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -358,14 +358,14 @@
   }
   .wl-gespot-dot {
     position: absolute; top: -3px; right: -3px; width: 14px; height: 14px;
-    background: #10b981; border: 2px solid white; border-radius: 50%;
+    background: var(--color-success-base); border: 2px solid var(--bg-surface); border-radius: 50%;
   }
   .wl-info { flex: 1; min-width: 0; }
   .wl-naam-rij { display: flex; align-items: center; gap: 6px; }
   .wl-naam {
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-bold);
-    color: #1e293b;
+    color: var(--text-primary);
   }
   .wl-ster { font-size: var(--font-size-xs); letter-spacing: -1px; }
   .wl-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -375,7 +375,7 @@
 
   .wl-detail {
     padding: 0 14px 14px 14px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--border-default);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -393,10 +393,10 @@
     margin: 0;
     position: relative;
     height: 260px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 8px 20px -6px rgba(0,0,0,0.2);
-    background: #e2e8f0;
+    background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -407,7 +407,7 @@
     bottom: 10px;
     margin: 0;
     font-size: var(--font-size-xs);
-    color: white;
+    color: var(--text-inverse);
     background: rgba(15, 23, 42, 0.7);
     padding: 4px 8px;
     border-radius: 999px;
@@ -444,7 +444,7 @@
     border-radius: 999px;
     padding: 8px 12px;
     background: rgba(255, 255, 255, 0.14);
-    color: white;
+    color: var(--text-inverse);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
@@ -454,21 +454,21 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: #f8fafc;
+    background: var(--bg-surface-sunken);
     padding: 12px;
     border-radius: 10px;
   }
   .wl-name-row {
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
     display: flex;
     line-height: var(--ui-line-compact);
   }
-  .wl-name-row strong { width: 40px; color: #1e293b; }
+  .wl-name-row strong { width: 40px; color: var(--text-primary); }
   .wl-section { display: flex; flex-direction: column; gap: 6px; }
   .wl-section strong {
     font-size: var(--font-size-md);
-    color: #1e293b;
+    color: var(--text-primary);
   }
   .wl-insights {
     display: grid;
@@ -478,8 +478,8 @@
     display: grid;
     gap: 6px;
     padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
     background: linear-gradient(135deg, rgba(219, 234, 254, 0.45), rgba(255, 255, 255, 0.92));
   }
   .wl-fact-card strong {
@@ -495,9 +495,9 @@
     display: grid;
     gap: 4px;
     padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface-sunken);
   }
   .wl-metric--wide {
     grid-column: 1 / -1;
@@ -511,26 +511,26 @@
   }
   .wl-metric-value {
     font-size: var(--font-size-sm);
-    color: #1e293b;
+    color: var(--text-primary);
     font-weight: var(--ui-weight-semibold);
     line-height: var(--ui-line-compact);
   }
   .wl-beschrijving {
     font-size: var(--font-size-sm);
     line-height: var(--ui-line-body);
-    color: #475569;
+    color: var(--text-secondary);
     margin: 0;
   }
-  .wl-spotting { background: #f0fdf4; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  .wl-spotting { background: var(--color-success-light); padding: 12px; border-radius: 10px; margin-bottom: 12px; }
   .wl-spotting-head {
     font-weight: var(--ui-weight-semibold);
     font-size: var(--font-size-sm);
     margin-bottom: 4px;
-    color: #166534;
+    color: var(--text-success);
   }
   .wl-spotting-row {
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
     padding: 2px 0;
     line-height: var(--ui-line-compact);
   }
@@ -538,7 +538,7 @@
   .wl-spot-input {
     min-height: var(--ui-touch-min);
     padding: 10px 12px;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid var(--border-default);
     border-radius: 10px;
     font-size: var(--font-size-sm);
     outline: none;
@@ -546,21 +546,21 @@
     box-sizing: border-box;
     width: 100%;
   }
-  .wl-spot-input:focus { border-color: #10b981; }
+  .wl-spot-input:focus { border-color: var(--color-success-base); }
   .wl-locatie-wrap { display: flex; gap: 8px; align-items: center; }
   .wl-loc-input { flex: 1; }
   .wl-loc-btn {
     width: var(--btn-height-compact);
     height: var(--btn-height-compact);
     flex-shrink: 0;
-    background: #EBF5FB;
+    background: var(--bg-accent-subtle);
     border: 1px solid var(--input-border);
     border-radius: var(--btn-radius);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #1565C0;
+    color: var(--text-accent);
   }
   .wl-loc-btn:disabled { opacity: 0.5; cursor: wait; }
   .spin-icon { width: 16px; height: 16px; animation: spin 1s linear infinite; }
@@ -570,7 +570,7 @@
     width: 100%;
     gap: 8px;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
@@ -580,16 +580,16 @@
     width: fit-content;
     padding: 0 16px;
     background: none;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid var(--border-default);
     border-radius: var(--btn-radius);
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     cursor: pointer;
     margin-bottom: 12px;
     display: inline-flex;
     align-items: center;
   }
-  .wl-unspot:active { border-color: #ef4444; color: #ef4444; }
+  .wl-unspot:active { border-color: var(--text-error); color: var(--text-error); }
   .wl-links { display: flex; gap: 8px; flex-wrap: wrap; }
   .wl-link {
     min-height: var(--btn-height-compact);
@@ -602,11 +602,11 @@
     display: inline-flex;
     align-items: center;
   }
-  .wl-link.wiki { background: #EBF5FB; color: #1565C0; }
-  .wl-link.geluid { background: #FFF7ED; color: #c2410c; }
+  .wl-link.wiki { background: var(--bg-accent-subtle); color: var(--text-accent); }
+  .wl-link.geluid { background: var(--color-warning-light); color: var(--text-warning); }
   .wl-map-links { margin-top: 8px; }
-  .wl-link.maps-google { background: #dcfce7; color: #166534; }
-  .wl-link.maps-osm { background: #f1f5f9; color: #334155; }
+  .wl-link.maps-google { background: var(--color-success-light); color: var(--text-success); }
+  .wl-link.maps-osm { background: var(--bg-surface-sunken); color: var(--text-secondary); }
   .wl-link:active { opacity: 0.7; }
 
   @media (min-width: 900px) {
@@ -670,28 +670,30 @@
   }
   
   :global(html.dark) .wl-card { background: var(--card-bg); }
-  :global(html.dark) .wl-card.gespot { background: #071a10; border-color: #10b981; }
-  :global(html.dark) .wl-naam { color: #e2e8f0; }
-  :global(html.dark) .wl-foto-ph { background: #334155; }
-  :global(html.dark) .wl-detail { border-top-color: #334155; }
-  :global(html.dark) .wl-grote-beeld { background: #0f172a; }
-  :global(html.dark) .wl-names { background: #1e293b; }
-  :global(html.dark) .wl-fact-card { background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), #111827); border-color: #334155; }
-  :global(html.dark) .wl-metric { background: #111827; border-color: #334155; }
-  :global(html.dark) .wl-name-row strong { color: #cbd5e1; }
-  :global(html.dark) .wl-name-row { color: #94a3b8; }
+  :global(html.dark) .wl-card.gespot { background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface)); border-color: var(--color-success-base); }
+  :global(html.dark) .wl-naam { color: var(--text-primary); }
+  :global(html.dark) .wl-foto-ph { background: var(--bg-interactive-active); }
+  :global(html.dark) .wl-detail { border-top-color: var(--border-strong); }
+  :global(html.dark) .wl-grote-beeld { background: var(--bg-surface); }
+  :global(html.dark) .wl-names { background: var(--bg-surface-raised); }
+  :global(html.dark) .wl-fact-card { background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary-700) 30%, transparent), var(--bg-surface-raised)); border-color: var(--border-strong); }
+  :global(html.dark) .wl-metric { background: var(--bg-surface-raised); border-color: var(--border-strong); }
+  :global(html.dark) .wl-name-row strong { color: var(--text-secondary); }
+  :global(html.dark) .wl-name-row { color: var(--text-tertiary); }
   :global(html.dark) .wl-fact-card strong,
-  :global(html.dark) .wl-section strong { color: #cbd5e1; }
-  :global(html.dark) .wl-metric-label { color: #94a3b8; }
+  :global(html.dark) .wl-section strong { color: var(--text-secondary); }
+  :global(html.dark) .wl-metric-label { color: var(--text-tertiary); }
   :global(html.dark) .wl-metric-value,
-  :global(html.dark) .wl-beschrijving { color: #94a3b8; }
-  :global(html.dark) .wl-spotting { background: #0f2d1c; }
-  :global(html.dark) .wl-spotting-head { color: #34d399; }
-  :global(html.dark) .wl-spot-input { background: #000000; border-color: #334155; color: #e2e8f0; }
-  :global(html.dark) .wl-loc-btn { background: #1e3a5f; border-color: #334155; color: #93c5fd; }
-  :global(html.dark) .wl-link.wiki { background: #1e3a5f; color: #93c5fd; }
-  :global(html.dark) .wl-link.geluid { background: #3b2006; color: #fdba74; }
-  :global(html.dark) .wl-link.maps-google { background: #0f2d1c; color: #86efac; }
-  :global(html.dark) .wl-link.maps-osm { background: #1e293b; color: #cbd5e1; }
+  :global(html.dark) .wl-beschrijving { color: var(--text-tertiary); }
+  :global(html.dark) .wl-spotting { background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface)); }
+  :global(html.dark) .wl-spotting-head { color: var(--color-success-light); }
+  :global(html.dark) .wl-spot-input { background: var(--bg-surface-sunken); border-color: var(--border-strong); color: var(--text-primary); }
+  :global(html.dark) .wl-loc-btn { background: var(--bg-accent-subtle); border-color: var(--border-strong); color: var(--text-accent); }
+  :global(html.dark) .wl-link.wiki { background: var(--bg-accent-subtle); color: var(--text-accent); }
+  :global(html.dark) .wl-link.geluid { background: color-mix(in srgb, var(--color-warning-dark) 34%, var(--bg-surface)); color: var(--color-warning-light); }
+  :global(html.dark) .wl-link.maps-google { background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface)); color: var(--color-success-light); }
+  :global(html.dark) .wl-link.maps-osm { background: var(--bg-surface-raised); color: var(--text-secondary); }
 </style>
+
+
 

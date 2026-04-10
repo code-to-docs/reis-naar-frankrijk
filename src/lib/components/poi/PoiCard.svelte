@@ -149,8 +149,8 @@
     width: 10px;
     height: 10px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--poi-accent) 16%, #d6e1ee);
-    border: 1px solid color-mix(in srgb, var(--poi-accent) 22%, #cbd5e1);
+    background: color-mix(in srgb, var(--poi-accent) 16%, var(--bg-surface-sunken));
+    border: 1px solid color-mix(in srgb, var(--poi-accent) 22%, var(--border-strong));
   }
 
   .poi-priority-dot.active {
@@ -194,8 +194,8 @@
 
   .poi-link {
     min-height: var(--btn-height-compact);
-    border-color: color-mix(in srgb, var(--input-border) 82%, #b9d2ed);
-    background: color-mix(in srgb, var(--card-bg) 86%, #e8f2fc);
+    border-color: color-mix(in srgb, var(--input-border) 82%, var(--border-default));
+    background: color-mix(in srgb, var(--card-bg) 86%, var(--bg-accent-subtle));
     color: var(--blauw);
   }
 
@@ -210,7 +210,7 @@
   }
 
   .poi-delete:hover {
-    background: color-mix(in srgb, var(--card-bg) 80%, #fee2e2);
+    background: color-mix(in srgb, var(--card-bg) 80%, var(--color-error-light));
   }
 
   @media (max-width: 720px) {
@@ -233,33 +233,36 @@
   }
 
   :global(html.dark) .poi-card {
-    border-left-color: color-mix(in srgb, var(--poi-accent) 80%, #cbd5e1);
+    border-left-color: color-mix(in srgb, var(--poi-accent) 80%, var(--border-strong));
   }
 
   :global(html.dark) .poi-name {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   :global(html.dark) .poi-desc {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .poi-meta {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .poi-priority {
-    background: #111827;
-    border-color: #334155;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .poi-priority-label {
-    color: #dbeafe;
+    color: var(--text-accent);
   }
 
   :global(html.dark) .poi-link {
-    background: #111827;
-    border-color: #334155;
-    color: #dbeafe;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-accent);
   }
 </style>
+
+
+

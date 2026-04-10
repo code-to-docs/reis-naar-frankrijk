@@ -58,14 +58,14 @@
     gap: 10px;
     justify-content: center;
     padding: 20px;
-    color: #1565C0;
+    color: var(--text-accent);
     font-size: 0.92rem;
   }
   .weer-spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid #E3F2FD;
-    border-top-color: #1565C0;
+    border: 3px solid var(--bg-accent-subtle);
+    border-top-color: var(--text-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -73,7 +73,7 @@
 
   .weer-fout {
     text-align: center;
-    color: #C62828;
+    color: var(--text-error);
     font-size: 0.85rem;
     padding: 14px;
   }
@@ -84,22 +84,22 @@
     gap: 10px;
   }
   .weer-dag {
-    background: #f8fafc;
+    background: var(--bg-surface-sunken);
     border-radius: 16px;
     padding: 12px 10px 10px;
     text-align: center;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid var(--border-default);
     transition: border-color 0.2s, background-color 0.2s;
   }
   .weer-dag.vandaag {
-    background: #ecf4ff;
-    border-color: #2b79c2;
+    background: var(--bg-accent-subtle);
+    border-color: var(--border-accent);
     box-shadow: 0 2px 8px rgba(43, 121, 194, 0.16);
   }
   .weer-dag-naam {
     font-weight: 700;
     font-size: 0.82rem;
-    color: #0f172a;
+    color: var(--text-primary);
     margin-bottom: 1px;
     white-space: nowrap;
     overflow: hidden;
@@ -107,7 +107,7 @@
   }
   .weer-dag-datum {
     font-size: 0.78rem;
-    color: #475569;
+    color: var(--text-secondary);
     margin-bottom: 7px;
     font-weight: 500;
   }
@@ -118,7 +118,7 @@
   }
   .weer-beschrijving {
     font-size: 0.88rem;
-    color: #1f2937;
+    color: var(--text-primary);
     margin-bottom: 8px;
     min-height: var(--ui-touch-compact);
     display: flex;
@@ -136,12 +136,12 @@
   .temp-max {
     font-weight: 800;
     font-size: 2.05rem;
-    color: #dd6b20;
+    color: var(--text-warning);
     line-height: 1;
   }
   .temp-min {
     font-size: 1.22rem;
-    color: #6b7280;
+    color: var(--text-secondary);
     font-weight: 700;
     align-self: flex-end;
     line-height: 1;
@@ -153,7 +153,7 @@
     align-items: center;
     gap: 3px;
     font-size: 0.9rem;
-    color: #111827;
+    color: var(--text-primary);
     font-weight: 500;
   }
   .weer-desktop-meta {
@@ -166,7 +166,7 @@
     gap: 3px;
     margin-top: 8px;
     font-size: 0.78rem;
-    color: #475569;
-    font-weight: 600;
+    color: var(--text-secondary);
+    font-weight: var(--weight-semibold);
   }
 </style>

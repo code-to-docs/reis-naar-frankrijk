@@ -57,19 +57,19 @@
   .gr-title {
     font-size: var(--font-size-xl);
     font-weight: var(--ui-weight-heavy);
-    color: #1a5276;
+    color: var(--bg-accent-hover);
     line-height: var(--ui-line-tight);
   }
   .gr-sub {
     margin-top: 2px;
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     line-height: var(--ui-line-compact);
   }
   .gr-mijn-perc {
     font-size: var(--font-size-xl);
     font-weight: var(--ui-weight-heavy);
-    color: #10b981;
+    color: var(--color-success-base);
     line-height: var(--ui-line-tight);
   }
   .gr-bars {
@@ -85,17 +85,17 @@
   }
   .gr-name {
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
   .gr-val {
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
   .gr-bar {
     height: 8px;
-    background: #e2e8f0;
+    background: var(--bg-surface-sunken);
     border-radius: 99px;
     overflow: hidden;
   }
@@ -103,8 +103,8 @@
     height: 100%;
     border-radius: 99px;
   }
-  .gr-fill.dennis { background: linear-gradient(90deg, #60a5fa, #2563eb); }
-  .gr-fill.franzi { background: linear-gradient(90deg, #f472b6, #db2777); }
+  .gr-fill.dennis { background: linear-gradient(90deg, var(--border-accent), var(--color-primary-600)); }
+  .gr-fill.franzi { background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-600)); }
 
   @media (min-width: 1100px) {
     .gr-stats-card {
@@ -124,9 +124,12 @@
     }
   }
 
-  :global(html.dark) .gr-title { color: #e2e8f0; }
+  :global(html.dark) .gr-title { color: var(--text-primary); }
   :global(html.dark) .gr-sub,
-  :global(html.dark) .gr-val { color: #94a3b8; }
-  :global(html.dark) .gr-name { color: #cbd5e1; }
-  :global(html.dark) .gr-bar { background: #334155; }
+  :global(html.dark) .gr-val { color: var(--text-tertiary); }
+  :global(html.dark) .gr-name { color: var(--text-secondary); }
+  :global(html.dark) .gr-bar { background: var(--bg-interactive-active); }
 </style>
+
+
+

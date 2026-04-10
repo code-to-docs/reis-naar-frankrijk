@@ -53,7 +53,7 @@
     // Empty state placeholder
     if (actief.length === 0) {
       return [{
-        kleur: "#e2e8f0",
+        kleur: "var(--bg-surface-sunken)",
         dashArray: `${c} ${c}`,
         transform: "rotate(-90 50 50)"
       }];
@@ -67,7 +67,7 @@
       const dashLength = Math.max(0, (percentage * c) - spacing);
       
       const segmentData = {
-        kleur: budgetCatMap[k]?.kleur || "#64748b",
+        kleur: budgetCatMap[k]?.kleur || "var(--text-secondary)",
         dashArray: `${dashLength} ${c}`,
         transform: `rotate(${currentAngle} 50 50)`
       };
@@ -152,9 +152,11 @@
     flex-shrink: 0;
   }
   .legenda-label { color: var(--nav-text); transition: color 0.2s; }
-  .legenda-bedrag { color: var(--heading); font-weight: 600; transition: color 0.2s; }
+  .legenda-bedrag { color: var(--heading); font-weight: var(--weight-semibold); transition: color 0.2s; }
 
-  :global(html.dark) .donut-center { color: #e2e8f0; }
-  :global(html.dark) .legenda-label { color: #94a3b8; }
-  :global(html.dark) .legenda-bedrag { color: #e2e8f0; }
+  :global(html.dark) .donut-center { color: var(--text-primary); }
+  :global(html.dark) .legenda-label { color: var(--text-tertiary); }
+  :global(html.dark) .legenda-bedrag { color: var(--text-primary); }
 </style>
+
+

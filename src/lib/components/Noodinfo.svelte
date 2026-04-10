@@ -75,7 +75,7 @@
   .noodinfo-card a {
     color: var(--blauw);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
 
   .noodinfo-card a:active {
@@ -109,6 +109,7 @@
   }
 
   :global(html.dark) .alarm-card {
-    border-left-color: #ef4444;
+    border-left-color: var(--text-error);
   }
 </style>
+

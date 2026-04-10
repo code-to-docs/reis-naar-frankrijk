@@ -77,8 +77,8 @@
     position: fixed;
     bottom: 78px;
     left: 0; right: 0;
-    background: #fef2f2;
-    color: #991b1b;
+    background: var(--color-error-light);
+    color: var(--text-error);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,7 +93,7 @@
   }
   .offline-dot {
     width: 8px; height: 8px;
-    background: #ef4444;
+    background: var(--color-error-base);
     border-radius: 50%;
     animation: pulse 2s infinite;
   }
@@ -148,7 +148,7 @@
 
   .nav-label {
     font-size: var(--font-size-xs);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     color: var(--nav-text);
     transition: color 0.2s ease;
     line-height: 1.15;
@@ -173,7 +173,7 @@
       right: auto;
       width: 220px;
       bottom: 14px;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       max-width: none;
       z-index: 130;
       padding: 8px 10px;
@@ -211,8 +211,8 @@
       width: 46px;
       height: 46px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #0f4d84, #2b79c2);
-      color: #fff;
+      background: linear-gradient(135deg, var(--color-primary-700), var(--border-accent));
+      color: var(--text-inverse);
       font-size: 1.15rem;
       font-weight: 700;
       align-items: center;
@@ -256,7 +256,7 @@
       gap: 10px;
       width: 100%;
       min-height: 46px;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 9px 12px;
       transition: background-color 0.2s ease, transform 0.15s ease;
     }
@@ -291,3 +291,5 @@
     }
   }
 </style>
+
+

@@ -26,8 +26,8 @@
   .wl-stats-card {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
-    padding: 16px;
-    margin-bottom: 12px;
+    padding: var(--space-4);
+    margin-bottom: var(--space-3);
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   }
   .wl-stats-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
@@ -35,29 +35,29 @@
   .wl-stats-groot {
     font-size: clamp(2.1rem, 5vw, 2.75rem);
     font-weight: var(--ui-weight-heavy);
-    color: #1a5276;
+    color: var(--text-accent);
     line-height: var(--ui-line-tight);
   }
   .wl-stats-van {
     font-size: var(--font-size-lg);
-    color: #94a3b8;
+    color: var(--text-tertiary);
     font-weight: var(--ui-weight-medium);
   }
   .wl-stats-rechts { text-align: right; }
   .wl-stats-perc {
     font-size: var(--font-size-lg);
     font-weight: var(--ui-weight-bold);
-    color: #10b981;
+    color: var(--color-success-base);
     line-height: var(--ui-line-tight);
   }
   .wl-stats-label {
     font-size: var(--font-size-xs);
-    color: #94a3b8;
+    color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .wl-stats-bar { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-  .wl-stats-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 4px; transition: width 0.4s ease; }
+  .wl-stats-bar { height: 8px; background: var(--bg-surface-sunken); border-radius: 4px; overflow: hidden; }
+  .wl-stats-fill { height: 100%; background: linear-gradient(90deg, var(--color-success-base), var(--color-success-light)); border-radius: 4px; transition: width 0.4s ease; }
 
   @media (min-width: 1100px) {
     .wl-stats-card {
@@ -76,5 +76,5 @@
   }
   
   :global(html.dark) .wl-stats-card { background: var(--card-bg); }
-  :global(html.dark) .wl-stats-groot { color: #f1f5f9; }
+  :global(html.dark) .wl-stats-groot { color: var(--text-primary); }
 </style>

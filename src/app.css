@@ -104,7 +104,7 @@ h3 { font-size: var(--font-size-lg); }
 .card {
   background: var(--card-bg);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: var(--space-4);
   margin: 12px 0;
   box-shadow: 0 8px 24px var(--card-shadow);
   border: 1px solid var(--border-subtle);
@@ -138,33 +138,33 @@ button {
 }
 button:active { transform: scale(0.95); }
 .btn-primary {
-  background: linear-gradient(135deg, #0a3764, #0f4d84);
-  color: white;
-  border-color: #0f4d84;
+  background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
+  color: var(--text-inverse);
+  border-color: var(--border-accent);
 }
 .btn-secondary {
-  background: color-mix(in srgb, var(--card-bg) 86%, #e8f2fc);
+  background: color-mix(in srgb, var(--card-bg) 86%, var(--bg-accent-subtle));
   color: var(--blauw);
-  border-color: color-mix(in srgb, var(--input-border) 82%, #b9d2ed);
+  border-color: color-mix(in srgb, var(--input-border) 82%, var(--border-default));
 }
 .btn-danger {
-  background: linear-gradient(135deg, #b93324, #c93727);
-  color: white;
-  border-color: color-mix(in srgb, var(--rood) 88%, #8f2318);
+  background: linear-gradient(135deg, var(--color-error-dark), var(--color-error-base));
+  color: var(--text-inverse);
+  border-color: color-mix(in srgb, var(--rood) 88%, var(--color-error-dark));
 }
 .btn-success {
-  background: linear-gradient(135deg, #146a43, #17814f);
-  color: white;
-  border-color: #17814f;
+  background: linear-gradient(135deg, var(--color-success-dark), var(--color-success-base));
+  color: var(--text-inverse);
+  border-color: var(--color-success-base);
 }
 .btn-save {
-  background: linear-gradient(135deg, #146a43, #17814f);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-success-dark), var(--color-success-base));
+  color: var(--text-inverse);
   min-height: var(--btn-height);
   border-radius: var(--btn-radius);
   font-weight: var(--ui-weight-heavy);
   letter-spacing: 0;
-  border-color: #17814f;
+  border-color: var(--color-success-base);
 }
 .btn-primary,
 .btn-secondary,
@@ -234,12 +234,12 @@ input::placeholder, textarea::placeholder {
 
 .progress-bar {
   width: 100%; height: 24px; background: var(--grijs);
-  border-radius: 12px; overflow: hidden; margin: 8px 0;
+  border-radius: var(--radius-lg); overflow: hidden; margin: 8px 0;
 }
 .progress-fill {
-  height: 100%; border-radius: 12px;
+  height: 100%; border-radius: var(--radius-lg);
   display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 12px; font-weight: bold;
+  color: var(--text-inverse); font-size: 12px; font-weight: bold;
   transition: width 0.5s ease;
 }
 
@@ -379,7 +379,7 @@ button,
   padding: 9px 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--card-bg) 88%, #f3f8fc);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-surface-sunken));
 }
 
 .ui-widget-metric-label {
@@ -422,31 +422,31 @@ button,
 .gr-tip-card,
 .noodinfo-card,
 .meer-groep-items {
-  border-radius: var(--radius-lg) !important;
-  border: 1px solid var(--border-subtle) !important;
-  box-shadow: 0 8px 24px var(--card-shadow) !important;
-  background: var(--card-bg) !important;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 24px var(--card-shadow);
+  background: var(--card-bg);
 }
 
 .pill,
 .wl-pill,
 .gr-pill,
 .cat-pill {
-  border-radius: 999px !important;
-  border: 1px solid var(--input-border) !important;
-  background: color-mix(in srgb, var(--card-bg) 88%, #eef4fb) !important;
-  color: #475d76 !important;
-  font-weight: 700 !important;
-  min-height: var(--btn-height-compact) !important;
-  padding-inline: 12px !important;
+  border-radius: 999px;
+  border: 1px solid var(--input-border);
+  background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-accent-subtle));
+  color: var(--text-secondary);
+  font-weight: 700;
+  min-height: var(--btn-height-compact);
+  padding-inline: 12px;
 }
 
 .pill.active,
 .wl-pill.active,
 .gr-pill.active {
-  background: linear-gradient(135deg, #0a3764, #0f4d84) !important;
-  border-color: #0f4d84 !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
+  border-color: var(--border-accent);
+  color: var(--text-inverse);
 }
 
 .entry-item,
@@ -454,9 +454,9 @@ button,
 .gr-card,
 .ov-item,
 .quick-btn {
-  border-radius: var(--radius-md) !important;
-  border: 1px solid var(--border-subtle) !important;
-  box-shadow: 0 4px 14px var(--card-shadow) !important;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 14px var(--card-shadow);
 }
 
 html.dark .hero-card,
@@ -471,9 +471,9 @@ html.dark .gr-filters-card,
 html.dark .gr-tip-card,
 html.dark .noodinfo-card,
 html.dark .meer-groep-items {
-  background: var(--card-bg) !important;
-  border-color: var(--border-subtle) !important;
-  box-shadow: 0 12px 30px var(--card-shadow) !important;
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
+  box-shadow: 0 12px 30px var(--card-shadow);
 }
 
 @media (min-width: 900px) and (max-width: 1099px) {
@@ -529,77 +529,77 @@ img {
 
 html.dark .hero-card,
 html.dark .budget-chart-wrapper,
-html.dark .budget-edit-card { background: var(--card-bg) !important; }
-html.dark .hero-label { color: #94a3b8 !important; }
-html.dark .hero-sub { color: #64748b !important; }
-html.dark .hero-uitgegeven { color: #64748b !important; }
-html.dark .hero-bar { background: #334155 !important; }
-html.dark .entry-item { background: var(--card-bg) !important; }
-html.dark .entry-info strong { color: #e2e8f0 !important; }
-html.dark .entry-bedrag { color: #e2e8f0 !important; }
-html.dark .dag-header { border-bottom-color: #334155 !important; }
-html.dark .dag-totaal { background: #334155 !important; color: #e2e8f0 !important; }
-html.dark .verrekening-card { border-top-color: #334155 !important; }
-html.dark .verrekening-lijn { border-top-color: #334155 !important; }
+html.dark .budget-edit-card { background: var(--card-bg); }
+html.dark .hero-label { color: var(--text-tertiary); }
+html.dark .hero-sub { color: var(--text-secondary); }
+html.dark .hero-uitgegeven { color: var(--text-secondary); }
+html.dark .hero-bar { background: var(--bg-interactive-active); }
+html.dark .entry-item { background: var(--card-bg); }
+html.dark .entry-info strong { color: var(--text-primary); }
+html.dark .entry-bedrag { color: var(--text-primary); }
+html.dark .dag-header { border-bottom-color: var(--border-strong); }
+html.dark .dag-totaal { background: var(--bg-interactive-active); color: var(--text-primary); }
+html.dark .verrekening-card { border-top-color: var(--border-strong); }
+html.dark .verrekening-lijn { border-top-color: var(--border-strong); }
 
 html.dark .pill,
 html.dark .wl-pill,
 html.dark .cat-pill {
-  background: var(--card-bg) !important;
-  border-color: #334155 !important;
-  color: #94a3b8 !important;
+  background: var(--card-bg);
+  border-color: var(--border-strong);
+  color: var(--text-tertiary);
 }
 html.dark .pill.active,
 html.dark .wl-pill.active {
-  background: #1a5276 !important;
-  color: white !important;
-  border-color: #1a5276 !important;
+  background: var(--bg-accent-hover);
+  color: var(--text-inverse);
+  border-color: var(--border-accent);
 }
-html.dark .filter-info { background: #1e3a5f !important; }
+html.dark .filter-info { background: var(--bg-accent-subtle); }
 
 
-html.dark .weer-card { background: var(--card-bg) !important; }
-html.dark .weer-dag { background: #000000 !important; }
-html.dark .weer-dag.vandaag { background: #1e3a5f !important; border-color: #3b82f6 !important; }
-html.dark .weer-dag-naam { color: #f1f5f9 !important; }
-html.dark .weer-beschrijving { color: #94a3b8 !important; }
-html.dark .weer-locatie { background: #1e3a5f !important; color: #93c5fd !important; }
-html.dark .weer-periode { background: #1f2937 !important; color: #cbd5e1 !important; }
-html.dark .weer-desktop-meta { color: #94a3b8 !important; }
-html.dark .datum-dag { color: #f1f5f9 !important; }
-html.dark .datum-volledig { color: #94a3b8 !important; }
+html.dark .weer-card { background: var(--card-bg); }
+html.dark .weer-dag { background: var(--bg-surface-sunken); }
+html.dark .weer-dag.vandaag { background: var(--bg-accent-subtle); border-color: var(--border-accent); }
+html.dark .weer-dag-naam { color: var(--text-primary); }
+html.dark .weer-beschrijving { color: var(--text-tertiary); }
+html.dark .weer-locatie { background: var(--bg-accent-subtle); color: var(--text-accent); }
+html.dark .weer-periode { background: var(--bg-surface-raised); color: var(--text-secondary); }
+html.dark .weer-desktop-meta { color: var(--text-tertiary); }
+html.dark .datum-dag { color: var(--text-primary); }
+html.dark .datum-volledig { color: var(--text-tertiary); }
 
-html.dark .spot-card { background: linear-gradient(135deg, #071a10, #0f2d1c) !important; }
-html.dark .spot-label { color: #34d399 !important; }
-html.dark .spot-naam { color: #ecfdf5 !important; }
-html.dark .spot-frans { color: #6ee7b7 !important; }
-html.dark .spot-meta { color: #a7f3d0 !important; }
-html.dark .spot-regio-tag { background: rgba(255,255,255,0.1) !important; color: #e2e8f0 !important; }
+html.dark .spot-card { background: linear-gradient(135deg, color-mix(in srgb, var(--color-success-dark) 38%, var(--bg-surface)), color-mix(in srgb, var(--color-success-dark) 48%, var(--bg-surface))); }
+html.dark .spot-label { color: var(--color-success-light); }
+html.dark .spot-naam { color: var(--text-primary); }
+html.dark .spot-frans { color: var(--color-success-light); }
+html.dark .spot-meta { color: var(--color-success-light); }
+html.dark .spot-regio-tag { background: rgba(255,255,255,0.1); color: var(--text-primary); }
 html.dark .ui-widget-title,
-html.dark .ui-widget-name { color: #e2e8f0; }
+html.dark .ui-widget-name { color: var(--text-primary); }
 html.dark .ui-widget-kicker,
-html.dark .ui-widget-subtitle { color: #94a3b8; }
+html.dark .ui-widget-subtitle { color: var(--text-tertiary); }
 html.dark .ui-widget-copy,
 html.dark .ui-widget-meta,
-html.dark .ui-widget-metric-value { color: #cbd5e1; }
+html.dark .ui-widget-metric-value { color: var(--text-secondary); }
 html.dark .ui-widget-metric {
-  background: #111827;
-  border-color: #334155;
+  background: var(--bg-surface-raised);
+  border-color: var(--border-strong);
 }
-html.dark .ui-widget-metric-label { color: #94a3b8; }
+html.dark .ui-widget-metric-label { color: var(--text-tertiary); }
 
-html.dark .meer-groep-items { background: var(--card-bg) !important; }
-html.dark .meer-item { border-bottom-color: #334155 !important; }
-html.dark .meer-item:active { background: #334155 !important; }
-html.dark .meer-label { color: #e2e8f0 !important; }
-html.dark .meer-uitloggen { border-color: #7f1d1d !important; }
+html.dark .meer-groep-items { background: var(--card-bg); }
+html.dark .meer-item { border-bottom-color: var(--border-strong); }
+html.dark .meer-item:active { background: var(--bg-interactive-active); }
+html.dark .meer-label { color: var(--text-primary); }
+html.dark .meer-uitloggen { border-color: var(--color-error-dark); }
 
-html.dark .fab { background: #3b82f6 !important; box-shadow: 0 4px 14px rgba(59,130,246,0.4) !important; }
-html.dark .fab-form { background: var(--card-bg) !important; box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important; }
+html.dark .fab { background: var(--bg-accent); box-shadow: 0 4px 14px color-mix(in srgb, var(--bg-accent) 40%, transparent); }
+html.dark .fab-form { background: var(--card-bg); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
 
-html.dark .undo-bar { background: #334155 !important; }
+html.dark .undo-bar { background: var(--bg-interactive-active); }
 
-html.dark .offline-bar { background: #450a0a !important; color: #fca5a5 !important; }
+html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 42%, var(--bg-surface)); color: var(--color-error-light); }
 
 /* ========== DARK MODE TOGGLE ========== */
 .dark-toggle-item {
@@ -615,20 +615,20 @@ html.dark .offline-bar { background: #450a0a !important; color: #fca5a5 !importa
 
 .toggle-track {
   width: 48px; height: 28px;
-  background: #cbd5e1;
+  background: var(--bg-interactive-active);
   border-radius: 14px;
   position: relative;
   transition: background 0.25s ease;
   flex-shrink: 0;
 }
 .toggle-track.active {
-  background: #3b82f6;
+  background: var(--bg-accent);
 }
 .toggle-thumb {
   position: absolute;
   top: 3px; left: 3px;
   width: 22px; height: 22px;
-  background: white;
+  background: var(--bg-surface);
   border-radius: 50%;
   transition: transform 0.25s ease;
   display: flex; align-items: center; justify-content: center;
@@ -640,3 +640,5 @@ html.dark .offline-bar { background: #450a0a !important; color: #fca5a5 !importa
 }
 
 /* ========== EINDE DARK MODE ========== */
+
+

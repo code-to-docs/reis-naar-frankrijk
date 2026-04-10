@@ -35,8 +35,8 @@
 
 <style>
   .header {
-    background: linear-gradient(135deg, var(--header-bg) 0%, #1a5276 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--header-bg) 0%, var(--bg-accent-hover) 100%);
+    color: var(--text-inverse);
     padding: 20px 18px 18px;
     text-align: left;
     position: relative;
@@ -48,7 +48,7 @@
     border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-sm);
   }
   .header h1 {
-    color: #ffffff;
+    color: var(--text-inverse);
     margin-bottom: 5px;
     font-size: clamp(1.75rem, 4.8vw, 2.35rem);
     line-height: 1.05;
@@ -98,7 +98,7 @@
   }
 
   :global(html.dark) .header {
-    background: linear-gradient(135deg, #0c2d48 0%, #1e3a5f 100%);
+    background: linear-gradient(135deg, var(--color-primary-900) 0%, var(--color-primary-800) 100%);
     border-bottom-color: rgba(59, 130, 246, 0.2);
     box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   }

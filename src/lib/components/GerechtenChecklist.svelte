@@ -520,8 +520,8 @@
   }
 
   .gr-tip-card {
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
-    border: 1px solid #bfdbfe;
+    background: linear-gradient(135deg, var(--bg-accent-subtle), var(--bg-surface));
+    border: 1px solid var(--border-default);
     border-radius: 14px;
     padding: 12px;
   }
@@ -535,7 +535,7 @@
 
   .gr-tip-label {
     font-size: var(--font-size-xs);
-    color: #1e3a8a;
+    color: var(--text-accent);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -545,9 +545,9 @@
     width: auto;
     min-height: var(--ui-touch-compact);
     border-radius: 10px;
-    border: 1px solid #93c5fd;
+    border: 1px solid var(--border-accent);
     background: rgba(255, 255, 255, 0.7);
-    color: #1d4ed8;
+    color: var(--text-accent);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-semibold);
     padding: 0 12px;
@@ -561,13 +561,13 @@
     margin-top: 6px;
     font-size: var(--font-size-lg);
     font-weight: var(--ui-weight-heavy);
-    color: #0f172a;
+    color: var(--text-primary);
   }
 
   .gr-tip-sub {
     margin-top: 2px;
     font-size: var(--font-size-sm);
-    color: #334155;
+    color: var(--text-secondary);
     line-height: var(--ui-line-compact);
   }
 
@@ -580,8 +580,8 @@
 
   .gr-tip-chip {
     background: rgba(255, 255, 255, 0.66);
-    color: #1e3a8a;
-    border: 1px solid #bfdbfe;
+    color: var(--text-accent);
+    border: 1px solid var(--border-default);
   }
 
   .gr-tip-empty {
@@ -589,8 +589,8 @@
     padding: 10px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.66);
-    color: #1e3a8a;
-    border: 1px dashed #93c5fd;
+    color: var(--text-accent);
+    border: 1px dashed var(--border-accent);
     font-size: var(--font-size-sm);
     line-height: 1.35;
   }
@@ -605,7 +605,7 @@
   .gr-zoek {
     margin: 0;
     min-height: var(--ui-touch-min);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1.5px solid var(--input-border);
     padding-inline: 12px;
     align-self: stretch;
@@ -615,7 +615,7 @@
     min-width: 92px;
     min-height: var(--ui-touch-min);
     padding: 0 14px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1.5px solid var(--input-border);
     background: var(--card-bg);
     color: var(--tekst);
@@ -630,9 +630,9 @@
   }
 
   .gr-filter-toggle.actief {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: white;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 
   .gr-filter-badge {
@@ -642,8 +642,8 @@
     min-width: 18px;
     height: 18px;
     border-radius: 999px;
-    background: #ef4444;
-    color: white;
+    background: var(--color-error-base);
+    color: var(--text-inverse);
     font-size: var(--font-size-xs);
     display: inline-flex;
     align-items: center;
@@ -664,7 +664,7 @@
 
   .gr-filter-title {
     font-size: var(--font-size-xs);
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
     margin-bottom: 6px;
@@ -677,9 +677,9 @@
   }
 
   .gr-pill {
-    border: 1.5px solid #e2e8f0;
-    background: #fff;
-    color: #475569;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
     border-radius: 999px;
     min-height: var(--ui-touch-compact);
     padding: 0 12px;
@@ -692,9 +692,9 @@
   }
 
   .gr-pill.active {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: #fff;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 
   .gr-reset {
@@ -702,15 +702,15 @@
     width: 100%;
     min-height: var(--ui-touch-min);
     border-radius: 10px;
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--color-error-light);
+    color: var(--text-error);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
   }
 
   .gr-resultaten {
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     padding: 0 2px;
   }
 
@@ -722,10 +722,10 @@
 
   .gr-leeg {
     border-radius: 14px;
-    padding: 16px;
+    padding: var(--space-4);
     text-align: center;
     background: var(--card-bg);
-    color: #64748b;
+    color: var(--text-secondary);
     box-shadow: 0 2px 10px var(--card-shadow);
   }
 
@@ -762,71 +762,73 @@
   }
 
   :global(html.dark) .gr-tip-card {
-    background: linear-gradient(135deg, #12243f, #1e3a5f);
-    border-color: #334155;
+    background: linear-gradient(135deg, var(--bg-surface), var(--bg-surface-raised));
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .gr-tip-label {
-    color: #93c5fd;
+    color: var(--text-accent);
   }
 
   :global(html.dark) .gr-tip-name {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   :global(html.dark) .gr-tip-sub {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .gr-tip-refresh {
     background: rgba(15, 23, 42, 0.5);
-    border-color: #334155;
-    color: #bfdbfe;
+    border-color: var(--border-strong);
+    color: var(--text-accent);
   }
 
   :global(html.dark) .gr-tip-chip {
     background: rgba(15, 23, 42, 0.5);
-    border-color: #334155;
-    color: #bfdbfe;
+    border-color: var(--border-strong);
+    color: var(--text-accent);
   }
 
   :global(html.dark) .gr-tip-empty {
     background: rgba(15, 23, 42, 0.5);
-    border-color: #334155;
-    color: #bfdbfe;
+    border-color: var(--border-strong);
+    color: var(--text-accent);
   }
 
   :global(html.dark) .gr-zoek,
   :global(html.dark) .gr-filter-toggle,
   :global(html.dark) .gr-filters-card {
-    border-color: #334155;
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .gr-filter-toggle {
     background: var(--card-bg);
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   :global(html.dark) .gr-filter-toggle.actief {
-    background: #1a5276;
-    border-color: #1a5276;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
   }
 
   :global(html.dark) .gr-filter-title,
   :global(html.dark) .gr-resultaten,
   :global(html.dark) .gr-leeg {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .gr-pill {
     background: var(--card-bg);
-    border-color: #334155;
-    color: #94a3b8;
+    border-color: var(--border-strong);
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .gr-pill.active {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: white;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 </style>
+
+

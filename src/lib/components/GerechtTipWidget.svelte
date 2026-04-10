@@ -90,7 +90,7 @@
     margin: 0;
     border: 1px solid var(--border-subtle);
     background:
-      radial-gradient(100% 65% at 12% 0%, color-mix(in srgb, #0ea5a4 12%, var(--card-bg)) 0%, transparent 66%),
+      radial-gradient(100% 65% at 12% 0%, color-mix(in srgb, var(--color-primary-500) 12%, var(--card-bg)) 0%, transparent 66%),
       var(--card-bg);
   }
   .food-tip-desc {
@@ -103,10 +103,12 @@
   :global(html.dark) .food-tip-card {
     background:
       radial-gradient(100% 70% at 10% 0%, rgba(14, 165, 164, 0.18) 0%, transparent 66%),
-      #111827;
-    border-color: #334155;
+      var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
   :global(html.dark) .food-tip-desc {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
 </style>
+
+

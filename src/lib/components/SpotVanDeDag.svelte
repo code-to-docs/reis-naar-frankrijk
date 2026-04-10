@@ -143,7 +143,7 @@
 <style>
   .spot-card {
     display: grid;
-    background: linear-gradient(135deg, #e9f8ea, #cceccc);
+    background: linear-gradient(135deg, var(--color-success-light), color-mix(in srgb, var(--color-success-base) 22%, var(--bg-surface)));
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: inherit;
@@ -178,7 +178,7 @@
     gap: 6px;
   }
   .spot-zeldzaamheid { font-size: 0.65rem; letter-spacing: -1px; }
-  .spot-frans { color: #14532d; }
+  .spot-frans { color: var(--text-success); }
   .spot-note { margin: 0; }
   .spot-regios { margin-top: 0; }
   .spot-regio-tag {
@@ -213,3 +213,4 @@
     }
   }
 </style>
+

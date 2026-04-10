@@ -64,11 +64,11 @@
 
 <style>
   .entries-header {
-    margin: 16px 0 8px 0;
+    margin: var(--space-4) 0 var(--space-2) 0;
   }
   .entries-header h3 {
-    font-size: 1rem;
-    color: #475569;
+    font-size: var(--text-base);
+    color: var(--text-secondary);
     margin: 0;
   }
   .dag-groep {
@@ -84,7 +84,7 @@
   .dag-label {
     font-weight: 700;
     font-size: var(--font-size-sm);
-    color: #1a5276;
+    color: var(--text-accent);
   }
   .dag-subtotaal {
     --entry-actions-offset: calc(var(--ui-touch-compact) + 10px);
@@ -92,10 +92,10 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    border-top: 1px solid #dbe4f0;
+    border-top: 1px solid var(--border-default);
     margin-top: 4px;
     padding: 10px calc(12px + var(--entry-actions-offset)) 2px 12px;
-    color: #475569;
+    color: var(--text-secondary);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-medium);
   }
@@ -109,8 +109,8 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
-    background: white;
-    border-radius: 12px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
     padding: 11px 12px;
     margin-bottom: 6px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -126,13 +126,13 @@
   .entry-info strong {
     display: block;
     font-size: var(--font-size-sm);
-    color: #1e293b;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .entry-info small {
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: var(--font-size-xs);
   }
   .entry-right {
@@ -143,12 +143,12 @@
   }
   .entry-bedrag {
     font-size: var(--font-size-md);
-    color: #1e293b;
+    color: var(--text-primary);
     white-space: nowrap;
     flex-shrink: 0;
   }
   .entry-delete {
-    background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
+    background: color-mix(in srgb, var(--card-bg) 92%, var(--bg-surface-sunken));
     border: 1px solid var(--input-border);
     font-size: 0.9rem;
     min-height: var(--btn-height-compact);
@@ -164,14 +164,14 @@
   }
   .empty-state {
     text-align: center;
-    padding: 32px 16px;
-    color: #94a3b8;
+    padding: var(--space-8) var(--space-4);
+    color: var(--text-tertiary);
   }
   .empty-icon {
     font-size: 2.5rem;
   }
   .empty-state p {
-    margin-top: 8px;
+    margin-top: var(--space-2);
     font-size: var(--font-size-sm);
   }
 

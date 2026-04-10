@@ -508,6 +508,30 @@ Stap 5:
 
 ## 13) Onderhoudslog
 
+### 2026-04-10 14:57:18 +02:00
+
+- UI normprofiel nu repo-breed doorgevoerd op alle hoofdschermen en onderliggende componenten:
+  - token-first styling actief voor `/`, `/budget`, `/campings`, `/poi`, `/meer`, `/meer/[id]`;
+  - resterende hardcoded hex-kleuren in app/component styles verwijderd (uitzondering: HTML entities zoals `&#9733;` in markup, geen CSS-kleur).
+- Globale stylelaag opgeschoond:
+  - `src/app.css` verder geharmoniseerd naar semantische tokens;
+  - legacy dark-mode overrides teruggebracht naar token-gedreven waarden;
+  - overmatige `!important`-overridepatronen verwijderd buiten reduced-motion regels in tokenbestanden.
+- Grote componenten extra gemigreerd voor UX-uniformiteit:
+  - `OvernachtingenPlanner` + subcomponenten (`overnachtingen/*`),
+  - `GerechtenChecklist` + `gerechten/*`,
+  - `wildlife/WildlifeCard.svelte` + `wildlife/WildlifeStats.svelte`,
+  - `Budget` + `budget/*`,
+  - `poi/*`, `Weer*`, `Header`, `Navigation`, `Snackbar`.
+- Incident tijdens migratie:
+  - agressieve bulk-replace veroorzaakte tijdelijke tekstmutaties in enkele bestanden;
+  - getroffen bestanden hersteld en gecontroleerd opnieuw gemigreerd;
+  - eindstatus is schoon (geen Svelte-check warnings/errors).
+- Validatie:
+  - `npm run check` OK (0 errors/warnings)
+  - `npm run test` OK (12 tests)
+  - `npm run build` OK
+
 ### 2026-04-10 14:39:42 +02:00
 
 - Nieuwe UI-token leidraad geactiveerd:

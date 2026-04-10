@@ -108,7 +108,7 @@
 
   .meer-uitloggen {
     width: 100%;
-    background: color-mix(in srgb, var(--card-bg) 88%, #fff0ef);
+    background: color-mix(in srgb, var(--card-bg) 88%, var(--color-error-light));
     border: 1px solid color-mix(in srgb, var(--rood) 30%, var(--input-border));
     border-radius: var(--radius-md);
     color: var(--rood);
@@ -158,3 +158,4 @@
     background: var(--bg-accent-hover);
   }
 </style>
+

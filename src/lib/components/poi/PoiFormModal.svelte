@@ -261,14 +261,14 @@
     padding: 12px 14px;
     border-radius: var(--radius-md);
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 90%, #eef4fb);
+    background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-accent-subtle));
     color: var(--tekst);
     text-align: left;
   }
 
   .poi-score-option.active {
     border-color: var(--nav-active);
-    background: color-mix(in srgb, var(--card-bg) 82%, #dbeafe);
+    background: color-mix(in srgb, var(--card-bg) 82%, var(--bg-accent-subtle));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nav-active) 24%, transparent);
   }
 
@@ -292,8 +292,8 @@
     width: 10px;
     height: 10px;
     border-radius: 999px;
-    background: #d6e1ee;
-    border: 1px solid #cbd5e1;
+    background: var(--bg-surface-sunken);
+    border: 1px solid var(--border-strong);
   }
 
   .poi-score-dots span.active {
@@ -308,7 +308,7 @@
     padding: 12px 14px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
-    background: color-mix(in srgb, var(--card-bg) 90%, #f8fbff);
+    background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-surface-sunken));
     font-size: var(--font-size-sm);
     color: var(--tekst);
     font-weight: var(--ui-weight-medium);
@@ -365,17 +365,17 @@
   :global(html.dark) .poi-field span,
   :global(html.dark) .poi-score-group legend,
   :global(html.dark) .poi-score-option small {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .poi-score-option,
   :global(html.dark) .poi-visited {
-    background: #111827;
-    border-color: #334155;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .poi-score-option strong,
   :global(html.dark) .poi-visited {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 </style>

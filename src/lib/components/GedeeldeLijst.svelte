@@ -229,7 +229,7 @@
   .gl-delete:active { opacity: 1; }
   .gl-leeg { text-align: center; color: var(--nav-text); margin: 32px 0; }
   .gl-form-actions { display: flex; gap: 8px; }
-  .gl-submit { flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .gl-submit { flex: 1; font-weight: var(--weight-semibold); display: flex; align-items: center; justify-content: center; gap: 6px; }
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
   .gl-add-btn { width: 100%; margin-top: 12px; font-size: var(--font-size-lg); font-weight: var(--ui-weight-semibold); }
 

@@ -291,8 +291,8 @@
     gap: var(--space-1-5);
   }
   .edit-budget-btn {
-    background: color-mix(in srgb, var(--card-bg) 82%, #e8f2fc);
-    border: 1px solid color-mix(in srgb, var(--input-border) 80%, #b9d2ed);
+    background: color-mix(in srgb, var(--card-bg) 82%, var(--bg-accent-subtle));
+    border: 1px solid color-mix(in srgb, var(--input-border) 80%, var(--border-default));
     font-size: var(--font-size-xs);
     cursor: pointer;
     min-height: var(--btn-height-compact);
@@ -401,7 +401,7 @@
     color: var(--text-accent);
   }
   .filter-reset {
-    background: color-mix(in srgb, var(--card-bg) 86%, #fff2f1);
+    background: color-mix(in srgb, var(--card-bg) 86%, var(--color-error-light));
     border: 1px solid color-mix(in srgb, var(--rood) 22%, var(--input-border));
     color: var(--rood);
     font-size: var(--text-sm);
@@ -441,4 +441,5 @@
   }
 
 </style>
+
 

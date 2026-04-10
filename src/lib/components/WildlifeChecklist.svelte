@@ -270,7 +270,7 @@
     min-height: var(--ui-touch-min);
     margin: 0;
     border: 1.5px solid var(--input-border);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     background: var(--input-bg);
     padding-inline: 12px;
     align-self: stretch;
@@ -279,7 +279,7 @@
     min-height: var(--ui-touch-min);
     min-width: 92px;
     padding: 0 14px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1.5px solid var(--input-border);
     background: var(--card-bg);
     color: var(--tekst);
@@ -293,9 +293,9 @@
     align-self: stretch;
   }
   .wl-filter-toggle.actief {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: #fff;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
   .wl-filter-badge {
     min-width: 20px;
@@ -322,9 +322,9 @@
     gap: 8px;
   }
   .wl-pill {
-    border: 1.5px solid #e2e8f0;
-    background: #fff;
-    color: #475569;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
     border-radius: 999px;
     min-height: var(--ui-touch-compact);
     padding: 0 12px;
@@ -335,23 +335,23 @@
     line-height: 1;
   }
   .wl-pill.active {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: #fff;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
   .wl-reset {
     margin-top: 12px;
     width: 100%;
     min-height: var(--ui-touch-min);
     border-radius: 10px;
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--color-error-light);
+    color: var(--text-error);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
   }
   .wl-resultaten {
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     padding: 0 2px;
   }
   .wl-lijst {
@@ -364,7 +364,7 @@
     border-radius: 14px;
     padding: 18px;
     text-align: center;
-    color: #64748b;
+    color: var(--text-secondary);
     box-shadow: 0 2px 10px var(--card-shadow);
   }
   .wl-leeg p { margin-bottom: 10px; }
@@ -413,12 +413,15 @@
     }
   }
 
-  :global(html.dark) .wl-filters-card { background: var(--card-bg); border-color: #334155; }
-  :global(html.dark) .wl-zoek { border-color: #334155; }
-  :global(html.dark) .wl-filter-toggle { background: var(--card-bg); border-color: #334155; color: #e2e8f0; }
-  :global(html.dark) .wl-filter-toggle.actief { background: #1a5276; border-color: #1a5276; }
-  :global(html.dark) .wl-pill { background: var(--card-bg); border-color: #334155; color: #94a3b8; }
-  :global(html.dark) .wl-pill.active { background: #1a5276; border-color: #1a5276; color: #fff; }
-  :global(html.dark) .wl-leeg { background: var(--card-bg); color: #94a3b8; }
-  :global(html.dark) .wl-resultaten { color: #94a3b8; }
+  :global(html.dark) .wl-filters-card { background: var(--card-bg); border-color: var(--border-strong); }
+  :global(html.dark) .wl-zoek { border-color: var(--border-strong); }
+  :global(html.dark) .wl-filter-toggle { background: var(--card-bg); border-color: var(--border-strong); color: var(--text-primary); }
+  :global(html.dark) .wl-filter-toggle.actief { background: var(--bg-accent-hover); border-color: var(--border-accent); }
+  :global(html.dark) .wl-pill { background: var(--card-bg); border-color: var(--border-strong); color: var(--text-tertiary); }
+  :global(html.dark) .wl-pill.active { background: var(--bg-accent-hover); border-color: var(--border-accent); color: var(--text-inverse); }
+  :global(html.dark) .wl-leeg { background: var(--card-bg); color: var(--text-tertiary); }
+  :global(html.dark) .wl-resultaten { color: var(--text-tertiary); }
 </style>
+
+
+

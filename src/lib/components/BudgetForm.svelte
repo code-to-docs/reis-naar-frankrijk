@@ -136,8 +136,8 @@
     height: 56px;
     min-height: 56px;
     border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, #0a3764, #0f4d84);
-    color: white;
+    background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
+    color: var(--text-inverse);
     font-size: 1.4rem;
     font-weight: var(--ui-weight-bold);
     border: none;
@@ -308,15 +308,17 @@
     }
   }
 
-  :global(html.dark) .form-header h3 { color: #f1f5f9; }
-  :global(html.dark) .form-header p { color: #94a3b8; }
-  :global(html.dark) .field-label { color: #cbd5e1; }
+  :global(html.dark) .form-header h3 { color: var(--text-primary); }
+  :global(html.dark) .form-header p { color: var(--text-tertiary); }
+  :global(html.dark) .field-label { color: var(--text-secondary); }
   :global(html.dark) .field-input,
   :global(html.dark) .field-select {
-    border-color: #334155;
-    color: #e2e8f0;
-    background: #0f172a;
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+    background: var(--bg-surface);
   }
-  :global(html.dark) .field-input::placeholder { color: #64748b; }
-  :global(html.dark) .action-cancel { background: #dc2626; }
+  :global(html.dark) .field-input::placeholder { color: var(--text-secondary); }
+  :global(html.dark) .action-cancel { background: var(--color-error-base); }
 </style>
+
+

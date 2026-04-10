@@ -306,7 +306,7 @@
     gap: var(--ui-space-4);
     align-items: start;
     background:
-      linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 92%, #eef6ff), var(--card-bg)),
+      linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 92%, var(--bg-accent-subtle)), var(--card-bg)),
       var(--card-bg);
   }
 
@@ -367,7 +367,7 @@
 
   .poi-summary-card--accent {
     background:
-      linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 82%, #dbeafe), var(--card-bg)),
+      linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 82%, var(--bg-accent-subtle)), var(--card-bg)),
       var(--card-bg);
   }
 
@@ -446,7 +446,7 @@
 
   .poi-pill {
     border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 88%, #eef4fb);
+    background: color-mix(in srgb, var(--card-bg) 88%, var(--bg-accent-subtle));
     color: var(--tekst);
     border-radius: 999px;
     min-height: var(--btn-height-compact);
@@ -456,9 +456,9 @@
   }
 
   .poi-pill.active {
-    background: linear-gradient(135deg, #0a3764, #0f4d84);
-    border-color: #0f4d84;
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 
   .poi-filter-footer {
@@ -485,8 +485,8 @@
     min-height: 26px;
     padding: 4px 9px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--card-bg) 85%, #dbeafe);
-    border: 1px solid color-mix(in srgb, var(--input-border) 78%, #bfdbfe);
+    background: color-mix(in srgb, var(--card-bg) 85%, var(--bg-accent-subtle));
+    border: 1px solid color-mix(in srgb, var(--input-border) 78%, var(--border-accent));
     color: var(--blauw);
     font-size: var(--font-size-xs);
     font-weight: var(--ui-weight-bold);
@@ -627,28 +627,30 @@
   :global(html.dark) .poi-kicker,
   :global(html.dark) .poi-summary-label,
   :global(html.dark) .poi-filter-label {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .poi-search {
-    border-color: #334155;
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .poi-pill {
-    background: #111827;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .poi-pill.active {
-    background: #1a5276;
-    border-color: #1a5276;
-    color: #ffffff;
+    background: var(--bg-accent-hover);
+    border-color: var(--border-accent);
+    color: var(--text-inverse);
   }
 
   :global(html.dark) .poi-filter-badge {
     background: rgba(30, 64, 175, 0.28);
     border-color: rgba(96, 165, 250, 0.32);
-    color: #dbeafe;
+    color: var(--text-accent);
   }
 </style>
+
+

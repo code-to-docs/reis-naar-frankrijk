@@ -132,7 +132,7 @@
       </div>
     </div>
     <svg class="gr-chevron" class:open={isExpanded} width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M6 8L10 12L14 8" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
   </button>
 
@@ -246,8 +246,8 @@
   }
 
   .gr-card.done {
-    border-color: #10b981;
-    background: #f0fdf4;
+    border-color: var(--color-success-base);
+    background: var(--color-success-light);
   }
 
   .gr-head {
@@ -265,11 +265,11 @@
   .gr-emoji {
     width: 52px;
     height: 52px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
+    background: var(--bg-surface-sunken);
     font-size: 1.65rem;
     flex-shrink: 0;
   }
@@ -289,20 +289,20 @@
   .gr-name {
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-bold);
-    color: #0f172a;
+    color: var(--text-primary);
     line-height: var(--ui-line-compact);
   }
 
   .gr-rating {
     font-size: var(--font-size-xs);
-    color: #b45309;
+    color: var(--text-warning);
     font-weight: var(--ui-weight-bold);
     flex-shrink: 0;
   }
 
   .gr-kort {
     font-size: var(--font-size-sm);
-    color: #64748b;
+    color: var(--text-secondary);
     margin-top: 2px;
     font-style: italic;
     line-height: var(--ui-line-compact);
@@ -329,7 +329,7 @@
   }
 
   .gr-detail {
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-default);
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -349,10 +349,10 @@
     height: 260px;
     margin: 0;
     position: relative;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.2);
-    background: #e2e8f0;
+    background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -373,21 +373,21 @@
     bottom: 10px;
     margin: 0;
     font-size: var(--font-size-xs);
-    color: white;
+    color: var(--text-inverse);
     background: rgba(15, 23, 42, 0.7);
     padding: 4px 8px;
     border-radius: 999px;
   }
 
   .gr-beeld-ph {
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-    border: 1px solid #dbeafe;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--bg-surface) , var(--bg-surface-sunken));
+    border: 1px solid var(--border-default);
     min-height: 220px;
     display: grid;
     place-items: center;
     gap: 8px;
-    padding: 24px;
+    padding: var(--space-6);
     text-align: center;
   }
 
@@ -398,7 +398,7 @@
 
   .gr-beeld-ph-text {
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
 
@@ -406,7 +406,7 @@
     margin: 0;
     font-size: var(--font-size-sm);
     line-height: var(--ui-line-body);
-    color: #334155;
+    color: var(--text-secondary);
   }
 
   .gr-user-status {
@@ -422,17 +422,17 @@
     gap: 8px;
     padding: 7px 10px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background: #fff;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
     font-weight: var(--ui-weight-semibold);
   }
 
   .gr-user-pill.checked {
-    border-color: #10b981;
-    background: #ecfdf5;
-    color: #065f46;
+    border-color: var(--color-success-base);
+    background: var(--color-success-light);
+    color: var(--text-success);
   }
 
   .gr-mijn-meta {
@@ -440,7 +440,7 @@
     flex-direction: column;
     gap: 6px;
     font-size: var(--font-size-sm);
-    color: #475569;
+    color: var(--text-secondary);
   }
 
   .gr-stars {
@@ -449,10 +449,10 @@
   }
 
   .gr-star {
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    color: #cbd5e1;
-    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
     width: 34px;
     height: 30px;
     line-height: 1;
@@ -461,9 +461,9 @@
   }
 
   .gr-star.active {
-    color: #f59e0b;
-    border-color: #f59e0b;
-    background: #fff7ed;
+    color: var(--text-warning);
+    border-color: var(--text-warning);
+    background: var(--color-warning-light);
   }
 
   .gr-streken {
@@ -479,17 +479,17 @@
   .gr-check-btn {
     width: 100%;
     min-height: var(--ui-touch-min);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: none;
     padding: 0 12px;
     font-size: var(--font-size-md);
     font-weight: var(--ui-weight-bold);
-    background: #10b981;
-    color: white;
+    background: var(--color-success-base);
+    color: var(--text-inverse);
   }
 
   .gr-check-btn.active {
-    background: #64748b;
+    background: var(--bg-interactive-active);
   }
 
   .gr-fs-overlay {
@@ -518,7 +518,7 @@
     border-radius: 999px;
     padding: 8px 12px;
     background: rgba(255, 255, 255, 0.14);
-    color: white;
+    color: var(--text-inverse);
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
     cursor: pointer;
@@ -566,74 +566,76 @@
   }
 
   :global(html.dark) .gr-card.done {
-    background: #071a10;
-    border-color: #10b981;
+    background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface));
+    border-color: var(--color-success-base);
   }
 
   :global(html.dark) .gr-emoji {
-    background: #1e293b;
+    background: var(--bg-surface-raised);
   }
 
   :global(html.dark) .gr-name {
-    color: #e2e8f0;
+    color: var(--text-primary);
   }
 
   :global(html.dark) .gr-kort {
-    color: #94a3b8;
+    color: var(--text-tertiary);
   }
 
   :global(html.dark) .gr-tag {
-    background: #1e293b;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .gr-detail {
-    border-top-color: #334155;
+    border-top-color: var(--border-strong);
   }
 
   :global(html.dark) .gr-beeld {
-    background: #0f172a;
+    background: var(--bg-surface);
   }
 
   :global(html.dark) .gr-beeld-ph {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    border-color: #334155;
+    background: linear-gradient(135deg, var(--bg-surface), var(--bg-surface-raised));
+    border-color: var(--border-strong);
   }
 
   :global(html.dark) .gr-beeld-ph-text,
   :global(html.dark) .gr-omschrijving,
   :global(html.dark) .gr-mijn-meta {
-    color: #cbd5e1;
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .gr-user-pill {
-    background: #111827;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .gr-user-pill.checked {
-    background: #0f2d1c;
-    color: #86efac;
-    border-color: #10b981;
+    background: color-mix(in srgb, var(--color-success-dark) 34%, var(--bg-surface));
+    color: var(--color-success-light);
+    border-color: var(--color-success-base);
   }
 
   :global(html.dark) .gr-star {
-    background: #111827;
-    border-color: #334155;
-    color: #64748b;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .gr-star.active {
-    background: #3b2006;
-    border-color: #f59e0b;
-    color: #fbbf24;
+    background: color-mix(in srgb, var(--color-warning-dark) 34%, var(--bg-surface));
+    border-color: var(--text-warning);
+    color: var(--color-warning-light);
   }
 
   :global(html.dark) .gr-streek-chip {
-    background: #1e293b;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
   }
 </style>
+
+
