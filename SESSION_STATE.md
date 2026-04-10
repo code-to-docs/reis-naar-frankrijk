@@ -3,11 +3,12 @@
 ## current_status
 - **sprint**: build stabilization & hardening
 - **progress**: restored 100% build compatibility; budget module hardening finalized
-- **last_action**: normalized all @media queries to literal pixel values to fix LightningCSS compilation errors
+- **last_action**: fixed Firebase `undefined` field error in `OvernachtingenPlanner.svelte` when saving locations without GPS.
 
 ## accomplishments
 - **build_stabilization**: resolved major build failure in `BudgetEntriesList.svelte` (Svelte/Vite syntax errors) and systematic `@media` query violations.
-- **breakpoint_normalization**: reverted `var(--breakpoint-*)` in CSS media queries to literal units (`1100px`, `768px`) project-wide for browser/compiler compatibility.
+- **bug_fix**: resolved `FirebaseError: Unsupported field value: undefined` in `OvernachtingenPlanner.svelte`.
+- **breakpoint_normalization**: reverted `var(--breakpoint-*)` in CSS media queries to literal units (`1100px`, `768px`) project-wide.
 - **budget_module**: 100% compliant with UI Normprofiel and build-stable.
 
 ## next_steps
