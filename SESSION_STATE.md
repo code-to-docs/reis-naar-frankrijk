@@ -1,21 +1,21 @@
-# session_state v1.2.2
+# session_state v1.2.3
 
 ## current_status
-- **sprint**: quality sprint 1 & 2 completed
-- **progress**: budget module hardened (100% compliant), app.css cleaned (50% compliant)
-- **last_action**: finalized tokenization of budget components and global styles in app.css
+- **sprint**: build stabilization & hardening
+- **progress**: restored 100% build compatibility; budget module hardening finalized
+- **last_action**: normalized all @media queries to literal pixel values to fix LightningCSS compilation errors
 
 ## accomplishments
-- **budget_module**: tokenized `BudgetChart.svelte`, `BudgetEntriesList.svelte`, `BudgetForm.svelte`, and `BudgetSettlementCard.svelte`.
-- **global_styles**: migrated 50+ lines in `app.css` to design tokens (spacing, shadows, breakpoints).
-- **semantics**: updated `GedeeldeLijst.svelte` and `WeerAlerts.svelte` to use semantic status tokens (danger, success).
-- **tooling**: hardened `ui-norm-audit.test.ts` and `semantic-color-audit.test.ts` for decimal support and semantic class recognition.
+- **build_stabilization**: resolved major build failure in `BudgetEntriesList.svelte` (Svelte/Vite syntax errors) and systematic `@media` query violations.
+- **breakpoint_normalization**: reverted `var(--breakpoint-*)` in CSS media queries to literal units (`1100px`, `768px`) project-wide for browser/compiler compatibility.
+- **budget_module**: 100% compliant with UI Normprofiel and build-stable.
 
 ## next_steps
 1.  **sprint 3**: tackle remaining violations in feature-specific components (`GerechtCard.svelte`, `PoiCard.svelte`).
-2.  **final_audit**: achieve 100% compliance across all 1100px breakpoints and 14px text.
-3.  **documentation**: update architectural diagram to reflect the now-robust design system integration.
+2.  **final_audit**: achieve 100% compliance across all peripheral modules (Overnachtingen, Wildlife).
+3.  **documentation**: finalize quality sprint walkthrough.
 
 ## technical_debt
 - **overnachtingen**: `OvernachtingenFormPanel.svelte` still has several hardcoded 52px and 840px values.
 - **wildlife**: `WildlifeChecklist.svelte` has legacy 108px and 42px dimensions.
+- **constraint_note**: CSS variables are NOT supported in media queries; maintenance of breakpoints must remain literal for now.

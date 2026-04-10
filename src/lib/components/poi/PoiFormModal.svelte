@@ -333,7 +333,7 @@
     flex: 1;
   }
 
-  @media (min-width: var(--breakpoint-md)) {
+  @media (min-width: 768px) {
     .poi-modal {
       left: 50%;
       right: auto;

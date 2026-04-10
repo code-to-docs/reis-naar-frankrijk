@@ -85,7 +85,7 @@
     color: var(--text-accent);
   }
 
-  @media (max-width: var(--breakpoint-md)) {
+  @media (max-width: 768px) {
     .ov-kpi-bar {
       padding: var(--space-2-5) var(--space-3);
       gap: var(--space-2);

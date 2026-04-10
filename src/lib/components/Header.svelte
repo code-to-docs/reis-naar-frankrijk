@@ -61,7 +61,7 @@
     margin: 0;
   }
 
-  @media (max-width: var(--breakpoint-md)) {
+  @media (max-width: 768px) {
     .header {
       margin-inline: var(--space-2-5);
       width: auto;
@@ -72,7 +72,7 @@
     .header p { font-size: var(--text-base); }
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .header {
       text-align: center;
       margin: 0 auto;

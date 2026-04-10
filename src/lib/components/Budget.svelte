@@ -316,7 +316,7 @@
     height: calc(var(--nav-height) + env(safe-area-inset-bottom, var(--space-2)) + var(--space-6));
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .budget-content-grid {
       grid-template-columns: minmax(0, 1.7fr) minmax(var(--space-75), 1fr);
       gap: var(--space-4);

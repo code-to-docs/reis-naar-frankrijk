@@ -7,35 +7,30 @@ Dit document bevat de actuele lijst met defecten, architecturale schuld en visue
 > [!WARNING]
 > De volgende bestanden bevatten hardcoded CSS-waarden (pixels, hex, rgba) of semantische fouten die niet voldoen aan het `UI_NORMPROFIEL`. Deze moeten systematisch worden vervangen door tokens uit `ui-tokens.css`.
 
-### Dashboard & Navigatie
-- **Header.svelte**: Veel hardcoded `rgba` schaduwen en `px` breedtes (1100px, 640px).
-- **Navigation.svelte**: Gebruikt `#eac` (debug color) en veel hardcoded `14px` fonts.
-
 ### Overnachtingen (Plural)
-- **OvernachtingenCalendarBoard.svelte**: Bevat `#eac` debug kleuren en `760px` max-widths.
-- **OvernachtingenListsSection.svelte**: Bevat `rgba` blauw/rood overlays die niet via tokens lopen.
-- **OvernachtingenTabs.svelte**: Gebruikt een hardcoded `640px` breakpoint.
+- **OvernachtingenFormPanel.svelte**: Nog steeds diverse hardcoded `52px` en `840px` waarden.
 - **plannerUtils.ts**: Bevat een set hardcoded hex-codes (`#1d4ed8`, `#0284c7`, etc.) voor kaart-markers. Dit moet via CSS variabelen.
 
-### POI & Wildlife
-- **PoiFormModal.svelte**: Veel hardcoded `px` waarden voor breedte en spacing.
-- **WildlifeCard.svelte**: Grote hoeveelheid legacy `px` waarden en hardcoded `rgba` overlays.
+### Wildlife
+- **WildlifeChecklist.svelte**: Heeft nog legacy `108px` en `42px` dimensies.
 
 ### Algemeen
 - **Snackbar.svelte**: Hardcoded schaduwen en margins.
-- **SpotVanDeDag.svelte**: Veel hardcoded layout-geometrie.
 
-## Semantische Audit Violations (v1.1.2)
+## Semantische Audit Violations (v1.2.3)
 *Gedetecteerd door `semantic-color-audit.test.ts`*
-- **Destructieve acties**: Ontbrekende `--color-error` bij delete-acties in `GedeeldeLijst.svelte`, `PoiCard.svelte`, `OvernachtingenListsSection.svelte`.
-- **Bevestigingsacties**: Ontbrekende `--color-success` bij save-acties in `BudgetForm.svelte`, `Budget.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`.
+- **Bevestigingsacties**: Ontbrekende `--color-success` bij save-acties in `PoiFormModal.svelte`.
 - **Disabled states**: Ontbrekende `--color-disabled` tokens in `BudgetForm.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`, `OvernachtingenFormPanel.svelte`.
-- **Waarschuwingen**: Ontbrekende `--color-warning` in `WeerAlerts.svelte`.
 
-## ✅ Resolved Features & Debts (Current Version)
-* **GerechtenChecklist Monoliet (v1.1.2):** Opgesplitst in modulaire architectuur (`src/lib/features/gerechten/`) met Svelte 5 Composables.
-* **Vitest Svelte 5 Lifecycle Issues (v1.1.1):** Opgelost in `vitest.config.ts`.
-* **Kalender Hydration:** Opgelost door browser-only guards.
+## ✅ Resolved Features & Debts (v1.2.3)
+* **Build Failure (v1.2.2):** Opgelost door syntax-correctie in `BudgetEntriesList.svelte`.
+* **Systematic @media Violations (v1.2.2):** Reverted CSS variables in media queries naar literal pixel values (`1100px`, `768px`) voor LightningCSS compatibiliteit.
+* **Budget Module Tokenization:** `BudgetChart.svelte`, `BudgetEntriesList.svelte`, `BudgetForm.svelte` en `BudgetSettlementCard.svelte` zijn nu 100% tokenized.
+* **Global Styles (Partieel):** ~50% van `app.css` is nu gemigreerd naar tokens.
+* **Semantic Colors:** `GedeeldeLijst.svelte` en `WeerAlerts.svelte` zijn bijgewerkt naar status tokens.
 
 ## Bekende Bugs
-*Momenteel geen kritieke functionele bugs bekend.*
+* **LightningCSS Media Queries:** Browser/Compiler ondersteunt GEEN `var()` binnen `@media` regels. Nieuwe media queries MOETEN literal units gebruiken.
+
+## Architecturale Schuld
+- **Mapping Inconsistentie:** `lib/components/gerechten/` bestaat naast `lib/features/gerechten/`. De feature mapping moet worden opgeschoond.

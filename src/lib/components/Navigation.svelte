@@ -167,7 +167,7 @@
     border-radius: var(--radius-sm);
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .offline-bar {
       left: max(var(--space-4), calc((100vw - var(--app-max-width)) / 2 + var(--space-4)));
       right: auto;

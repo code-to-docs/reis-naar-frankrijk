@@ -174,6 +174,14 @@
     margin-top: var(--space-2);
     font-size: var(--text-sm);
   }
+
+  @media (max-width: 768px) {
+    .entry-item {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      row-gap: var(--space-1);
+    }
+    .entry-emoji {
       grid-row: 1 / span 2;
       align-self: center;
     }

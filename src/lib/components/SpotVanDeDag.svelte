@@ -212,7 +212,7 @@
     min-height: var(--space-7);
   }
 
-  @media (max-width: var(--breakpoint-md)) {
+  @media (max-width: 768px) {
     .spot-content {
       gap: var(--space-3);
     }
@@ -222,7 +222,7 @@
     }
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .spot-card {
       border-radius: var(--radius-xl);
     }

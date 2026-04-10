@@ -320,7 +320,7 @@
     font-size: var(--text-sm);
   }
 
-  @media (max-width: var(--breakpoint-md)) {
+  @media (max-width: 768px) {
     .ov-item-top {
       flex-direction: column;
       align-items: stretch;

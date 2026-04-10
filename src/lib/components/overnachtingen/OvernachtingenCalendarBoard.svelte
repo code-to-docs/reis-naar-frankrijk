@@ -338,7 +338,7 @@
     box-shadow: 0 0 0 1px var(--black-a05);
   }
 
-  @media (max-width: var(--breakpoint-md)) {
+  @media (max-width: 768px) {
     .ov-calendar-teaser {
       display: grid;
       gap: var(--space-2-5);

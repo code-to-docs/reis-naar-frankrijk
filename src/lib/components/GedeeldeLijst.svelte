@@ -247,7 +247,7 @@
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: var(--weight-bold); width: var(--space-12); }
   .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--text-lg); font-weight: var(--ui-weight-semibold); }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .gl-title.desktop-hidden {
       display: none;
     }

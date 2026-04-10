@@ -265,7 +265,7 @@
     line-height: 1;
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .fab {
       bottom: var(--space-6);
       right: max(var(--space-6), calc((100vw - var(--app-max-width)) / 2 + var(--space-6)));

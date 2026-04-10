@@ -473,7 +473,7 @@
   .wl-link.maps-osm { background: var(--bg-surface-sunken); color: var(--text-secondary); }
   .wl-link:active { opacity: 0.7; }
 
-  @media (min-width: var(--breakpoint-md)) {
+  @media (min-width: 768px) {
     .wl-hoofd {
       gap: var(--space-4);
       padding: var(--space-4);
@@ -499,7 +499,7 @@
     }
   }
 
-  @media (min-width: var(--breakpoint-lg)) {
+  @media (min-width: 1100px) {
     .wl-hoofd {
       gap: var(--space-4);
       padding: var(--space-4);
