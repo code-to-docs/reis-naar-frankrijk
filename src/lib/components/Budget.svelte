@@ -61,6 +61,13 @@
     filterCat = "alle";
   }
 
+  function getDagTotaalLabel(label: string): string {
+    const trimmed = label.trim();
+    if (!trimmed) return "Totaal";
+    if (trimmed.toLowerCase() === "vandaag") return "Totaal vandaag";
+    return `Totaal ${trimmed}`;
+  }
+
   async function slabudgetOp() {
     const val = parseLocalizedNumber(nieuwBudget);
     if (!Number.isFinite(val) || val <= 0) {
@@ -183,8 +190,8 @@
             placeholder="Nieuw budget"
             class="budget-edit-input"
           />
-          <button type="submit" class="btn-success budget-edit-save"><span style="color:white;font-weight:800;font-size:1.1rem;">OK</span></button>
-          <button type="button" class="btn-danger budget-edit-cancel" onclick={() => toonBudgetEdit = false}><span style="color:white;font-weight:800;font-size:1.1rem;">X</span></button>
+          <button type="submit" class="btn-success budget-edit-save">OK</button>
+          <button type="button" class="btn-danger btn-icon budget-edit-cancel" onclick={() => toonBudgetEdit = false}>X</button>
         </div>
       </form>
     </div>
@@ -246,7 +253,7 @@
               </div>
             {/each}
             <div class="dag-subtotaal">
-              <span>Optelsom {groep.label}</span>
+              <span>{getDagTotaalLabel(groep.label)}</span>
               <strong>{formatEuro(groep.totaal)}</strong>
             </div>
           </div>
@@ -339,14 +346,15 @@
     gap: 6px;
   }
   .edit-budget-btn {
-    background: none;
-    border: none;
+    background: color-mix(in srgb, var(--card-bg) 82%, #e8f2fc);
+    border: 1px solid color-mix(in srgb, var(--input-border) 80%, #b9d2ed);
     font-size: var(--font-size-xs);
     cursor: pointer;
-    min-height: var(--ui-touch-compact);
-    min-width: var(--ui-touch-compact);
-    padding: 2px 4px;
-    opacity: 0.6;
+    min-height: var(--btn-height-compact);
+    min-width: var(--btn-height-compact);
+    padding: 0;
+    opacity: 0.85;
+    color: var(--blauw);
   }
   .edit-budget-btn:active { opacity: 1; }
   .hero-bar {
@@ -383,13 +391,11 @@
   .budget-edit-input {
     flex: 1;
     padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-md);
   }
   .budget-edit-save, .budget-edit-cancel {
-    padding: 8px 14px;
-    font-size: 1rem;
-    border-radius: 8px;
+    font-size: var(--font-size-md);
   }
 
   .undo-bar {
@@ -399,19 +405,20 @@
     background: #1e293b;
     color: white;
     padding: 12px 16px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     margin-bottom: 12px;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     animation: slideUp 0.25s ease-out;
   }
   .undo-btn {
+    min-height: var(--btn-height-compact);
     background: rgba(255,255,255,0.15);
-    color: #60a5fa;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    color: #bfdbfe;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 0 14px;
+    border-radius: var(--btn-radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
     cursor: pointer;
   }
   .undo-btn:active { opacity: 0.7; }
@@ -444,14 +451,15 @@
     margin-bottom: 10px; font-size: var(--font-size-sm); color: #1a5276;
   }
   .filter-reset {
-    background: none;
-    border: none;
+    background: color-mix(in srgb, var(--card-bg) 86%, #fff2f1);
+    border: 1px solid color-mix(in srgb, var(--rood) 22%, var(--input-border));
     color: var(--rood);
     font-size: var(--font-size-sm);
-    font-weight: 600;
+    font-weight: var(--ui-weight-semibold);
     cursor: pointer;
-    min-height: var(--ui-touch-compact);
-    padding: 2px 8px;
+    min-height: var(--btn-height-compact);
+    padding: 0 10px;
+    border-radius: var(--btn-radius);
   }
 
   .budget-content-grid {
@@ -477,13 +485,14 @@
     color: #1a5276;
   }
   .dag-subtotaal {
+    --entry-actions-offset: calc(var(--ui-touch-compact) + 10px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     border-top: 1px solid #dbe4f0;
     margin-top: 4px;
-    padding: 10px 6px 2px;
+    padding: 10px calc(12px + var(--entry-actions-offset)) 2px 12px;
     color: #475569;
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-medium);
@@ -519,12 +528,13 @@
   }
   .entry-bedrag { font-size: var(--font-size-md); color: #1e293b; white-space: nowrap; flex-shrink: 0; }
   .entry-delete {
-    background: none;
-    border: none;
+    background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
+    border: 1px solid var(--input-border);
     font-size: 0.9rem;
-    min-height: var(--ui-touch-compact);
-    min-width: var(--ui-touch-compact);
-    padding: 4px;
+    min-height: var(--btn-height-compact);
+    min-width: var(--btn-height-compact);
+    padding: 0;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     opacity: 0.5;
     flex-shrink: 0;

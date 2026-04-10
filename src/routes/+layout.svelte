@@ -64,9 +64,9 @@
     align-items: center;
     justify-content: center;
     height: 100dvh;
-    gap: 14px;
+    gap: var(--ui-space-4);
     text-align: center;
-    padding: 24px;
+    padding: var(--ui-space-6);
   }
 
   .kies-vlag {
@@ -81,21 +81,19 @@
 
   .kies-scherm p {
     color: var(--nav-text);
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-semibold);
   }
 
   .kies-acties {
     display: flex;
-    gap: 12px;
+    gap: var(--ui-space-3);
     margin-top: 6px;
   }
 
   .kies-knop {
-    font-size: 1.1rem;
-    padding: 13px 24px;
+    font-size: var(--font-size-lg);
     min-width: 136px;
-    border-radius: 12px;
   }
 
   .app-shell {

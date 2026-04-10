@@ -7,7 +7,7 @@
 
 <div class="page-transition page-shell home-page">
   <div class="quick-actions quick-actions-top">
-    <a href="/budget" class="quick-btn">
+    <a href="/budget?nieuw=1" class="quick-btn">
       <div class="quick-content">
         <span>Nieuwe uitgave</span>
         <small>Kosten direct noteren</small>
@@ -53,7 +53,7 @@
 <style>
   .home-page {
     display: grid;
-    gap: var(--ui-space-3);
+    gap: var(--ui-space-4);
   }
 
   .quick-actions-top {
@@ -63,26 +63,26 @@
 
   .home-dashboard {
     display: grid;
-    gap: var(--ui-space-3);
+    gap: var(--ui-space-4);
   }
 
   .dashboard-main,
   .dashboard-side {
     display: grid;
-    gap: var(--ui-space-3);
+    gap: var(--ui-space-4);
     align-content: start;
   }
 
   .quick-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--ui-space-3);
+    gap: var(--ui-space-4);
     padding: 0;
   }
   .quick-btn {
     background: var(--card-bg);
     border-radius: var(--radius-md);
-    padding: 14px;
+    padding: var(--ui-space-4);
     text-decoration: none;
     color: var(--tekst);
     box-shadow: 0 2px 8px var(--card-shadow);
@@ -91,7 +91,7 @@
     justify-content: space-between;
     gap: var(--ui-space-2);
     border: 1px solid var(--border-subtle);
-    min-height: 106px;
+    min-height: 110px;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
   .quick-btn:active { transform: scale(0.98); }
@@ -106,7 +106,7 @@
     min-width: 0;
   }
   .quick-btn .icon {
-    font-size: 1.95rem;
+    font-size: clamp(1.8rem, 4vw, 2rem);
     line-height: 1;
     flex-shrink: 0;
     filter: saturate(1.04);
@@ -130,10 +130,10 @@
   @media (max-width: 760px) {
     .quick-btn {
       min-height: 96px;
-      padding: 12px;
+      padding: var(--ui-space-3);
     }
     .quick-btn span {
-      font-size: 1rem;
+      font-size: var(--font-size-md);
     }
     .quick-btn small {
       font-size: var(--font-size-xs);
@@ -146,14 +146,14 @@
     }
     .home-dashboard {
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      gap: 14px;
+      gap: var(--ui-space-4);
     }
     .quick-btn {
-      min-height: 108px;
-      padding: 14px;
+      min-height: 116px;
+      padding: var(--ui-space-4);
     }
     .quick-btn span {
-      font-size: 1.15rem;
+      font-size: var(--font-size-lg);
     }
     .quick-btn small {
       font-size: var(--font-size-sm);

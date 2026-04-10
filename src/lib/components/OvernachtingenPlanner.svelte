@@ -1216,13 +1216,14 @@
   }
   .ov-secondary-btn {
     width: auto;
-    min-height: var(--ui-touch-min);
+    min-height: var(--btn-height);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
     padding: 0 12px;
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
   }
 
   .ov-stats {
@@ -1238,14 +1239,14 @@
   }
   .ov-view-btn {
     width: auto;
-    min-height: var(--ui-touch-compact);
-    padding: 6px 14px;
-    border-radius: 20px;
+    min-height: var(--btn-height-compact);
+    padding: 0 14px;
+    border-radius: 999px;
     border: 1.5px solid #e2e8f0;
     background: #ffffff;
     color: #475569;
     font-size: var(--font-size-sm);
-    font-weight: var(--ui-weight-medium);
+    font-weight: var(--ui-weight-semibold);
     transition: all 0.15s ease;
   }
   .ov-view-btn.active {
@@ -1332,12 +1333,14 @@
   }
   .ov-gps-btn {
     width: auto;
-    min-height: var(--ui-touch-min);
+    min-height: var(--btn-height);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
-    font-weight: 700;
-    padding: 6px 10px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
+    padding: 0 12px;
+    border-radius: var(--btn-radius);
   }
   .ov-actions {
     display: flex;
@@ -1394,13 +1397,14 @@
   }
   .ov-month-btn {
     width: auto;
-    min-height: var(--ui-touch-compact);
+    min-height: var(--btn-height-compact);
     padding: 0 10px;
     font-size: var(--font-size-sm);
-    font-weight: 700;
+    font-weight: var(--ui-weight-semibold);
     border: 1px solid var(--input-border);
     background: var(--hover-bg);
     color: var(--heading);
+    border-radius: var(--btn-radius);
   }
   .ov-month-btn:disabled {
     opacity: 0.45;
@@ -1594,9 +1598,9 @@
   }
   .ov-open-btn {
     width: auto;
-    min-height: var(--ui-touch-compact);
+    min-height: var(--btn-height-compact);
     padding: 0 12px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--btn-radius);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
     color: var(--blauw);
@@ -1605,11 +1609,11 @@
   }
   .ov-delete {
     width: auto;
-    min-height: var(--ui-touch-compact);
-    min-width: var(--ui-touch-compact);
-    padding: 0 10px;
+    min-height: var(--btn-height-compact);
+    min-width: var(--btn-height-compact);
+    padding: 0;
     font-size: 0.95rem;
-    border-radius: var(--radius-sm);
+    border-radius: var(--btn-radius);
     border: 1px solid var(--input-border);
     background: color-mix(in srgb, var(--card-bg) 92%, #f8fbff);
     color: color-mix(in srgb, var(--tekst) 70%, #475569);

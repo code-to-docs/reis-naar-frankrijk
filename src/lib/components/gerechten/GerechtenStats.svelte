@@ -19,7 +19,7 @@
 <div class="gr-stats-card">
   <div class="gr-stats-top">
     <div>
-      <div class="gr-title">🍽️ Gerechten Checklist</div>
+      <div class="gr-title">Gerechten checklist</div>
       <div class="gr-sub">{mijnCount}/{totaal} door jou geproefd</div>
     </div>
     <div class="gr-mijn-perc">{mijnPerc}%</div>
@@ -42,8 +42,8 @@
 <style>
   .gr-stats-card {
     background: var(--card-bg);
-    border-radius: 16px;
-    padding: 14px;
+    border-radius: var(--radius-lg);
+    padding: var(--ui-space-4);
     box-shadow: 0 2px 10px var(--card-shadow);
     border: 1px solid var(--border-subtle);
   }
@@ -55,20 +55,22 @@
     margin-bottom: 10px;
   }
   .gr-title {
-    font-size: 1.06rem;
-    font-weight: 800;
+    font-size: var(--font-size-xl);
+    font-weight: var(--ui-weight-heavy);
     color: #1a5276;
+    line-height: var(--ui-line-tight);
   }
   .gr-sub {
     margin-top: 2px;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
     color: #64748b;
+    line-height: var(--ui-line-compact);
   }
   .gr-mijn-perc {
-    font-size: 1.2rem;
-    font-weight: 800;
+    font-size: var(--font-size-xl);
+    font-weight: var(--ui-weight-heavy);
     color: #10b981;
-    line-height: 1;
+    line-height: var(--ui-line-tight);
   }
   .gr-bars {
     display: flex;
@@ -77,19 +79,19 @@
   }
   .gr-bar-row {
     display: grid;
-    grid-template-columns: 52px 1fr auto;
+    grid-template-columns: 60px 1fr auto;
     align-items: center;
     gap: 8px;
   }
   .gr-name {
-    font-size: 0.78rem;
+    font-size: var(--font-size-sm);
     color: #475569;
-    font-weight: 700;
+    font-weight: var(--ui-weight-semibold);
   }
   .gr-val {
-    font-size: 0.75rem;
+    font-size: var(--font-size-sm);
     color: #64748b;
-    font-weight: 700;
+    font-weight: var(--ui-weight-semibold);
   }
   .gr-bar {
     height: 8px;
@@ -103,6 +105,24 @@
   }
   .gr-fill.dennis { background: linear-gradient(90deg, #60a5fa, #2563eb); }
   .gr-fill.franzi { background: linear-gradient(90deg, #f472b6, #db2777); }
+
+  @media (min-width: 1100px) {
+    .gr-stats-card {
+      padding: var(--ui-space-5);
+    }
+    .gr-stats-top {
+      margin-bottom: 12px;
+    }
+    .gr-title {
+      font-size: clamp(1.55rem, 2.2vw, 1.85rem);
+    }
+    .gr-sub {
+      font-size: var(--font-size-md);
+    }
+    .gr-mijn-perc {
+      font-size: clamp(1.6rem, 2.2vw, 2rem);
+    }
+  }
 
   :global(html.dark) .gr-title { color: #e2e8f0; }
   :global(html.dark) .gr-sub,

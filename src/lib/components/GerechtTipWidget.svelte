@@ -65,26 +65,25 @@
   });
 </script>
 
-<article class="card food-tip-card">
-  <div class="food-tip-head">
+<a href="/meer/gerechten" class="card food-tip-card ui-widget-card">
+  <div class="ui-widget-head">
     <div>
-      <div class="food-tip-label">{E.ETEN} Proeftip van vandaag</div>
-      <div class="food-tip-help">{tipUitleg}</div>
+      <div class="ui-widget-title">{E.ETEN} Proeftip van vandaag</div>
+      <div class="ui-widget-kicker">{tipUitleg}</div>
     </div>
-    <a href="/meer/gerechten" class="food-tip-link">Open Gerechten</a>
   </div>
 
   {#if dagTip}
-    <div class="food-tip-name">{dagTip.emoji || E.ETEN} {dagTip.naam}</div>
-    <div class="food-tip-sub">{dagTip.frans}</div>
-    <p class="food-tip-desc">{dagTip.omschrijving}</p>
-    <div class="food-tip-chips">
+    <div class="ui-widget-name">{dagTip.emoji || E.ETEN} {dagTip.naam}</div>
+    <div class="ui-widget-subtitle">{dagTip.frans}</div>
+    <p class="ui-widget-copy food-tip-desc">{dagTip.omschrijving}</p>
+    <div class="ui-widget-chips">
       <span class="food-chip ui-chip ui-chip--muted">{getStreekLabel(getHoofdStreek(dagTip))}</span>
       <span class="food-chip ui-chip ui-chip--muted">{getSoortLabel(dagTip.soort)}</span>
       <span class="food-chip ui-chip ui-chip--muted">{dagTip.vegetarisch ? "Vegetarisch" : dagTip.vis ? "Vis" : "Non-veg"}</span>
     </div>
   {/if}
-</article>
+</a>
 
 <style>
   .food-tip-card {
@@ -94,76 +93,11 @@
       radial-gradient(100% 65% at 12% 0%, color-mix(in srgb, #0ea5a4 12%, var(--card-bg)) 0%, transparent 66%),
       var(--card-bg);
   }
-  .food-tip-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .food-tip-label {
-    font-size: var(--font-size-xl);
-    font-weight: var(--ui-weight-heavy);
-    color: var(--heading);
-    letter-spacing: -0.01em;
-    line-height: var(--ui-line-tight);
-  }
-  .food-tip-help {
-    margin-top: 2px;
-    font-size: var(--font-size-sm);
-    color: var(--nav-text);
-    font-weight: var(--ui-weight-medium);
-  }
-  .food-tip-link {
-    text-decoration: none;
-    border: 1px solid var(--input-border);
-    border-radius: 10px;
-    padding: 6px 10px;
-    color: var(--blauw);
-    font-size: var(--font-size-sm);
-    font-weight: var(--ui-weight-semibold);
-    background: color-mix(in srgb, var(--card-bg) 84%, #e8f2fc);
-    white-space: nowrap;
-  }
-  .food-tip-name {
-    font-size: clamp(1.38rem, 4.2vw, 1.85rem);
-    font-weight: var(--ui-weight-heavy);
-    color: var(--heading);
-    letter-spacing: -0.02em;
-    line-height: var(--ui-line-tight);
-  }
-  .food-tip-sub {
-    margin-top: 2px;
-    font-style: italic;
-    color: var(--nav-text);
-    font-size: var(--font-size-md);
-    font-weight: var(--ui-weight-medium);
-  }
   .food-tip-desc {
-    margin: 10px 0;
-    color: var(--tekst);
-    font-size: var(--font-size-sm);
-    line-height: var(--ui-line-compact);
-    font-weight: var(--ui-weight-medium);
-  }
-  .food-tip-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    margin: 0;
   }
   .food-chip {
     min-height: 28px;
-  }
-
-  @media (max-width: 760px) {
-    .food-tip-head {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-    }
-    .food-tip-link {
-      text-align: center;
-    }
   }
 
   :global(html.dark) .food-tip-card {
@@ -172,17 +106,6 @@
       #111827;
     border-color: #334155;
   }
-  :global(html.dark) .food-tip-link {
-    background: #1e3a8a;
-    border-color: #2563eb;
-    color: #dbeafe;
-  }
-  :global(html.dark) .food-tip-label,
-  :global(html.dark) .food-tip-name {
-    color: #e2e8f0;
-  }
-  :global(html.dark) .food-tip-help,
-  :global(html.dark) .food-tip-sub,
   :global(html.dark) .food-tip-desc {
     color: #cbd5e1;
   }

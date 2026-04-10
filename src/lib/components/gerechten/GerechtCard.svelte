@@ -12,6 +12,7 @@
     currentUser,
     foto,
     groteFoto,
+    fotoStatus = "loading",
     isExpanded,
     onToggle
   } = $props<{
@@ -20,6 +21,7 @@
     currentUser: string;
     foto?: string;
     groteFoto?: string;
+    fotoStatus?: "loading" | "ready" | "missing";
     isExpanded: boolean;
     onToggle: () => void;
   }>();
@@ -118,11 +120,11 @@
       </div>
       <div class="gr-kort">{korteOmschrijving(gerecht.omschrijving)}</div>
       <div class="gr-tags">
-        <span class="gr-tag">{gerecht.vegetarisch ? "Vegetarisch" : "Non-veg"}</span>
+        <span class="gr-tag ui-chip ui-chip--muted">{gerecht.vegetarisch ? "Vegetarisch" : "Non-veg"}</span>
         {#if gerecht.vis}
-          <span class="gr-tag">Vis</span>
+          <span class="gr-tag ui-chip ui-chip--muted">Vis</span>
         {/if}
-        <span class="gr-tag">{gerecht.smaak === "zoet" ? "Zoet" : "Hartig"}</span>
+        <span class="gr-tag ui-chip ui-chip--muted">{gerecht.smaak === "zoet" ? "Zoet" : "Hartig"}</span>
       </div>
     </div>
     <svg class="gr-chevron" class:open={isExpanded} width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -156,13 +158,21 @@
                 imgError = true;
               }}
             />
-            <figcaption class="gr-foto-hint">Tik voor fullscreen</figcaption>
+            <figcaption class="gr-foto-hint">Open fullscreen</figcaption>
           </figure>
         </button>
       {:else}
         <div class="gr-beeld-ph">
           <div class="gr-beeld-ph-emoji">{gerecht.emoji}</div>
-          <div class="gr-beeld-ph-text">{foto || groteFoto ? "Foto niet beschikbaar" : "Foto wordt geladen..."}</div>
+          <div class="gr-beeld-ph-text">
+            {#if fotoStatus === "missing"}
+              Geen betrouwbare foto gevonden
+            {:else if foto || groteFoto}
+              Foto niet beschikbaar
+            {:else}
+              Foto wordt geladen...
+            {/if}
+          </div>
         </div>
       {/if}
 
@@ -202,12 +212,12 @@
 
       <div class="gr-streken">
         {#each gerecht.streken as streek}
-          <span class="gr-streek-chip">{streek}</span>
+          <span class="gr-streek-chip ui-chip ui-chip--info">{streek}</span>
         {/each}
       </div>
 
-      <button type="button" class="gr-check-btn" class:active={heeftGeproefd} onclick={toggleMijnProefStatus}>
-        {heeftGeproefd ? `${E.UNDO} Niet meer geproefd` : `${gerecht.naam} geproefd!`}
+      <button type="button" class="gr-check-btn btn-save" class:active={heeftGeproefd} onclick={toggleMijnProefStatus}>
+        {heeftGeproefd ? "Niet meer geproefd" : `${gerecht.naam} geproefd`}
       </button>
     </div>
   {/if}
@@ -225,7 +235,7 @@
 <style>
   .gr-card {
     background: var(--card-bg);
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     border: 2px solid transparent;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
     overflow: hidden;
@@ -242,7 +252,7 @@
     background: none;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     padding: 12px;
     text-align: left;
     cursor: pointer;
@@ -273,24 +283,25 @@
   }
 
   .gr-name {
-    font-size: 0.95rem;
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-bold);
     color: #0f172a;
-    line-height: 1.2;
+    line-height: var(--ui-line-compact);
   }
 
   .gr-rating {
-    font-size: 0.76rem;
+    font-size: var(--font-size-xs);
     color: #b45309;
-    font-weight: 700;
+    font-weight: var(--ui-weight-bold);
     flex-shrink: 0;
   }
 
   .gr-kort {
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: #64748b;
     margin-top: 2px;
     font-style: italic;
-    line-height: 1.35;
+    line-height: var(--ui-line-compact);
   }
 
   .gr-tags {
@@ -301,12 +312,7 @@
   }
 
   .gr-tag {
-    font-size: 0.68rem;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: #f8fafc;
-    color: #475569;
-    border: 1px solid #e2e8f0;
+    min-height: 26px;
   }
 
   .gr-chevron {
@@ -323,7 +329,7 @@
     padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
   }
 
   .gr-beeld-btn {
@@ -362,7 +368,7 @@
     right: 10px;
     bottom: 10px;
     margin: 0;
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     color: white;
     background: rgba(15, 23, 42, 0.7);
     padding: 4px 8px;
@@ -387,15 +393,15 @@
   }
 
   .gr-beeld-ph-text {
-    font-size: 0.84rem;
+    font-size: var(--font-size-sm);
     color: #475569;
-    font-weight: 600;
+    font-weight: var(--ui-weight-semibold);
   }
 
   .gr-omschrijving {
     margin: 0;
-    font-size: 0.86rem;
-    line-height: 1.45;
+    font-size: var(--font-size-sm);
+    line-height: var(--ui-line-body);
     color: #334155;
   }
 
@@ -414,9 +420,9 @@
     border-radius: 10px;
     border: 1px solid #e2e8f0;
     background: #fff;
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: #475569;
-    font-weight: 700;
+    font-weight: var(--ui-weight-semibold);
   }
 
   .gr-user-pill.checked {
@@ -429,7 +435,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: #475569;
   }
 
@@ -463,22 +469,17 @@
   }
 
   .gr-streek-chip {
-    font-size: 0.72rem;
-    padding: 4px 8px;
-    border-radius: 999px;
-    background: #eef2ff;
-    color: #334155;
-    border: 1px solid #dbeafe;
     text-transform: capitalize;
   }
 
   .gr-check-btn {
     width: 100%;
-    border-radius: 10px;
+    min-height: var(--ui-touch-min);
+    border-radius: 12px;
     border: none;
-    padding: 11px 12px;
-    font-size: 0.86rem;
-    font-weight: 700;
+    padding: 0 12px;
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-bold);
     background: #10b981;
     color: white;
   }
@@ -514,9 +515,46 @@
     padding: 8px 12px;
     background: rgba(255, 255, 255, 0.14);
     color: white;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
     cursor: pointer;
+  }
+
+  @media (min-width: 1100px) {
+    .gr-head {
+      gap: 14px;
+      padding: 14px;
+    }
+    .gr-emoji {
+      width: 62px;
+      height: 62px;
+      font-size: 1.9rem;
+    }
+    .gr-name {
+      font-size: var(--font-size-lg);
+    }
+    .gr-kort {
+      font-size: var(--font-size-md);
+    }
+    .gr-detail {
+      padding: 14px;
+      gap: 16px;
+    }
+    .gr-beeld {
+      height: 320px;
+    }
+    .gr-omschrijving,
+    .gr-mijn-meta {
+      font-size: var(--font-size-md);
+    }
+    .gr-user-pill {
+      font-size: var(--font-size-md);
+      min-height: 42px;
+    }
+    .gr-check-btn {
+      min-height: 48px;
+      font-size: var(--font-size-lg);
+    }
   }
 
   :global(html.dark) .gr-card {

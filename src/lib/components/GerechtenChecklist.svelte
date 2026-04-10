@@ -20,6 +20,12 @@
   type Coords = { lat: number; lon: number };
   type StreekLocatie = { naam: string; lat: number; lon: number };
   type GerechtChecksPerUser = Partial<Record<string, GerechtCheck>>;
+  type FotoStatus = "loading" | "ready" | "missing";
+  type FotoCache = {
+    thumb: Record<string, string>;
+    full: Record<string, string>;
+    missing: string[];
+  };
 
   const TIP_MAX_AFSTAND_KM = 20;
   const REGIO_DETECTIE_MAX_KM = 70;
@@ -27,9 +33,11 @@
   let checksByDish: Record<string, GerechtChecksPerUser> = $state({});
   let fotos: Record<string, string> = $state({});
   let fotosGroot: Record<string, string> = $state({});
+  let fotoStatusById: Record<string, FotoStatus> = $state({});
   let expandedGerecht: string | null = $state(null);
   let stopFotoLoading = false;
   let fotoBatchTimer: ReturnType<typeof setTimeout> | null = null;
+  let missingFotoIds = new Set<string>();
 
   let zoek = $state("");
   let toonFilters = $state(false);
@@ -185,22 +193,37 @@
 
   onMount(() => {
     stopFotoLoading = false;
-    const CACHE_KEY = "gerechten_fotos_v1";
+    const CACHE_KEY = "gerechten_fotos_v3_quality";
     const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+    const basisStatus = Object.fromEntries(gerechtenData.map((gerecht) => [gerecht.id, "loading"])) as Record<string, FotoStatus>;
+    fotoStatusById = basisStatus;
 
-    const cached = cacheManager.get<{ thumb: Record<string, string>, full: Record<string, string> }>(CACHE_KEY, CACHE_MAX_AGE);
-    
+    const cached = cacheManager.get<FotoCache>(CACHE_KEY, CACHE_MAX_AGE);
+
     if (cached) {
       fotos = cached.thumb || {};
       fotosGroot = cached.full || {};
-      
-      const missing = gerechtenData.filter((gerecht) => !fotos[gerecht.id] || !fotosGroot[gerecht.id]);
-      if (missing.length > 0) laadFotos(missing);
+      missingFotoIds = new Set(Array.isArray(cached.missing) ? cached.missing.map(String) : []);
+
+      const status: Record<string, FotoStatus> = { ...basisStatus };
+      for (const gerecht of gerechtenData) {
+        const heeftFoto = Boolean(fotos[gerecht.id] && fotosGroot[gerecht.id]);
+        if (heeftFoto) {
+          status[gerecht.id] = "ready";
+        } else if (missingFotoIds.has(gerecht.id)) {
+          status[gerecht.id] = "missing";
+        }
+      }
+      fotoStatusById = status;
+
+      const nogTeLaden = gerechtenData.filter((gerecht) => status[gerecht.id] === "loading");
+      if (nogTeLaden.length > 0) laadFotos(nogTeLaden);
       else {
         stopFotoLoading = true;
         if (fotoBatchTimer) clearTimeout(fotoBatchTimer);
       }
     } else {
+      missingFotoIds = new Set<string>();
       laadFotos(gerechtenData);
     }
 
@@ -211,7 +234,11 @@
   });
 
   function bewaarFotoCache() {
-    cacheManager.set("gerechten_fotos_v1", { thumb: fotos, full: fotosGroot });
+    cacheManager.set("gerechten_fotos_v3_quality", {
+      thumb: fotos,
+      full: fotosGroot,
+      missing: [...missingFotoIds]
+    });
   }
 
   function laadFotos(gerechten: Gerecht[]) {
@@ -224,6 +251,21 @@
 
       const batch = gerechten.slice(index, index + batchSize);
       if (batch.length === 0) {
+        const status = { ...fotoStatusById };
+        let statusChanged = false;
+
+        for (const gerecht of gerechtenData) {
+          if (status[gerecht.id] === "loading") {
+            status[gerecht.id] = "missing";
+            missingFotoIds.add(gerecht.id);
+            statusChanged = true;
+          }
+        }
+
+        if (statusChanged) {
+          fotoStatusById = status;
+        }
+
         bewaarFotoCache();
         return;
       }
@@ -233,8 +275,13 @@
 
       let changed = false;
       let gotRateLimited = false;
+      const status = { ...fotoStatusById };
+      let statusChanged = false;
 
-      results.forEach((result) => {
+      results.forEach((result, idx) => {
+        const batchItem = batch[idx];
+        if (!batchItem) return;
+
         if (result && "retry" in result) {
             gotRateLimited = true;
             return;
@@ -243,14 +290,29 @@
         if (result && "thumb" in result) {
             fotos[result.id] = result.thumb;
             fotosGroot[result.id] = result.full;
+            status[result.id] = "ready";
+            missingFotoIds.delete(result.id);
             changed = true;
+            statusChanged = true;
+            return;
         }
+
+        status[batchItem.id] = "missing";
+        missingFotoIds.add(batchItem.id);
+        statusChanged = true;
       });
 
       if (changed) {
           fotos = { ...fotos };
           fotosGroot = { ...fotosGroot };
-          bewaarFotoCache();
+      }
+
+      if (statusChanged) {
+        fotoStatusById = status;
+      }
+
+      if (changed || statusChanged) {
+        bewaarFotoCache();
       }
 
       if (gotRateLimited && retries < 5) {
@@ -389,13 +451,13 @@
       <div class="gr-tip-name">{dagTip.emoji} {dagTip.naam}</div>
       <div class="gr-tip-sub">{dagTip.frans} · {getSoortLabel(dagTip.soort)}</div>
       <div class="gr-tip-meta">
-        <span>Regio: {huidigeRegio ? getStreekLabel(huidigeRegio) : "Onbekend"}</span>
-        <span>Binnen {TIP_MAX_AFSTAND_KM} km</span>
+        <span class="gr-tip-chip ui-chip ui-chip--muted">Regio: {huidigeRegio ? getStreekLabel(huidigeRegio) : "Onbekend"}</span>
+        <span class="gr-tip-chip ui-chip ui-chip--muted">Binnen {TIP_MAX_AFSTAND_KM} km</span>
         {#if regioAfstand !== null}
-          <span>GPS match: {regioAfstand.toFixed(1)} km</span>
+          <span class="gr-tip-chip ui-chip ui-chip--muted">GPS match: {regioAfstand.toFixed(1)} km</span>
         {/if}
         {#if isFranzi}
-          <span>Franzi-filter: vegetarisch of vis</span>
+          <span class="gr-tip-chip ui-chip ui-chip--muted">Franzi-filter: vegetarisch of vis</span>
         {/if}
       </div>
     {:else}
@@ -416,7 +478,7 @@
       onclick={() => (toonFilters = !toonFilters)}
       aria-label="Toon filters"
     >
-      Filter
+      Filters
       {#if actieveFilters > 0}
         <span class="gr-filter-badge">{actieveFilters}</span>
       {/if}
@@ -430,7 +492,7 @@
         <div class="gr-pills">
           {#each Object.entries(gerechtenDieetLabels) as [key, val]}
             <button class="gr-pill" class:active={filterDieet === key} onclick={() => (filterDieet = key)}>
-              {val.emoji} {val.label}
+              {val.label}
             </button>
           {/each}
         </div>
@@ -441,7 +503,7 @@
         <div class="gr-pills">
           {#each Object.entries(gerechtenSmaakLabels) as [key, val]}
             <button class="gr-pill" class:active={filterSmaak === key} onclick={() => (filterSmaak = key)}>
-              {val.emoji} {val.label}
+              {val.label}
             </button>
           {/each}
         </div>
@@ -452,7 +514,7 @@
         <div class="gr-pills">
           {#each Object.entries(gerechtenSoortLabels) as [key, val]}
             <button class="gr-pill" class:active={filterSoort === key} onclick={() => (filterSoort = key)}>
-              {val.emoji} {val.label}
+              {val.label}
             </button>
           {/each}
         </div>
@@ -463,7 +525,7 @@
         <div class="gr-pills">
           {#each Object.entries(gerechtenStreekLabels) as [key, val]}
             <button class="gr-pill" class:active={filterStreek === key} onclick={() => (filterStreek = key)}>
-              {val.emoji} {val.label}
+              {val.label}
             </button>
           {/each}
         </div>
@@ -500,6 +562,7 @@
         currentUser={appState.gebruiker}
         foto={fotos[gerecht.id]}
         groteFoto={fotosGroot[gerecht.id]}
+        fotoStatus={fotoStatusById[gerecht.id] || "loading"}
         isExpanded={expandedGerecht === gerecht.id}
         onToggle={() => (expandedGerecht = expandedGerecht === gerecht.id ? null : gerecht.id)}
       />
@@ -518,7 +581,7 @@
   .gr-page {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--ui-space-3);
   }
 
   .gr-tip-card {
@@ -538,7 +601,7 @@
   .gr-tip-label {
     font-size: var(--font-size-xs);
     color: #1e3a8a;
-    font-weight: 700;
+    font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
@@ -546,13 +609,13 @@
   .gr-tip-refresh {
     width: auto;
     min-height: var(--ui-touch-compact);
-    border-radius: 999px;
+    border-radius: 10px;
     border: 1px solid #93c5fd;
     background: rgba(255, 255, 255, 0.7);
     color: #1d4ed8;
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    padding: 0 10px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
+    padding: 0 12px;
   }
 
   .gr-tip-refresh:disabled {
@@ -561,15 +624,16 @@
 
   .gr-tip-name {
     margin-top: 6px;
-    font-size: 1rem;
-    font-weight: 800;
+    font-size: var(--font-size-lg);
+    font-weight: var(--ui-weight-heavy);
     color: #0f172a;
   }
 
   .gr-tip-sub {
     margin-top: 2px;
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
     color: #334155;
+    line-height: var(--ui-line-compact);
   }
 
   .gr-tip-meta {
@@ -579,14 +643,10 @@
     gap: 6px;
   }
 
-  .gr-tip-meta span {
-    font-size: 0.72rem;
-    padding: 4px 8px;
-    border-radius: 999px;
+  .gr-tip-chip {
     background: rgba(255, 255, 255, 0.66);
     color: #1e3a8a;
     border: 1px solid #bfdbfe;
-    font-weight: 700;
   }
 
   .gr-tip-empty {
@@ -596,7 +656,7 @@
     background: rgba(255, 255, 255, 0.66);
     color: #1e3a8a;
     border: 1px dashed #93c5fd;
-    font-size: 0.82rem;
+    font-size: var(--font-size-sm);
     line-height: 1.35;
   }
 
@@ -604,26 +664,34 @@
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
+    align-items: stretch;
   }
 
   .gr-zoek {
     margin: 0;
-    min-height: 44px;
+    min-height: var(--ui-touch-min);
     border-radius: 12px;
     border: 1.5px solid var(--input-border);
+    padding-inline: 12px;
+    align-self: stretch;
   }
 
   .gr-filter-toggle {
     min-width: 92px;
-    min-height: 44px;
-    padding: 0 10px;
+    min-height: var(--ui-touch-min);
+    padding: 0 14px;
     border-radius: 12px;
     border: 1.5px solid var(--input-border);
     background: var(--card-bg);
     color: var(--tekst);
     position: relative;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
   }
 
   .gr-filter-toggle.actief {
@@ -641,7 +709,7 @@
     border-radius: 999px;
     background: #ef4444;
     color: white;
-    font-size: 0.68rem;
+    font-size: var(--font-size-xs);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -660,9 +728,9 @@
   }
 
   .gr-filter-title {
-    font-size: 0.74rem;
+    font-size: var(--font-size-xs);
     color: #64748b;
-    font-weight: 700;
+    font-weight: var(--ui-weight-bold);
     text-transform: uppercase;
     margin-bottom: 6px;
   }
@@ -678,10 +746,14 @@
     background: #fff;
     color: #475569;
     border-radius: 999px;
-    padding: 7px 12px;
-    font-size: 0.8rem;
+    min-height: var(--ui-touch-compact);
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
     line-height: 1;
-    font-weight: 600;
+    font-weight: var(--ui-weight-semibold);
   }
 
   .gr-pill.active {
@@ -693,14 +765,16 @@
   .gr-reset {
     margin-top: 2px;
     width: 100%;
+    min-height: var(--ui-touch-min);
     border-radius: 10px;
     background: #fee2e2;
     color: #991b1b;
-    font-weight: 700;
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-bold);
   }
 
   .gr-resultaten {
-    font-size: 0.84rem;
+    font-size: var(--font-size-sm);
     color: #64748b;
     padding: 0 2px;
   }
@@ -718,6 +792,38 @@
     background: var(--card-bg);
     color: #64748b;
     box-shadow: 0 2px 10px var(--card-shadow);
+  }
+
+  @media (min-width: 1100px) {
+    .gr-page {
+      gap: var(--ui-space-4);
+    }
+    .gr-tip-card,
+    .gr-filters-card {
+      padding: var(--ui-space-4);
+    }
+    .gr-tip-name {
+      font-size: var(--font-size-xl);
+    }
+    .gr-tip-sub,
+    .gr-resultaten {
+      font-size: var(--font-size-md);
+    }
+    .gr-zoek {
+      min-height: 48px;
+      font-size: var(--font-size-md);
+      padding-inline: 14px;
+    }
+    .gr-filter-toggle {
+      min-height: 48px;
+      min-width: 108px;
+      font-size: var(--font-size-md);
+    }
+    .gr-pill {
+      min-height: 42px;
+      padding-inline: 14px;
+      font-size: var(--font-size-md);
+    }
   }
 
   :global(html.dark) .gr-tip-card {
@@ -743,7 +849,7 @@
     color: #bfdbfe;
   }
 
-  :global(html.dark) .gr-tip-meta span {
+  :global(html.dark) .gr-tip-chip {
     background: rgba(15, 23, 42, 0.5);
     border-color: #334155;
     color: #bfdbfe;

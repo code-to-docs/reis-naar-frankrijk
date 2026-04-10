@@ -118,6 +118,15 @@ export type WildlifeCategorie = "roofvogel" | "zoogdier" | "reptiel_amfibie" | "
 export type WildlifeRegio = "lozere" | "cantal" | "pyrenees";
 export type WildlifeZeldzaamheid = 1 | 2 | 3;
 
+export interface WildlifeProfile {
+    feitje: string;
+    gewicht: string;
+    lengte: string;
+    leeftijd: string;
+    voeding: string;
+    actief: string;
+}
+
 export interface Wildlife {
     id: string;
     naam: string;

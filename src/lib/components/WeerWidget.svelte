@@ -126,15 +126,15 @@
   }
   .datum-dag {
     font-size: clamp(1.85rem, 5.4vw, 2.2rem);
-    font-weight: 800;
-    color: #1a5276;
+    font-weight: var(--ui-weight-heavy);
+    color: var(--heading);
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
   .weer-card {
     background: var(--card-bg);
-    border-radius: 18px;
-    padding: 16px 14px 14px;
+    border-radius: var(--radius-lg);
+    padding: var(--ui-space-4);
     margin-bottom: 12px;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
     border: 1px solid var(--border-subtle);
@@ -148,9 +148,9 @@
     gap: 8px;
   }
   .weer-titel {
-    font-weight: 800;
-    font-size: 1.55rem;
-    color: #0f172a;
+    font-weight: var(--ui-weight-heavy);
+    font-size: var(--font-size-xl);
+    color: var(--heading);
     letter-spacing: -0.02em;
     line-height: 1;
   }

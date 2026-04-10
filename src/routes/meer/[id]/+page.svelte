@@ -59,10 +59,18 @@
     padding: 0 0 10px 0;
   }
   .terug-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 16px; background: var(--blauw);
-    color: white; border: none; border-radius: 10px;
-    font-size: 0.9rem; font-weight: 500; cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--btn-height-compact);
+    padding: 0 14px;
+    background: color-mix(in srgb, var(--card-bg) 86%, #e8f2fc);
+    color: var(--blauw);
+    border: 1px solid color-mix(in srgb, var(--input-border) 82%, #b9d2ed);
+    border-radius: var(--btn-radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--ui-weight-semibold);
+    cursor: pointer;
     text-decoration: none;
   }
   .terug-btn:active { opacity: 0.85; }

@@ -39,6 +39,27 @@
   --ui-touch-compact: 40px;
   --ui-form-gap: 10px;
   --ui-actions-gap: 10px;
+  --ui-btn-height: 44px;
+  --ui-btn-height-compact: 40px;
+  --ui-btn-radius: 12px;
+  --ui-btn-padding-inline: 16px;
+  --ui-btn-gap: 8px;
+  --ui-btn-font-size: var(--ui-text-md);
+  --ui-btn-font-weight: var(--ui-weight-bold);
+
+  /* Widgets: heading, subtitle and body sizing should stay token-based.
+     Variatie mag vooral in accentkleur, illustratie en achtergrond - niet in typografie. */
+  --ui-widget-padding: 18px;
+  --ui-widget-gap: 12px;
+  --ui-widget-kicker-size: var(--ui-text-xs);
+  --ui-widget-title-size: var(--ui-text-xl);
+  --ui-widget-name-size: clamp(1.55rem, 3.4vw, 2rem);
+  --ui-widget-subtitle-size: var(--ui-text-md);
+  --ui-widget-copy-size: var(--ui-text-sm);
+  --ui-widget-meta-size: var(--ui-text-sm);
+  --ui-widget-metric-label-size: var(--ui-text-xs);
+  --ui-widget-metric-value-size: var(--ui-text-sm);
+  --ui-widget-min-height: 210px;
 
   /* Readability */
   --ui-measure-reading: 68ch;

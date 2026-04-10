@@ -75,18 +75,18 @@
 
 <style>
   .meer-menu { padding-top: 12px; }
-  .meer-groep { margin-bottom: 16px; }
+  .meer-groep { margin-bottom: var(--ui-space-4); }
   .meer-groep-label {
-    font-size: var(--font-size-xs); font-weight: 600; color: var(--nav-text);
+    font-size: var(--font-size-xs); font-weight: var(--ui-weight-bold); color: var(--nav-text);
     text-transform: uppercase; letter-spacing: 0.04em; padding: 0 4px 6px 4px;
   }
   .meer-groep-items {
-    background: var(--card-bg); border-radius: 14px; overflow: hidden;
+    background: var(--card-bg); border-radius: var(--radius-md); overflow: hidden;
     box-shadow: 0 1px 4px var(--card-shadow);
   }
   .meer-item {
     width: 100%; display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px; background: none; border: none;
+    min-height: 58px; padding: 0 16px; background: none; border: none;
     border-bottom: 1px solid var(--border-subtle); cursor: pointer;
     text-align: left; transition: background 0.15s ease;
     color: var(--nav-text); text-decoration: none;
@@ -94,26 +94,19 @@
   .meer-item:last-child { border-bottom: none; }
   .meer-item:active { background: var(--hover-bg); }
   .meer-emoji { font-size: 1.4rem; flex-shrink: 0; }
-  .meer-label { flex: 1; font-size: var(--font-size-sm); font-weight: 500; color: var(--tekst); }
+  .meer-label { flex: 1; font-size: var(--font-size-md); font-weight: var(--ui-weight-medium); color: var(--tekst); }
   .meer-arrow { flex-shrink: 0; }
-  
-  .dark-toggle-item {
-    width: 100%; display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px; background: none; border: none; cursor: pointer;
-    text-align: left;
-  }
-  .dark-toggle-emoji { font-size: 1.4rem; flex-shrink: 0; }
-  .dark-toggle-label { flex: 1; font-size: var(--font-size-sm); font-weight: 500; color: var(--tekst); }
-  .toggle-track { width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; position: relative; transition: background 0.2s; }
-  .toggle-track.active { background: #3b82f6; }
-  .toggle-thumb { position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-  .toggle-track.active .toggle-thumb { transform: translateX(20px); }
-  
+
   .meer-uitloggen {
-    width: 100%; padding: 14px; background: none;
-    border: 1.5px solid #f5b3ac; border-radius: 14px;
-    color: var(--rood); font-size: var(--font-size-sm); font-weight: 500;
-    cursor: pointer; margin-top: 8px;
+    width: 100%;
+    background: color-mix(in srgb, var(--card-bg) 88%, #fff0ef);
+    border: 1px solid color-mix(in srgb, var(--rood) 30%, var(--input-border));
+    border-radius: var(--radius-md);
+    color: var(--rood);
+    font-size: var(--font-size-md);
+    font-weight: var(--ui-weight-semibold);
+    cursor: pointer;
+    margin-top: 8px;
   }
   .meer-uitloggen:active { background: var(--hover-bg); }
 </style>

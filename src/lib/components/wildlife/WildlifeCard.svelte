@@ -4,6 +4,7 @@
   import { toonSnackbar } from "$lib/stores.svelte.js";
   import { haptic } from "$lib/utils/haptic.js";
   import { categorieLabels, regioLabels, zeldzaamheidLabels } from "$lib/wildlifeData.js";
+  import { getWildlifeProfile } from "$lib/wildlifeProfiles.js";
   import { E } from "$lib/emojis.js";
   import { formatFullDate, formatTime } from "$lib/utils/formatters.js";
   import type { Spotting, Wildlife, WildlifeRegio, WildlifeZeldzaamheid } from "$lib/types.js";
@@ -37,6 +38,7 @@
   let toonFullscreenFoto = $state(false);
 
   let groteFotoSrc = $derived(groteFoto || (foto ? foto.replace(/\/\d+px-/, "/1600px-") : null));
+  let profiel = $derived.by(() => getWildlifeProfile(dier.id));
 
   // Reset error state when foto prop changes
   $effect(() => {
@@ -102,6 +104,11 @@
   function getCategorieEmoji() {
     const categorie = dier.categorie as keyof typeof categorieLabels;
     return categorieLabels[categorie]?.emoji || E.POOT;
+  }
+
+  function getCategorieLabel() {
+    const categorie = dier.categorie as keyof typeof categorieLabels;
+    return categorieLabels[categorie]?.label || "Wildlife";
   }
 
   function getZeldzaamheidMeta(level: WildlifeZeldzaamheid) {
@@ -252,6 +259,36 @@
         <div class="wl-name-row"><strong>NL</strong> {dier.naam}</div>
         <div class="wl-name-row"><strong>DE</strong> {dier.duits}</div>
         <div class="wl-name-row"><strong>LAT</strong> <i>{dier.latijn}</i></div>
+        <div class="wl-name-row"><strong>TYPE</strong> {getCategorieLabel()}</div>
+      </div>
+
+      <div class="wl-insights">
+        <div class="wl-fact-card">
+          <strong>{E.TIP} Interessant feitje</strong>
+          <p class="wl-beschrijving">{profiel.feitje}</p>
+        </div>
+        <div class="wl-metrics-grid">
+          <div class="wl-metric">
+            <span class="wl-metric-label">Gewicht</span>
+            <span class="wl-metric-value">{profiel.gewicht}</span>
+          </div>
+          <div class="wl-metric">
+            <span class="wl-metric-label">Lengte</span>
+            <span class="wl-metric-value">{profiel.lengte}</span>
+          </div>
+          <div class="wl-metric">
+            <span class="wl-metric-label">Leeftijd</span>
+            <span class="wl-metric-value">{profiel.leeftijd}</span>
+          </div>
+          <div class="wl-metric">
+            <span class="wl-metric-label">Actief</span>
+            <span class="wl-metric-value">{profiel.actief}</span>
+          </div>
+          <div class="wl-metric wl-metric--wide">
+            <span class="wl-metric-label">Voeding</span>
+            <span class="wl-metric-value">{profiel.voeding}</span>
+          </div>
+        </div>
       </div>
 
       <div class="wl-section">
@@ -299,7 +336,7 @@
           </div>
           <input type="text" class="wl-spot-input" placeholder="{E.NOTITIE} Notitie (optioneel)" bind:value={spotNotitie} />
           <button class="wl-spot-btn btn-save" onclick={saveSpottingDetails}>
-            {E.CHECK} {dier.naam} gespot!
+            {dier.naam} gespot!
           </button>
         </div>
       {:else}
@@ -476,6 +513,51 @@
     font-size: var(--font-size-md);
     color: #1e293b;
   }
+  .wl-insights {
+    display: grid;
+    gap: 12px;
+  }
+  .wl-fact-card {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.45), rgba(255, 255, 255, 0.92));
+  }
+  .wl-fact-card strong {
+    font-size: var(--font-size-sm);
+    color: var(--heading);
+  }
+  .wl-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .wl-metric {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+  .wl-metric--wide {
+    grid-column: 1 / -1;
+  }
+  .wl-metric-label {
+    font-size: var(--font-size-xs);
+    color: var(--nav-text);
+    font-weight: var(--ui-weight-bold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .wl-metric-value {
+    font-size: var(--font-size-sm);
+    color: #1e293b;
+    font-weight: var(--ui-weight-semibold);
+    line-height: var(--ui-line-compact);
+  }
   .wl-beschrijving {
     font-size: var(--font-size-sm);
     line-height: var(--ui-line-body);
@@ -511,12 +593,12 @@
   .wl-locatie-wrap { display: flex; gap: 8px; align-items: center; }
   .wl-loc-input { flex: 1; }
   .wl-loc-btn {
-    width: var(--ui-touch-compact);
-    height: var(--ui-touch-compact);
+    width: var(--btn-height-compact);
+    height: var(--btn-height-compact);
     flex-shrink: 0;
     background: #EBF5FB;
     border: 1px solid var(--input-border);
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -537,12 +619,12 @@
     cursor: pointer;
   }
   .wl-unspot {
-    min-height: var(--ui-touch-compact);
+    min-height: var(--btn-height-compact);
     width: fit-content;
-    padding: 8px 16px;
+    padding: 0 16px;
     background: none;
     border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     font-size: var(--font-size-sm);
     color: #64748b;
     cursor: pointer;
@@ -553,8 +635,8 @@
   .wl-unspot:active { border-color: #ef4444; color: #ef4444; }
   .wl-links { display: flex; gap: 8px; flex-wrap: wrap; }
   .wl-link {
-    min-height: 32px;
-    padding: 6px 14px;
+    min-height: var(--btn-height-compact);
+    padding: 0 14px;
     border-radius: 999px;
     border: 1px solid var(--input-border);
     font-size: var(--font-size-sm);
@@ -597,6 +679,9 @@
     .wl-name-row strong {
       width: 48px;
     }
+    .wl-insights {
+      gap: 14px;
+    }
   }
 
   @media (min-width: 1100px) {
@@ -619,6 +704,9 @@
     .wl-beschrijving {
       font-size: var(--font-size-md);
     }
+    .wl-metric-value {
+      font-size: var(--font-size-md);
+    }
     .wl-spotting-row {
       font-size: var(--font-size-md);
     }
@@ -631,9 +719,14 @@
   :global(html.dark) .wl-detail { border-top-color: #334155; }
   :global(html.dark) .wl-grote-beeld { background: #0f172a; }
   :global(html.dark) .wl-names { background: #1e293b; }
+  :global(html.dark) .wl-fact-card { background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), #111827); border-color: #334155; }
+  :global(html.dark) .wl-metric { background: #111827; border-color: #334155; }
   :global(html.dark) .wl-name-row strong { color: #cbd5e1; }
   :global(html.dark) .wl-name-row { color: #94a3b8; }
+  :global(html.dark) .wl-fact-card strong,
   :global(html.dark) .wl-section strong { color: #cbd5e1; }
+  :global(html.dark) .wl-metric-label { color: #94a3b8; }
+  :global(html.dark) .wl-metric-value,
   :global(html.dark) .wl-beschrijving { color: #94a3b8; }
   :global(html.dark) .wl-spotting { background: #0f2d1c; }
   :global(html.dark) .wl-spotting-head { color: #34d399; }

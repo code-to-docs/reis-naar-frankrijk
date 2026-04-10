@@ -145,7 +145,7 @@
         {/if}
         <small class="gl-meta">({item.door})</small>
       </div>
-      <button class="gl-delete" onclick={() => verwijder(item.id)}>{E.PRULLENBAK}</button>
+      <button class="gl-delete btn-icon btn-ghost" onclick={() => verwijder(item.id)}>{E.PRULLENBAK}</button>
     </div>
   {/each}
 
@@ -165,7 +165,7 @@
         <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
         <div class="gl-form-actions">
           <button type="submit" class="btn-save gl-submit">Opslaan</button>
-          <button type="button" class="btn-danger gl-cancel" onclick={() => toonForm = false}>{E.X}</button>
+          <button type="button" class="btn-danger btn-icon gl-cancel" onclick={() => toonForm = false}>{E.X}</button>
         </div>
       </form>
     </div>
@@ -185,25 +185,25 @@
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
-  .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: 0.9rem; }
+  .gl-voortgang { color: var(--nav-text); margin-bottom: 4px; font-size: var(--font-size-sm); }
   .progress-fill { background: var(--groen); }
   .gl-item-content { flex: 1; min-width: 0; }
-  .gl-notitie { color: var(--nav-text); font-size: 14px; margin: 2px 0; }
+  .gl-notitie { color: var(--nav-text); font-size: var(--font-size-sm); margin: 2px 0; }
   .gl-maps-link {
     display: inline-flex; align-items: center; gap: 6px;
-    color: var(--blauw); font-size: 13px; text-decoration: none;
-    background: var(--hover-bg); padding: 4px 10px; border-radius: 12px;
+    color: var(--blauw); font-size: var(--font-size-xs); text-decoration: none;
+    background: var(--hover-bg); padding: 4px 10px; border-radius: 999px;
     margin-top: 4px; border: 1px solid var(--border-subtle);
   }
   .gl-maps-link:active { opacity: 0.8; }
   .gl-meta { color: var(--nav-text); display: block; margin-top: 2px; }
-  .gl-delete { background: none; font-size: 18px; padding: 6px; cursor: pointer; border: none; opacity: 0.7; }
+  .gl-delete { font-size: 18px; cursor: pointer; opacity: 0.7; }
   .gl-delete:active { opacity: 1; }
   .gl-leeg { text-align: center; color: var(--nav-text); margin: 32px 0; }
   .gl-form-actions { display: flex; gap: 8px; }
   .gl-submit { flex: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: bold; width: 48px; }
-  .gl-add-btn { width: 100%; margin-top: 12px; padding: 14px; font-size: 18px; font-weight: 600; }
+  .gl-add-btn { width: 100%; margin-top: 12px; font-size: var(--font-size-lg); font-weight: var(--ui-weight-semibold); }
 
   @media (min-width: 1100px) {
     .gl-title.desktop-hidden {

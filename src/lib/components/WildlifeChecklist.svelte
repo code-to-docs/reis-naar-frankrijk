@@ -193,7 +193,7 @@
   <div class="wl-zoek-rij">
     <input type="text" class="wl-zoek" placeholder="{E.ZOEK} Zoek op naam, Frans, info..." bind:value={zoek} />
     <button class="wl-filter-toggle" class:actief={toonFilters || aantalActieveFilters > 0} onclick={() => toonFilters = !toonFilters}>
-      {E.FILTER}
+      Filters
       {#if aantalActieveFilters > 0}
         <span class="wl-filter-badge">{aantalActieveFilters}</span>
       {/if}
@@ -271,27 +271,33 @@
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
-    align-items: center;
+    align-items: stretch;
   }
   .wl-zoek {
-    min-height: 44px;
+    min-height: var(--ui-touch-min);
     margin: 0;
     border: 1.5px solid var(--input-border);
     border-radius: 12px;
     background: var(--input-bg);
+    padding-inline: 12px;
+    align-self: stretch;
   }
   .wl-filter-toggle {
     min-height: var(--ui-touch-min);
-    padding: 10px 12px;
+    min-width: 92px;
+    padding: 0 14px;
     border-radius: 12px;
     border: 1.5px solid var(--input-border);
     background: var(--card-bg);
     color: var(--tekst);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     font-size: var(--font-size-sm);
     font-weight: var(--ui-weight-bold);
+    line-height: 1;
+    align-self: stretch;
   }
   .wl-filter-toggle.actief {
     background: #1a5276;
@@ -391,6 +397,7 @@
     }
     .wl-filter-toggle {
       min-height: 48px;
+      min-width: 108px;
       padding-inline: 16px;
       font-size: var(--font-size-md);
     }

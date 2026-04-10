@@ -1,4 +1,5 @@
 <script>
+  import { page } from "$app/stores";
   import { onMount } from "svelte";
   import { addDoc, collection, serverTimestamp } from "firebase/firestore";
   import { db } from "$lib/firebase.js";
@@ -13,6 +14,7 @@
   let omschrijving = $state("");
   let toonForm = $state(false);
   let isMounted = $state(false);
+  let autoOpenHandled = $state(false);
 
   /** @param {string} raw */
   function parseBedrag(raw) {
@@ -54,6 +56,20 @@
 
   onMount(() => {
     isMounted = true;
+  });
+
+  $effect(() => {
+    if (!isMounted || autoOpenHandled) return;
+    if ($page.url.searchParams.get("nieuw") !== "1") return;
+
+    toonForm = true;
+    autoOpenHandled = true;
+
+    if (typeof window !== "undefined") {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.delete("nieuw");
+      window.history.replaceState(window.history.state, "", `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+    }
   });
 </script>
 
@@ -98,7 +114,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn-save action-save" disabled={!kanOpslaan}>Opslaan</button>
-        <button type="button" class="action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
+        <button type="button" class="btn-danger btn-icon action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
           {E.X}
         </button>
       </div>
@@ -118,11 +134,12 @@
     right: 20px;
     width: 56px;
     height: 56px;
-    border-radius: 16px;
+    min-height: 56px;
+    border-radius: var(--radius-lg);
     background: linear-gradient(135deg, #0a3764, #0f4d84);
     color: white;
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: var(--ui-weight-bold);
     border: none;
     box-shadow: 0 8px 24px var(--card-shadow);
     cursor: pointer;
@@ -156,8 +173,8 @@
     left: 16px;
     right: 16px;
     background: var(--card-bg);
-    border-radius: 18px;
-    padding: 20px;
+    border-radius: var(--radius-lg);
+    padding: var(--ui-space-5);
     box-shadow: 0 12px 32px var(--card-shadow);
     border: 1px solid var(--border-subtle);
     max-height: min(76dvh, 540px);
@@ -186,8 +203,8 @@
     gap: 3px;
   }
   .form-header h3 {
-    font-size: 1.15rem;
-    font-weight: 800;
+    font-size: var(--font-size-lg);
+    font-weight: var(--ui-weight-heavy);
     line-height: 1.1;
     letter-spacing: -0.01em;
     color: var(--heading);
@@ -207,7 +224,7 @@
     font-size: var(--font-size-xs);
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    font-weight: 700;
+    font-weight: var(--ui-weight-bold);
     color: var(--nav-text);
   }
   .field-input,
@@ -242,13 +259,8 @@
   }
   .action-cancel {
     width: 50px;
-    min-height: 44px;
-    border-radius: 10px;
-    background: var(--rood);
-    color: #fff;
+    min-width: 50px;
     font-size: 1.25rem;
-    font-weight: 700;
-    border: none;
     padding: 0;
     line-height: 1;
   }
@@ -260,7 +272,7 @@
       width: auto;
       min-width: 176px;
       height: 54px;
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       padding: 0 16px;
       gap: 8px;
       font-size: 1rem;
