@@ -1,6 +1,7 @@
 import { fireEvent, render, waitFor } from "@testing-library/svelte";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import WildlifeCard from "./WildlifeCard.svelte";
+import type { Wildlife } from "$lib/types.js";
 
 const firestore = vi.hoisted(() => ({
   deleteDoc: vi.fn(),
@@ -45,7 +46,7 @@ vi.mock("./locationUtils.js", () => ({
 }));
 
 describe("WildlifeCard", () => {
-  const dier = {
+  const dier: Wildlife = {
     id: "vos",
     naam: "Vos",
     duits: "Fuchs",
@@ -57,7 +58,7 @@ describe("WildlifeCard", () => {
     regios: ["lozere"],
     zeldzaamheid: 1,
     geluid: null
-  } as const;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();

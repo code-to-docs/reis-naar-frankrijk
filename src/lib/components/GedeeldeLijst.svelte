@@ -10,6 +10,9 @@
   import { appState, toonSnackbar } from '$lib/stores.svelte.js';
   import { E } from '$lib/emojis.js';
   import type { LijstItem } from '$lib/types.js';
+  import Button from '$lib/components/ui/Button.svelte';
+  import Card from '$lib/components/ui/Card.svelte';
+  import Input from '$lib/components/ui/Input.svelte';
 
   type GedeeldLijstItem = LijstItem & { id: string };
 
@@ -174,13 +177,15 @@
         {/if}
         <small class="gl-meta">({item.door})</small>
       </div>
-      <button
-        class="gl-delete btn-icon btn-danger"
+      <Button
+        variant="destructive"
+        size="sm"
+        class="gl-trash-btn"
         aria-label={`Verwijder ${item.naam}`}
         onclick={() => verwijder(item.id)}
       >
         {E.PRULLENBAK}
-      </button>
+      </Button>
     </div>
   {/each}
 
@@ -191,30 +196,32 @@
   {/if}
 
   {#if toonForm}
-    <div class="card">
-      <form onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
-        <input bind:value={nieuwItem} placeholder={placeholder} />
+    <Card class="gl-form-card">
+      <form class="gl-form" onsubmit={(e) => { e.preventDefault(); voegToe(); }}>
+        <Input bind:value={nieuwItem} placeholder={placeholder} />
         {#if metLink}
-          <input bind:value={linkVeld} type="url" placeholder="Google Maps link (optioneel)" />
+          <Input bind:value={linkVeld} type="url" placeholder="Google Maps link (optioneel)" />
         {/if}
-        <textarea bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
+        <textarea class="gl-textarea" bind:value={extraVeld} placeholder="Notities (optioneel)" rows="2"></textarea>
         <div class="gl-form-actions">
-          <button type="submit" class="btn-success gl-submit">Opslaan</button>
-          <button
+          <Button type="submit" variant="success" class="gl-submit">Opslaan</Button>
+          <Button
             type="button"
-            class="btn-danger btn-icon gl-cancel"
+            variant="ghost"
+            size="sm"
+            class="gl-cancel"
             aria-label="Sluit formulier"
             onclick={() => toonForm = false}
           >
             {E.X}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   {:else}
-    <button class="btn-primary gl-add-btn" onclick={() => toonForm = true}>
+    <Button class="gl-add-btn" variant="primary" fullWidth onclick={() => toonForm = true}>
       + Toevoegen
-    </button>
+    </Button>
   {/if}
 </div>
 
@@ -239,13 +246,36 @@
   }
   .gl-maps-link:active { opacity: 0.8; }
   .gl-meta { color: var(--nav-text); display: block; margin-top: var(--space-1); }
-  .gl-delete { font-size: var(--text-md); cursor: pointer; opacity: 0.7; }
-  .gl-delete:active { opacity: 1; }
+  :global(.gl-trash-btn) {
+    min-width: var(--ui-btn-height-compact);
+    padding-inline: var(--space-2);
+    opacity: 0.75;
+  }
+  :global(.gl-trash-btn:active) {
+    opacity: 1;
+  }
   .gl-leeg { text-align: center; color: var(--nav-text); margin: var(--space-8) 0; }
+  .gl-form {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .gl-textarea {
+    min-height: calc(var(--ui-touch-min) * 1.6);
+    margin: 0;
+  }
   .gl-form-actions { display: flex; gap: var(--space-2); }
-  .gl-submit { flex: 1; font-weight: var(--weight-semibold); display: flex; align-items: center; justify-content: center; gap: var(--space-1-5); }
-  .gl-cancel { display: flex; align-items: center; justify-content: center; font-weight: var(--weight-bold); width: var(--space-12); }
-  .gl-add-btn { width: 100%; margin-top: var(--space-3); font-size: var(--text-lg); font-weight: var(--ui-weight-semibold); }
+  :global(.gl-submit) {
+    flex: 1;
+  }
+  :global(.gl-cancel) {
+    min-width: var(--ui-touch-min);
+    padding-inline: var(--space-2);
+  }
+  :global(.gl-add-btn) {
+    margin-top: var(--space-3);
+    font-size: var(--text-lg);
+    font-weight: var(--ui-weight-semibold);
+  }
 
   @media (min-width: 1100px) {
     .gl-title.desktop-hidden {

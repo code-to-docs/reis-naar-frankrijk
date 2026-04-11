@@ -102,8 +102,13 @@ function collectSemanticViolations() {
   const files = globSync("src/**/*.svelte", { cwd: ROOT, ignore: ["**/node_modules/**"] });
   let count = 0;
   for (const rel of files) {
+    const normalizedRel = rel.replace(/\\/g, "/");
     const content = fs.readFileSync(path.join(ROOT, rel), "utf8");
     for (const rule of SEMANTIC_RULES) {
+      if (normalizedRel.includes("components/ui/") && rule.name === "Disabled states") {
+        continue;
+      }
+
       for (const pattern of rule.contextPatterns) {
         pattern.lastIndex = 0;
         let match;

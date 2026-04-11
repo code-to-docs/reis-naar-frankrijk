@@ -13,6 +13,9 @@
   import BudgetSettlementCard from "./budget/BudgetSettlementCard.svelte";
   import { budgetCategorieen as cats } from "$lib/budgetCategories.js";
   import { E } from "$lib/emojis.js";
+  import Button from "$lib/components/ui/Button.svelte";
+  import Card from "$lib/components/ui/Card.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
   import { 
     formatEuro, parseLocalizedNumber
   } from "$lib/utils/formatters.js";
@@ -169,35 +172,39 @@
   />
 
   {#if toonBudgetEdit}
-    <div class="card budget-edit-card">
+    <Card class="budget-edit-card">
       <div class="budget-edit-titel">Budget aanpassen</div>
       <form onsubmit={(e) => { e.preventDefault(); slabudgetOp(); }}>
         <div class="budget-edit-row">
-          <input
+          <Input
             type="text"
             inputmode="decimal"
             bind:value={nieuwBudget}
             placeholder="Nieuw budget"
-            class="input budget-edit-input"
+            class="budget-edit-input"
           />
-          <button type="submit" class="btn-success budget-edit-save">OK</button>
-          <button
+          <Button type="submit" variant="success" class="budget-edit-apply">OK</Button>
+          <Button
             type="button"
-            class="btn-secondary btn-icon budget-edit-cancel"
+            variant="secondary"
+            size="sm"
+            class="budget-edit-close"
             aria-label="Annuleer budget bewerken"
             onclick={() => toonBudgetEdit = false}
           >
             X
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   {/if}
 
   {#if laatsteVerwijderd}
     <div class="undo-bar">
       <span>Uitgave verwijderd</span>
-      <button class="undo-btn" onclick={ongedaanMaken}>{E.UNDO} Ongedaan maken</button>
+      <Button class="undo-btn" size="sm" variant="tertiary" onclick={ongedaanMaken}>
+        {E.UNDO} Ongedaan maken
+      </Button>
     </div>
   {/if}
 
@@ -244,7 +251,7 @@
 <style>
   .budget-page { padding: 0; }
 
-  .budget-edit-card {
+  :global(.budget-edit-card) {
     margin-bottom: var(--space-3);
     padding: var(--space-4);
   }
@@ -258,14 +265,16 @@
     display: flex;
     gap: var(--space-2);
   }
-  .budget-edit-input {
+  :global(.budget-edit-input) {
     flex: 1;
-    padding: var(--padding-input);
-    border-radius: var(--radius-md);
+  }
+  :global(.budget-edit-apply),
+  :global(.budget-edit-close) {
     font-size: var(--text-base);
   }
-  .budget-edit-save, .budget-edit-cancel {
-    font-size: var(--text-base);
+  :global(.budget-edit-close) {
+    min-width: var(--ui-touch-min);
+    padding-inline: var(--space-2);
   }
 
   .undo-bar {
@@ -281,19 +290,16 @@
     border: 1px solid var(--border-accent);
     animation: fadeSlideIn var(--duration-normal) var(--ease-out);
   }
-  .undo-btn {
-    min-height: var(--btn-height-compact);
+  :global(.undo-btn) {
+    min-height: var(--ui-touch-compact);
     background: var(--bg-accent-subtle);
     color: var(--text-accent);
     border: 1px solid var(--border-accent);
-    padding: 0 var(--space-3);
+    padding-inline: var(--space-3);
     border-radius: var(--radius-full);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
-    cursor: pointer;
-    transition: transform var(--duration-fast) var(--ease-default);
   }
-  .undo-btn:active { opacity: 0.7; }
   @keyframes slideUp {
     from { transform: translateY(var(--space-2-5)); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }

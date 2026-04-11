@@ -10,6 +10,9 @@
   import { E } from "$lib/emojis.js";
   import WildlifeStats from "./wildlife/WildlifeStats.svelte";
   import WildlifeCard from "./wildlife/WildlifeCard.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import Card from "$lib/components/ui/Card.svelte";
+  import Input from "$lib/components/ui/Input.svelte";
 
   type WildlifePhotoResult = { id: string; thumb: string; full: string } | { id: string; retry: true } | null;
 
@@ -202,44 +205,48 @@
   <WildlifeStats {aantalGespot} {totaal} {gespotPerc} />
 
   <div class="wl-zoek-rij">
-    <input type="text" class="wl-zoek ui-filter-input" placeholder="{E.ZOEK} Zoek op naam, Frans, info..." bind:value={zoek} />
-    <button class="wl-filter-toggle ui-filter-toggle" class:actief={toonFilters || aantalActieveFilters > 0} onclick={() => toonFilters = !toonFilters}>
+    <Input type="text" class="wl-zoek" placeholder={`${E.ZOEK} Zoek op naam, Frans, info...`} bind:value={zoek} />
+    <Button
+      class={"wl-filter-toggle ui-filter-toggle" + (toonFilters || aantalActieveFilters > 0 ? " actief" : "")}
+      variant="secondary"
+      onclick={() => toonFilters = !toonFilters}
+    >
       Filters
       {#if aantalActieveFilters > 0}
         <span class="wl-filter-badge ui-filter-badge">{aantalActieveFilters}</span>
       {/if}
-    </button>
+    </Button>
   </div>
 
   {#if toonFilters}
-    <div class="wl-filters-card">
+    <Card class="wl-filters-card" padding="sm">
       <div class="wl-filter-rij">
         <div class="wl-pills">
-          <button class="wl-pill" class:active={filterStatus === "alle"} onclick={() => filterStatus = "alle"}>Alle</button>
-          <button class="wl-pill" class:active={filterStatus === "gespot"} onclick={() => filterStatus = "gespot"}>{E.CHECK} Gespot</button>
-          <button class="wl-pill" class:active={filterStatus === "niet"} onclick={() => filterStatus = "niet"}>{E.KRUIS} Niet gespot</button>
+          <Button class={"wl-pill ui-pill" + (filterStatus === "alle" ? " active" : "")} variant="ghost" size="sm" onclick={() => filterStatus = "alle"}>Alle</Button>
+          <Button class={"wl-pill ui-pill" + (filterStatus === "gespot" ? " active" : "")} variant="ghost" size="sm" onclick={() => filterStatus = "gespot"}>{E.CHECK} Gespot</Button>
+          <Button class={"wl-pill ui-pill" + (filterStatus === "niet" ? " active" : "")} variant="ghost" size="sm" onclick={() => filterStatus = "niet"}>{E.KRUIS} Niet gespot</Button>
         </div>
       </div>
       <div class="wl-filter-rij">
         <div class="wl-pills">
-          <button class="wl-pill" class:active={filterRegio === "alle"} onclick={() => filterRegio = "alle"}>Alle</button>
+          <Button class={"wl-pill ui-pill" + (filterRegio === "alle" ? " active" : "")} variant="ghost" size="sm" onclick={() => filterRegio = "alle"}>Alle</Button>
           {#each regioEntries as [key, val] (key)}
-            <button class="wl-pill" class:active={filterRegio === key} onclick={() => filterRegio = key}>{val.emoji} {val.label}</button>
+            <Button class={"wl-pill ui-pill" + (filterRegio === key ? " active" : "")} variant="ghost" size="sm" onclick={() => filterRegio = key}>{val.emoji} {val.label}</Button>
           {/each}
         </div>
       </div>
       <div class="wl-filter-rij">
         <div class="wl-pills">
-          <button class="wl-pill" class:active={filterCategorie === "alle"} onclick={() => filterCategorie = "alle"}>Alle</button>
+          <Button class={"wl-pill ui-pill" + (filterCategorie === "alle" ? " active" : "")} variant="ghost" size="sm" onclick={() => filterCategorie = "alle"}>Alle</Button>
           {#each categorieEntries as [key, val] (key)}
-            <button class="wl-pill" class:active={filterCategorie === key} onclick={() => filterCategorie = key}>{val.emoji} {val.label}</button>
+            <Button class={"wl-pill ui-pill" + (filterCategorie === key ? " active" : "")} variant="ghost" size="sm" onclick={() => filterCategorie = key}>{val.emoji} {val.label}</Button>
           {/each}
         </div>
       </div>
       {#if isGefilterd}
-        <button class="wl-reset" onclick={resetFilters}>Filters resetten</button>
+        <Button class="wl-reset" variant="tertiary" fullWidth onclick={resetFilters}>Filters resetten</Button>
       {/if}
-    </div>
+    </Card>
   {/if}
 
   {#if isGefilterd}
@@ -261,10 +268,10 @@
   </div>
 
   {#if gefilterd.length === 0}
-    <div class="wl-leeg">
+    <Card class="wl-leeg" padding="lg">
       <p>Geen dieren gevonden</p>
-      <button class="wl-reset" onclick={resetFilters}>Filters resetten</button>
-    </div>
+      <Button class="wl-reset" variant="tertiary" fullWidth onclick={resetFilters}>Filters resetten</Button>
+    </Card>
   {/if}
 </section>
 
@@ -284,16 +291,20 @@
     gap: var(--space-2);
     align-items: stretch;
   }
-  .wl-zoek {
+  :global(.wl-zoek) {
     align-self: stretch;
   }
-  .wl-filter-toggle {
+  :global(.wl-zoek .ui-input) {
+    border-radius: var(--radius-lg);
+    border-width: 1.5px;
+  }
+  :global(.wl-filter-toggle) {
     align-self: stretch;
   }
   .wl-filter-badge {
     background: color-mix(in srgb, var(--bg-surface) 22%, transparent);
   }
-  .wl-filters-card {
+  :global(.wl-filters-card) {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: var(--space-3);
@@ -306,16 +317,14 @@
     flex-wrap: wrap;
     gap: var(--space-2);
   }
-  .wl-pill {
+  :global(.wl-pill) {
     min-height: var(--ui-touch-compact);
     padding: 0 var(--space-3);
-    display: inline-flex;
-    align-items: center;
     font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
     line-height: 1;
   }
-  .wl-reset {
+  :global(.wl-reset) {
     margin-top: var(--space-3);
     width: 100%;
     min-height: var(--ui-touch-min);
@@ -335,7 +344,7 @@
     flex-direction: column;
     gap: var(--space-2-5);
   }
-  .wl-leeg {
+  :global(.wl-leeg) {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: var(--space-4-5);
@@ -343,37 +352,37 @@
     color: var(--text-secondary);
     box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
   }
-  .wl-leeg p { margin-bottom: var(--space-2-5); }
+  :global(.wl-leeg p) { margin-bottom: var(--space-2-5); }
 
   @media (min-width: 768px) {
     .wl-page {
       gap: var(--ui-space-4);
     }
-    .wl-filter-toggle { padding-inline: var(--space-3-5); }
+    :global(.wl-filter-toggle) { padding-inline: var(--space-3-5); }
   }
 
   @media (min-width: 1100px) {
     .wl-page {
       gap: var(--ui-space-5);
     }
-    .wl-zoek {
+    :global(.wl-zoek) {
       min-height: var(--space-12);
       font-size: var(--text-base);
       padding-inline: var(--space-3-5);
     }
-    .wl-filter-toggle {
+    :global(.wl-filter-toggle) {
       min-height: var(--space-12);
       min-width: var(--space-24);
       padding-inline: var(--space-4);
       font-size: var(--text-base);
     }
-    .wl-filters-card {
+    :global(.wl-filters-card) {
       padding: var(--ui-space-4);
     }
     .wl-filter-rij + .wl-filter-rij {
       margin-top: var(--space-3);
     }
-    .wl-pill {
+    :global(.wl-pill) {
       min-height: var(--ui-touch-compact);
       padding-inline: var(--space-3-5);
       font-size: var(--text-base);
@@ -386,9 +395,9 @@
     }
   }
 
-  :global(html.dark) .wl-filters-card { background: var(--card-bg); border-color: var(--border-strong); }
-  :global(html.dark) .wl-leeg { background: var(--card-bg); color: var(--text-tertiary); }
-  :global(html.dark) .wl-resultaten { color: var(--text-tertiary); }
+  :global(html.dark .wl-filters-card) { background: var(--card-bg); border-color: var(--border-strong); }
+  :global(html.dark .wl-leeg) { background: var(--card-bg); color: var(--text-tertiary); }
+  :global(html.dark .wl-resultaten) { color: var(--text-tertiary); }
 </style>
 
 

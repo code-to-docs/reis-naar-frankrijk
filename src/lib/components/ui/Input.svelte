@@ -15,7 +15,9 @@
     required = false,
     fullWidth = true,
     oninput = undefined,
-    onkeydown = undefined
+    onkeydown = undefined,
+    class: className = "",
+    ...restProps
   } = $props();
 
   const fallbackId = `ui-input-${++inputCounter}`;
@@ -23,7 +25,7 @@
   const describedById = $derived(error ? `${inputId}-error` : help ? `${inputId}-help` : undefined);
 </script>
 
-<div class="ui-field" class:ui-field--full={fullWidth}>
+<div class={`ui-field ${className}`.trim()} class:ui-field--full={fullWidth}>
   {#if label}
     <label class="ui-field__label" for={inputId}>{label}</label>
   {/if}
@@ -41,6 +43,7 @@
     {onkeydown}
     aria-invalid={!!error}
     aria-describedby={describedById}
+    {...restProps}
   />
 
   {#if error}

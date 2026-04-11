@@ -24,6 +24,7 @@
 * `src/lib/components/wildlife/WildlifeCard.test.ts`
 * `src/lib/components/budget/BudgetEntriesList.test.ts`
 * `src/lib/features/gerechten/components/GerechtCard.test.ts`
+* `src/lib/components/ui/ui-primitives.test.ts`
 * **Audit-tests**: `src/lib/tests/ui-norm-audit.test.ts`, `src/lib/tests/semantic-color-audit.test.ts`, `src/lib/tests/a11y-regression-audit.test.ts`.
 
 ## 3. Data Flow
@@ -33,6 +34,10 @@
 * **State**: Svelte 5 Runes + context en globale app-state (`stores.svelte.js`).
 
 ## 4. Recente Architecturale Beslissingen
+* **[v1.2.12] Primitive rollout in kernfeatures**: `GedeeldeLijst`, `Budget` en `WildlifeChecklist` gebruiken primitives als primaire UI-bouwlaag.
+* **[v1.2.12] Primitive contracttesting**: nieuwe testsuite borgt gedragscontracten voor `Button`, `Card` en `Input`.
+* **[v1.2.12] Typecheck-closure**: codebase is teruggebracht naar `svelte-check` 0 errors / 0 warnings.
+* **[v1.2.12] Trendscript-alignering**: `audit-trend` volgt nu dezelfde semantische uitzondering voor UI-primitives als de actieve semantic gate.
 * **[v1.2.11] Primitive baseline**: `Button`, `Card`, `Input` introduceren een centrale UI-contractlaag voor variants/sizes/states met token-only styling.
 * **[v1.2.11] Route-level POC**: `meer/+page` en `meer/[id]/+page` zijn eerste migratiepunt naar primitives voor terug- en uitlogacties.
 * **[v1.2.11] Semantic gate exception**: `Disabled states` check sluit `src/lib/components/ui/` uit om false positives op generieke componenten te vermijden.

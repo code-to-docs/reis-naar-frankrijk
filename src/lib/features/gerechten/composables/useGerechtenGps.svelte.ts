@@ -4,7 +4,8 @@ import {
   dichtstbijzijndeLocatie, 
   gerechtVoorFranziToegestaan, 
   gerechtBinnen20Km, 
-  TIP_MAX_AFSTAND_KM 
+  TIP_MAX_AFSTAND_KM,
+  type Coords
 } from "../utils/regionUtils.js";
 import { gerechtenStreekLocaties, gerechtenStreekLabels } from "$lib/gerechtenData.js";
 import type { Gerecht } from "../types";
@@ -21,7 +22,7 @@ export function useGerechtenGps(
   let gpsBezig = $state(false);
   let gpsGeprobeerd = $state(false);
   let gpsFout = $state("");
-  let huidigeCoords = $state<{ latitude: number; longitude: number } | null>(null);
+  let huidigeCoords = $state<Coords | null>(null);
 
   async function refreshGpsTip() {
     if (gpsBezig) return;

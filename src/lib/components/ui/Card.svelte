@@ -6,7 +6,9 @@
     disabled = false,
     href = "",
     onclick = undefined,
-    children = undefined
+    children = undefined,
+    class: className = "",
+    ...restProps
   } = $props();
 
   /**
@@ -23,28 +25,30 @@
 
 {#if href}
   <a
-    class={`ui-card ui-card--${variant} ui-card--pad-${padding}`}
+    class={`ui-card ui-card--${variant} ui-card--pad-${padding} ${className}`.trim()}
     class:ui-card--hoverable={hoverable}
     class:ui-card--disabled={disabled}
     href={disabled ? undefined : href}
     aria-disabled={disabled ? "true" : undefined}
     tabindex={disabled ? -1 : undefined}
     onclick={handleLinkClick}
+    {...restProps}
   >
     {@render children?.()}
   </a>
 {:else if onclick}
   <button
-    class={`ui-card ui-card--${variant} ui-card--pad-${padding}`}
+    class={`ui-card ui-card--${variant} ui-card--pad-${padding} ${className}`.trim()}
     class:ui-card--hoverable={hoverable}
     {disabled}
     onclick={onclick}
     type="button"
+    {...restProps}
   >
     {@render children?.()}
   </button>
 {:else}
-  <div class={`ui-card ui-card--${variant} ui-card--pad-${padding}`}>
+  <div class={`ui-card ui-card--${variant} ui-card--pad-${padding} ${className}`.trim()} {...restProps}>
     {@render children?.()}
   </div>
 {/if}

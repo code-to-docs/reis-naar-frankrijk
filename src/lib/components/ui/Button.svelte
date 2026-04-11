@@ -7,7 +7,9 @@
     type = "button",
     href = "",
     onclick = undefined,
-    children = undefined
+    children = undefined,
+    class: className = "",
+    ...restProps
   } = $props();
 
   /**
@@ -24,23 +26,25 @@
 
 {#if href}
   <a
-    class={`ui-btn ui-btn--${variant} ui-btn--${size}`}
+    class={`ui-btn ui-btn--${variant} ui-btn--${size} ${className}`.trim()}
     class:ui-btn--full={fullWidth}
     class:ui-btn--disabled={disabled}
     href={disabled ? undefined : href}
     aria-disabled={disabled ? "true" : undefined}
     tabindex={disabled ? -1 : undefined}
     onclick={handleLinkClick}
+    {...restProps}
   >
     {@render children?.()}
   </a>
 {:else}
   <button
-    class={`ui-btn ui-btn--${variant} ui-btn--${size}`}
+    class={`ui-btn ui-btn--${variant} ui-btn--${size} ${className}`.trim()}
     class:ui-btn--full={fullWidth}
     type={type === "submit" || type === "reset" ? type : "button"}
     {disabled}
     onclick={onclick}
+    {...restProps}
   >
     {@render children?.()}
   </button>

@@ -499,8 +499,8 @@
       adres,
       latitude: coord.latNum,
       longitude: coord.lonNum,
-      mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres),
-      openStreetMapUrl: coord.osmLink,
+      mapsLink: coord.mapsLink || getGoogleMapsAddressUrl(adres) || undefined,
+      openStreetMapUrl: coord.osmLink || undefined,
       websiteUrl: websiteUrl || "",
       bookingUrl: bookingUrl || "",
       notities: notitiesInput.trim() || "",
@@ -585,8 +585,8 @@
       nachten,
       latitude: coord.latNum,
       longitude: coord.lonNum,
-      mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : null),
-      openStreetMapUrl: coord.osmLink,
+      mapsLink: coord.mapsLink || (adres ? getGoogleMapsAddressUrl(adres) : undefined),
+      openStreetMapUrl: coord.osmLink || undefined,
       websiteUrl: websiteUrl || "",
       bookingUrl: bookingUrl || "",
       notities: notitiesInput.trim() || "",
@@ -681,8 +681,6 @@
       window.removeEventListener("touchmove", handleGlobalTouchMove);
       window.removeEventListener("touchend", finishTouchSelection);
       window.removeEventListener("touchcancel", finishTouchSelection);
-      window.addEventListener("touchend", finishTouchSelection);
-      window.addEventListener("touchcancel", finishTouchSelection);
       unsubscribe?.();
     };
   });
