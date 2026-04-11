@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Run test suite
+        run: npm run test
+
+      - name: Generate audit trend
+        run: npm run audit:trend
+
+      - name: Upload audit trend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-trend
+          path: |
+            docs/AUDIT_TREND.json
+            docs/AUDIT_TREND.md

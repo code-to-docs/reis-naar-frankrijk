@@ -11,7 +11,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest run",
+		"test:ci": "vitest run",
 		"test:watch": "vitest",
+		"audit:trend": "node scripts/audit-trend.mjs",
 		"test:e2e": "playwright test",
 		"test:visual": "playwright test e2e/visual",
 		"test:visual:update": "playwright test e2e/visual --update-snapshots"
