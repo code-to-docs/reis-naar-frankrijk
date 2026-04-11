@@ -13,6 +13,10 @@ import type { Overnachting } from "$lib/types.js";
 
 const COLLECTION_NAME = "campings";
 
+function stripUndefined<T extends Record<string, unknown>>(payload: T): T {
+  return Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== undefined)) as T;
+}
+
 export class OvernachtingenService {
   static subscribe(
     onUpdate: (data: Overnachting[]) => void,
@@ -35,17 +39,17 @@ export class OvernachtingenService {
   }
 
   static async add(overnachting: Omit<Overnachting, "id" | "datum">) {
-    return addDoc(collection(db, COLLECTION_NAME), {
+    return addDoc(collection(db, COLLECTION_NAME), stripUndefined({
       ...overnachting,
       datum: serverTimestamp()
-    });
+    }));
   }
 
   static async update(id: string, updates: Partial<Omit<Overnachting, "id">>) {
-    return updateDoc(doc(db, COLLECTION_NAME, id), {
+    return updateDoc(doc(db, COLLECTION_NAME, id), stripUndefined({
       ...updates,
       datum: serverTimestamp()
-    });
+    }));
   }
 
   static async delete(id: string) {

@@ -1,60 +1,34 @@
 # ARCHITECTURE.md
 
-## 1. Mappenstructuur (De Ruimte)
-Dit overzicht toont de fysieke indeling van het project.
+## 1. Mappenstructuur
+* `src/`
+* `src/routes/`: SvelteKit file-based routing (`+layout`, home, budget, campings, poi, meer, api).
+* `src/lib/api/`: externe API-adapters (weer, wiki).
+* `src/lib/components/`: domeincomponenten voor budget, overnachtingen, poi, weer en wildlife.
+* `src/lib/features/gerechten/`: modulaire gerechten-feature (context, composables, UI-componenten).
+* `src/lib/services/`: Firestore service-laag (`overnachtingenService`, `poiService`).
+* `src/lib/utils/`: pure helperlogica en datatransformaties.
+* `src/lib/tests/`: auditgerichte kwaliteitstests (UI norm + semantische kleurchecks).
 
-```txt
-src/
-  app.css                 # Globale CSS en mapping van design tokens naar basisstijlen.
-  app.html                # HTML-entrypoint (body, fonts, meta-tags).
-  routes/                 # SvelteKit routing (file-based).
-    +layout.svelte        # App shell: navigatie, gebruikerskeuze, globale state.
-    +page.svelte          # Dashboard/Home: verzamelpunt van actieve widgets.
-    budget/               # Module voor uitgavenbeheer en budgetoverzichten.
-    campings/             # Module voor overnachtingen en reisplanning.
-    poi/                  # Module voor Point of Interest suggesties.
-    meer/                 # Groepsmenu voor submodules.
-    meer/[id]/            # Dynamische routes voor wildlife, gerechten, noodinfo, etc.
-    api/                  # Server-side endpoints (o.a. weather-alerts).
-  lib/
-    api/                  # Externe API-adapters (Open-Meteo, Wikipedia, Nominatim).
-    components/           # Herbruikbare UI-elementen, gesorteerd op domein.
-      budget/             # Specifieke UI voor uitgaven en settlement cards.
-      overnachtingen/     # UI voor kalender, lijstweergaven en planners.
-      poi/                # UI voor POI-cards en interactieve suggesties.
-      weer/               # Weer-widgets en waarschuwings-banners.
-      wildlife/           # UI voor de fauna-checklist en spotting-details.
-    features/             # Zelfvoorzienende feature-modules (Svelte 5 standard).
-      gerechten/          # Volledige proeverij-feature incl. logic & UI.
-    services/             # Domeinlogica en Firestore-interacties.
-    styles/               # Design tokens en het visuele normprofiel.
-    utils/                # Pure helperfuncties voor data en UI-transformaties.
-    firebase.ts           # Firebase/Firestore initialisatie en configuratie.
-    stores.svelte.js      # Globale state (gebruiker, snackbar, thema).
-    types.ts              # Centrale TypeScript contracten voor het hele project.
+## 2. Testarchitectuur
+* **Service-tests**: `src/lib/services/overnachtingenService.test.ts`, `src/lib/services/poiService.test.ts`.
+* **Utility-tests**: `src/lib/utils/budget.test.ts`, `src/lib/utils/dashboard.test.ts`, `src/lib/utils/poi.test.ts`.
+* **Component-interactietests**:
+* `src/lib/components/overnachtingen/OvernachtingenTabs.test.ts`
+* `src/lib/components/overnachtingen/OvernachtingenFormPanel.test.ts`
+* `src/lib/components/poi/PoiFormModal.test.ts`
+* `src/lib/components/wildlife/WildlifeCard.test.ts`
+* `src/lib/components/budget/BudgetEntriesList.test.ts`
+* `src/lib/features/gerechten/components/GerechtCard.test.ts`
+* **Audit-tests**: `src/lib/tests/ui-norm-audit.test.ts`, `src/lib/tests/semantic-color-audit.test.ts`.
 
-    2. Feature-to-File Mapping
-App Shell: Beheerd in src/routes/+layout.svelte met navigatie in src/lib/components/Navigation.svelte.
+## 3. Data Flow
+* **Persistence**: realtime synchronisatie via Firebase Firestore snapshots.
+* **Domeinmodellen**: gecentraliseerd in `src/lib/types.ts`.
+* **Koppeling**: entiteiten zijn gekoppeld via `door` (gebruiker), zonder relationele `tripId`.
+* **State**: Svelte 5 Runes + context en globale app-state (`stores.svelte.js`).
 
-Identiteit: Gebruikersselectie (Dennis/Franzi) via localStorage, gedistribueerd via src/lib/stores.svelte.js.
-
-Budget & Uitgaven: Core logica in src/lib/components/Budget.svelte en data-invoer in src/lib/components/BudgetForm.svelte.
-
-Overnachtingen: Modulair systeem met container OvernachtingenPlanner.svelte en submodules in src/lib/components/overnachtingen/.
-
-POI Suggesties: Realtime suggestielijst v1 via src/lib/services/poiService.ts en src/routes/poi/+page.svelte.
-
-Wildlife & Fauna: Checklist en spotting-persistence in src/lib/components/wildlife/.
-
-Gerechten & Proeverij: Regionale food-tracking in src/lib/features/gerechten/ (Svelte 5 Composables).
-
-Weer-informatie: Integratie van Open-Meteo en MÃ©tÃ©o-France alerts via src/lib/api/weatherApi.ts.
-
-3. Data Flow & Schema
-Persistence: Realtime client-side synchronisatie via Firebase Firestore snapshots.
-
-Domeinmodellen: Vastgelegd in src/lib/types.ts (Uitgave, Overnachting, Poi, Spotting, GerechtCheck).
-
-Koppelingen: Entiteiten zijn functioneel gekoppeld via het door veld (Dennis/Franzi); er is geen relationele tripId.
-
-State: Componenten communiceren via Svelte 5 Runes en context providers om prop-drilling te voorkomen.
+## 4. Recente Architecturale Beslissingen
+* **[v1.2.4] Firestore payloadsanitatie**: overnachtingen-service verwijdert `undefined` waarden vóór writes om runtime Firestore errors te voorkomen.
+* **[v1.2.4] Regressie-eerst kwaliteitspoort**: featureknoppen en reactiepaden zijn expliciet afgedekt in componenttests om pre-build regressies sneller te detecteren.
+* **[v1.2.x] Media-query constraint**: breakpoints blijven literal (`px`) vanwege LightningCSS-beperking op `var()` in `@media`.

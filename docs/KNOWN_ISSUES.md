@@ -1,37 +1,36 @@
 # KNOWN_ISSUES.md
 > [!NOTE] LLM INSTRUCTION: Lees `AGENT_PROTOCOL.md`. Verplaats opgeloste bugs naar 'Resolved'. Wis de volledige 'Resolved' lijst bij een versie-ophoging (Major/Minor).
 
-Dit document bevat de actuele lijst met defecten, architecturale schuld en visuele afwijkingen gedetecteerd door de automatische UI Audit.
+## version
+* **current**: [v1.2.4]
 
 ## Kritieke UI Afwijkingen (Audit Failures)
 > [!WARNING]
-> De volgende bestanden bevatten hardcoded CSS-waarden (pixels, hex, rgba) of semantische fouten die niet voldoen aan het `UI_NORMPROFIEL`. Deze moeten systematisch worden vervangen door tokens uit `ui-tokens.css`.
+> De volgende bestanden bevatten hardcoded CSS-waarden of semantische fouten die niet voldoen aan het `UI_NORMPROFIEL`.
 
-### Overnachtingen (Plural)
-- **OvernachtingenFormPanel.svelte**: Nog steeds diverse hardcoded `52px` en `840px` waarden.
-- **plannerUtils.ts**: Bevat een set hardcoded hex-codes (`#1d4ed8`, `#0284c7`, etc.) voor kaart-markers. Dit moet via CSS variabelen.
+### Overnachtingen
+* **OvernachtingenFormPanel.svelte**: hardcoded `52px` en `840px` waarden aanwezig.
+* **plannerUtils.ts**: hardcoded hex-kleuren voor locatiekleurmapping.
 
 ### Wildlife
-- **WildlifeChecklist.svelte**: Heeft nog legacy `108px` en `42px` dimensies.
+* **WildlifeChecklist.svelte**: legacy `108px` en `42px` dimensies aanwezig.
 
 ### Algemeen
-- **Snackbar.svelte**: Hardcoded schaduwen en margins.
+* **Snackbar.svelte**: hardcoded schaduwen en margins.
 
-## Semantische Audit Violations (v1.2.3)
-*Gedetecteerd door `semantic-color-audit.test.ts`*
-- **Bevestigingsacties**: Ontbrekende `--color-success` bij save-acties in `PoiFormModal.svelte`.
-- **Disabled states**: Ontbrekende `--color-disabled` tokens in `BudgetForm.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`, `OvernachtingenFormPanel.svelte`.
-
-## ✅ Resolved Features & Debts (v1.2.3)
-* **Bug Fix: Firebase `undefined` error (v1.2.3):** Opgelost door `undefined` te vervangen door `null` in `OvernachtingenPlanner.svelte`.
-* **Build Failure (v1.2.2):** Opgelost door syntax-correctie in `BudgetEntriesList.svelte`.
-* **Systematic @media Violations (v1.2.2):** Reverted CSS variables in media queries naar literal pixel values (`1100px`, `768px`) voor LightningCSS compatibiliteit.
-* **Budget Module Tokenization:** `BudgetChart.svelte`, `BudgetEntriesList.svelte`, `BudgetForm.svelte` en `BudgetSettlementCard.svelte` zijn nu 100% tokenized.
-* **Global Styles (Partieel):** ~50% van `app.css` is nu gemigreerd naar tokens.
-* **Semantic Colors:** `GedeeldeLijst.svelte` en `WeerAlerts.svelte` zijn bijgewerkt naar status tokens.
+## Semantische Audit Violations ([v1.2.4])
+* **Bevestigingsacties**: save-acties gebruiken op meerdere plekken onjuiste token (`btn-danger`) in plaats van success-semantiek.
+* **Disabled states**: ontbrekende disabled-semantiek in `BudgetForm.svelte`, `WildlifeCard.svelte`, `PoiFormModal.svelte`, `OvernachtingenFormPanel.svelte`.
+* **Destructieve acties**: delete-acties missen error/destructive semantiek in `PoiCard.svelte` en `OvernachtingenListsSection.svelte`.
+* **Waarschuwingsstaten**: waarschuwingsblokken in `WeerAlerts.svelte` missen warning-semantiektokens.
 
 ## Bekende Bugs
-* **LightningCSS Media Queries:** Browser/Compiler ondersteunt GEEN `var()` binnen `@media` regels. Nieuwe media queries MOETEN literal units gebruiken.
+* **LightningCSS Media Queries**: `var()` wordt niet ondersteund binnen `@media`; nieuwe media queries moeten literal units gebruiken.
 
 ## Architecturale Schuld
-- **Mapping Inconsistentie:** `lib/components/gerechten/` bestaat naast `lib/features/gerechten/`. De feature mapping moet worden opgeschoond.
+* **Mapping Inconsistentie**: `lib/components/gerechten/` bestaat naast `lib/features/gerechten/`; mapping moet verder opgeschoond worden.
+
+## ✅ Resolved Features & Debts ([v1.2.4])
+* **Undefined Firestore payload guard**: opgelost door payloadsanitatie in `OvernachtingenService` (`add` + `update`).
+* **Regressiepreventie shortlist-save**: tests toegevoegd die `undefined`-velden blokkeren en write-payload valideren.
+* **Feature-interactie regressies**: actieknoppen en reacties nu afgedekt in tests voor Overnachtingen, POI, Wildlife, Gerechten en Budget-lijsten.

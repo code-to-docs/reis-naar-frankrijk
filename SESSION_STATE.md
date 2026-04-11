@@ -1,22 +1,24 @@
-# session_state v1.2.3
+# session_state v1.2.4
 
 ## current_status
-- **sprint**: build stabilization & hardening
-- **progress**: restored 100% build compatibility; budget module hardening finalized
-- **last_action**: updated budget chart palette to secondary blue/green pastels to align with "Softness" design principle.
+* **version**: [v1.2.4]
+* **sprint**: build hardening via regression prevention
+* **progress**: brede feature-regressietests toegevoegd voor knoppen, acties en foutreacties
+* **last_action**: Firestore writes in overnachtingen-service gehard tegen `undefined` payloads
 
 ## accomplishments
-- **build_stabilization**: resolved major build failure in `BudgetEntriesList.svelte` (Svelte/Vite syntax errors) and systematic `@media` query violations.
-- **bug_fix**: resolved `FirebaseError: Unsupported field value: undefined` in `OvernachtingenPlanner.svelte`.
-- **breakpoint_normalization**: reverted `var(--breakpoint-*)` in CSS media queries to literal units (`1100px`, `768px`) project-wide.
-- **budget_module**: 100% compliant with UI Normprofiel and build-stable.
+* **regression_suite**: nieuwe interactietests toegevoegd voor Overnachtingen, POI, Wildlife, Gerechten en Budget-lijstacties.
+* **service_hardening**: `OvernachtingenService.add` en `OvernachtingenService.update` strippen nu `undefined` velden vóór Firestore writes.
+* **incident_prevention**: shortlist-save regressie afgedekt met service-level tests op payloadsanitatie.
+* **quality_gate**: volledige vitest-suite lokaal groen gedraaid (`13` bestanden, `36` tests).
 
 ## next_steps
-1.  **sprint 3**: tackle remaining violations in feature-specific components (`GerechtCard.svelte`, `PoiCard.svelte`).
-2.  **final_audit**: achieve 100% compliance across all peripheral modules (Overnachtingen, Wildlife).
-3.  **documentation**: finalize quality sprint walkthrough.
+1. **pre_push_guardrail**: `npm test` verplicht maken in pre-push/CI pipeline.
+2. **semantic_audit_sprint**: openstaande semantische kleur-violations oplossen in form- en delete-acties.
+3. **ui_norm_sprint**: resterende hardcoded waarden in Overnachtingen/Wildlife/Gerechten/Poi modules wegwerken.
 
 ## technical_debt
-- **overnachtingen**: `OvernachtingenFormPanel.svelte` still has several hardcoded 52px and 840px values.
-- **wildlife**: `WildlifeChecklist.svelte` has legacy 108px and 42px dimensions.
-- **constraint_note**: CSS variables are NOT supported in media queries; maintenance of breakpoints must remain literal for now.
+* **overnachtingen**: `OvernachtingenFormPanel.svelte` bevat nog hardcoded `52px` en `840px` waarden.
+* **wildlife**: `WildlifeChecklist.svelte` bevat nog legacy `108px` en `42px` dimensies.
+* **semantic_tokens**: disabled en destructieve states missen op meerdere plaatsen semantische tokens.
+* **constraint_note**: CSS variabelen zijn niet bruikbaar in `@media`; breakpoints moeten literal blijven.

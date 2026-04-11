@@ -55,4 +55,45 @@ describe("OvernachtingenService", () => {
     expect(firestore.doc).toHaveBeenCalledWith(firebaseMock.db, "campings", "test-id");
     expect(firestore.deleteDoc).toHaveBeenCalled();
   });
+
+  it("stript undefined velden bij add zodat Firestore geen invalid payload krijgt", async () => {
+    await OvernachtingenService.add({
+      naam: "Test",
+      door: "Dennis",
+      shortlist: true,
+      websiteUrl: undefined,
+      bookingUrl: undefined,
+      mapsLink: undefined
+    });
+
+    const [, payload] = firestore.addDoc.mock.calls[0] ?? [];
+    expect(payload).toMatchObject({
+      naam: "Test",
+      door: "Dennis",
+      shortlist: true,
+      datum: { __type: "serverTimestamp" }
+    });
+    expect("websiteUrl" in payload).toBe(false);
+    expect("bookingUrl" in payload).toBe(false);
+    expect("mapsLink" in payload).toBe(false);
+  });
+
+  it("stript undefined velden bij update", async () => {
+    await OvernachtingenService.update("abc123", {
+      shortlist: false,
+      startDatum: "2026-04-11",
+      nachten: 2,
+      adres: undefined
+    });
+
+    expect(firestore.doc).toHaveBeenCalledWith(firebaseMock.db, "campings", "abc123");
+    const [, payload] = firestore.updateDoc.mock.calls[0] ?? [];
+    expect(payload).toMatchObject({
+      shortlist: false,
+      startDatum: "2026-04-11",
+      nachten: 2,
+      datum: { __type: "serverTimestamp" }
+    });
+    expect("adres" in payload).toBe(false);
+  });
 });
