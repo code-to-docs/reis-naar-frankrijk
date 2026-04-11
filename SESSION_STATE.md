@@ -1,32 +1,30 @@
-﻿# session_state v1.2.12
+# session_state v1.2.13
 
 ## current_status
-* **version**: [v1.2.12]
-* **sprint**: P5 backlog-closure
-* **progress**: alle niet-feature backlogpunten uitgevoerd en gevalideerd
-* **last_action**: kerncomponenten gemigreerd naar UI-primitives en typecheck-backlog volledig opgelost
+* **version**: [v1.2.13]
+* **sprint**: P5 UI-Refinement
+* **progress**: Global hover cleanup en ListItem primitive rollout uitgevoerd en gevalideerd.
+* **last_action**: +page.svelte refactored naar primitives; legacy stores shim toegevoegd voor compatibiliteit.
 
 ## accomplishments_current_session
-* **p5_primitive_rollout_done**: `GedeeldeLijst`, `Budget` en `WildlifeChecklist` gebruiken nu `Button/Input/Card` uit `src/lib/components/ui/` voor knoppen, inputvelden en kaartcontainers.
-* **p5_contract_tests_done**: `src/lib/components/ui/ui-primitives.test.ts` toegevoegd met regressietests voor variant/sizing/fullWidth, disabled-link gedrag, click-handling en input-error accessibility.
-* **p5_typecheck_backlog_done**: eerdere `npm run check` fouten opgelost in `WildlifeCard.test`, `useGerechtenGps.svelte.ts` en `OvernachtingenPlanner.svelte`.
-* **p5_cleanup_done**: event-listener cleanup bug in `OvernachtingenPlanner.svelte` gecorrigeerd (geen dubbele re-registratie in teardown).
-* **p5_audit_trend_alignment_done**: `scripts/audit-trend.mjs` padnormalisatie + semantic uitzondering voor `components/ui` toegevoegd zodat trendmeting consistent is met actieve semantische gate.
-* **qa_status**: `npm test` groen (15 testbestanden, 44 tests) en `npm run check` groen (0 errors, 0 warnings).
+* **p5_listitem_primitive_done**: `ListItem` (primitive) geïntroduceerd in `src/lib/components/ui/` conform UI Normprofiel 10.6.
+* **p5_hover_cleanup_done**: `app.css` opgeschoond; agressieve global active schaling vervangen door milde fallback `scale(0.98)` en primitives hanteren nu hun eigen interactiestaten.
+* **p5_homepage_refactor_done**: `+page.svelte` volledig herschreven om gebruik te maken van `ListItem` en `Button` primitives, met een nieuwe gecategoriseerde "Meer" menu structuur.
+* **p5_stores_shim_done**: `src/lib/stores.js` toegevoegd om legacy store imports in de nieuwe `+page.svelte` te ondersteunen zonder de app-architectuur te breken.
+* **qa_status**: Handmatige browserverificatie bevestigt correcte hover/active staten, subpagina navigatie en dark-mode consistentie.
 
 ## accomplishments_previous_session
-* **[v1.2.11] p4_ui_primitives_done**: `Button`, `Card`, `Input` basislaag geïntroduceerd in `src/lib/components/ui/`.
-* **[v1.2.11] p4_meer_poc_done**: `meer/+page` en `meer/[id]/+page` gemigreerd naar `Button` voor terug- en uitlogacties.
-* **[v1.2.11] p4_gate_alignment_done**: semantic audit false positives op `Disabled states` voor primitives opgeheven.
+* **[v1.2.12] p5_primitive_rollout_done**: `GedeeldeLijst`, `Budget` en `WildlifeChecklist` gebruiken nu `Button/Input/Card`.
+* **[v1.2.12] p5_contract_tests_done**: UI-primitive testsuite toegevoegd.
+* **[v1.2.12] p5_typecheck_backlog_done**: `svelte-check` 0 errors / 0 warnings bereikt.
 
 ## history_compression
-* **pre-v1.2.11**: P1/P2/P3 token-harmonisatie, dark-mode alignment en CI/audit governance baseline gerealiseerd.
+* **pre-v1.2.12**: Opzet UI-tokens, dark-mode baseline, Firestore services en governance audit gates.
 
 ## next_steps
-* **feature_overzicht_kaartweergave**: interactieve kaartweergave voor overnachtingen realiseren (vervangt huidige placeholder-flow).
-* **feature_wildlife_route_intelligence**: wildlife-aanbevelingen uitbreiden met route-/locatiecontext in plaats van alleen lijstfiltering.
-* **feature_budget_insights**: budgetmodule uitbreiden met voorspellende trend- en waarschuwingfeatures.
+* **feature_overzicht_kaartweergave**: interactieve kaartweergave voor overnachtingen realiseren.
+* **feature_wildlife_route_intelligence**: wildlife-aanbevelingen uitbreiden met route-/locatiecontext.
 
 ## technical_debt
-* **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven een bewuste technische uitzondering.
-* **governance_note**: semantische disabled-rule gebruikt een bewuste uitzondering voor `src/lib/components/ui/` om false positives op generieke primitives te vermijden.
+* **legacy_stores_shim**: `src/lib/stores.js` is een tijdelijke oplossing; routing en global state zouden idealiter volledig naar Svelte 5 runes (`stores.svelte.js`) gemigreerd moeten worden.
+* **constraint_note**: CSS variabelen blijven beperkt tot literal `px` in `@media` queries.

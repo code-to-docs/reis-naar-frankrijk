@@ -27,3 +27,10 @@ Verwijder meedogenloos oude ballast, maar behoud belangrijke technische context.
 
 ### Voor ARCHITECTURE.md:
 * Dit bestand weerspiegelt de actuele codebase. Werk dit ALLEEN bij als we een fysiek bestand of een map aanmaken, verplaatsen of verwijderen.
+
+## 4. Code Generatie & Quality Gates (PRE-FLIGHT CHECK)
+Voordat je een nieuw component of feature aan de gebruiker presenteert, MOET je in stilte de volgende controles uitvoeren:
+1. **Component Hergebruik:** Heb ik uitsluitend de basiscomponenten uit `src/lib/components/ui/` gebruikt voor knoppen, inputs en kaarten?
+2. **Tokens Only:** Bevat mijn Svelte-bestand hardcoded hex-kleuren, `px` of `rem` waarden? (Zo ja, herschrijf naar `var(--...)` tokens uit `ui-tokens.css`).
+3. **Media Query Uitzondering:** De ENIGE plek waar hardcoded `px` is toegestaan, is in `@media` queries vanwege een LightningCSS restrictie.
+4. **Audit Validatie:** Zou deze code falen op de actieve `ui-norm-audit` of `semantic-color-audit` gate?

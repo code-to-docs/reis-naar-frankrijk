@@ -1,4 +1,4 @@
-﻿# ARCHITECTURE.md
+# ARCHITECTURE.md
 
 ## 1. Mappenstructuur
 * `.github/workflows/`: CI-automatisering voor tests en auditrapportage.
@@ -7,11 +7,12 @@
 * `src/routes/`: SvelteKit file-based routing (`+layout`, home, budget, campings, poi, meer, api).
 * `src/lib/api/`: externe API-adapters (weer, wiki).
 * `src/lib/components/`: domeincomponenten voor budget, overnachtingen, poi, weer en wildlife.
-* `src/lib/components/ui/`: app-brede primitives (`Button`, `Card`, `Input`) voor consistente interactie- en vormgevingstokens.
+* `src/lib/components/ui/`: app-brede primitives (`Button`, `Card`, `Input`, `ListItem`) voor consistente interactie- en vormgevingstokens.
 * `src/lib/features/gerechten/`: modulaire gerechten-feature (context, composables, UI-componenten).
 * `src/lib/services/`: Firestore service-laag (`overnachtingenService`, `poiService`).
 * `src/lib/utils/`: pure helperlogica en datatransformaties.
 * `src/lib/tests/`: auditgerichte kwaliteitstests (UI norm + semantische kleurchecks + a11y regressies).
+* `src/lib/stores.js`: legacy store shim voor Svelte 4/5 compatibiliteit in gemigreerde routes.
 * `docs/`: projectdocumentatie, auditrapportages en sprintadministratie.
 
 ## 2. Testarchitectuur
@@ -34,6 +35,7 @@
 * **State**: Svelte 5 Runes + context en globale app-state (`stores.svelte.js`).
 
 ## 4. Recente Architecturale Beslissingen
+* **[v1.2.13] ListItem rollout & Global hover cleanup**: `ListItem` geïntroduceerd als nieuwe primitive (UI Normprofiel 10.6). `app.css` geschoond van agressieve global hover/active schaling ten gunste van primitive-specific gedrag.
 * **[v1.2.12] Primitive rollout in kernfeatures**: `GedeeldeLijst`, `Budget` en `WildlifeChecklist` gebruiken primitives als primaire UI-bouwlaag.
 * **[v1.2.12] Primitive contracttesting**: nieuwe testsuite borgt gedragscontracten voor `Button`, `Card` en `Input`.
 * **[v1.2.12] Typecheck-closure**: codebase is teruggebracht naar `svelte-check` 0 errors / 0 warnings.

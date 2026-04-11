@@ -149,7 +149,7 @@ button {
     color var(--duration-normal) var(--ease-default),
     box-shadow var(--duration-normal) var(--ease-default);
 }
-button:active { transform: scale(0.95); }
+/* button:active handled by primitives */
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-700));
   color: var(--text-inverse);
@@ -274,14 +274,14 @@ button,
 [onclick],
 a {
   touch-action: manipulation;
-  transition: transform var(--duration-fast) var(--ease-default), opacity var(--duration-fast) var(--ease-default);
+  transition: transform 150ms ease;
 }
 
+/* Mild fallback active for unmigrated buttons.
+   Primitives (.btn, .list-item) override via higher specificity */
 button:active,
-[onclick]:active,
-a:active {
-  transform: scale(0.96);
-  opacity: 0.85;
+[onclick]:active {
+  transform: scale(0.98);
 }
 
 button,
