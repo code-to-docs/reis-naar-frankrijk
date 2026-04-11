@@ -1,24 +1,26 @@
-# session_state v1.2.4
+ï»¿# session_state v1.2.5
 
 ## current_status
-* **version**: [v1.2.4]
-* **sprint**: build hardening via regression prevention
-* **progress**: brede feature-regressietests toegevoegd voor knoppen, acties en foutreacties
-* **last_action**: Firestore writes in overnachtingen-service gehard tegen `undefined` payloads
+* **version**: [v1.2.5]
+* **sprint**: governance hardening via full audit and standards alignment
+* **progress**: volledige 3-fasen codebase-audit opgeleverd inclusief machine-inventarisaties
+* **last_action**: auditrapport + volledige inventarisbestanden toegevoegd en documentatie bijgewerkt
 
 ## accomplishments
-* **regression_suite**: nieuwe interactietests toegevoegd voor Overnachtingen, POI, Wildlife, Gerechten en Budget-lijstacties.
-* **service_hardening**: `OvernachtingenService.add` en `OvernachtingenService.update` strippen nu `undefined` velden vóór Firestore writes.
-* **incident_prevention**: shortlist-save regressie afgedekt met service-level tests op payloadsanitatie.
-* **quality_gate**: volledige vitest-suite lokaal groen gedraaid (`13` bestanden, `36` tests).
+* **push_done**: wijzigingen gepusht naar `origin/main` (commit `301263e`).
+* **full_audit**: complete normprofiel-vs-implementatie audit uitgevoerd op `src/` met prioriteiten en migratieplan.
+* **audit_artifacts**: `docs/AUDIT_RAPPORT_v1.2.5.md`, `docs/AUDIT_BUTTON_INVENTARIS_v1.2.5.csv`, `docs/AUDIT_HARDCODED_VALUES_v1.2.5.csv`, `docs/AUDIT_COMPONENT_MATRIX_v1.2.5.csv` aangemaakt.
+* **compliance_metrics**: 126 interactieve knoppen/links en 43 bestanden met hardcoded waarde-signalen in scanresultaten geclassificeerd.
 
 ## next_steps
-1. **pre_push_guardrail**: `npm test` verplicht maken in pre-push/CI pipeline.
-2. **semantic_audit_sprint**: openstaande semantische kleur-violations oplossen in form- en delete-acties.
-3. **ui_norm_sprint**: resterende hardcoded waarden in Overnachtingen/Wildlife/Gerechten/Poi modules wegwerken.
+1. **p1_button_system**: normaliseer button-landschap naar normprofiel-varianten en semantische states.
+2. **p1_token_migration**: migreer hardcoded waarden in `GerechtCard`, `POI route`, `WildlifeCard`, `Header`, `Navigation`.
+3. **p1_dark_alignment**: implementeer dark-mode bootstrap zonder FOUC met compatibele `prefers-color-scheme` fallback.
+4. **p1_ci_gate**: pre-push/CI blokkade op regressies (`npm test` + semantische style checks).
 
 ## technical_debt
-* **overnachtingen**: `OvernachtingenFormPanel.svelte` bevat nog hardcoded `52px` en `840px` waarden.
-* **wildlife**: `WildlifeChecklist.svelte` bevat nog legacy `108px` en `42px` dimensies.
-* **semantic_tokens**: disabled en destructieve states missen op meerdere plaatsen semantische tokens.
-* **constraint_note**: CSS variabelen zijn niet bruikbaar in `@media`; breakpoints moeten literal blijven.
+* **normprofiel_gaps**: meerdere high-impact componentpatronen ontbreken of zijn incompleet in normprofiel (snackbar, FAB, destructive confirm, header/back pattern, z-index system).
+* **css_architecture**: `app.css` bevat nog feature-specifieke overrides die componentisolatie doorbreken.
+* **token_gap**: normprofielvariabelen en implementatie lopen uiteen; er is een mappinglaag nodig vÃ³Ã³r brede refactor.
+* **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven voorlopig nodig.
+
