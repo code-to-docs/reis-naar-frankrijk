@@ -1347,3 +1347,24 @@ Changelog
 Versie	Datum	Wijzigingen
 2.0.0	2025-01-09	Volledige herschrijving met uitgebreide tokens, componenten, en Apple-geÃ¯nspireerde principes
 1.0.0	2026-04-09	InitiÃ«le versie (technische baseline)
+
+13. Governance-aanvulling (v1.2.8)
+UI audit gate
+- semantic-color-audit is hard gate; violations blokkeren CI.
+- ui-norm-audit is hard gate op kritieke scope:
+  - src/routes/poi/+page.svelte
+  - src/lib/components/wildlife/WildlifeCard.svelte
+  - src/lib/components/Header.svelte
+  - src/lib/components/Navigation.svelte
+  - src/lib/components/GerechtTipWidget.svelte
+  - src/lib/poiCategories.ts
+- Toegestane uitzondering: media-breakpoint literals 640/740/768/880/900/1099/1100 px.
+- Reden: LightningCSS ondersteunt geen var() in @media.
+
+Dark mode compatibiliteit
+- html.dark blijft de runtime class voor handmatige dark mode.
+- Pre-hydration bootstrap in src/app.html zet html.dark vóór hydratie.
+- Volgorde:
+  1) user-specifieke localStorage key darkmode_{username}
+  2) anders prefers-color-scheme: dark
+- Zonder userkeuze volgt de app systeemvoorkeur.

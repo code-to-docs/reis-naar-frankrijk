@@ -113,7 +113,7 @@
     display: flex;
     justify-content: space-around;
     padding: var(--space-2) 0 calc(env(safe-area-inset-bottom, var(--space-2)) + 2px) 0;
-    box-shadow: 0 -2px 14px var(--nav-shadow);
+    box-shadow: 0 calc(-1 * var(--space-0-5)) var(--space-3-5) var(--nav-shadow);
     z-index: 100;
     max-width: var(--app-max-width);
     margin: 0 auto;
@@ -162,7 +162,7 @@
     position: absolute;
     top: -var(--space-1-5);
     width: var(--space-5);
-    height: 3px;
+    height: var(--space-1);
     background: var(--nav-active);
     border-radius: var(--radius-sm);
   }
@@ -171,7 +171,7 @@
     .offline-bar {
       left: max(var(--space-4), calc((100vw - var(--app-max-width)) / 2 + var(--space-4)));
       right: auto;
-      width: 220px;
+      width: var(--nav-sidebar-width);
       bottom: var(--space-4);
       border-radius: var(--radius-lg);
       max-width: none;
@@ -190,7 +190,7 @@
       flex-direction: column;
       justify-content: flex-start;
       gap: var(--space-3);
-      width: 220px;
+      width: var(--nav-sidebar-width);
       border-radius: var(--radius-xl);
       padding: var(--space-4) var(--space-2-5);
       box-shadow: 0 var(--space-1-5) var(--space-6) var(--nav-shadow);
@@ -225,7 +225,7 @@
     .profile-meta {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--space-0-5);
       min-width: 0;
     }
 
@@ -285,7 +285,7 @@
       top: 50%;
       left: var(--space-1);
       transform: translateY(-50%);
-      width: 3px;
+      width: var(--space-1);
       height: var(--space-6);
       border-radius: var(--radius-sm);
     }

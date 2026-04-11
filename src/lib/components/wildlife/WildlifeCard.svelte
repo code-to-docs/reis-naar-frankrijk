@@ -279,7 +279,7 @@
     background: var(--card-bg);
     border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 1px var(--space-1) var(--black-a10);
+    box-shadow: var(--shadow-sm);
     border: 2px solid transparent;
     transition: border-color var(--duration-normal);
   }
@@ -314,8 +314,8 @@
   }
   .wl-gespot-dot {
     position: absolute; 
-    top: calc(-1 * var(--radius-xs)); 
-    right: calc(-1 * var(--radius-xs)); 
+    top: calc(-1 * var(--space-1)); 
+    right: calc(-1 * var(--space-1)); 
     width: var(--space-4); 
     height: var(--space-4);
     background: var(--color-success-base); 
@@ -357,7 +357,7 @@
     width: 100%;
     margin: 0;
     position: relative;
-    height: var(--space-65); /* ~260px */
+    height: calc(var(--space-16) * 4 + var(--space-1));
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-md);
@@ -395,7 +395,7 @@
   .wl-spotting-row {
     font-size: var(--text-sm);
     color: var(--text-secondary);
-    padding: 2px 0;
+    padding: var(--space-0-5) 0;
     line-height: var(--ui-line-compact);
   }
   .wl-spot-form { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-3); }
@@ -501,7 +501,7 @@
       gap: var(--space-5);
     }
     .wl-grote-beeld {
-      height: var(--space-80); /* 320px */
+      height: calc(var(--space-16) * 5);
     }
   }
 
@@ -520,7 +520,7 @@
       gap: var(--space-5);
     }
     .wl-grote-beeld {
-      height: var(--space-90); /* 360px */
+      height: calc(var(--space-16) * 5 + var(--space-10));
     }
     .wl-spotting-row {
       font-size: var(--text-base);

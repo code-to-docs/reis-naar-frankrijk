@@ -41,6 +41,10 @@
     } catch {
       // Ignore storage issues and continue with reload.
     }
+    appState.isDarkMode = false;
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.remove("dark");
+    }
     location.reload();
   }
 </script>

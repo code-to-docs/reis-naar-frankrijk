@@ -2,41 +2,36 @@
 > [!NOTE] LLM INSTRUCTION: Lees `AGENT_PROTOCOL.md`. Verplaats opgeloste bugs naar 'Resolved'. Wis de volledige 'Resolved' lijst bij een versie-ophoging (Major/Minor).
 
 ## version
-* **current**: [v1.2.7]
+* **current**: [v1.2.8]
 
 ## Kritieke UI Afwijkingen (Audit Failures)
 > [!WARNING]
-> De volgende bestanden bevatten hardcoded CSS-waarden of semantische fouten die niet voldoen aan het `UI_NORMPROFIEL`.
+> P1 en P2 uit vorige sprint zijn opgelost. Er zijn geen openstaande P1/P2 violations.
 
-### P1 — Core UI risico
-* **Button systeem versnipperd**: semantische regressies zijn afgedekt, maar visuele variantconsolidatie is nog niet volledig afgerond.
-* **`src/app.css`**: bevat nog feature-specifieke overrides (dark en component-specifiek) die componentisolatie en voorspelbaarheid verminderen.
-* **Dark mode methode-gap**: normprofiel gebruikt `prefers-color-scheme`, implementatie gebruikt `html.dark` + per-user localStorage.
+### Openstaande Niet-kritieke Backlog (P3)
+* **`src/lib/components/weer/WeerDagen.svelte`**: resterende vaste maatwaarden (`px`) buiten kritieke gate-scope.
+* **`src/lib/features/gerechten/components/GerechtenHeader.svelte`**: meerdere vaste layoutwaarden nog niet getokeniseerd.
+* **`src/routes/+page.svelte`** en **`src/routes/meer/+page.svelte`**: legacy vaste maten in layout/kaartblokken.
 
-### P1 — High-impact componenten met grootste token-gap
-* **`src/routes/poi/+page.svelte`**: grote hoeveelheid hardcoded responsive/layout/skeleton waarden.
-* **`src/lib/components/wildlife/WildlifeCard.svelte`**: legacy vaste maten en dense interactiepatronen.
-* **`src/lib/components/Header.svelte`** en **`src/lib/components/Navigation.svelte`**: shell-level hardcoded maten en inconsistentie met normlayout.
-
-### P2 — Bestaande bekende afwijkingen
-* **`src/lib/components/GerechtTipWidget.svelte`**: hardcoded accentkleur (`rgba(14, 165, 164, 0.18)`) buiten tokenlaag.
-* **`src/lib/poiCategories.ts`**: hardcoded hex-kleuren voor categoriepalet en locatiekleurmapping.
-
-## Semantische Audit Violations ([v1.2.7])
+## Semantische Audit Violations ([v1.2.8])
 * **Geen openstaande violations**: semantische kleur-audit draait als afdwingende test-gate.
+
+## Governance & CI Status
+* **Strict UI gate actief voor kritieke scope**: `routes/poi/+page`, `WildlifeCard`, `Header`, `Navigation`, `GerechtTipWidget`, `poiCategories`.
+* **Exception policy actief**: alleen media-breakpoint literals (`640/740/768/880/900/1099/1100px`) toegestaan binnen de gate.
 
 ## Bekende Bugs
 * **LightningCSS Media Queries**: `var()` wordt niet ondersteund binnen `@media`; nieuwe media queries moeten literal units gebruiken.
-* **Dark-mode FOUC risico**: thema-class wordt client-side gezet; korte mismatch bij initial paint blijft mogelijk.
 
 ## Architecturale Schuld
 * **Mapping Inconsistentie**: `lib/components/gerechten/` bestaat naast `lib/features/gerechten/`; domeinmigratie niet voltooid.
-* **Token Mapping Layer ontbreekt**: normprofiel-variabelen en implementatie-variabelen zijn nog niet volledig geharmoniseerd.
+* **Token Mapping Layer**: volledige harmonisatie van normprofielvariabelen naar alle niet-kritieke componenten loopt nog.
 
-## ✅ Resolved Features & Debts ([v1.2.7])
-* **Undefined Firestore payload guard**: opgelost door payloadsanitatie in `OvernachtingenService` (`add` + `update`).
-* **Cross-feature regressietests**: interactie- en reactietests toegevoegd voor Overnachtingen, POI, Wildlife, Gerechten en Budget-lijstacties.
-* **Semantische regressiegate**: `semantic-color-audit` faalt nu op violations; waarschuwing/disabled/destructief-contexten zijn afgedekt.
-* **Button-semantiek remediatie**: save-/delete-/close-acties geharmoniseerd in Budget, Overnachtingen, POI, Wildlife en Gerechten tip-refresh.
-* **Overnachtingen shortlist save-regressie**: entry-opslagpad afgedekt met service-guard + tests om herintroductie te blokkeren.
-* **Gerechten token-remediatie**: `GerechtCard.svelte` en `GerechtenTipCard.svelte` gemigreerd van hardcoded `px`/`rgba` naar token-gebaseerde varianten.
+## ✅ Resolved Features & Debts ([v1.2.8])
+* **P1 token migration wave2a**: `src/routes/poi/+page.svelte` gemigreerd naar token-gedreven waarden; hardcoded `rgba` en vaste kaartenmaten verwijderd.
+* **P1 token migration wave2b**: `Navigation.svelte`, `+layout.svelte` en shell-tokens geharmoniseerd (`--nav-sidebar-width`, spacing aliases, indicator/shadow tokenized).
+* **P1 UI gate strategy**: `src/lib/tests/ui-norm-audit.test.ts` omgezet naar strict gate voor kritieke scope met expliciete exception policy.
+* **P1 dark alignment**: pre-hydration dark bootstrap in `src/app.html`; `stores.svelte.js` gebruikt user-voorkeur met systeemfallback; layout hydrateert zonder themamismatch.
+* **P2 widget kleuren**: `src/lib/components/GerechtTipWidget.svelte` hardcoded dark `rgba` vervangen door tokenized `color-mix`.
+* **P2 categoriekleuren**: `src/lib/poiCategories.ts` geconverteerd van hex naar semantische CSS tokens.
+* **App.css isolatieverbetering**: feature-specifieke dark overrides opgeschoond naar generieke laag; componenteigen dark gedrag blijft lokaal.

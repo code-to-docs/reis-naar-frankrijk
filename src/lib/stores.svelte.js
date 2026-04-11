@@ -27,7 +27,13 @@ class AppState {
     } catch {
       opgeslagen = null;
     }
-    this.isDarkMode = opgeslagen === "true";
+    if (opgeslagen === "true") this.isDarkMode = true;
+    else if (opgeslagen === "false") this.isDarkMode = false;
+    else if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+      this.isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+      this.isDarkMode = false;
+    }
     this.applyDarkMode();
   }
 

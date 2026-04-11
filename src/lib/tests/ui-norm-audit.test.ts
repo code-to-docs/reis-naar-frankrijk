@@ -14,6 +14,15 @@ const PROHIBITED_HEX = /#(?!([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b)[a-fA-F0-9]+/g; //
 const HEX_PATTERN = /#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})\b/g;
 const PX_PATTERN = /\b[0-9.]+px\b/g;
 const RGB_PATTERN = /rgba?\([^)]+\)/g;
+const ALLOWED_MEDIA_LITERALS = new Set(["640px", "740px", "768px", "880px", "900px", "1099px", "1100px"]);
+const CRITICAL_SCOPE = new Set([
+  "src/routes/poi/+page.svelte",
+  "src/lib/components/wildlife/WildlifeCard.svelte",
+  "src/lib/components/Header.svelte",
+  "src/lib/components/Navigation.svelte",
+  "src/lib/components/GerechtTipWidget.svelte",
+  "src/lib/poiCategories.ts"
+]);
 
 // Uitzonderingen voor SVG metadata
 const SVG_DATA_EXCLUSION = /d="[^"]+"/g;
@@ -79,8 +88,15 @@ describe('UI Normprofiel Audit', () => {
         const rgbs = sanitized.match(RGB_PATTERN);
         if (rgbs) matches.push(...rgbs);
 
-        if (matches.length > 0) {
-          violations.push({ file, matches });
+        const normalizedFile = file.replace(/\\/g, '/');
+        const filteredMatches = matches.filter((match) => {
+          if (!CRITICAL_SCOPE.has(normalizedFile)) return true;
+          if (ALLOWED_MEDIA_LITERALS.has(match)) return false;
+          return true;
+        });
+
+        if (filteredMatches.length > 0) {
+          violations.push({ file: normalizedFile, matches: filteredMatches });
         }
       }
     });
@@ -93,7 +109,7 @@ describe('UI Normprofiel Audit', () => {
       console.warn('='.repeat(30) + '\n');
     }
 
-    // De test slaagt technisch (geen throw), maar de output waarschuwt de dev.
-    expect(true).toBe(true);
+    const criticalViolations = violations.filter((entry) => CRITICAL_SCOPE.has(entry.file));
+    expect(criticalViolations.length).toBe(0);
   });
 });

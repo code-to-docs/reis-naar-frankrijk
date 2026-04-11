@@ -2,12 +2,12 @@ import { E } from "./emojis.js";
 import type { PoiCategorie, PoiCategorieId, PoiScore } from "./types.js";
 
 export const poiCategorieen: PoiCategorie[] = [
-  { id: "cultuur", label: "Cultuur", emoji: E.BOEK, kleur: "#335CFF" },
-  { id: "natuur", label: "Natuur", emoji: E.VOGEL, kleur: "#15803d" },
-  { id: "activiteit", label: "Activiteit", emoji: E.TARGET, kleur: "#c2410c" },
-  { id: "eten_drinken", label: "Eten & drinken", emoji: E.ETEN, kleur: "#b45309" },
-  { id: "winkelen", label: "Winkelen", emoji: E.WINKEL, kleur: "#7c3aed" },
-  { id: "overig", label: "Overig", emoji: E.DOOS, kleur: "#475569" }
+  { id: "cultuur", label: "Cultuur", emoji: E.BOEK, kleur: "var(--color-primary-500)" },
+  { id: "natuur", label: "Natuur", emoji: E.VOGEL, kleur: "var(--color-success-dark)" },
+  { id: "activiteit", label: "Activiteit", emoji: E.TARGET, kleur: "var(--color-error-dark)" },
+  { id: "eten_drinken", label: "Eten & drinken", emoji: E.ETEN, kleur: "var(--color-warning-dark)" },
+  { id: "winkelen", label: "Winkelen", emoji: E.WINKEL, kleur: "var(--color-primary-700)" },
+  { id: "overig", label: "Overig", emoji: E.DOOS, kleur: "var(--text-secondary)" }
 ];
 
 export const poiCategorieMap = poiCategorieen.reduce<Record<PoiCategorieId, PoiCategorie>>((map, categorie) => {

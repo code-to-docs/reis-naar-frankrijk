@@ -33,7 +33,10 @@
 
   onMount(() => {
     if (naam) appState.init(naam);
-    else appState.applyDarkMode();
+    else {
+      appState.isDarkMode = document.documentElement.classList.contains("dark");
+      appState.applyDarkMode();
+    }
   });
 
   // Reading isDarkMode creates a reactive dependency so applyDarkMode()
@@ -116,10 +119,10 @@
   @media (min-width: 1100px) {
     .app-shell {
       display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
+      grid-template-columns: var(--nav-sidebar-width) minmax(0, 1fr);
       align-items: start;
       gap: var(--space-4);
-      padding: 14px 14px 0;
+      padding: var(--space-3) var(--space-3) 0;
     }
   }
 </style>

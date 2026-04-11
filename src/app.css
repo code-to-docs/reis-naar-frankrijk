@@ -8,9 +8,21 @@ html, body {
 
 :root {
   --app-max-width: var(--page-max-width);
-  --content-max-width: var(--content-max-width);
+  --content-max-width: 42.5rem;
+  --content-max-wide: 70rem;
+  --nav-sidebar-width: 13.75rem;
   --page-gutter: var(--space-3);
   --nav-height: var(--space-20);
+  --space-0-5: calc(var(--space-1) / 2);
+  --space-3-5: calc(var(--space-3) + var(--space-0-5));
+  --space-4-5: calc(var(--space-4) + var(--space-0-5));
+  --space-7: calc(var(--space-6) + var(--space-1));
+  --space-14-5: calc(var(--space-12) + var(--space-2) + var(--space-0-5));
+  --space-20: calc(var(--space-16) + var(--space-4));
+  --space-21-5: calc(var(--space-20) + var(--space-1-5));
+  --tracking-tighter: -0.02em;
+  --radius-xs: var(--space-1);
+  --border-accent-subtle: color-mix(in srgb, var(--border-accent) 35%, var(--border-default));
   --blauw: var(--color-primary-700);
   --wit: var(--bg-surface);
   --grijs-licht: var(--bg-app);
@@ -424,7 +436,7 @@ button,
 .meer-groep-items {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 8px 24px var(--card-shadow);
+  box-shadow: 0 var(--space-2) var(--space-6) var(--card-shadow);
   background: var(--card-bg);
 }
 
@@ -459,7 +471,7 @@ button,
 .quick-btn {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 14px var(--card-shadow);
+  box-shadow: 0 var(--space-1) var(--space-3-5) var(--card-shadow);
 }
 
 html.dark .hero-card,
@@ -492,7 +504,7 @@ html.dark .meer-groep-items {
 @media (min-width: 1100px) {
   :root {
     --app-max-width: var(--page-max-width);
-    --content-max-width: 1120px;
+    --content-max-width: var(--content-max-wide);
     --page-gutter: var(--space-6);
     --nav-height: var(--space-0);
   }
@@ -508,11 +520,11 @@ html.dark .meer-groep-items {
 }
 
 img {
-  transition: opacity 0.3s ease;
+  transition: opacity var(--duration-slow) var(--ease-default);
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: var(--space-1-5);
 }
 
 ::-webkit-scrollbar-track {
@@ -530,84 +542,10 @@ img {
 
 /* ========== DARK MODE COMPONENT OVERRIDES ========== */
 
-html.dark .hero-card,
-html.dark .budget-chart-wrapper,
-html.dark .budget-edit-card { background: var(--card-bg); }
-html.dark .hero-label { color: var(--text-tertiary); }
-html.dark .hero-sub { color: var(--text-secondary); }
-html.dark .hero-uitgegeven { color: var(--text-secondary); }
-html.dark .hero-bar { background: var(--bg-interactive-active); }
-html.dark .entry-item { background: var(--card-bg); }
-html.dark .entry-info strong { color: var(--text-primary); }
-html.dark .entry-bedrag { color: var(--text-primary); }
-html.dark .dag-header { border-bottom-color: var(--border-strong); }
-html.dark .dag-totaal { background: var(--bg-interactive-active); color: var(--text-primary); }
-html.dark .verrekening-card { border-top-color: var(--border-strong); }
-html.dark .verrekening-lijn { border-top-color: var(--border-strong); }
-
-html.dark .pill,
-html.dark .wl-pill,
-html.dark .gr-pill,
-html.dark .poi-pill,
-html.dark .cat-pill {
-  background: var(--card-bg);
-  border-color: var(--border-strong);
-  color: var(--text-tertiary);
+html.dark .offline-bar {
+  background: color-mix(in srgb, var(--color-error-dark) 42%, var(--bg-surface));
+  color: var(--color-error-light);
 }
-html.dark .pill.active,
-html.dark .wl-pill.active,
-html.dark .gr-pill.active,
-html.dark .poi-pill.active,
-html.dark .cat-pill.active {
-  background: color-mix(in srgb, var(--bg-accent-subtle) 68%, var(--bg-surface-raised));
-  color: var(--text-accent);
-  border-color: var(--border-accent);
-}
-html.dark .filter-info { background: var(--bg-accent-subtle); }
-
-
-html.dark .weer-card { background: var(--card-bg); }
-html.dark .weer-dag { background: var(--bg-surface-sunken); }
-html.dark .weer-dag.vandaag { background: var(--bg-accent-subtle); border-color: var(--border-accent); }
-html.dark .weer-dag-naam { color: var(--text-primary); }
-html.dark .weer-beschrijving { color: var(--text-tertiary); }
-html.dark .weer-locatie { background: var(--bg-accent-subtle); color: var(--text-accent); }
-html.dark .weer-periode { background: var(--bg-surface-raised); color: var(--text-secondary); }
-html.dark .weer-desktop-meta { color: var(--text-tertiary); }
-html.dark .datum-dag { color: var(--text-primary); }
-html.dark .datum-volledig { color: var(--text-tertiary); }
-
-html.dark .spot-card { background: linear-gradient(135deg, color-mix(in srgb, var(--color-success-dark) 38%, var(--bg-surface)), color-mix(in srgb, var(--color-success-dark) 48%, var(--bg-surface))); }
-html.dark .spot-label { color: var(--color-success-light); }
-html.dark .spot-naam { color: var(--text-primary); }
-html.dark .spot-frans { color: var(--color-success-light); }
-html.dark .spot-meta { color: var(--color-success-light); }
-html.dark .spot-regio-tag { background: rgba(255,255,255,0.1); color: var(--text-primary); }
-html.dark .ui-widget-title,
-html.dark .ui-widget-name { color: var(--text-primary); }
-html.dark .ui-widget-kicker,
-html.dark .ui-widget-subtitle { color: var(--text-tertiary); }
-html.dark .ui-widget-copy,
-html.dark .ui-widget-meta,
-html.dark .ui-widget-metric-value { color: var(--text-secondary); }
-html.dark .ui-widget-metric {
-  background: var(--bg-surface-raised);
-  border-color: var(--border-strong);
-}
-html.dark .ui-widget-metric-label { color: var(--text-tertiary); }
-
-html.dark .meer-groep-items { background: var(--card-bg); }
-html.dark .meer-item { border-bottom-color: var(--border-strong); }
-html.dark .meer-item:active { background: var(--bg-interactive-active); }
-html.dark .meer-label { color: var(--text-primary); }
-html.dark .meer-uitloggen { border-color: var(--color-error-dark); }
-
-html.dark .fab { background: var(--bg-accent); box-shadow: 0 4px 14px color-mix(in srgb, var(--bg-accent) 40%, transparent); }
-html.dark .fab-form { background: var(--card-bg); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
-
-html.dark .undo-bar { background: var(--bg-interactive-active); }
-
-html.dark .offline-bar { background: color-mix(in srgb, var(--color-error-dark) 42%, var(--bg-surface)); color: var(--color-error-light); }
 
 /* ========== DARK MODE TOGGLE ========== */
 .dark-toggle-item {

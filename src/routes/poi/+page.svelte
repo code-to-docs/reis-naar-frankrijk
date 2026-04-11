@@ -366,7 +366,7 @@
     margin: 0;
     display: grid;
     gap: var(--space-1);
-    min-height: 118px;
+    min-height: calc(var(--space-16) + var(--space-10) + var(--space-3-5));
     align-content: start;
   }
 
@@ -425,7 +425,7 @@
   }
 
   .poi-filter-toggle {
-    min-width: 92px;
+    min-width: calc(var(--space-16) + var(--space-6) + var(--space-1));
     align-self: stretch;
   }
 
@@ -503,8 +503,8 @@
   .poi-filter-count {
     display: inline-flex;
     align-items: center;
-    min-height: 26px;
-    padding: var(--space-1) 9px;
+    min-height: var(--ui-touch-compact);
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--card-bg) 85%, var(--bg-accent-subtle));
     border: 1px solid color-mix(in srgb, var(--input-border) 78%, var(--border-accent));
@@ -516,7 +516,7 @@
   .poi-grid {
     display: grid;
     gap: var(--ui-space-4);
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
   }
 
   .poi-empty {
@@ -543,13 +543,18 @@
     margin: 0;
     display: grid;
     gap: var(--space-2-5);
-    min-height: 280px;
+    min-height: 17.5rem;
   }
 
   .poi-skeleton-line,
   .poi-skeleton-pill {
     border-radius: var(--radius-full);
-    background: linear-gradient(90deg, rgba(148, 163, 184, 0.16), rgba(148, 163, 184, 0.32), rgba(148, 163, 184, 0.16));
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--border-strong) 34%, transparent),
+      color-mix(in srgb, var(--border-strong) 62%, transparent),
+      color-mix(in srgb, var(--border-strong) 34%, transparent)
+    );
     background-size: 200% 100%;
     animation: poiSkeleton 1.4s ease-in-out infinite;
   }
@@ -575,11 +580,11 @@
 
   .poi-skeleton-pill {
     height: var(--space-10);
-    width: 136px;
+    width: 8.5rem;
   }
 
   .poi-skeleton-pill--small {
-    width: 92px;
+    width: 5.75rem;
   }
 
   @keyframes poiSkeleton {
@@ -609,11 +614,11 @@
 
     .poi-hero-action {
       width: auto;
-      min-width: 190px;
+      min-width: 11.875rem;
     }
 
     .poi-sort {
-      max-width: 220px;
+      max-width: var(--nav-sidebar-width);
     }
   }
 
@@ -637,7 +642,7 @@
 
     .poi-filter-toggle {
       min-height: var(--space-12);
-      min-width: 108px;
+      min-width: 6.75rem;
       font-size: var(--text-base);
     }
 
@@ -650,7 +655,11 @@
   :global(html.dark) .poi-hero,
   :global(html.dark) .poi-summary-card--accent {
     background:
-      linear-gradient(135deg, rgba(30, 58, 95, 0.82), rgba(13, 24, 40, 0.96)),
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--bg-surface-raised) 82%, var(--color-primary-900)),
+        color-mix(in srgb, var(--bg-surface-sunken) 96%, var(--color-primary-900))
+      ),
       var(--card-bg);
   }
 
@@ -669,8 +678,8 @@
   }
 
   :global(html.dark) .poi-filter-count {
-    background: rgba(30, 64, 175, 0.28);
-    border-color: rgba(96, 165, 250, 0.32);
+    background: color-mix(in srgb, var(--color-primary-700) 28%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary-300) 32%, transparent);
     color: var(--text-accent);
   }
 </style>

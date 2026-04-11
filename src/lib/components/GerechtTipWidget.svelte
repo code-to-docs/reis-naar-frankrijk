@@ -108,7 +108,11 @@
 
   :global(html.dark) .food-tip-card {
     background:
-      radial-gradient(100% 70% at 10% 0%, rgba(14, 165, 164, 0.18) 0%, transparent 66%),
+      radial-gradient(
+        100% 70% at 10% 0%,
+        color-mix(in srgb, var(--color-primary-400) 18%, transparent) 0%,
+        transparent 66%
+      ),
       var(--bg-surface-raised);
     border-color: var(--border-strong);
   }

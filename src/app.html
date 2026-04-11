@@ -21,6 +21,22 @@
     <link rel="icon" href="/favicon.png" />
     <script>
       (function () {
+        try {
+          const naam = localStorage.getItem("naam") || "";
+          const key = naam ? `darkmode_${naam.toLowerCase()}` : "";
+          const opgeslagen = key ? localStorage.getItem(key) : null;
+          const systeemDonker =
+            typeof window.matchMedia === "function" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const isDonker = opgeslagen === "true" || (opgeslagen === null && systeemDonker);
+          document.documentElement.classList.toggle("dark", isDonker);
+        } catch {
+          // Ignore storage/access errors and continue with default theme.
+        }
+      })();
+    </script>
+    <script>
+      (function () {
         const recoveryKey = "chunk-recovery-v1";
 
         function shouldRecover(message, source) {
