@@ -113,8 +113,8 @@
       </label>
 
       <div class="form-actions">
-        <button type="submit" class="btn-save action-save" disabled={!kanOpslaan}>Opslaan</button>
-        <button type="button" class="btn-danger btn-icon action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
+        <button type="submit" class="btn-save action-save" disabled={!kanOpslaan} data-disabled-opacity="0.6">Opslaan</button>
+        <button type="button" class="btn-secondary btn-icon action-cancel" onclick={() => toonForm = false} aria-label="Sluiten">
           {E.X}
         </button>
       </div>
@@ -264,6 +264,10 @@
     padding: 0;
     line-height: 1;
   }
+  .action-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
   @media (min-width: 1100px) {
     .fab {
@@ -318,7 +322,11 @@
     background: var(--bg-surface);
   }
   :global(html.dark) .field-input::placeholder { color: var(--text-secondary); }
-  :global(html.dark) .action-cancel { background: var(--color-error-base); }
+  :global(html.dark) .action-cancel {
+    background: var(--bg-surface-raised);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
+  }
 </style>
 
 

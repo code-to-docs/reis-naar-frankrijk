@@ -44,7 +44,7 @@
         </div>
         <div class="entry-right">
           <strong class="entry-bedrag">{formatEuro(u.bedrag)}</strong>
-          <button class="entry-delete" aria-label={`Verwijder ${u.omschrijving}`} onclick={() => onDelete(u.id)}>{E.PRULLENBAK}</button>
+          <button class="entry-delete btn-danger btn-icon" aria-label={`Verwijder ${u.omschrijving}`} onclick={() => onDelete(u.id)}>{E.PRULLENBAK}</button>
         </div>
       </div>
     {/each}
@@ -148,8 +148,7 @@
     flex-shrink: 0;
   }
   .entry-delete {
-    background: color-mix(in srgb, var(--card-bg) 92%, var(--bg-surface-sunken));
-    border: 1px solid var(--input-border);
+    border: none;
     font-size: 0.9rem;
     min-height: var(--btn-height-compact);
     min-width: var(--btn-height-compact);

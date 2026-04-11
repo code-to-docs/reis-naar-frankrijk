@@ -337,7 +337,7 @@
   .wl-leeg {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
-    padding: 18px;
+    padding: var(--space-4-5);
     text-align: center;
     color: var(--text-secondary);
     box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
@@ -348,7 +348,7 @@
     .wl-page {
       gap: var(--ui-space-4);
     }
-    .wl-filter-toggle { padding-inline: 14px; }
+    .wl-filter-toggle { padding-inline: var(--space-3-5); }
   }
 
   @media (min-width: 1100px) {
@@ -358,11 +358,11 @@
     .wl-zoek {
       min-height: var(--space-12);
       font-size: var(--text-base);
-      padding-inline: 14px;
+      padding-inline: var(--space-3-5);
     }
     .wl-filter-toggle {
       min-height: var(--space-12);
-      min-width: 108px;
+      min-width: var(--space-24);
       padding-inline: var(--space-4);
       font-size: var(--text-base);
     }
@@ -373,8 +373,8 @@
       margin-top: var(--space-3);
     }
     .wl-pill {
-      min-height: 42px;
-      padding-inline: 14px;
+      min-height: var(--ui-touch-compact);
+      padding-inline: var(--space-3-5);
       font-size: var(--text-base);
     }
     .wl-resultaten {

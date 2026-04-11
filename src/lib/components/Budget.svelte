@@ -183,7 +183,7 @@
           <button type="submit" class="btn-success budget-edit-save">OK</button>
           <button
             type="button"
-            class="btn-danger btn-icon budget-edit-cancel"
+            class="btn-secondary btn-icon budget-edit-cancel"
             aria-label="Annuleer budget bewerken"
             onclick={() => toonBudgetEdit = false}
           >

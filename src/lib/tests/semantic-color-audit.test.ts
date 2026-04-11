@@ -154,7 +154,7 @@ describe('Semantische Kleur Audit', () => {
       }
     }
 
-    expect(allViolations.length).toBeDefined();
+    expect(allViolations.length).toBe(0);
   });
 
   it('valideert button-kleur consistentie', async () => {

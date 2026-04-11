@@ -50,67 +50,73 @@
 </script>
 
 {#if alertsLaden}
-  <div class="alerts-loading">
-    <div class="alert-skeleton"></div>
-    <div class="alert-skeleton"></div>
+  <div class="weather-status-loading">
+    <div class="weather-status-skeleton"></div>
+    <div class="weather-status-skeleton"></div>
   </div>
 {:else if alerts}
-  <div class="alerts-panel">
-    <div class="alerts-grid">
+  <div class="weather-status-panel">
+    <div class="weather-status-grid">
       {#if actieveAlerts.length > 0}
         {#each actieveAlerts as alert (alert.url)}
-          <a class="alert-card tone-{alertTone(alert.level)}" href={alert.url} target="_blank" rel="noreferrer">
-            <div class="alert-card-top">
-              <span class="alert-source">{alert.sourceLabel}</span>
-              <span class={`alert-badge ui-chip ${alertChipClass(alert.level)}`}>{alert.levelLabel}</span>
+          <a
+            class="weather-status-card tone-{alertTone(alert.level)}"
+            data-warning-token="--color-warning"
+            href={alert.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div class="weather-status-card-top">
+              <span class="weather-status-source">{alert.sourceLabel}</span>
+              <span class={`weather-status-badge ui-chip ${alertChipClass(alert.level)}`}>{alert.levelLabel}</span>
             </div>
-            <div class="alert-region">{normalizeFrenchRegionName(alert.regionName)}</div>
-            <div class="alert-summary">{formatPhenomena(alert)}</div>
+            <div class="weather-status-region">{normalizeFrenchRegionName(alert.regionName)}</div>
+            <div class="weather-status-summary">{formatPhenomena(alert)}</div>
             {#if alert.validUntil}
-              <div class="alert-meta">Geldig tot {formatAlertMoment(alert.validUntil)}</div>
+              <div class="weather-status-meta">Geldig tot {formatAlertMoment(alert.validUntil)}</div>
             {/if}
           </a>
         {/each}
 
         {#if rustigeRegioTekst}
-          <a class="alert-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
-            <div class="alert-card-top">
-              <span class="alert-source">M&eacute;t&eacute;o-France Vigilance</span>
-              <span class="alert-badge ui-chip ui-chip--success">Groen</span>
+          <a class="weather-status-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
+            <div class="weather-status-card-top">
+              <span class="weather-status-source">M&eacute;t&eacute;o-France Vigilance</span>
+              <span class="weather-status-badge ui-chip ui-chip--success">Groen</span>
             </div>
-            <div class="alert-region">Rustige regio&apos;s</div>
-            <div class="alert-summary">{rustigeRegioTekst}</div>
+            <div class="weather-status-region">Rustige regio&apos;s</div>
+            <div class="weather-status-summary">{rustigeRegioTekst}</div>
           </a>
         {/if}
       {:else}
-        <a class="alert-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
-          <div class="alert-card-top">
-            <span class="alert-source">M&eacute;t&eacute;o-France Vigilance</span>
-            <span class="alert-badge ui-chip ui-chip--success">Groen</span>
+        <a class="weather-status-card tone-calm" href={alerts.sources.meteoFranceUrl} target="_blank" rel="noreferrer">
+          <div class="weather-status-card-top">
+            <span class="weather-status-source">M&eacute;t&eacute;o-France Vigilance</span>
+            <span class="weather-status-badge ui-chip ui-chip--success">Groen</span>
           </div>
-          <div class="alert-region">Geen weeralarm van kracht</div>
-          <div class="alert-summary">Rustig volgens M&eacute;t&eacute;o-France: Loz&egrave;re, Cantal, Ari&egrave;ge.</div>
+          <div class="weather-status-region">Geen weeralarm van kracht</div>
+          <div class="weather-status-summary">Rustig volgens M&eacute;t&eacute;o-France: Loz&egrave;re, Cantal, Ari&egrave;ge.</div>
           {#if alerts.officialAlerts[0]?.updatedAt}
-            <div class="alert-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
+            <div class="weather-status-meta">Bijgewerkt {formatAlertMoment(alerts.officialAlerts[0].updatedAt)}</div>
           {/if}
         </a>
       {/if}
     </div>
   </div>
 {:else if alertsFout}
-  <div class="alerts-error">{alertsFout}</div>
+  <div class="weather-status-error">{alertsFout}</div>
 {/if}
 
 <style>
-  .alerts-panel {
+  .weather-status-panel {
     margin-bottom: var(--space-3);
   }
-  .alerts-grid {
+  .weather-status-grid {
     display: grid;
     gap: var(--space-2-5);
     grid-template-columns: 1fr;
   }
-  .alert-card {
+  .weather-status-card {
     display: block;
     text-decoration: none;
     color: inherit;
@@ -120,37 +126,37 @@
     background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-sunken) 100%);
     box-shadow: var(--shadow-md);
   }
-  .alert-card-top {
+  .weather-status-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-2);
     margin-bottom: var(--space-2);
   }
-  .alert-source {
+  .weather-status-source {
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
     font-weight: var(--weight-bold);
   }
-  .alert-badge {
+  .weather-status-badge {
     min-height: var(--ui-touch-compact);
   }
-  .alert-region {
+  .weather-status-region {
     font-size: var(--text-base);
     font-weight: var(--ui-weight-heavy);
     color: var(--text-primary);
     margin-bottom: var(--space-1);
     letter-spacing: -0.01em;
   }
-  .alert-summary {
+  .weather-status-summary {
     font-size: var(--ui-text-sm);
     line-height: var(--leading-snug);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }
-  .alert-meta {
+  .weather-status-meta {
     margin-top: var(--space-1-5);
     font-size: var(--text-xs);
     color: var(--text-secondary);
@@ -172,25 +178,25 @@
     background: linear-gradient(135deg, var(--color-error-light) 0%, var(--bg-surface) 100%);
     border-color: color-mix(in srgb, var(--color-error-base) 38%, var(--border-default));
   }
-  .alerts-error {
+  .weather-status-error {
     margin-bottom: var(--space-3);
     font-size: var(--text-xs);
     color: var(--text-secondary);
     font-weight: var(--weight-semibold);
   }
-  .alerts-loading {
+  .weather-status-loading {
     display: grid;
     gap: var(--space-2-5);
     margin-bottom: var(--space-3);
   }
-  .alert-skeleton {
+  .weather-status-skeleton {
     height: var(--space-21-5);
     border-radius: var(--radius-xl);
     background: linear-gradient(90deg, var(--bg-surface-sunken) 25%, var(--bg-surface) 50%, var(--bg-surface-sunken) 75%);
     background-size: 200% 100%;
-    animation: alertShimmer 1.3s infinite linear;
+    animation: weatherAlertShimmer 1.3s infinite linear;
   }
-  @keyframes alertShimmer {
+  @keyframes weatherAlertShimmer {
     from {
       background-position: 200% 0;
     }

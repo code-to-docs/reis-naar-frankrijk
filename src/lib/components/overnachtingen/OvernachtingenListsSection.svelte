@@ -49,7 +49,7 @@
             </div>
             <div class="ov-item-head-actions">
               <button class="ov-open-btn" onclick={() => onOpenEditor(o)}>Bewerk</button>
-              <button class="ov-delete" aria-label={`Verwijder ${o.naam} uit shortlist`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
+              <button class="ov-delete btn-danger btn-icon" aria-label={`Verwijder ${o.naam} uit shortlist`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
             </div>
           </div>
           <div class="ov-meta">
@@ -117,7 +117,7 @@
               </div>
               <div class="ov-item-head-actions">
                 <button class="ov-open-btn" onclick={() => onOpenEditor(o)}>Bewerk</button>
-                <button class="ov-delete" aria-label={`Verwijder ${o.naam}`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
+                <button class="ov-delete btn-danger btn-icon" aria-label={`Verwijder ${o.naam}`} onclick={() => onDelete(o.id, o.naam)}>{E.PRULLENBAK}</button>
               </div>
             </div>
             <div class="ov-item-body">
@@ -241,15 +241,12 @@
     padding: 0;
     font-size: var(--text-base);
     border-radius: var(--btn-radius);
-    border: 1px solid var(--input-border);
-    background: color-mix(in srgb, var(--card-bg) 92%, var(--bg-surface-sunken));
-    color: color-mix(in srgb, var(--tekst) 70%, var(--text-secondary));
+    border: none;
+    color: var(--text-inverse);
     opacity: 1;
   }
   .ov-delete:hover {
-    border-color: color-mix(in srgb, var(--color-error-base) 30%, var(--input-border));
-    color: var(--text-error);
-    background: color-mix(in srgb, var(--card-bg) 78%, var(--color-error-light));
+    opacity: 0.9;
   }
   .ov-meta {
     display: flex;
@@ -353,14 +350,7 @@
     border-color: var(--border-accent);
   }
   :global(html.dark) .ov-delete {
-    background: var(--bg-surface);
-    border-color: var(--border-strong);
-    color: var(--text-secondary);
-  }
-  :global(html.dark) .ov-delete:hover {
-    border-color: var(--color-error-base);
-    color: var(--color-error-light);
-    background: var(--black-a35);
+    border-color: transparent;
   }
   :global(html.dark) .ov-shortlist-item {
     background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary-800) 35%, transparent) 0%, var(--bg-surface-raised) 72%);

@@ -152,10 +152,10 @@
       </label>
 
       <div class="poi-form-actions">
-        <button type="submit" class="btn-primary poi-save" disabled={saving}>
+        <button type="submit" class="btn-primary poi-save" disabled={saving} data-disabled-opacity="0.6">
           {saving ? "Opslaan..." : poi ? "Wijziging opslaan" : "Suggestie opslaan"}
         </button>
-        <button type="button" class="btn-secondary" onclick={onClose} disabled={saving}>Annuleer</button>
+        <button type="button" class="btn-secondary" onclick={onClose} disabled={saving} data-disabled-opacity="0.6">Annuleer</button>
       </div>
     </form>
   </div>
@@ -331,6 +331,13 @@
 
   .poi-save {
     flex: 1;
+  }
+  .poi-form-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--bg-surface-sunken);
+    color: var(--text-tertiary);
+    border-color: var(--border-default);
   }
 
   @media (min-width: 768px) {

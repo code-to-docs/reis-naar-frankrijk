@@ -17,7 +17,7 @@
 <div class="gr-tip-card">
   <div class="gr-tip-top">
     <div class="gr-tip-label">Proef-tip van vandaag</div>
-    <button class="gr-tip-refresh" onclick={gps.refreshGpsTip} disabled={gps.gpsBezig}>
+    <button class="gr-tip-refresh" onclick={gps.refreshGpsTip} disabled={gps.gpsBezig} data-disabled-opacity="0.7">
       {gps.gpsBezig ? "GPS..." : "GPS verversen"}
     </button>
   </div>

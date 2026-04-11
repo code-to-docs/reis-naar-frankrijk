@@ -183,14 +183,14 @@
         {#if vertrekPreview}
           <span>{emojiKalender} Uitcheck: {vertrekPreview}</span>
         {/if}
-        <button type="button" class="ov-gps-btn" onclick={onGebruikGps} disabled={gpsBezig}>
+        <button type="button" class="ov-gps-btn" onclick={onGebruikGps} disabled={gpsBezig} data-disabled-opacity="0.6">
           {gpsBezig ? "GPS ophalen..." : `${emojiPin} Gebruik huidige GPS`}
         </button>
       </div>
 
       <div class="ov-actions">
         <button class="btn-save" type="submit">{editItemId ? "Wijzigingen opslaan" : "Opslaan"}</button>
-        <button class="btn-danger" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
+        <button class="btn-secondary btn-icon" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
       </div>
     </form>
   </div>
@@ -292,14 +292,14 @@
 
       <div class="ov-preview">
         <span>{emojiPin} Tip: voeg GPS toe voor snelle route in Google Maps.</span>
-        <button type="button" class="ov-gps-btn" onclick={onGebruikGps} disabled={gpsBezig}>
+        <button type="button" class="ov-gps-btn" onclick={onGebruikGps} disabled={gpsBezig} data-disabled-opacity="0.6">
           {gpsBezig ? "GPS ophalen..." : `${emojiPin} Gebruik huidige GPS`}
         </button>
       </div>
 
       <div class="ov-actions">
         <button class="btn-save" type="submit">{editItemId ? "Wijzigingen opslaan" : "Naar shortlist"}</button>
-        <button class="btn-danger" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
+        <button class="btn-secondary btn-icon" type="button" aria-label="Sluit formulier" onclick={onCloseForms}>X</button>
       </div>
     </form>
   </div>
@@ -330,7 +330,7 @@
   }
   .ov-form label {
     display: grid;
-    gap: 5px;
+    gap: var(--space-1);
   }
   .ov-form label span {
     font-size: var(--text-xs);
@@ -386,13 +386,19 @@
     flex: 1;
     width: auto;
   }
-  .ov-actions .btn-danger {
-    width: 52px;
+  .ov-actions .btn-icon {
+    width: var(--btn-height);
     font-weight: var(--weight-bold);
     padding: 0;
   }
+  .ov-gps-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--bg-surface-sunken);
+    color: var(--text-tertiary);
+  }
 
-  @media (min-width: 840px) {
+  @media (min-width: 768px) {
     .ov-form {
       grid-template-columns: 1fr 1fr;
     }

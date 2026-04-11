@@ -53,9 +53,25 @@
 {#if actieveWeergave === "kalender"}
   <div class="card ov-calendar-card">
     <div class="ov-calendar-head">
-      <button class="ov-month-btn" onclick={onPrevMaand} disabled={!kanVorigeMaand} aria-label="Vorige maand">Vorige</button>
+      <button
+        class="ov-month-btn"
+        onclick={onPrevMaand}
+        disabled={!kanVorigeMaand}
+        data-disabled-opacity="0.45"
+        aria-label="Vorige maand"
+      >
+        Vorige
+      </button>
       <strong aria-live="polite">{maandLabelText}</strong>
-      <button class="ov-month-btn" onclick={onNextMaand} disabled={!kanVolgendeMaand} aria-label="Volgende maand">Volgende</button>
+      <button
+        class="ov-month-btn"
+        onclick={onNextMaand}
+        disabled={!kanVolgendeMaand}
+        data-disabled-opacity="0.45"
+        aria-label="Volgende maand"
+      >
+        Volgende
+      </button>
     </div>
     <p class="ov-calendar-hint">Tik op een dag voor 1 nacht, of swipe/drag over meerdere dagen voor een reeks.</p>
 

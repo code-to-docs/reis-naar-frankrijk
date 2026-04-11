@@ -57,7 +57,7 @@
 
   <div class="poi-actions">
     {#if poi.mapsLink}
-      <a href={poi.mapsLink} target="_blank" rel="noopener noreferrer" class="btn-primary poi-map-link">Laat zien op kaart</a>
+      <a href={poi.mapsLink} target="_blank" rel="noopener noreferrer" class="btn-secondary poi-map-link">Laat zien op kaart</a>
     {/if}
     {#if poi.websiteUrl}
       <a href={poi.websiteUrl} target="_blank" rel="noopener noreferrer" class="poi-link">Website</a>
@@ -66,7 +66,7 @@
       {poi.bezocht ? "Nog open" : "Bezocht"}
     </button>
     <button type="button" class="btn-ghost btn-pill poi-edit" onclick={onEdit}>Bewerk</button>
-    <button type="button" class="btn-ghost btn-icon poi-delete" onclick={onDelete} aria-label={`Verwijder ${poi.naam}`}>{E.X}</button>
+    <button type="button" class="btn-danger btn-icon poi-delete" onclick={onDelete} aria-label={`Verwijder ${poi.naam}`}>{E.X}</button>
   </div>
 </article>
 
