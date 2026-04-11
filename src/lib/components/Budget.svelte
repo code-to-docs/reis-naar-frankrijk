@@ -106,11 +106,17 @@
       }
     );
 
-    unsubBudget = onSnapshot(firestoreDoc(db, "instellingen", "budget"), (snap) => {
-      if (!snap.exists()) return;
-      const val = Number(snap.data().bedrag);
-      if (Number.isFinite(val) && val > 0) budget = val;
-    });
+    unsubBudget = onSnapshot(
+      firestoreDoc(db, "instellingen", "budget"),
+      (snap) => {
+        if (!snap.exists()) return;
+        const val = Number(snap.data().bedrag);
+        if (Number.isFinite(val) && val > 0) budget = val;
+      },
+      (error) => {
+        console.error("Fout bij laden budget instellingen:", error);
+      }
+    );
 
     return () => {
       unsubscribe?.();

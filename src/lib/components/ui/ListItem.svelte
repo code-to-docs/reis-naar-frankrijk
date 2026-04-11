@@ -5,7 +5,7 @@
     subtitle = "",
     arrow = true,
     onclick,
-    children
+    children = null
   } = $props();
 
   // arrow: toont standaard chevron rechts

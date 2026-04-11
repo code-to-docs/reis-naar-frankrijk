@@ -50,7 +50,7 @@
     {#each paginas as p (p.id)}
       {@const active = isActive(p.id)}
       <a href={p.id} class="nav-item" class:active aria-current={active ? "page" : undefined} aria-label={p.label}>
-        <span class="nav-emoji">{p.emoji}</span>
+        <span class="nav-emoji" aria-hidden="true">{p.emoji}</span>
         <span class="nav-label">{p.label}</span>
         {#if active}
           <div class="nav-indicator"></div>

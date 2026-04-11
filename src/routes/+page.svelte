@@ -10,7 +10,7 @@
   import ListItem from "$lib/components/ui/ListItem.svelte";
 
   const vertrekDatum = new Date("2025-07-14");
-  const dagen = Math.ceil((vertrekDatum - new Date()) / 86400000);
+  const dagen = Math.ceil((vertrekDatum.getTime() - Date.now()) / 86400000);
 
   let meerPagina = $state("");
 
@@ -121,11 +121,11 @@
 {:else if $activePagina === "meer"}
   {#if !meerPagina}
     <div class="page-transition meer-menu">
-      {#each meerGroepen as groep}
+      {#each meerGroepen as groep (groep.label)}
         <div class="meer-groep">
           <div class="meer-groep-label">{groep.label}</div>
           <div class="meer-groep-items">
-            {#each groep.items as o}
+            {#each groep.items as o (o.id)}
               <ListItem
                 emoji={o.emoji}
                 label={o.label}
@@ -253,14 +253,14 @@
   .toggle-track {
     width: 48px;
     height: 28px;
-    background: #cbd5e1;
-    border-radius: 14px;
+    background: var(--color-neutral-300);
+    border-radius: var(--radius-full);
     position: relative;
-    transition: background 250ms ease;
+    transition: background var(--duration-normal) var(--ease-default);
     flex-shrink: 0;
   }
   .toggle-track.active {
-    background: #3b82f6;
+    background: var(--color-primary-500);
   }
   .toggle-thumb {
     position: absolute;
@@ -268,14 +268,14 @@
     left: 3px;
     width: 22px;
     height: 22px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 250ms ease;
+    background: var(--color-neutral-0);
+    border-radius: var(--radius-full);
+    transition: transform var(--duration-normal) var(--ease-default);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    font-size: var(--text-xs);
+    box-shadow: var(--shadow-sm);
   }
   .toggle-track.active .toggle-thumb {
     transform: translateX(20px);

@@ -5,6 +5,7 @@
   import { appState } from "$lib/stores.svelte.js";
   import Snackbar from "$lib/components/Snackbar.svelte";
   import Header from "$lib/components/Header.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
 
   let { children } = $props();
   let naam = $state("");
@@ -53,8 +54,8 @@
     <h2>Reis naar Frankrijk</h2>
     <p>Wie ben je?</p>
     <div class="kies-acties">
-      <button class="btn-primary kies-knop" onclick={() => kiesNaam("Franzi")}>Franzi</button>
-      <button class="btn-primary kies-knop" onclick={() => kiesNaam("Dennis")}>Dennis</button>
+      <Button variant="primary" class="kies-knop" onclick={() => kiesNaam("Franzi")}>Franzi</Button>
+      <Button variant="primary" class="kies-knop" onclick={() => kiesNaam("Dennis")}>Dennis</Button>
     </div>
   </div>
 {:else}
@@ -102,7 +103,7 @@
     margin-top: var(--space-1-5);
   }
 
-  .kies-knop {
+  :global(.kies-knop) {
     font-size: var(--text-lg);
     min-width: calc(var(--space-16) + var(--space-12) + var(--space-6));
   }

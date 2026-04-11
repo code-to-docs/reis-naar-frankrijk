@@ -3,6 +3,7 @@
 ## 1. Mappenstructuur
 * `.github/workflows/`: CI-automatisering voor tests en auditrapportage.
 * `scripts/`: onderhouds- en governance-scripts (o.a. audit-trending).
+* `static/`: statische assets (icons, manifest.json) en de PWA service worker (`sw.js`).
 * `src/`
 * `src/routes/`: SvelteKit file-based routing (`+layout`, home, budget, campings, poi, meer, api).
 * `src/lib/api/`: externe API-adapters (weer, wiki).
