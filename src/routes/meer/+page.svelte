@@ -1,6 +1,7 @@
 <script>
   import { appState } from "$lib/stores.svelte.js";
   import { E } from "$lib/emojis.js";
+  import Button from "$lib/components/ui/Button.svelte";
 
 
 
@@ -82,15 +83,17 @@
     </div>
   </div>
 
-  <button class="meer-uitloggen" onclick={handleUitloggen}>
-    {E.DEUR} Uitloggen
-  </button>
+  <div class="uitloggen-wrap">
+    <Button variant="destructive" fullWidth onclick={handleUitloggen}>
+      {E.DEUR} Uitloggen
+    </Button>
+  </div>
 
   {#if showTokenTest}
     <section class="test-card" aria-label="UI tokens testkaart">
       <h2 class="test-title">Token Test</h2>
       <p class="test-body">Als dit er goed uitziet, werken de tokens.</p>
-      <button class="test-button" type="button">Primaire actie</button>
+      <Button variant="primary" type="button">Primaire actie</Button>
     </section>
   {/if}
 </div>
@@ -119,19 +122,6 @@
   .meer-label { flex: 1; font-size: var(--text-base); font-weight: var(--ui-weight-medium); color: var(--tekst); }
   .meer-arrow { flex-shrink: 0; }
 
-  .meer-uitloggen {
-    width: 100%;
-    background: color-mix(in srgb, var(--card-bg) 88%, var(--color-error-light));
-    border: 1px solid color-mix(in srgb, var(--rood) 30%, var(--input-border));
-    border-radius: var(--radius-md);
-    color: var(--rood);
-    font-size: var(--text-base);
-    font-weight: var(--ui-weight-semibold);
-    cursor: pointer;
-    margin-top: var(--space-2);
-  }
-  .meer-uitloggen:active { background: var(--hover-bg); }
-
   .test-card {
     background: var(--bg-surface);
     padding: var(--space-6);
@@ -140,6 +130,10 @@
     border: 1px solid var(--border-default);
     max-width: calc(var(--space-16) * 6 + var(--space-4));
     margin: var(--space-8) auto 0;
+  }
+
+  .uitloggen-wrap {
+    margin-top: var(--space-2);
   }
 
   .test-title {
@@ -155,20 +149,5 @@
     margin-bottom: var(--space-4);
   }
 
-  .test-button {
-    background: var(--bg-accent);
-    color: var(--text-inverse);
-    padding: var(--space-2-5) var(--space-4);
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: var(--text-base);
-    font-weight: var(--weight-medium);
-    cursor: pointer;
-    transition: background var(--duration-fast) var(--ease-default);
-  }
-
-  .test-button:hover {
-    background: var(--bg-accent-hover);
-  }
 </style>
 

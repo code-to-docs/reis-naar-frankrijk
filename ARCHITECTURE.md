@@ -7,6 +7,7 @@
 * `src/routes/`: SvelteKit file-based routing (`+layout`, home, budget, campings, poi, meer, api).
 * `src/lib/api/`: externe API-adapters (weer, wiki).
 * `src/lib/components/`: domeincomponenten voor budget, overnachtingen, poi, weer en wildlife.
+* `src/lib/components/ui/`: app-brede primitives (`Button`, `Card`, `Input`) voor consistente interactie- en vormgevingstokens.
 * `src/lib/features/gerechten/`: modulaire gerechten-feature (context, composables, UI-componenten).
 * `src/lib/services/`: Firestore service-laag (`overnachtingenService`, `poiService`).
 * `src/lib/utils/`: pure helperlogica en datatransformaties.
@@ -32,6 +33,9 @@
 * **State**: Svelte 5 Runes + context en globale app-state (`stores.svelte.js`).
 
 ## 4. Recente Architecturale Beslissingen
+* **[v1.2.11] Primitive baseline**: `Button`, `Card`, `Input` introduceren een centrale UI-contractlaag voor variants/sizes/states met token-only styling.
+* **[v1.2.11] Route-level POC**: `meer/+page` en `meer/[id]/+page` zijn eerste migratiepunt naar primitives voor terug- en uitlogacties.
+* **[v1.2.11] Semantic gate exception**: `Disabled states` check sluit `src/lib/components/ui/` uit om false positives op generieke componenten te vermijden.
 * **[v1.2.10] CI-kwaliteitspoort**: `.github/workflows/ci.yml` maakt test- en audit-trendstappen standaard voor `main` en PR's.
 * **[v1.2.10] Audit-trending**: `scripts/audit-trend.mjs` levert persistente trendartefacten in `docs/` voor sprint-over-sprint governance.
 * **[v1.2.10] A11y-regressiegate**: extra audit-suite borgt focus/reduced-motion/toetsenbord/contrast-invarianten.

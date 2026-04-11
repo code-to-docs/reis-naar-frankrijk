@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import { appState } from '$lib/stores.svelte.js';
   import { E } from '$lib/emojis.js';
+  import Button from '$lib/components/ui/Button.svelte';
   import GedeeldeLijst from '$lib/components/GedeeldeLijst.svelte';
   import Noodinfo from '$lib/components/Noodinfo.svelte';
   import WildlifeChecklist from '$lib/components/WildlifeChecklist.svelte';
@@ -12,12 +13,12 @@
 
 <div class="page-transition page-shell">
   <div class="terug-wrap">
-    <a href="/meer" class="terug-btn">
+    <Button href="/meer" variant="secondary" size="sm">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M11 4L6 9L11 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       Terug
-    </a>
+    </Button>
   </div>
 
   {#if id === "activiteiten"}
@@ -58,22 +59,6 @@
   .terug-wrap {
     padding: 0 0 var(--space-2-5) 0;
   }
-  .terug-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1-5);
-    min-height: var(--btn-height-compact);
-    padding: 0 var(--space-3-5);
-    background: color-mix(in srgb, var(--card-bg) 86%, var(--bg-accent-subtle));
-    color: var(--blauw);
-    border: 1px solid color-mix(in srgb, var(--input-border) 82%, var(--border-default));
-    border-radius: var(--btn-radius);
-    font-size: var(--text-sm);
-    font-weight: var(--ui-weight-semibold);
-    cursor: pointer;
-    text-decoration: none;
-  }
-  .terug-btn:active { opacity: 0.85; }
   .not-found {
     padding: var(--space-4);
   }

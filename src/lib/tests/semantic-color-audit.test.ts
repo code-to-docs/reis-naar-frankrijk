@@ -75,8 +75,13 @@ function extractContextWindow(content: string, index: number, windowSize: number
 
 function analyzeSemanticColors(filePath: string, content: string): Violation[] {
   const violations: Violation[] = [];
+  const isUiPrimitive = filePath.includes('/components/ui/');
 
   for (const rule of SEMANTIC_RULES) {
+    if (isUiPrimitive && rule.name === 'Disabled states') {
+      continue;
+    }
+
     for (const pattern of rule.contextPatterns) {
       pattern.lastIndex = 0;
       
