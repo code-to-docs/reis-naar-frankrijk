@@ -208,7 +208,7 @@
   /* Aftelling kaart */
   .aftelling-card {
     text-align: center;
-    padding: 20px 16px;
+    padding: var(--space-5) var(--space-4);
   }
   .aftelling-tekst {
     font-size: 1.1rem;
@@ -216,43 +216,43 @@
     color: var(--heading);
   }
   .aftelling-route {
-    margin-top: 6px;
-    font-size: 0.85rem;
-    font-weight: 400;
+    margin-top: var(--space-1-5);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-regular);
     color: var(--nav-text);
-    letter-spacing: 0.3px;
+    letter-spacing: 0.02em;
   }
 
   /* Meer menu — alleen layout, geen component styling */
-  .meer-menu { padding: 16px; }
-  .meer-groep { margin-bottom: 16px; }
+  .meer-menu { padding: var(--space-4); }
+  .meer-groep { margin-bottom: var(--space-4); }
   .meer-groep-label {
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
     color: var(--nav-text);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 0 4px 6px 4px;
+    letter-spacing: 0.03em;
+    padding: 0 var(--space-1) var(--space-1-5) var(--space-1);
   }
   .meer-groep-items {
     background: var(--card-bg);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 1px 4px var(--card-shadow);
+    box-shadow: 0 1px var(--space-1) var(--card-shadow);
   }
 
   /* Primitive wrappers — alleen positie */
   .uitloggen-wrapper {
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
   .terug-wrapper {
-    padding: 16px 16px 0 16px;
+    padding: var(--space-4) var(--space-4) 0 var(--space-4);
   }
-
+ 
   /* Toggle track — past in ListItem accessory slot */
   .toggle-track {
-    width: 48px;
-    height: 28px;
+    width: var(--space-12);
+    height: var(--space-7);
     background: var(--color-neutral-300);
     border-radius: var(--radius-full);
     position: relative;
@@ -264,10 +264,10 @@
   }
   .toggle-thumb {
     position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
+    top: var(--space-0-75);
+    left: var(--space-0-75);
+    width: calc(var(--space-5) + var(--space-0-5));
+    height: calc(var(--space-5) + var(--space-0-5));
     background: var(--color-neutral-0);
     border-radius: var(--radius-full);
     transition: transform var(--duration-normal) var(--ease-default);
@@ -278,6 +278,6 @@
     box-shadow: var(--shadow-sm);
   }
   .toggle-track.active .toggle-thumb {
-    transform: translateX(20px);
+    transform: translateX(var(--space-5));
   }
 </style>

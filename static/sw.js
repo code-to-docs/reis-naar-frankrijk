@@ -32,8 +32,12 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Bypass for non-GET requests and Firebase calls (Firebase handles its own caching)
-  if (event.request.method !== 'GET' || event.request.url.includes('firestore.googleapis.com')) {
+  // Bypass for non-GET requests and Firebase/Google APIs
+  if (
+    event.request.method !== 'GET' || 
+    event.request.url.includes('googleapis.com') || 
+    event.request.url.includes('firebaseio.com')
+  ) {
     return;
   }
 

@@ -62,7 +62,32 @@
   --space-8: 2rem;          /* 32px */
   --space-10: 2.5rem;       /* 40px */
   --space-12: 3rem;         /* 48px */
+  --space-13: 3.25rem;       /* 52px */
+  --space-14: 3.5rem;       /* 56px */
   --space-16: 4rem;         /* 64px */
+  --space-20: 5rem;         /* 80px */
+  --space-22: 5.5rem;       /* 88px */
+  --space-24: 6rem;         /* 96px */
+  --space-26: 6.5rem;       /* 104px */
+  --space-30: 7.5rem;       /* 120px */
+  --space-75: 18.75rem;     /* 300px */
+  --space-130: 32.5rem;      /* 520px */
+  --space-135: 33.75rem;     /* 540px */
+  --space-155: 38.75rem;     /* 620px */
+  
+  --space-0-25: 0.0625rem;   /* 1px */
+  --space-0-75: 0.1875rem;   /* 3px */
+  --space-5-5: 1.375rem;     /* 22px */
+  --space-12-5: 3.125rem;    /* 50px */
+  --space-13-5: 3.375rem;    /* 54px */
+  --space-44: 11rem;         /* 176px */
+
+  --tracking-wider: 0.05em;
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+  --poi-accent: var(--color-primary-500);
+  --loc-kleur: var(--color-primary-600);
+  --entry-actions-offset: -var(--space-20);
+
 
   /* ─────────────────────────────────────────────────
      BORDER RADIUS
@@ -168,6 +193,8 @@
   --duration-fast: 100ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  --duration-slowest: 800ms;
 
   --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out: cubic-bezier(0, 0, 0.58, 1);

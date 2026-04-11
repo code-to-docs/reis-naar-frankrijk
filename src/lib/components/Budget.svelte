@@ -36,6 +36,18 @@
   let nieuwBudget = $state("");
   let unsubscribe: Unsubscribe | undefined;
   let unsubBudget: Unsubscribe | undefined;
+  let loading = $state(true);
+
+  // Watchdog: waarschuw bij trage initialisatie (mogelijke Firebase/SW blokkade)
+  $effect(() => {
+    if (!loading) return;
+    const timer = setTimeout(() => {
+      if (loading) {
+        toonSnackbar("Laden duurt lang... controleer je verbinding of ververs de pagina.", "warning", E.WARN);
+      }
+    }, 8000);
+    return () => clearTimeout(timer);
+  });
 
   let filterPersoon = $state("alle");
   let filterCat = $state("alle");
@@ -94,6 +106,7 @@
     const sortedQuery = query(uitgavenRef, orderBy("datum", "desc"));
     const onData = (snapshot: QuerySnapshot<DocumentData>) => {
       uitgaven = mapUitgavenSnapshot(snapshot);
+      loading = false;
     };
 
     unsubscribe = onSnapshot(

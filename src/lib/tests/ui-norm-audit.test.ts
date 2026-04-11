@@ -35,15 +35,34 @@ function walk(dir: string, callback: (file: string) => void) {
     }
   });
 }
-
 describe('UI Normprofiel Audit', () => {
-  it('identificeert niet-getokeniseerde CSS waarden in de src directory', () => {
+  // Parse tokens uit alle bronbestanden
+  const tokenFiles = [
+    './src/lib/styles/ui-tokens.css',
+    './src/lib/styles/ui-norm-profile.css',
+    './src/app.css'
+  ];
+  const DEFINED_TOKENS = new Set<string>();
+
+  tokenFiles.forEach(file => {
+    if (fs.existsSync(file)) {
+      const content = fs.readFileSync(file, 'utf8');
+      const tokenMatches = content.match(/--[a-zA-Z0-9-]+(?=:)/g);
+      if (tokenMatches) {
+        tokenMatches.forEach(t => DEFINED_TOKENS.add(t));
+      }
+    }
+  });
+
+  console.log(`DEBUG: DEFINED_TOKENS size = ${DEFINED_TOKENS.size}`);
+
+  it('identificeert niet-getokeniseerde CSS waarden en onopgeloste variabelen', () => {
     const violations: { file: string; matches: string[] }[] = [];
+    const brokenTokens: { file: string; tokens: string[] }[] = [];
 
     walk(SRC_DIR, (file) => {
       const ext = path.extname(file);
       if (ext === '.svelte' || ext === '.css' || ext === '.ts') {
-        // Sla configuratiebestanden en de audit zelf over
         if (
           file.includes('ui-norm-audit.test.ts') ||
           file.includes('ui-tokens.css') ||
@@ -55,7 +74,6 @@ describe('UI Normprofiel Audit', () => {
 
         const content = fs.readFileSync(file, 'utf8');
         
-        // Verwijder SVG data en comments om false positives te voorkomen
         const COMMENT_PATTERN = /\/\*[\s\S]*?\*\/|\/\/.*/g;
         const sanitized = content
           .replace(COMMENT_PATTERN, '')
@@ -69,7 +87,7 @@ describe('UI Normprofiel Audit', () => {
         const hexes = sanitized.match(HEX_PATTERN);
         if (hexes) matches.push(...hexes);
 
-        // Check PX (alleen waarden > 2px om kleine borders/stroke-width te gedogen indien nodig)
+        // Check PX
         const pxs = sanitized.match(PX_PATTERN);
         if (pxs) {
           const significantPxs = pxs.filter(p => parseInt(p) > 2);
@@ -86,17 +104,36 @@ describe('UI Normprofiel Audit', () => {
         if (filteredMatches.length > 0) {
           violations.push({ file: normalizedFile, matches: filteredMatches });
         }
+
+        // --- NEW: Check voor 'Broken Tokens' ---
+        const varMatches = sanitized.match(/var\((--[a-zA-Z0-9-]+)\)/g);
+        if (varMatches) {
+          const invalid = varMatches
+            .map(v => v.match(/--[a-zA-Z0-9-]+/)![0])
+            .filter(t => !DEFINED_TOKENS.has(t));
+          
+          if (invalid.length > 0) {
+            brokenTokens.push({ file: normalizedFile, tokens: invalid });
+          }
+        }
       }
     });
 
     if (violations.length > 0) {
-      console.warn('\n⚠️  UI NORM VIOLATIONS\n' + '='.repeat(30));
+      console.warn('\n⚠️  UI NORM VIOLATIONS (Hardcoded values)\n' + '='.repeat(30));
       violations.forEach(v => {
         console.warn(`${v.file}: [ ${v.matches.join(', ')} ]`);
       });
-      console.warn('='.repeat(30) + '\n');
     }
 
-    expect(violations.length).toBe(0);
+    if (brokenTokens.length > 0) {
+      console.error('\n❌ BROKEN TOKENS (Variables not found in ui-tokens.css)\n' + '='.repeat(30));
+      brokenTokens.forEach(b => {
+        console.error(`${b.file}: [ ${b.tokens.join(', ')} ]`);
+      });
+    }
+
+    expect(violations.length, 'Geen hardcoded kleuren/pixels toegestaan').toBe(0);
+    expect(brokenTokens.length, 'Alle var() aanroepen moeten verwijzen naar bestaande tokens').toBe(0);
   });
 });

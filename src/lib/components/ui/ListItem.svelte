@@ -47,12 +47,12 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    min-height: 52px;
+    gap: var(--space-3-5);
+    padding: var(--space-3-5) var(--space-4);
+    min-height: var(--space-13);
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+    border-bottom: 1px solid var(--border-subtle);
     cursor: pointer;
     text-align: left;
     font-family: inherit;
@@ -62,8 +62,8 @@
     user-select: none;
     touch-action: manipulation;
     transition:
-      background-color 100ms ease,
-      transform 100ms ease;
+      background-color var(--duration-fast) var(--ease-default),
+      transform var(--duration-fast) var(--ease-default);
   }
 
   .list-item:last-child {
@@ -73,13 +73,13 @@
   /* ---------- Hover ---------- */
 
   .list-item:hover:not(:active) {
-    background: var(--hover-bg, #f8fafc);
+    background: var(--hover-bg);
   }
 
   /* ---------- Active ---------- */
 
   .list-item:active {
-    background: var(--hover-bg, #f1f5f9);
+    background: var(--bg-interactive-active);
     transform: scale(0.99);
   }
 
@@ -87,13 +87,13 @@
 
   .list-item:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px rgba(59, 108, 228, 0.4);
+    box-shadow: var(--shadow-focus);
   }
 
   /* ---------- Emoji ---------- */
 
   .list-item-emoji {
-    font-size: 1.4rem;
+    font-size: var(--text-lg);
     flex-shrink: 0;
     line-height: 1;
   }
@@ -105,24 +105,24 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-0-5);
   }
 
   .list-item-label {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--tekst, #333);
-    line-height: 1.3;
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    color: var(--tekst);
+    line-height: var(--leading-snug);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .list-item-subtitle {
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--tekst-subtiel, #64748b);
-    line-height: 1.3;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-regular);
+    color: var(--text-secondary);
+    line-height: var(--leading-snug);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -132,12 +132,12 @@
 
   .list-item-chevron {
     flex-shrink: 0;
-    color: var(--nav-text, #94a3b8);
-    transition: transform 100ms ease;
+    color: var(--nav-text);
+    transition: transform var(--duration-fast) var(--ease-default);
   }
 
   .list-item:hover .list-item-chevron {
-    transform: translateX(2px);
+    transform: translateX(var(--space-0-5));
   }
 
   /* ---------- Accessory ---------- */
@@ -151,31 +151,31 @@
   /* ---------- Dark mode ---------- */
 
   :global(html.dark) .list-item {
-    border-bottom-color: var(--border-subtle, #1e293b);
+    border-bottom-color: var(--border-subtle);
   }
 
   :global(html.dark) .list-item:hover:not(:active) {
-    background: var(--hover-bg, #1a1a1a);
+    background: var(--hover-bg);
   }
 
   :global(html.dark) .list-item:active {
-    background: var(--hover-bg, #222222);
+    background: var(--bg-interactive-active);
   }
 
   :global(html.dark) .list-item-label {
-    color: var(--tekst, #e2e8f0);
+    color: var(--text-primary);
   }
 
   :global(html.dark) .list-item-subtitle {
-    color: var(--tekst-subtiel, #94a3b8);
+    color: var(--text-secondary);
   }
 
   :global(html.dark) .list-item-chevron {
-    color: var(--nav-text, #64748b);
+    color: var(--nav-text);
   }
 
   :global(html.dark) .list-item:focus-visible {
-    box-shadow: inset 0 0 0 2px rgba(133, 174, 255, 0.4);
+    box-shadow: var(--shadow-focus);
   }
 
   /* ---------- Reduced motion ---------- */

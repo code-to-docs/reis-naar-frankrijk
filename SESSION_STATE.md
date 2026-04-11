@@ -1,29 +1,23 @@
-# session_state v1.2.14
+# SESSION_STATE.md
 
-## current_status
-* **version**: [v1.2.14]
-* **sprint**: P5 Audit-Remediation
-* **progress**: Phase 1 (Critical) gestart; documentatie gealigneerd met AGENT_PROTOCOL.
-* **last_action**: sw.js aangemaakt en governance docs (KNOWN_ISSUES/ARCHITECTURE) bijgewerkt.
+## version
+* **current**: [v1.2.15]
 
-## accomplishments_current_session
-* **p5_audit_baseline_done**: Grondige codebase-audit uitgevoerd; bevindingen vastgelegd in AUDIT_RAPPORT.md.
-* **p5_pwa_shell_done**: `static/sw.js` toegevoegd om basis PWA-functionaliteit en offline caching van de shell mogelijk te maken.
-* **p5_governance_cleanup_done**: `KNOWN_ISSUES.md` gezuiverd en bijgewerkt naar v1.2.14; `ARCHITECTURE.md` uitgebreid met PWA assets.
+## Status
+- **Fase 4: Herstel & Hardening voltooid.**
+- Regressies op Budget-pagina (styling en data) verholpen.
+- Nieuwe integriteits-audits (Missing Tokens) en runtime-watchdogs geactiveerd.
 
-## accomplishments_previous_session
-* **[v1.2.13] p5_listitem_primitive_done**: `ListItem` geïntroduceerd in `src/lib/components/ui/` (UI Normprofiel 10.6).
-* **[v1.2.13] p5_hover_cleanup_done**: `app.css` opschoning; global active schaling vervangen door milde fallback.
-* **[v1.2.13] p5_homepage_refactor_done**: `+page.svelte` refactored naar primitives; legacy stores shim toegevoegd.
+## Governance & Gatekeeper status
+- ✅ `npm run check`: Passing
+- ✅ `npm test`: Passing (incl. new budget-integrity tests)
+- ✅ `ui-norm-audit`: Passing (incl. broken-token detection)
 
-## history_compression
-* **pre-v1.2.13**: Initiële setup, Firestore connectie, UI-tokens en rollout van basis-primitives (Button/Card/Input).
+## Laatste wijzigingen
+- [v1.2.15] Herstel van Firebase fallback config en `--space-14` token.
+- [v1.2.15] Uitbreiding `ui-norm-audit.test.ts` met 'Broken Token' scan.
+- [v1.2.15] Toevoegen `budget-integrity.test.ts` en runtime watchdog in `Budget.svelte`.
 
-## next_steps
-* **audit_phase_1_critical**: Hardcoded kleuren fixen in `+page.svelte` en error handling toevoegen aan `Budget.svelte`.
-* **audit_phase_2_important**: Firebase config opschoning en primitives adoptie in `+layout.svelte`.
-* **audit_phase_3_polish**: A11Y verbeteringen in navigatie.
-
-## technical_debt
-* **legacy_stores_shim**: `src/lib/stores.js` blijft noodzakelijk voor Svelte 4/5 compatibiliteit.
-* **media_query_constraint**: Hardcoded breakpoints blijven noodzakelijk door LightningCSS-beperking.
+## Context voor volgende sessie
+- De app is nu stabiel en heeft actieve bewaking op onopgeloste tokens.
+- Volgende focus: Opschonen van overige 'Nice-to-fix' punten uit Audit-Rapport v1.0 (taalgebruik, file size).
