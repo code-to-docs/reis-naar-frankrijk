@@ -68,7 +68,7 @@
     min-height: var(--ui-touch-compact);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-accent);
-    background: rgba(255, 255, 255, 0.7);
+    background: color-mix(in srgb, var(--bg-surface) 70%, var(--bg-accent-subtle));
     color: var(--text-accent);
     font-size: var(--text-sm);
     font-weight: var(--ui-weight-semibold);
@@ -101,7 +101,7 @@
   }
 
   .gr-tip-chip {
-    background: rgba(255, 255, 255, 0.66);
+    background: color-mix(in srgb, var(--bg-surface) 66%, var(--bg-accent-subtle));
     color: var(--text-accent);
     border: 1px solid var(--border-default);
   }
@@ -110,7 +110,7 @@
     margin-top: var(--space-2);
     padding: var(--space-2-5);
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.66);
+    background: color-mix(in srgb, var(--bg-surface) 66%, var(--bg-accent-subtle));
     color: var(--text-accent);
     border: 1px dashed var(--border-accent);
     font-size: var(--text-sm);
@@ -147,19 +147,19 @@
   }
 
   :global(html.dark) .gr-tip-refresh {
-    background: rgba(15, 23, 42, 0.5);
+    background: color-mix(in srgb, var(--bg-surface-raised) 50%, var(--bg-surface-sunken));
     border-color: var(--border-strong);
     color: var(--text-accent);
   }
 
   :global(html.dark) .gr-tip-chip {
-    background: rgba(15, 23, 42, 0.5);
+    background: color-mix(in srgb, var(--bg-surface-raised) 50%, var(--bg-surface-sunken));
     border-color: var(--border-strong);
     color: var(--text-accent);
   }
 
   :global(html.dark) .gr-tip-empty {
-    background: rgba(15, 23, 42, 0.5);
+    background: color-mix(in srgb, var(--bg-surface-raised) 50%, var(--bg-surface-sunken));
     border-color: var(--border-strong);
     color: var(--text-accent);
   }

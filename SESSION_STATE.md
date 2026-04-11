@@ -1,27 +1,25 @@
-﻿# session_state v1.2.6
+﻿# session_state v1.2.7
 
 ## current_status
-* **version**: [v1.2.6]
+* **version**: [v1.2.7]
 * **sprint**: governance hardening via audit-remediation and regression gates
-* **progress**: semantische kleurafwijkingen weggewerkt; regressiecheck is nu build-blocking
-* **last_action**: componenten en tests gemigreerd naar consistente button/disabled/warning-semantiek
+* **progress**: p1 token-migratie gestart op hoogste afwijkingscluster binnen gerechtenflow
+* **last_action**: hardcoded waarden in `GerechtCard` en `GerechtenTipCard` vervangen door token-gebaseerde varianten
 
 ## accomplishments
-* **semantic_gate_enforced**: `src/lib/tests/semantic-color-audit.test.ts` faalt nu bij iedere semantische violation (`expect(...).toBe(0)`).
-* **warning_semantics_fixed**: `WeerAlerts.svelte` warning-cards gemigreerd naar semantische warning-context zonder audit-violations.
-* **disabled_semantics_fixed**: ontbrekende disabled-tokencontext opgelost in `OvernachtingenCalendarBoard.svelte` en `GerechtenTipCard.svelte`.
-* **button_alignment_batch**: bevestig-/destructieve/neutral-knoppen verder geharmoniseerd in Budget, Overnachtingen, POI en Wildlife componenten.
-* **regression_status**: `npm test` groen (13 testbestanden, 36 tests), inclusief semantische gate.
-* **history_compression**: pre-v1.2.5 setup, Firestore-integratie en eerste audit-inventaris afgerond.
+* **semantic_gate_stable**: semantische regressiegate blijft groen na stylesheetmigratie.
+* **gerechten_card_cleanup**: `GerechtCard.svelte` opgeschoond van hardcoded `px`/`rgba` waarden; audit-output voor dit bestand teruggebracht naar breakpoint-only signalen.
+* **gerechten_tip_cleanup**: `GerechtenTipCard.svelte` translucent `rgba` waarden vervangen door token-gebaseerde `color-mix` varianten.
+* **regression_status**: `npm test` groen (13 testbestanden, 36 tests).
+* **history_compression**: pre-v1.2.6 semantische remediation en test-gating afgerond.
 
 ## next_steps
-1. **p1_token_migration_wave2**: grote hardcoded clusters migreren in `GerechtCard.svelte`, `routes/poi/+page.svelte`, `Navigation.svelte`, `Header.svelte`.
-2. **p1_ui_norm_gate_strategy**: beslissen welke UI-normregels strict gate worden en welke als tijdelijke uitzonderingslijst blijven (met name media-query literals).
-3. **p1_dark_alignment**: normprofiel uitbreiden met expliciete compatibiliteitssectie voor `html.dark` + `prefers-color-scheme` fallback.
-4. **p2_css_isolation**: feature-specifieke overrides uit `app.css` verder terugbrengen naar componentniveau.
+1. **p1_token_migration_wave2a**: hardcoded clusters in `routes/poi/+page.svelte` migreren naar tokens.
+2. **p1_token_migration_wave2b**: shell-afwijkingen in `Navigation.svelte` en `Header.svelte` migreren.
+3. **p1_ui_norm_gate_strategy**: strict-gate regels vastleggen met uitzonderingsbeleid voor media-query literals.
+4. **p1_dark_alignment**: normprofiel uitbreiden met expliciete compatibiliteitssectie voor `html.dark` + `prefers-color-scheme` fallback.
 
 ## technical_debt
-* **ui_norm_backlog**: brede hardcoded-waarde inventaris staat nog open over meerdere modules; audit rapporteert dit nog bewust als backlog-signaal.
+* **ui_norm_backlog**: brede hardcoded-waarde inventaris blijft open buiten de reeds gemigreerde gerechtencomponenten.
 * **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven voorlopig nodig.
 * **domain_migration_gap**: `lib/components/gerechten/` en `lib/features/gerechten/` bestaan parallel; consolidatie nog niet voltooid.
-

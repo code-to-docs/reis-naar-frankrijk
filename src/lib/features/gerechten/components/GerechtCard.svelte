@@ -241,7 +241,7 @@
     background: var(--card-bg);
     border-radius: var(--radius-md);
     border: 2px solid transparent;
-    box-shadow: 0 1px var(--space-1-5) rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
   }
 
@@ -263,8 +263,8 @@
   }
 
   .gr-emoji {
-    width: 52px;
-    height: 52px;
+    width: calc(var(--space-12) + var(--space-1));
+    height: calc(var(--space-12) + var(--space-1));
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
@@ -303,7 +303,7 @@
   .gr-kort {
     font-size: var(--text-sm);
     color: var(--text-secondary);
-    margin-top: 2px;
+    margin-top: var(--space-0-5);
     font-style: italic;
     line-height: var(--ui-line-compact);
   }
@@ -312,11 +312,11 @@
     margin-top: var(--space-1-5);
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: var(--space-1);
   }
 
   .gr-tag {
-    min-height: 26px;
+    min-height: var(--ui-touch-compact);
   }
 
   .gr-chevron {
@@ -333,7 +333,7 @@
     padding: var(--space-3);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-3);
   }
 
   .gr-beeld-btn {
@@ -346,12 +346,12 @@
 
   .gr-beeld {
     width: 100%;
-    height: 260px;
+    height: calc(var(--space-16) * 4);
     margin: 0;
     position: relative;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 var(--space-2) var(--space-5) -var(--space-1-5) rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
     background: var(--bg-surface-sunken);
     display: flex;
     align-items: center;
@@ -374,7 +374,7 @@
     margin: 0;
     font-size: var(--text-xs);
     color: var(--text-inverse);
-    background: rgba(15, 23, 42, 0.7);
+    background: color-mix(in srgb, var(--bg-surface-sunken) 70%, var(--black-a35));
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
   }
@@ -383,7 +383,7 @@
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--bg-surface) , var(--bg-surface-sunken));
     border: 1px solid var(--border-default);
-    min-height: 220px;
+    min-height: calc(var(--space-16) * 3 + var(--space-8));
     display: grid;
     place-items: center;
     gap: var(--space-2);
@@ -420,7 +420,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-2);
-    padding: 7px var(--space-2-5);
+    padding: var(--space-2) var(--space-2-5);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-default);
     background: var(--bg-surface);
@@ -453,8 +453,8 @@
     background: var(--bg-surface);
     color: var(--text-secondary);
     border-radius: var(--radius-md);
-    width: 34px;
-    height: 30px;
+    width: var(--touch-target-compact);
+    height: var(--touch-target-compact);
     line-height: 1;
     font-size: var(--text-base);
     padding: 0;
@@ -496,11 +496,11 @@
     position: fixed;
     inset: 0;
     z-index: 1200;
-    background: rgba(2, 6, 23, 0.95);
+    background: color-mix(in srgb, var(--bg-surface-sunken) 95%, var(--black-a50));
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 56px var(--space-3) var(--space-4);
+    padding: calc(var(--space-12) + var(--space-2)) var(--space-3) var(--space-4);
   }
 
   .gr-fs-img {
@@ -517,7 +517,7 @@
     border: none;
     border-radius: var(--radius-full);
     padding: var(--space-2) var(--space-3);
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--white-a15);
     color: var(--text-inverse);
     font-size: var(--text-sm);
     font-weight: var(--ui-weight-bold);
@@ -526,12 +526,12 @@
 
   @media (min-width: 1100px) {
     .gr-head {
-      gap: 14px;
-      padding: 14px;
+      gap: var(--space-3);
+      padding: var(--space-3);
     }
     .gr-emoji {
-      width: 62px;
-      height: 62px;
+      width: calc(var(--space-16) - var(--space-0-5));
+      height: calc(var(--space-16) - var(--space-0-5));
       font-size: 1.9rem;
     }
     .gr-name {
@@ -541,11 +541,11 @@
       font-size: var(--text-base);
     }
     .gr-detail {
-      padding: 14px;
+      padding: var(--space-3);
       gap: var(--space-4);
     }
     .gr-beeld {
-      height: 320px;
+      height: calc(var(--space-16) * 5);
     }
     .gr-omschrijving,
     .gr-mijn-meta {
@@ -553,7 +553,7 @@
     }
     .gr-user-pill {
       font-size: var(--text-base);
-      min-height: 42px;
+      min-height: var(--ui-touch-min);
     }
     .gr-check-btn {
       min-height: var(--space-12);
