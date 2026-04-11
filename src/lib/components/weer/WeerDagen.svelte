@@ -64,7 +64,7 @@
   .weer-spinner {
     width: var(--space-5);
     height: var(--space-5);
-    border: 3px solid var(--bg-accent-subtle);
+    border: var(--space-1) solid var(--bg-accent-subtle);
     border-top-color: var(--text-accent);
     border-radius: var(--radius-full);
     animation: spin 0.8s linear infinite;
@@ -75,7 +75,7 @@
     text-align: center;
     color: var(--text-error);
     font-size: var(--text-sm);
-    padding: 14px;
+    padding: var(--space-3-5);
   }
 
   .weer-dagen {
@@ -100,7 +100,7 @@
     font-weight: var(--weight-bold);
     font-size: var(--ui-text-xs);
     color: var(--text-primary);
-    margin-bottom: 1px;
+    margin-bottom: var(--space-0-5);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -108,7 +108,7 @@
   .weer-dag-datum {
     font-size: var(--text-xs);
     color: var(--text-secondary);
-    margin-bottom: 7px;
+    margin-bottom: var(--space-1-5);
     font-weight: var(--weight-medium);
   }
   .weer-emoji {
@@ -145,13 +145,13 @@
     font-weight: var(--weight-bold);
     align-self: flex-end;
     line-height: 1;
-    margin-bottom: 1px;
+    margin-bottom: var(--space-0-5);
   }
   .weer-extra {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: var(--space-1);
     font-size: var(--ui-text-sm);
     color: var(--text-primary);
     font-weight: var(--weight-medium);
@@ -163,7 +163,7 @@
   :global(.weer-card.desktop) .weer-desktop-meta {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: var(--space-1);
     margin-top: var(--space-2);
     font-size: var(--text-xs);
     color: var(--text-secondary);

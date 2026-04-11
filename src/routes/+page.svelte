@@ -91,7 +91,7 @@
     justify-content: space-between;
     gap: var(--ui-space-2);
     border: 1px solid var(--border-subtle);
-    min-height: 110px;
+    min-height: calc(var(--space-16) + var(--space-8) + var(--space-3-5));
     transition: 
       transform var(--duration-normal) var(--ease-default), 
       box-shadow var(--duration-normal) var(--ease-default), 
@@ -130,9 +130,9 @@
     font-weight: var(--ui-weight-medium);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 768px) {
     .quick-btn {
-      min-height: 96px;
+      min-height: calc(var(--space-16) + var(--space-8));
       padding: var(--ui-space-3);
     }
     .quick-btn span {
@@ -152,7 +152,7 @@
       gap: var(--ui-space-4);
     }
     .quick-btn {
-      min-height: 116px;
+      min-height: calc(var(--space-16) + var(--space-8) + var(--space-5));
       padding: var(--ui-space-4);
     }
     .quick-btn span {

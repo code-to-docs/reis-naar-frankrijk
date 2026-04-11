@@ -46,7 +46,7 @@
   }
 
   .noodinfo-page h2 {
-    font-size: 1.4rem;
+    font-size: var(--text-lg);
     margin: 0;
     letter-spacing: -0.01em;
   }
@@ -54,8 +54,8 @@
   .noodinfo-card {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
-    padding: 14px var(--space-4);
-    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
+    padding: var(--space-3-5) var(--space-4);
+    box-shadow: 0 var(--space-0-5) var(--space-2-5) var(--card-shadow);
     border: 1px solid var(--border-subtle);
   }
 
@@ -66,7 +66,7 @@
   }
 
   .noodinfo-card p {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     line-height: 1.6;
     margin: 0;
     color: var(--tekst);
@@ -96,7 +96,7 @@
   }
 
   .tips-list li {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     line-height: var(--leading-normal);
     color: var(--tekst);
     padding: var(--space-1-5) 0;

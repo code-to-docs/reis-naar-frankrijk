@@ -76,7 +76,8 @@
 
     function maakGrotereThumbUrl(url: string) {
       if (!url) return url;
-      return url.replace(/\/\d+px-/, "/1600px-");
+      const targetWidth = "1600";
+      return url.replace(/\/\d+px-/, `/${targetWidth}px-`);
     }
 
     async function laadEnkel(dier: Wildlife): Promise<WildlifePhotoResult> {

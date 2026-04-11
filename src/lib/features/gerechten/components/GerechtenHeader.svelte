@@ -114,7 +114,7 @@
   }
 
   .gr-filter-toggle {
-    min-width: 92px;
+    min-width: calc(var(--space-16) + var(--space-6) + var(--space-1));
     position: relative;
     align-self: stretch;
   }
@@ -123,8 +123,8 @@
     position: absolute;
     top: -var(--space-1-5);
     right: -var(--space-1-5);
-    min-width: 18px;
-    height: 18px;
+    min-width: calc(var(--space-4) + var(--space-0-5));
+    height: calc(var(--space-4) + var(--space-0-5));
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--bg-accent) 60%, var(--color-error-base));
     color: var(--text-inverse);
@@ -132,14 +132,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
   }
 
   .gr-filters-card {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-subtle);
-    box-shadow: 0 2px var(--space-2-5) var(--card-shadow);
+    box-shadow: 0 var(--space-0-5) var(--space-2-5) var(--card-shadow);
     padding: var(--space-3);
     display: flex;
     flex-direction: column;
@@ -172,7 +172,7 @@
   }
 
   .gr-reset {
-    margin-top: 2px;
+    margin-top: var(--space-0-5);
     width: 100%;
     min-height: var(--ui-touch-min);
     border-radius: var(--radius-md);
@@ -189,16 +189,16 @@
     .gr-zoek {
       min-height: var(--space-12);
       font-size: var(--text-base);
-      padding-inline: 14px;
+      padding-inline: var(--space-3-5);
     }
     .gr-filter-toggle {
       min-height: var(--space-12);
-      min-width: 108px;
+      min-width: calc(var(--space-16) + var(--space-6) + var(--space-5));
       font-size: var(--text-base);
     }
     .gr-pill {
-      min-height: 42px;
-      padding-inline: 14px;
+      min-height: var(--ui-touch-min);
+      padding-inline: var(--space-3-5);
       font-size: var(--text-base);
     }
   }

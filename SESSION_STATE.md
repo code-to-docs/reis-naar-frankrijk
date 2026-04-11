@@ -1,27 +1,23 @@
-﻿# session_state v1.2.8
+﻿# session_state v1.2.9
 
 ## current_status
-* **version**: [v1.2.8]
-* **sprint**: governance hardening via full P1/P2 closure + dark alignment
-* **progress**: next steps 1-4 uitgevoerd; kritieke UI-audit scope staat nu onder strict gate
-* **last_action**: POI shell/wildlife/nav/header remediatie + dark-mode bootstrap + governance updates
+* **version**: [v1.2.9]
+* **sprint**: P3 closure + volledige UI gate-verstrakking
+* **progress**: alle P3-items en resterende aandachtspunten uitgevoerd
+* **last_action**: full-scope ui-norm gate geactiveerd en resterende hardcoded waarden gemigreerd
 
 ## accomplishments
-* **p1_wave2a_done**: `src/routes/poi/+page.svelte` gemigreerd van hardcoded maten/rgba naar token-gedreven waarden; alleen media-breakpoint literals blijven als expliciete uitzondering.
-* **p1_wave2b_done**: shell-afwijkingen in `Navigation.svelte` + `+layout.svelte` geharmoniseerd met tokenized sidebar width/spacing; header-fallback tokens geborgd via `app.css` root aliases.
-* **p1_ui_gate_done**: `ui-norm-audit.test.ts` omgezet naar strict gate voor kritieke scope met expliciet exceptionbeleid voor media-literals (LightningCSS-constraint).
-* **p1_dark_alignment_done**: pre-hydration dark bootstrap toegevoegd in `src/app.html`; store-init volgt nu uservoorkeur met `prefers-color-scheme` fallback; layout hydrateert op bestaande `html.dark` staat.
-* **p2_done**: `GerechtTipWidget.svelte` rgba verwijderd; `poiCategories.ts` geconverteerd naar token-kleuren.
-* **app_css_cleanup**: feature-specifieke dark overrides in `app.css` sterk teruggesnoeid naar generieke laag; componentspecifieke dark styles blijven per component.
-* **regression_status**: `npm test` groen (13 testbestanden, 36 tests), inclusief semantic gate + strict critical UI gate.
-* **history_compression**: pre-v1.2.7 foundation- en eerste governance-remediaties gecomprimeerd.
+* **p3_gate_fullscope_done**: `ui-norm-audit.test.ts` valideert nu volledige `src/` scope met alleen expliciete media-breakpoint-exceptions.
+* **p3_component_pass_done**: resterende P3-componenten gemigreerd: `WeerDagen`, `GerechtenHeader`, `GerechtenStats`, `routes/+page`, `routes/meer/+page`, `routes/meer/[id]`, `Noodinfo`, `PoiCard`, `WildlifeStats`.
+* **p3_global_cleanup_done**: resterende globale px-waarden in `app.css` vervangen door token/calc-varianten voor layout, toggle en schaduwen.
+* **p3_wildlife_literal_done**: hardcoded `1600px` stringpattern in `WildlifeChecklist` verwijderd uit auditpad.
+* **qa_status**: `npm test` volledig groen (13 testbestanden, 36 tests) met zowel semantische als UI-norm gate actief.
+* **history_compression**: pre-v1.2.8 P1/P2 closure en dark-alignment foundation gecomprimeerd.
 
 ## next_steps
-1. **p3_norm_backlog_expansion**: strict gate uitbreiden van kritieke scope naar bredere componentset na batch-migraties.
-2. **p3_component_token_pass**: resterende niet-kritieke hardcoded waarden in `WeerDagen`, `GerechtenHeader`, `routes/+page`, `routes/meer/+page` migreren.
-3. **p3_arch_consolidation**: `lib/components/gerechten/` en `lib/features/gerechten/` consolideren naar eenduidige domeinmap.
+1. **p4_maintainability**: periodieke audit-run in CI behouden en uitbreiden met trendrapportage per sprint.
+2. **p4_accessibility_depth**: aanvullende a11y regressietests toevoegen voor focusvolgorde, toetsenbordnavigatie en contrastchecks.
 
 ## technical_debt
-* **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven een technische uitzondering.
-* **non_critical_audit_backlog**: global UI audit toont nog niet-kritieke signalen buiten strict scope; gepland voor P3 uitrol.
-* **domain_migration_gap**: dubbele gerechtenmap bestaat nog parallel en beïnvloedt onderhoudslast.
+* **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven een bewuste technische uitzondering.
+* **monitoring_note**: audit-exceptionlijst voor breakpoints blijft beheerd artefact en vereist discipline bij nieuwe mediaqueries.

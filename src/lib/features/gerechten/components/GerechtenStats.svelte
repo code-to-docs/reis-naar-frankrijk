@@ -79,7 +79,7 @@
   }
   .gr-bar-row {
     display: grid;
-    grid-template-columns: 60px 1fr auto;
+    grid-template-columns: calc(var(--space-16) - var(--space-1)) 1fr auto;
     align-items: center;
     gap: var(--space-2);
   }

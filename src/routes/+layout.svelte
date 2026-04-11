@@ -104,7 +104,7 @@
 
   .kies-knop {
     font-size: var(--text-lg);
-    min-width: 136px;
+    min-width: calc(var(--space-16) + var(--space-12) + var(--space-6));
   }
 
   .app-shell {

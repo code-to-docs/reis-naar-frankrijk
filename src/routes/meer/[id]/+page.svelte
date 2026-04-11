@@ -50,7 +50,7 @@
   {:else if id === "noodinfo"}
     <Noodinfo />
   {:else}
-    <p style="padding: var(--space-4);">Pagina niet gevonden.</p>
+    <p class="not-found">Pagina niet gevonden.</p>
   {/if}
 </div>
 
@@ -63,7 +63,7 @@
     align-items: center;
     gap: var(--space-1-5);
     min-height: var(--btn-height-compact);
-    padding: 0 14px;
+    padding: 0 var(--space-3-5);
     background: color-mix(in srgb, var(--card-bg) 86%, var(--bg-accent-subtle));
     color: var(--blauw);
     border: 1px solid color-mix(in srgb, var(--input-border) 82%, var(--border-default));
@@ -74,6 +74,9 @@
     text-decoration: none;
   }
   .terug-btn:active { opacity: 0.85; }
+  .not-found {
+    padding: var(--space-4);
+  }
 </style>
 
 

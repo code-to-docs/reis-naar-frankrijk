@@ -76,13 +76,13 @@
     display: grid;
     gap: var(--ui-space-3);
     min-height: 100%;
-    border-left: 5px solid var(--poi-accent);
+    border-left: var(--space-1) solid var(--poi-accent);
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
 
   .poi-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 var(--space-2-5) 28px var(--card-shadow);
+    box-shadow: 0 var(--space-2-5) var(--space-7) var(--card-shadow);
   }
 
   .poi-head {
@@ -132,7 +132,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2-5);
-    min-height: 34px;
+    min-height: var(--ui-touch-compact);
     width: fit-content;
     padding: var(--space-1-5) var(--space-2-5);
     border-radius: var(--radius-full);
@@ -142,7 +142,7 @@
 
   .poi-priority-dots {
     display: inline-flex;
-    gap: 5px;
+    gap: var(--space-1);
   }
 
   .poi-priority-dot {
@@ -189,7 +189,7 @@
   }
 
   .poi-map-link {
-    padding-inline: 14px;
+    padding-inline: var(--space-3-5);
   }
 
   .poi-link {
@@ -213,7 +213,7 @@
     background: color-mix(in srgb, var(--card-bg) 80%, var(--color-error-light));
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 740px) {
     .poi-actions {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));

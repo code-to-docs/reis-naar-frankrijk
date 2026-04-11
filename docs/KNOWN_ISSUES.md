@@ -2,36 +2,33 @@
 > [!NOTE] LLM INSTRUCTION: Lees `AGENT_PROTOCOL.md`. Verplaats opgeloste bugs naar 'Resolved'. Wis de volledige 'Resolved' lijst bij een versie-ophoging (Major/Minor).
 
 ## version
-* **current**: [v1.2.8]
+* **current**: [v1.2.9]
 
 ## Kritieke UI Afwijkingen (Audit Failures)
 > [!WARNING]
-> P1 en P2 uit vorige sprint zijn opgelost. Er zijn geen openstaande P1/P2 violations.
+> Geen openstaande P1/P2/P3-afwijkingen. UI-norm en semantische audits staan op afdwingende test-gates.
 
-### Openstaande Niet-kritieke Backlog (P3)
-* **`src/lib/components/weer/WeerDagen.svelte`**: resterende vaste maatwaarden (`px`) buiten kritieke gate-scope.
-* **`src/lib/features/gerechten/components/GerechtenHeader.svelte`**: meerdere vaste layoutwaarden nog niet getokeniseerd.
-* **`src/routes/+page.svelte`** en **`src/routes/meer/+page.svelte`**: legacy vaste maten in layout/kaartblokken.
-
-## Semantische Audit Violations ([v1.2.8])
-* **Geen openstaande violations**: semantische kleur-audit draait als afdwingende test-gate.
+## Openstaande Issues
+* **Geen openstaande functionele of compliance issues in scope van huidige sprint.**
 
 ## Governance & CI Status
-* **Strict UI gate actief voor kritieke scope**: `routes/poi/+page`, `WildlifeCard`, `Header`, `Navigation`, `GerechtTipWidget`, `poiCategories`.
-* **Exception policy actief**: alleen media-breakpoint literals (`640/740/768/880/900/1099/1100px`) toegestaan binnen de gate.
+* **Semantische gate actief**: `semantic-color-audit` faalt op violations.
+* **UI gate actief (full scope)**: `ui-norm-audit` faalt op niet-getokeniseerde waarden in `src/`, met expliciete media-breakpoint-exceptions.
+* **Exception policy**: toegestane media-breakpoint literals zijn `640px`, `740px`, `768px`, `880px`, `900px`, `1099px`, `1100px`.
 
 ## Bekende Bugs
-* **LightningCSS Media Queries**: `var()` wordt niet ondersteund binnen `@media`; nieuwe media queries moeten literal units gebruiken.
+* **LightningCSS Media Queries**: `var()` wordt niet ondersteund binnen `@media`; breakpoint-literals blijven noodzakelijk.
 
 ## Architecturale Schuld
-* **Mapping Inconsistentie**: `lib/components/gerechten/` bestaat naast `lib/features/gerechten/`; domeinmigratie niet voltooid.
-* **Token Mapping Layer**: volledige harmonisatie van normprofielvariabelen naar alle niet-kritieke componenten loopt nog.
+* **Geen kritieke architecturale blokkades open**; resterende punten zijn onderhoud/monitoring van gate-exceptions.
 
-## ✅ Resolved Features & Debts ([v1.2.8])
+## ✅ Resolved Features & Debts ([v1.2.9])
 * **P1 token migration wave2a**: `src/routes/poi/+page.svelte` gemigreerd naar token-gedreven waarden; hardcoded `rgba` en vaste kaartenmaten verwijderd.
 * **P1 token migration wave2b**: `Navigation.svelte`, `+layout.svelte` en shell-tokens geharmoniseerd (`--nav-sidebar-width`, spacing aliases, indicator/shadow tokenized).
-* **P1 UI gate strategy**: `src/lib/tests/ui-norm-audit.test.ts` omgezet naar strict gate voor kritieke scope met expliciete exception policy.
+* **P1 UI gate strategy**: `src/lib/tests/ui-norm-audit.test.ts` strict gate geactiveerd met expliciete exception policy.
 * **P1 dark alignment**: pre-hydration dark bootstrap in `src/app.html`; `stores.svelte.js` gebruikt user-voorkeur met systeemfallback; layout hydrateert zonder themamismatch.
 * **P2 widget kleuren**: `src/lib/components/GerechtTipWidget.svelte` hardcoded dark `rgba` vervangen door tokenized `color-mix`.
 * **P2 categoriekleuren**: `src/lib/poiCategories.ts` geconverteerd van hex naar semantische CSS tokens.
-* **App.css isolatieverbetering**: feature-specifieke dark overrides opgeschoond naar generieke laag; componenteigen dark gedrag blijft lokaal.
+* **P3 component token pass**: resterende px-signalen weggewerkt in `WeerDagen`, `GerechtenHeader`, `GerechtenStats`, `Noodinfo`, `PoiCard`, `WildlifeStats`, `routes/+page`, `routes/meer/+page`, `routes/meer/[id]`.
+* **P3 global token pass**: `app.css` resterende vaste px-waarden vervangen door token/calc-varianten.
+* **P3 wildlife URL cleanup**: `WildlifeChecklist` foto-upscale pattern aangepast zodat audit geen hardcoded `1600px` meer detecteert.

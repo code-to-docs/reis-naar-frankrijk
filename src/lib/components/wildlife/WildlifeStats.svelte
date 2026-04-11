@@ -28,7 +28,7 @@
     border-radius: var(--radius-lg);
     padding: var(--space-4);
     margin-bottom: var(--space-3);
-    box-shadow: 0 2px var(--space-2-5) rgba(0,0,0,0.08);
+    box-shadow: 0 var(--space-0-5) var(--space-2-5) var(--card-shadow);
   }
   .wl-stats-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-2-5); }
   .wl-stats-nummer { display: flex; align-items: baseline; gap: var(--space-1); }
@@ -62,7 +62,7 @@
   @media (min-width: 1100px) {
     .wl-stats-card {
       padding: var(--ui-space-5);
-      margin-bottom: 14px;
+      margin-bottom: var(--space-3-5);
     }
     .wl-stats-top {
       margin-bottom: var(--space-3);

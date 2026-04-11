@@ -107,8 +107,8 @@
     box-shadow: 0 1px var(--space-1) var(--card-shadow);
   }
   .meer-item {
-    width: 100%; display: flex; align-items: center; gap: 14px;
-    min-height: 58px; padding: 0 var(--space-4); background: none; border: none;
+    width: 100%; display: flex; align-items: center; gap: var(--space-3-5);
+    min-height: calc(var(--ui-touch-min) + var(--space-3-5)); padding: 0 var(--space-4); background: none; border: none;
     border-bottom: 1px solid var(--border-subtle); cursor: pointer;
     text-align: left; transition: background 0.15s ease;
     color: var(--nav-text); text-decoration: none;
@@ -138,7 +138,7 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-default);
-    max-width: 400px;
+    max-width: calc(var(--space-16) * 6 + var(--space-4));
     margin: var(--space-8) auto 0;
   }
 
