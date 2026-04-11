@@ -1,4 +1,4 @@
-# session_state v1.2.6
+﻿# session_state v1.2.6
 
 ## current_status
 * **version**: [v1.2.6]
@@ -24,3 +24,4 @@
 * **ui_norm_backlog**: brede hardcoded-waarde inventaris staat nog open over meerdere modules; audit rapporteert dit nog bewust als backlog-signaal.
 * **constraint_note**: CSS variabelen blijven onbruikbaar in `@media`; literal breakpoints blijven voorlopig nodig.
 * **domain_migration_gap**: `lib/components/gerechten/` en `lib/features/gerechten/` bestaan parallel; consolidatie nog niet voltooid.
+
